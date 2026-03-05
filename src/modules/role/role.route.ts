@@ -1,0 +1,23 @@
+import express from "express";
+import { authMiddleware } from "../../core/middleware/auth.middleware";
+import { roleController } from "./role.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware";
+import { roleSchema, updateRoleSchema } from "./role.zod";
+const roleRouter = express.Router();
+
+roleRouter.use(
+  authMiddleware.protectedRoute,
+  authMiddleware.restrictRote("admin")
+);
+
+roleRouter
+  .route("/")
+  .get(roleController.getAllRoles)
+  .post(validationMiddleware(roleSchema), roleController.createRole);
+
+roleRouter
+  .route("/:id")
+  .delete(roleController.deleteRole)
+  .patch(validationMiddleware(updateRoleSchema), roleController.updateRole);
+
+export default roleRouter;

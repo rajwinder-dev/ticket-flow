@@ -1,0 +1,4406 @@
+PASS tests/testModules/salary.test.ts (23.557 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjcyZTVjODQzLTlhZWEtNGYzYS05NzZkLWU4N2I1NTU5ODdiNiIsImlhdCI6MTc1NDIzMDQ4NiwiZXhwIjoxNzU0MjMxMzg2fQ.UaafHhUv6XfXCnJbRsdIR8rTAgctrV5kYUkBUNphoHE",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:46.477Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {
+        "base": 1000,
+        "allowance": 100,
+        "bonus": 100,
+        "deductions": 50,
+        "salaryType": "income",
+        "effectiveFrom": "2025-10-01",
+        "effectiveTo": "2025-11-01",
+        "note": "test string"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 170,
+          "createdAt": "2025-08-03T14:14:46.614Z",
+          "employeeId": 44,
+          "base": 1000,
+          "allowance": 100,
+          "bonus": 100,
+          "deductions": 50,
+          "netPay": 1150,
+          "salaryType": "income",
+          "effectiveFrom": "2025-10-01T00:00:00.000Z",
+          "effectiveTo": "2025-11-01T00:00:00.000Z",
+          "note": "test string"
+        },
+        "timestamp": "2025-08-03T14:14:46.620Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/salary ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 72,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 73,
+            "createdAt": "2025-07-07T21:48:14.915Z",
+            "employeeId": 44,
+            "base": 52928,
+            "allowance": 2657,
+            "bonus": 8666,
+            "deductions": 3054,
+            "netPay": 61197,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-07-07T21:48:14.915Z",
+            "effectiveTo": "2025-08-07T21:48:14.915Z",
+            "note": "Includes performance bonus"
+          },
+          {
+            "srNo": 2,
+            "id": 74,
+            "createdAt": "2025-01-30T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 39085,
+            "allowance": 7660,
+            "bonus": 0,
+            "deductions": 1404,
+            "netPay": 45341,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-01-30T17:44:15.411Z",
+            "effectiveTo": "2025-03-02T17:44:15.411Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 3,
+            "id": 75,
+            "createdAt": "2025-03-02T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 44090,
+            "allowance": 4444,
+            "bonus": 0,
+            "deductions": 2610,
+            "netPay": 45924,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-03-02T17:44:15.411Z",
+            "effectiveTo": "2025-04-02T17:44:15.411Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 4,
+            "id": 76,
+            "createdAt": "2025-04-02T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 57057,
+            "allowance": 7430,
+            "bonus": 0,
+            "deductions": 2116,
+            "netPay": 62371,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-04-02T17:44:15.411Z",
+            "effectiveTo": "2025-05-02T17:44:15.411Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 5,
+            "id": 77,
+            "createdAt": "2025-05-02T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 32389,
+            "allowance": 4721,
+            "bonus": 12991,
+            "deductions": 2209,
+            "netPay": 47892,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-05-02T17:44:15.411Z",
+            "effectiveTo": "2025-06-02T17:44:15.411Z",
+            "note": "Includes performance bonus"
+          },
+          {
+            "srNo": 6,
+            "id": 78,
+            "createdAt": "2025-06-02T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 35453,
+            "allowance": 3417,
+            "bonus": 0,
+            "deductions": 1327,
+            "netPay": 37543,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-06-02T17:44:15.411Z",
+            "effectiveTo": "2025-07-02T17:44:15.411Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 7,
+            "id": 79,
+            "createdAt": "2025-07-02T17:44:15.411Z",
+            "employeeId": 45,
+            "base": 40754,
+            "allowance": 5801,
+            "bonus": 0,
+            "deductions": 2657,
+            "netPay": 43898,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-07-02T17:44:15.411Z",
+            "effectiveTo": "2025-08-02T17:44:15.411Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 8,
+            "id": 80,
+            "createdAt": "2025-03-23T16:46:22.694Z",
+            "employeeId": 46,
+            "base": 44748,
+            "allowance": 5542,
+            "bonus": 0,
+            "deductions": 3545,
+            "netPay": 46745,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-03-23T16:46:22.694Z",
+            "effectiveTo": "2025-04-23T16:46:22.694Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 9,
+            "id": 81,
+            "createdAt": "2025-04-23T16:46:22.694Z",
+            "employeeId": 46,
+            "base": 53910,
+            "allowance": 5676,
+            "bonus": 0,
+            "deductions": 1621,
+            "netPay": 57965,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-04-23T16:46:22.694Z",
+            "effectiveTo": "2025-05-23T16:46:22.694Z",
+            "note": "Standard monthly salary"
+          },
+          {
+            "srNo": 10,
+            "id": 82,
+            "createdAt": "2025-05-23T16:46:22.694Z",
+            "employeeId": 46,
+            "base": 32488,
+            "allowance": 6375,
+            "bonus": 0,
+            "deductions": 2018,
+            "netPay": 36845,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-05-23T16:46:22.694Z",
+            "effectiveTo": "2025-06-23T16:46:22.694Z",
+            "note": "Standard monthly salary"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:46.664Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/salary/44 ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 2,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 73,
+            "createdAt": "2025-07-07T21:48:14.915Z",
+            "employeeId": 44,
+            "base": 52928,
+            "allowance": 2657,
+            "bonus": 8666,
+            "deductions": 3054,
+            "netPay": 61197,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-07-07T21:48:14.915Z",
+            "effectiveTo": "2025-08-07T21:48:14.915Z",
+            "note": "Includes performance bonus"
+          },
+          {
+            "srNo": 2,
+            "id": 170,
+            "createdAt": "2025-08-03T14:14:46.614Z",
+            "employeeId": 44,
+            "base": 1000,
+            "allowance": 100,
+            "bonus": 100,
+            "deductions": 50,
+            "netPay": 1150,
+            "salaryType": "income",
+            "effectiveFrom": "2025-10-01T00:00:00.000Z",
+            "effectiveTo": "2025-11-01T00:00:00.000Z",
+            "note": "test string"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:46.718Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/salary/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "totalPayRole": 1063929,
+          "pendingEmployees": 1,
+          "deduction": 64347,
+          "bonuses": 64369
+        },
+        "timestamp": "2025-08-03T14:14:46.773Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "base",
+            "message": "Required"
+          },
+          {
+            "field": "allowance",
+            "message": "Required"
+          },
+          {
+            "field": "bonus",
+            "message": "Required"
+          },
+          {
+            "field": "deductions",
+            "message": "Required"
+          },
+          {
+            "field": "salaryType",
+            "message": "Invalid salary type"
+          },
+          {
+            "field": "effectiveFrom",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "effectiveTo",
+            "message": "A valid date is required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {
+        "base": -100,
+        "allowance": 50,
+        "bonus": 0,
+        "deductions": 0,
+        "salaryType": "income",
+        "effectiveFrom": "2025-10-01",
+        "effectiveTo": "2025-11-01",
+        "note": "negative base test"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "base",
+            "message": "Base salary must be non-negative"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {
+        "base": 1000,
+        "allowance": 50,
+        "bonus": 0,
+        "deductions": 0,
+        "salaryType": "invalidType",
+        "effectiveFrom": "2025-10-01",
+        "effectiveTo": "2025-11-01",
+        "note": "invalid type test"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "salaryType",
+            "message": "Invalid salary type"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {
+        "base": 1000,
+        "allowance": 100,
+        "bonus": 50,
+        "deductions": 20,
+        "salaryType": "income",
+        "effectiveFrom": "2025-12-01",
+        "effectiveTo": "2025-11-01",
+        "note": "reverse date"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "effectiveTo",
+            "message": "effectiveTo must be after effectiveFrom"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/44 ✅
+      Input:
+      {
+        "base": 1200,
+        "allowance": 100,
+        "bonus": 0,
+        "deductions": 0,
+        "salaryType": "income",
+        "effectiveFrom": "2025-12-01",
+        "effectiveTo": "2026-01-01",
+        "note": "extra fields test",
+        "hackField": "should be rejected"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'hackField'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/salary/999999 ✅
+      Input:
+      {
+        "base": 1000,
+        "allowance": 50,
+        "bonus": 50,
+        "deductions": 20,
+        "salaryType": "income",
+        "effectiveFrom": "2025-10-01",
+        "effectiveTo": "2025-11-01",
+        "note": "bad ID"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record with given id  do not exist ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/salary/me ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 0,
+        "data": [],
+        "timestamp": "2025-08-03T14:14:46.932Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:46 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "delpha",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDQsInNlc3Npb25JZCI6IjFiYTJiNmZiLTI4NWQtNDExNy1hNDUyLTczNThjYjUwODY5NSIsImlhdCI6MTc1NDIzMDQ4NywiZXhwIjoxNzU0MjMxMzg3fQ.FiDeppGWyBBu1XWZ28mXAsgREhyjTrdABTq_djmmAKI",
+          "userId": 44
+        },
+        "timestamp": "2025-08-03T14:14:47.177Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/salary/me ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 2,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 73,
+            "createdAt": "2025-07-07T21:48:14.915Z",
+            "employeeId": 44,
+            "base": 52928,
+            "allowance": 2657,
+            "bonus": 8666,
+            "deductions": 3054,
+            "netPay": 61197,
+            "salaryType": "Monthly",
+            "effectiveFrom": "2025-07-07T21:48:14.915Z",
+            "effectiveTo": "2025-08-07T21:48:14.915Z",
+            "note": "Includes performance bonus"
+          },
+          {
+            "srNo": 2,
+            "id": 170,
+            "createdAt": "2025-08-03T14:14:46.614Z",
+            "employeeId": 44,
+            "base": 1000,
+            "allowance": 100,
+            "bonus": 100,
+            "deductions": 50,
+            "netPay": 1150,
+            "salaryType": "income",
+            "effectiveFrom": "2025-10-01T00:00:00.000Z",
+            "effectiveTo": "2025-11-01T00:00:00.000Z",
+            "note": "test string"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:47.200Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/holiday.test.ts (23.799 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjlmMDkzMTI1LTA3NmYtNGZiOS04ZjkyLWZlMjg3MzY0ZDg2MSIsImlhdCI6MTc1NDIzMDQ4NywiZXhwIjoxNzU0MjMxMzg3fQ.bCD9CEW-SXyN3olfEBCPX9BfWDPohw4j4uZE72s4Xak",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:47.150Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "name": "testHoliday",
+        "description": "this is the test holiday",
+        "date": "2025-08-08T18:30:00.000Z"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 53,
+          "name": "testHoliday",
+          "date": "2025-08-08T00:00:00.000Z",
+          "description": "this is the test holiday"
+        },
+        "timestamp": "2025-08-03T14:14:47.211Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "name": "testHoliday",
+        "description": "this is the test holiday",
+        "date": "2025-08-08T18:30:00.000Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record already exist in database ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/holiday ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 1,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 53,
+            "name": "testHoliday",
+            "date": "2025-08-08T00:00:00.000Z",
+            "description": "this is the test holiday"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:47.330Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/holiday/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "holidaysThisYear": 1,
+          "upcomingHoliday": {
+            "id": 53,
+            "name": "testHoliday",
+            "date": "2025-08-08T00:00:00.000Z",
+            "description": "this is the test holiday"
+          }
+        },
+        "timestamp": "2025-08-03T14:14:47.360Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/holiday/53 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/holiday/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Can't find /api/v1/holiday/999999 on this server!",
+        "code": "INVALID_ROUTE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/holiday/invalid ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Can't find /api/v1/holiday/invalid on this server!",
+        "code": "INVALID_ROUTE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "description": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "date": "2025-08-08T18:30:00.000Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Must be at most 50 characters"
+          },
+          {
+            "field": "description",
+            "message": "Description must be at most 100 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "description": "missing fields"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Required"
+          },
+          {
+            "field": "date",
+            "message": "A valid date is required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "name": "InvalidDateHoliday",
+        "description": "invalid date test",
+        "date": "not-a-date"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "date",
+            "message": "Invalid date"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/holiday ✅
+      Input:
+      {
+        "name": "PastHoliday",
+        "description": "testing past date",
+        "date": "2000-01-01T00:00:00.000Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "date.startDate",
+            "message": "Date must be today or in the future"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/holiday/53 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 53",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/holiday/bad-id ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/goal.test.ts (24.191 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjRlOGQzMTJkLWJkOWMtNDE3Zi05OWI4LTFjNDgyZDIyMDBiNSIsImlhdCI6MTc1NDIzMDQ4NywiZXhwIjoxNzU0MjMxMzg3fQ.UPVpyFa_KyMtpI-OSwCOmeedcXuMUvz3My3_VXYqWSc",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:47.235Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/45 ✅
+      Input:
+      {
+        "goal": "this is the test goal",
+        "deadline": "2025-08-05T14:14:47.293Z"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 784,
+          "createdAt": "2025-08-03T14:14:47.337Z",
+          "updatedAt": "2025-08-03T14:14:47.337Z",
+          "done": false,
+          "goal": "this is the test goal",
+          "deadline": "2025-08-05T14:14:47.293Z",
+          "assignedBy": 65,
+          "assignedTo": 45
+        },
+        "timestamp": "2025-08-03T14:14:47.341Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/784 ✅
+      Input:
+      {
+        "goal": "this is the test goal updated",
+        "deadline": "2025-08-05T14:14:47.359Z"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "done": false,
+          "goal": "this is the test goal updated",
+          "deadline": "2025-08-05T14:14:47.359Z",
+          "assignedBy": 65,
+          "assignedTo": 45
+        },
+        "timestamp": "2025-08-03T14:14:47.403Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/goal ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 385,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 387,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Improve team performance metrics",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 45
+          },
+          {
+            "srNo": 2,
+            "id": 388,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-09T09:29:54.690Z",
+            "done": false,
+            "goal": "Improve team performance metrics",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 45
+          },
+          {
+            "srNo": 3,
+            "id": 389,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Prepare quarterly report",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 45
+          },
+          {
+            "srNo": 4,
+            "id": 390,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Train new interns on tools",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 45
+          },
+          {
+            "srNo": 5,
+            "id": 391,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Fix high-priority bugs",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 46
+          },
+          {
+            "srNo": 6,
+            "id": 392,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-09T09:29:54.690Z",
+            "done": false,
+            "goal": "Train new interns on tools",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 46
+          },
+          {
+            "srNo": 7,
+            "id": 393,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Optimize database queries",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 46
+          },
+          {
+            "srNo": 8,
+            "id": 394,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Implement user feedback on dashboard",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 46
+          },
+          {
+            "srNo": 9,
+            "id": 395,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Implement user feedback on dashboard",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 55
+          },
+          {
+            "srNo": 10,
+            "id": 396,
+            "createdAt": "2025-06-07T09:29:54.690Z",
+            "updatedAt": "2025-06-07T09:29:54.690Z",
+            "done": false,
+            "goal": "Fix high-priority bugs",
+            "deadline": "2025-06-14T09:29:54.690Z",
+            "assignedBy": 44,
+            "assignedTo": 55
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:47.434Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/goal/784 ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 784,
+          "createdAt": "2025-08-03T14:14:47.337Z",
+          "updatedAt": "2025-08-03T14:14:47.394Z",
+          "done": false,
+          "goal": "this is the test goal updated",
+          "deadline": "2025-08-05T14:14:47.359Z",
+          "assignedBy": 65,
+          "assignedTo": 45,
+          "GoalReview": []
+        },
+        "timestamp": "2025-08-03T14:14:47.478Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/goal/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "PendingGoals": 398,
+          "goalsCreatedLast30Days": 206,
+          "goalOverDue": 384
+        },
+        "timestamp": "2025-08-03T14:14:47.571Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/goal/784 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/goal/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 999999",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/goal/abc ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/45 ✅
+      Input:
+      {
+        "goal": "should fail",
+        "deadline": "2025-08-02T14:14:47.697Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "deadline.startDate",
+            "message": "Date must be today or in the future"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/45 ✅
+      Input:
+      {
+        "goal": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "deadline": "2025-08-05T14:14:47.718Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "goal",
+            "message": "Description must be at most 100 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/45 ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "goal",
+            "message": "Required"
+          },
+          {
+            "field": "deadline",
+            "message": "A valid date is required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/goal/784 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 784",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal/784 ✅
+      Input:
+      {
+        "goal": "won't update",
+        "deadline": "2025-08-08T14:14:47.864Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record not found ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/goal/fake ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/goal ✅
+      Input:
+      {
+        "goal": "missing employee",
+        "deadline": "2025-08-06T14:14:47.930Z"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Can't find /api/v1/goal on this server!",
+        "code": "INVALID_ROUTE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/employee.test.ts (24.697 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjkwYmE5MjQ5LTdhYzgtNGVkNy1iZDI0LTgzNzRlYWNlYTBkOSIsImlhdCI6MTc1NDIzMDQ4NywiZXhwIjoxNzU0MjMxMzg3fQ.58Xk_nOXSAMD2qcwO5MN4tR_-3plzil7mgS3W_v2hEI",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:47.327Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/employee ✅
+      Input:
+      {
+        "uuid": "6011-3842-1750-5355",
+        "gender": "female",
+        "firstName": "Joana",
+        "lastName": "Macejkovic",
+        "nationalId": "67124368",
+        "idType": "dknIXbacQp",
+        "email": "Shane37@hotmail.com",
+        "phoneNumber": "+13525264234",
+        "dateOfBirth": "1951-02-27",
+        "address": "501 Harold Burg",
+        "hireDate": "2024-10-23",
+        "jobTitle": "test job",
+        "description": "added for testing",
+        "departmentId": 17
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 121,
+          "createdAt": "2025-08-03T14:14:47.471Z",
+          "updatedAt": "2025-08-03T14:14:47.471Z",
+          "uuid": "6011-3842-1750-5355",
+          "nationalId": "67124368",
+          "idType": "dknIXbacQp",
+          "firstName": "Joana",
+          "lastName": "Macejkovic",
+          "email": "Shane37@hotmail.com",
+          "phoneNumber": "+13525264234",
+          "dateOfBirth": "1951-02-27T00:00:00.000Z",
+          "gender": "female",
+          "address": "501 Harold Burg",
+          "jobTitle": "test job",
+          "hireDate": "2024-10-23T00:00:00.000Z",
+          "image": null,
+          "description": "added for testing",
+          "departmentId": 17
+        },
+        "timestamp": "2025-08-03T14:14:47.480Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/employee ✅
+      Input:
+      {
+        "uuid": "6011-3842-1750-5355",
+        "gender": "female",
+        "firstName": "Joana",
+        "lastName": "Macejkovic",
+        "nationalId": "67124368",
+        "idType": "dknIXbacQp",
+        "email": "Shane37@hotmail.com",
+        "phoneNumber": "+13525264234",
+        "dateOfBirth": "1951-02-27",
+        "address": "501 Harold Burg",
+        "hireDate": "2024-10-23",
+        "jobTitle": "test job",
+        "description": "added for testing",
+        "departmentId": 17
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record already exist in database ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/employee ✅
+      Input:
+      {
+        "createdAt": "test@test.coom"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "uuid",
+            "message": "Required"
+          },
+          {
+            "field": "firstName",
+            "message": "Required"
+          },
+          {
+            "field": "lastName",
+            "message": "Required"
+          },
+          {
+            "field": "email",
+            "message": "Required"
+          },
+          {
+            "field": "phoneNumber",
+            "message": "Required"
+          },
+          {
+            "field": "dateOfBirth",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "gender",
+            "message": "Required"
+          },
+          {
+            "field": "address",
+            "message": "Required"
+          },
+          {
+            "field": "jobTitle",
+            "message": "Required"
+          },
+          {
+            "field": "hireDate",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "nationalId",
+            "message": "Required"
+          },
+          {
+            "field": "idType",
+            "message": "Required"
+          },
+          {
+            "field": "departmentId",
+            "message": "Required"
+          },
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'createdAt'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 39,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 44,
+            "firstName": "Delpha",
+            "email": "Napoleon19@yahoo.com",
+            "jobTitle": "Client Relationship Manager",
+            "image": null
+          },
+          {
+            "srNo": 2,
+            "id": 45,
+            "firstName": "Julien",
+            "email": "Bobbie.Nitzsche95@gmail.com",
+            "jobTitle": "SEO Specialist",
+            "image": null
+          },
+          {
+            "srNo": 3,
+            "id": 46,
+            "firstName": "Jonathon",
+            "email": "Kendra97@hotmail.com",
+            "jobTitle": "Full Stack Developer",
+            "image": null
+          },
+          {
+            "srNo": 4,
+            "id": 47,
+            "firstName": "Nadia",
+            "email": "Natalie58@yahoo.com",
+            "jobTitle": "UI/UX Designer",
+            "image": null
+          },
+          {
+            "srNo": 5,
+            "id": 48,
+            "firstName": "Mikel",
+            "email": "Ford34@yahoo.com",
+            "jobTitle": "Front-End Developer",
+            "image": null
+          },
+          {
+            "srNo": 6,
+            "id": 49,
+            "firstName": "Cicero",
+            "email": "Liana69@gmail.com",
+            "jobTitle": "Quality Assurance Tester",
+            "image": null
+          },
+          {
+            "srNo": 7,
+            "id": 50,
+            "firstName": "Deonte",
+            "email": "Shea26@gmail.com",
+            "jobTitle": "Quality Assurance Tester",
+            "image": null
+          },
+          {
+            "srNo": 8,
+            "id": 51,
+            "firstName": "Raquel",
+            "email": "Javier.Huel@yahoo.com",
+            "jobTitle": "Project Manager",
+            "image": null
+          },
+          {
+            "srNo": 9,
+            "id": 52,
+            "firstName": "Kiana",
+            "email": "Hertha28@yahoo.com",
+            "jobTitle": "SEO Specialist",
+            "image": null
+          },
+          {
+            "srNo": 10,
+            "id": 53,
+            "firstName": "Hobart",
+            "email": "George.Stehr@yahoo.com",
+            "jobTitle": "Project Manager",
+            "image": null
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:47.713Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/121 ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 121,
+          "createdAt": "2025-08-03T14:14:47.471Z",
+          "updatedAt": "2025-08-03T14:14:47.471Z",
+          "uuid": "6011-3842-1750-5355",
+          "nationalId": "67124368",
+          "idType": "dknIXbacQp",
+          "firstName": "Joana",
+          "lastName": "Macejkovic",
+          "email": "Shane37@hotmail.com",
+          "phoneNumber": "+13525264234",
+          "dateOfBirth": "1951-02-27T00:00:00.000Z",
+          "gender": "female",
+          "address": "501 Harold Burg",
+          "jobTitle": "test job",
+          "hireDate": "2024-10-23T00:00:00.000Z",
+          "image": null,
+          "description": "added for testing",
+          "departmentId": 17
+        },
+        "timestamp": "2025-08-03T14:14:47.738Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/me ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 65,
+          "createdAt": "2025-08-02T09:29:56.047Z",
+          "updatedAt": "2025-08-02T09:29:56.048Z",
+          "uuid": "4400-1215-3390-4852",
+          "nationalId": "343456-84",
+          "idType": "passport",
+          "firstName": "rajwinder",
+          "lastName": "singh",
+          "email": "rajwindersxxx@gmail.com",
+          "phoneNumber": "1364878967",
+          "dateOfBirth": "1975-12-29T23:22:05.844Z",
+          "gender": "female",
+          "address": "2544 Dax Isle",
+          "jobTitle": "admin",
+          "hireDate": "2025-07-02T02:12:20.513Z",
+          "image": null,
+          "description": "nothing",
+          "departmentId": 17
+        },
+        "timestamp": "2025-08-03T14:14:47.759Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "employeeCount": 39,
+          "employeeJoinThisMonth": 20,
+          "employeeOnLeave": 0,
+          "unAssignedEmployees": 17
+        },
+        "timestamp": "2025-08-03T14:14:47.860Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/employee/121 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 999999",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/invalid-id ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Invalid Input , please check your query",
+        "code": "DB_VALIDATION_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:47 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/employee ✅
+      Input:
+      {
+        "uuid": "3528-7679-2270-5679",
+        "gender": "male",
+        "firstName": "Shyann",
+        "lastName": "Durgan",
+        "nationalId": "94485144",
+        "idType": "riHhvDUkYO",
+        "email": "Marcos_Hudson21@hotmail.com",
+        "phoneNumber": "+19623098693",
+        "dateOfBirth": "1982-06-22",
+        "address": "834 Porter Brook",
+        "hireDate": "2025-06-02",
+        "jobTitle": "test job",
+        "description": "added for testing",
+        "departmentId": 17,
+        "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'name'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/employee ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "uuid",
+            "message": "Required"
+          },
+          {
+            "field": "firstName",
+            "message": "Required"
+          },
+          {
+            "field": "lastName",
+            "message": "Required"
+          },
+          {
+            "field": "email",
+            "message": "Required"
+          },
+          {
+            "field": "phoneNumber",
+            "message": "Required"
+          },
+          {
+            "field": "dateOfBirth",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "gender",
+            "message": "Required"
+          },
+          {
+            "field": "address",
+            "message": "Required"
+          },
+          {
+            "field": "jobTitle",
+            "message": "Required"
+          },
+          {
+            "field": "hireDate",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "nationalId",
+            "message": "Required"
+          },
+          {
+            "field": "idType",
+            "message": "Required"
+          },
+          {
+            "field": "departmentId",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/employee/abc ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/employee/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 999999",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/employee/121 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 121",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/attendance.test.ts (25.445 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6ImQzODg3YjkxLTJiYjktNDU3Ny04MGUzLWYzMGRiYjk5ZGY2YSIsImlhdCI6MTc1NDIzMDQ4OCwiZXhwIjoxNzU0MjMxMzg4fQ.bM3yMK7rf7E_jOhd1pWNOp1K0o0Ton9xLlyQ_nJUX_U",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:48.517Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/attend ✅
+      Output:
+      {
+        "status": "success",
+        "message": "Attendance checkIn successfully."
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/attend ✅
+      Output:
+      {
+        "status": "success",
+        "message": "Attendance checkOut successfully."
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/attend ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "attendance already marked ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 1337,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 1219,
+            "checkIn": "2025-07-07T19:52:00.000Z",
+            "checkOut": "2025-07-08T13:06:00.000Z",
+            "status": "Half-day"
+          },
+          {
+            "srNo": 2,
+            "id": 1220,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 3,
+            "id": 1221,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 4,
+            "id": 1222,
+            "checkIn": "2025-07-10T21:06:00.000Z",
+            "checkOut": "2025-07-11T13:43:00.000Z",
+            "status": "Half-day"
+          },
+          {
+            "srNo": 5,
+            "id": 1223,
+            "checkIn": "2025-07-14T00:54:00.000Z",
+            "checkOut": "2025-07-14T12:12:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 6,
+            "id": 1224,
+            "checkIn": "2025-07-14T19:49:00.000Z",
+            "checkOut": "2025-07-15T11:55:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 7,
+            "id": 1225,
+            "checkIn": "2025-07-15T22:59:00.000Z",
+            "checkOut": "2025-07-16T11:42:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 8,
+            "id": 1226,
+            "checkIn": "2025-07-17T03:57:00.000Z",
+            "checkOut": "2025-07-17T12:34:00.000Z",
+            "status": "Half-day"
+          },
+          {
+            "srNo": 9,
+            "id": 1227,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 10,
+            "id": 1228,
+            "checkIn": "2025-07-20T23:20:00.000Z",
+            "checkOut": "2025-07-21T12:59:00.000Z",
+            "status": "Present"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:48.839Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend/54 ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 131,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 1827,
+            "checkIn": "2025-01-30T21:51:00.000Z",
+            "checkOut": "2025-01-31T12:58:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 2,
+            "id": 1828,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 3,
+            "id": 1829,
+            "checkIn": "2025-02-04T03:11:00.000Z",
+            "checkOut": "2025-02-04T14:13:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 4,
+            "id": 1830,
+            "checkIn": "2025-02-04T20:32:00.000Z",
+            "checkOut": "2025-02-05T12:02:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 5,
+            "id": 1831,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 6,
+            "id": 1832,
+            "checkIn": "2025-02-06T21:45:00.000Z",
+            "checkOut": "2025-02-07T12:46:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 7,
+            "id": 1833,
+            "checkIn": "2025-02-09T18:53:00.000Z",
+            "checkOut": "2025-02-10T13:08:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 8,
+            "id": 1834,
+            "checkIn": "2025-02-11T05:06:00.000Z",
+            "checkOut": "2025-02-11T12:16:00.000Z",
+            "status": "Present"
+          },
+          {
+            "srNo": 9,
+            "id": 1835,
+            "checkIn": null,
+            "checkOut": null,
+            "status": "Absent"
+          },
+          {
+            "srNo": 10,
+            "id": 1836,
+            "checkIn": "2025-02-12T20:00:00.000Z",
+            "checkOut": "2025-02-13T12:57:00.000Z",
+            "status": "Present"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:48.895Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Record not exist",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "totalPresent": 1,
+          "lateArivel": 1,
+          "avgAttendanceTime": "19:44:48",
+          "attendanceTrend": "+42.97% increase"
+        },
+        "timestamp": "2025-08-03T14:14:48.974Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend/me ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 1,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 2570,
+            "checkIn": "2025-08-03T14:14:48.688Z",
+            "checkOut": "2025-08-03T14:14:48.733Z",
+            "status": "present"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:48.995Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/attend/invalid ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/auth/logout ✅
+      Input:
+      "Logout user"
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "message": "Logged out successfully"
+        },
+        "timestamp": "2025-08-03T14:14:49.025Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/attend ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "login session expire",
+        "code": "SESSION_EXPIRE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/role.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjI0NDQ2ZDlmLTI0Y2MtNDQ0My05NmIyLTE0Y2IzZWMyYzNkYSIsImlhdCI6MTc1NDIzMDQ4OCwiZXhwIjoxNzU0MjMxMzg4fQ.I7xiImNlkurFhaGZaLUXgAF1iNkAf1XOBl-Nl2VQGF4",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:48.957Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "testRole",
+        "description": "Added for testing purpose"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 39,
+          "createdAt": "2025-08-03T14:14:48.977Z",
+          "updatedAt": "2025-08-03T14:14:48.977Z",
+          "name": "testRole",
+          "description": "Added for testing purpose"
+        },
+        "timestamp": "2025-08-03T14:14:48.983Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role/39 ✅
+      Input:
+      {
+        "description": "Updated test description"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 39,
+          "createdAt": "2025-08-03T14:14:48.977Z",
+          "updatedAt": "2025-08-03T14:14:48.997Z",
+          "name": "testRole",
+          "description": "Updated test description"
+        },
+        "timestamp": "2025-08-03T14:14:48.999Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "testRole",
+        "description": "Another attempt"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record already exist in database ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "role": 12345
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Required"
+          },
+          {
+            "field": "description",
+            "message": "Required"
+          },
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'role'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/role ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 4,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 10,
+            "createdAt": "2025-08-02T09:29:54.490Z",
+            "updatedAt": "2025-08-02T09:29:54.490Z",
+            "name": "admin",
+            "description": "able to control everything"
+          },
+          {
+            "srNo": 2,
+            "id": 11,
+            "createdAt": "2025-08-02T09:29:54.490Z",
+            "updatedAt": "2025-08-02T09:29:54.490Z",
+            "name": "manager",
+            "description": "control team"
+          },
+          {
+            "srNo": 3,
+            "id": 12,
+            "createdAt": "2025-08-02T09:29:54.490Z",
+            "updatedAt": "2025-08-02T09:29:54.490Z",
+            "name": "employee",
+            "description": "lowerlevel employee"
+          },
+          {
+            "srNo": 4,
+            "id": 39,
+            "createdAt": "2025-08-03T14:14:48.977Z",
+            "updatedAt": "2025-08-03T14:14:48.997Z",
+            "name": "testRole",
+            "description": "Updated test description"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:49.049Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/role/39 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "",
+        "description": "empty name test"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Must be at least 2 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "description": "Too long role name"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Must be at most 50 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role/999999 ✅
+      Input:
+      {
+        "description": "non-existent update"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record not found ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/role/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 999999",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "strictRole",
+        "description": "testing strict",
+        "extraField": "unauthorized field"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'extraField'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": "missingDescription"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "description",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/role ✅
+      Input:
+      {
+        "name": 123,
+        "description": "type error"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "name",
+            "message": "Expected string, received number"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/task.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "cheyanne",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTYsInNlc3Npb25JZCI6ImQ3N2VlNGY1LWU4MGEtNDljMy05YjU5LTQ3OGUxNjg0NDU0NiIsImlhdCI6MTc1NDIzMDQ4OSwiZXhwIjoxNzU0MjMxMzg5fQ.JxdBSw0bK6mAeZJtgi2P2vbPmKUzluaS2KkP3jU3MqE",
+          "userId": 56
+        },
+        "timestamp": "2025-08-03T14:14:49.291Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {
+        "task": "Test task creation",
+        "deadline": "2025-08-05T14:14:49.296Z",
+        "assignedTo": 63
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 3877,
+          "createdAt": "2025-08-03T14:14:49.327Z",
+          "updatedAt": "2025-08-03T14:14:49.327Z",
+          "task": "Test task creation",
+          "deadline": "2025-08-05T14:14:49.296Z",
+          "done": false,
+          "goalId": 578,
+          "assignedBy": 56,
+          "assignedTo": 63
+        },
+        "timestamp": "2025-08-03T14:14:49.371Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/3877 ✅
+      Input:
+      {
+        "task": "Updated task name",
+        "deadline": "2025-08-06T14:14:49.402Z"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 3877,
+          "createdAt": "2025-08-03T14:14:49.327Z",
+          "updatedAt": "2025-08-03T14:14:49.474Z",
+          "task": "Updated task name",
+          "deadline": "2025-08-06T14:14:49.402Z",
+          "done": false,
+          "goalId": 578,
+          "assignedBy": 56,
+          "assignedTo": 63
+        },
+        "timestamp": "2025-08-03T14:14:49.493Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/task/578 ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 3,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 2633,
+            "createdAt": "2025-06-28T09:29:54.691Z",
+            "updatedAt": "2025-06-28T09:29:54.691Z",
+            "task": "Conduct user testing",
+            "deadline": "2025-07-04T09:29:54.691Z",
+            "done": false,
+            "goalId": 578,
+            "assignedBy": 56,
+            "assignedTo": 60
+          },
+          {
+            "srNo": 2,
+            "id": 2635,
+            "createdAt": "2025-06-30T09:29:54.691Z",
+            "updatedAt": "2025-06-30T09:29:54.691Z",
+            "task": "Refactor legacy code",
+            "deadline": "2025-07-05T09:29:54.691Z",
+            "done": false,
+            "goalId": 578,
+            "assignedBy": 56,
+            "assignedTo": 60
+          },
+          {
+            "srNo": 3,
+            "id": 3877,
+            "createdAt": "2025-08-03T14:14:49.327Z",
+            "updatedAt": "2025-08-03T14:14:49.474Z",
+            "task": "Updated task name",
+            "deadline": "2025-08-06T14:14:49.402Z",
+            "done": false,
+            "goalId": 578,
+            "assignedBy": 56,
+            "assignedTo": 63
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:49.623Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/task/3877 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "task",
+            "message": "Required"
+          },
+          {
+            "field": "deadline",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "assignedTo",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {
+        "task": "Past deadline",
+        "deadline": "2025-08-01T14:14:49.722Z",
+        "assignedTo": 63
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "deadline.startDate",
+            "message": "Date must be today or in the future"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/9999999 ✅
+      Input:
+      {
+        "task": "Invalid goal",
+        "deadline": "2025-08-05T14:14:49.758Z",
+        "assignedTo": 63
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record with given id  do not exist ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {
+        "task": "Invalid assignedTo",
+        "deadline": "2025-08-05T14:14:49.841Z",
+        "assignedTo": "invalid-id"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Invalid Input , please check your query",
+        "code": "DB_VALIDATION_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {
+        "task": "",
+        "deadline": "2025-08-05T14:14:49.968Z",
+        "assignedTo": 63
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "task",
+            "message": "Description must be at least 5 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/task/578 ✅
+      Input:
+      {
+        "task": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "deadline": "2025-08-05T14:14:50.002Z",
+        "assignedTo": 63
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "task",
+            "message": "Description must be at most 100 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/roleAssign.test.ts (26.209 s)
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjA5YjExYmJlLTQzZTktNDIwMi1hYjQzLTJiNDQzNTA3MzcwMyIsImlhdCI6MTc1NDIzMDQ4OCwiZXhwIjoxNzU0MjMxMzg4fQ.sTZzMo12AS_1WxhBYgqBUvbL_q2sWjnChtFmk79EnHw",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:48.128Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "username": "EzequielMcKenzie",
+        "password": "user",
+        "confirmPassword": "user",
+        "roleId": 12
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 122,
+          "createdAt": "2025-08-03T14:14:48.623Z",
+          "updatedAt": "2025-08-03T14:14:48.623Z",
+          "employeeId": 123,
+          "username": "EzequielMcKenzie",
+          "roleId": 12
+        },
+        "timestamp": "2025-08-03T14:14:48.631Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:48 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "username": "EzequielMcKenzie",
+        "password": "user",
+        "confirmPassword": "user",
+        "roleId": 12
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record already exist in database ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "username",
+            "message": "Required"
+          },
+          {
+            "field": "password",
+            "message": "Required"
+          },
+          {
+            "field": "confirmPassword",
+            "message": "Required"
+          },
+          {
+            "field": "roleId",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/roleAssign ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 24,
+        "data": [
+          {
+            "srNo": 1,
+            "createdAt": "2025-07-07T21:48:14.915Z",
+            "employeeId": 44,
+            "username": "delpha",
+            "roleId": 10
+          },
+          {
+            "srNo": 2,
+            "createdAt": "2025-01-30T17:44:15.411Z",
+            "employeeId": 45,
+            "username": "julien",
+            "roleId": 11
+          },
+          {
+            "srNo": 3,
+            "createdAt": "2025-03-23T16:46:22.694Z",
+            "employeeId": 46,
+            "username": "jonathon",
+            "roleId": 11
+          },
+          {
+            "srNo": 4,
+            "createdAt": "2025-05-27T20:53:54.663Z",
+            "employeeId": 47,
+            "username": "nadia",
+            "roleId": 12
+          },
+          {
+            "srNo": 5,
+            "createdAt": "2025-07-17T20:19:18.551Z",
+            "employeeId": 48,
+            "username": "mikel",
+            "roleId": 12
+          },
+          {
+            "srNo": 6,
+            "createdAt": "2025-06-24T02:50:50.834Z",
+            "employeeId": 49,
+            "username": "cicero",
+            "roleId": 12
+          },
+          {
+            "srNo": 7,
+            "createdAt": "2024-11-03T10:00:33.069Z",
+            "employeeId": 50,
+            "username": "deonte",
+            "roleId": 12
+          },
+          {
+            "srNo": 8,
+            "createdAt": "2025-07-17T23:02:42.905Z",
+            "employeeId": 51,
+            "username": "raquel",
+            "roleId": 12
+          },
+          {
+            "srNo": 9,
+            "createdAt": "2025-07-16T14:02:00.378Z",
+            "employeeId": 52,
+            "username": "kiana",
+            "roleId": 12
+          },
+          {
+            "srNo": 10,
+            "createdAt": "2025-05-18T15:56:02.373Z",
+            "employeeId": 53,
+            "username": "hobart",
+            "roleId": 12
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:49.270Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/roleAssign/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "roleCount": 3,
+          "totalEmployees": 15,
+          "totalManager": 4,
+          "totalAdmins": 5
+        },
+        "timestamp": "2025-08-03T14:14:49.398Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/roleAssign/myRole ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 65,
+          "createdAt": "2025-08-02T09:29:56.055Z",
+          "updatedAt": "2025-08-02T09:29:56.055Z",
+          "employeeId": 65,
+          "username": "rajwinder",
+          "roleId": 10,
+          "Employees": {
+            "email": "rajwindersxxx@gmail.com",
+            "image": null
+          }
+        },
+        "timestamp": "2025-08-03T14:14:49.472Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "username": "EzequielMcKenzie",
+        "password": "user123",
+        "confirmPassword": "user456",
+        "roleId": 12
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Confirm Password don't match, try again!",
+        "code": "MATCH_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "username": "EzequielMcKenzie",
+        "password": "user",
+        "confirmPassword": "user",
+        "roleId": "not-a-number"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "roleId",
+            "message": "Expected number, received string"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "password": "user",
+        "confirmPassword": "user",
+        "roleId": 12
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "username",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/123 ✅
+      Input:
+      {
+        "username": "EzequielMcKenzie",
+        "password": "user",
+        "confirmPassword": "user",
+        "roleId": 12,
+        "unauthorizedField": "malicious_data"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "",
+            "message": "Unrecognized key(s) in object: 'unauthorizedField'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/roleAssign/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Record not found ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/roleAssign/999999 ✅
+      Input:
+      {
+        "username": "ghostUser",
+        "password": "ghost",
+        "confirmPassword": "ghost",
+        "roleId": 12
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record with given id  do not exist ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/roleAssign/123 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/review.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6ImUwY2VhY2JjLTZmZjEtNGU2MC05ODgyLTY2NzY0NjIwMTIzMCIsImlhdCI6MTc1NDIzMDQ4OSwiZXhwIjoxNzU0MjMxMzg5fQ.HtU1x2R9UTAyHVq6GAXMNXhSTNIkbIiUu7u5wzidTiE",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:49.233Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/432 ✅
+      Input:
+      {
+        "review": "this is test review",
+        "rating": 3
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 442,
+          "createdAt": "2025-08-03T14:14:49.408Z",
+          "updatedAt": "2025-08-03T14:14:49.408Z",
+          "review": "this is test review",
+          "goalId": 432,
+          "rating": 3,
+          "reviewBy": 65
+        },
+        "timestamp": "2025-08-03T14:14:49.418Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/442 ✅
+      Input:
+      {
+        "review": "this is test review updated",
+        "rating": 4
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 442,
+          "createdAt": "2025-08-03T14:14:49.408Z",
+          "updatedAt": "2025-08-03T14:14:49.492Z",
+          "review": "this is test review updated",
+          "goalId": 432,
+          "rating": 4,
+          "reviewBy": 65
+        },
+        "timestamp": "2025-08-03T14:14:49.512Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/review/goal/442 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/task/2887 ✅
+      Input:
+      {
+        "review": "this is test review",
+        "rating": 3
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 2738,
+          "createdAt": "2025-08-03T14:14:49.647Z",
+          "updatedAt": "2025-08-03T14:14:49.647Z",
+          "review": "this is test review",
+          "taskId": 2887,
+          "rating": 3,
+          "reviewBy": 65
+        },
+        "timestamp": "2025-08-03T14:14:49.651Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/task/2738 ✅
+      Input:
+      {
+        "review": "this is test review updated",
+        "rating": 5
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 2738,
+          "createdAt": "2025-08-03T14:14:49.647Z",
+          "updatedAt": "2025-08-03T14:14:49.681Z",
+          "review": "this is test review updated",
+          "taskId": 2887,
+          "rating": 5,
+          "reviewBy": 65
+        },
+        "timestamp": "2025-08-03T14:14:49.686Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/review/task/2738 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/review/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "goals": {
+            "totalGoalsReviews": 209,
+            "upcomingGoalReviews": 189,
+            "averageGoalRating": 3.971291866028708,
+            "topPerformingTeams": 138
+          },
+          "tasks": {
+            "totalTasksReviews": 1364,
+            "upcomingTaskReviews": 565,
+            "averageTaskRating": 3.967741935483871,
+            "topPerformingEmployees": 877
+          }
+        },
+        "timestamp": "2025-08-03T14:14:49.995Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:49 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/432 ✅
+      Input:
+      {
+        "review": "invalid rating",
+        "rating": 6
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "rating",
+            "message": "Number must be less than or equal to 5"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/task/2887 ✅
+      Input:
+      {
+        "review": "",
+        "rating": 3
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "review",
+            "message": "Description must be at least 5 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/432 ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "review",
+            "message": "Required"
+          },
+          {
+            "field": "rating",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/bad-id ✅
+      Input:
+      {
+        "review": "invalid update",
+        "rating": 2
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/goal/442 ✅
+      Input:
+      {
+        "review": "try updating deleted review",
+        "rating": 3
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record not found ",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/review/task/2738 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 2738",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/review/task/2887 ✅
+      Input:
+      {
+        "review": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "rating": 3
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "review",
+            "message": "Description must be at most 100 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/department.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjFjNDBlNTRkLThhZDctNGMwYi04MmRmLTc0YWUyNDM3N2FlNCIsImlhdCI6MTc1NDIzMDQ5MCwiZXhwIjoxNzU0MjMxMzkwfQ.KbaUxwouH_AfB8sLXeXH6ruuZpwaC3YOgjyfYE74AsI",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:50.123Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": "testDepartment",
+        "head": "testHead",
+        "description": "testDescription"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 53,
+          "createdAt": "2025-08-03T14:14:50.220Z",
+          "updatedAt": "2025-08-03T14:14:50.220Z",
+          "department": "testDepartment",
+          "head": "testHead",
+          "description": "testDescription"
+        },
+        "timestamp": "2025-08-03T14:14:50.229Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": "testDepartment",
+        "head": "testHead",
+        "description": "testDescription"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Record already exist in database ",
+        "code": "DUPLICATE_ERROR"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": 12345
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "department",
+            "message": "Expected string, received number"
+          },
+          {
+            "field": "head",
+            "message": "Required"
+          },
+          {
+            "field": "description",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": "MissingFieldsDept"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "head",
+            "message": "Required"
+          },
+          {
+            "field": "description",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "head": "Head",
+        "description": "Valid description"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "department",
+            "message": "String must contain at most 50 character(s)"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/department ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 11,
+        "data": [
+          {
+            "srNo": 1,
+            "totalEmployees": 21,
+            "id": 17,
+            "department": "administration",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 2,
+            "totalEmployees": 2,
+            "id": 18,
+            "department": "management",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 3,
+            "totalEmployees": 2,
+            "id": 19,
+            "department": "client services",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 4,
+            "totalEmployees": 2,
+            "id": 20,
+            "department": "engineering",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 5,
+            "totalEmployees": 2,
+            "id": 21,
+            "department": "human resources",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 6,
+            "totalEmployees": 2,
+            "id": 22,
+            "department": "finance",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 7,
+            "totalEmployees": 2,
+            "id": 23,
+            "department": "Marketing",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 8,
+            "totalEmployees": 2,
+            "id": 24,
+            "department": "sales",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 9,
+            "totalEmployees": 2,
+            "id": 25,
+            "department": "it support",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          },
+          {
+            "srNo": 10,
+            "totalEmployees": 2,
+            "id": 26,
+            "department": "legal",
+            "createdAt": "2025-08-02T09:29:54.496Z"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.351Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/department/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Can't find /api/v1/department/999999 on this server!",
+        "code": "INVALID_ROUTE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/department/999999 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 999999",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/department/53 ✅
+      Output:
+      {}
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      DELETE ✅ /api/v1/department/53 ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with id 53",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/auth/logout ✅
+      Input:
+      "Logout user"
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "message": "Logged out successfully"
+        },
+        "timestamp": "2025-08-03T14:14:50.494Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/department ✅
+      Input:
+      {
+        "department": "Unauthorized",
+        "head": "NoHead",
+        "description": "Blocked without auth"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "login session expire",
+        "code": "SESSION_EXPIRE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/annoucements.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjI3M2RhNGMwLTBkZjAtNGZmNi1hNDliLTIwNTU2NTU1YTQ4YyIsImlhdCI6MTc1NDIzMDQ5MCwiZXhwIjoxNzU0MjMxMzkwfQ.OmSdxMFA_tQm-C5Uz-cg1AH0tQebkN4y6MB71kxCxNM",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:50.426Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/announcement ✅
+      Input:
+      {
+        "title": "",
+        "description": "Only desc provided"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "type",
+            "message": "Required"
+          },
+          {
+            "field": "target",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/announcement ✅
+      Input:
+      {
+        "title": "Invalid type",
+        "description": "invalid enum value",
+        "type": "invalid",
+        "target": "admin"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "type",
+            "message": "Invalid enum value. Expected 'role' | 'department', received 'invalid'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/announcement ✅
+      Input:
+      {
+        "title": "this is test announcement",
+        "description": "send for testing purpose",
+        "type": "role",
+        "target": "admin"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 31,
+          "createdAt": "2025-08-03T14:14:50.507Z",
+          "title": "this is test announcement",
+          "description": "send for testing purpose",
+          "type": "role",
+          "target": "admin",
+          "announcedBy": 65
+        },
+        "timestamp": "2025-08-03T14:14:50.513Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/announcement ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 1,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 31,
+            "createdAt": "2025-08-03T14:14:50.507Z",
+            "title": "this is test announcement",
+            "description": "send for testing purpose",
+            "type": "role",
+            "target": "admin",
+            "announcedBy": 65
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.525Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/announcement/me ✅
+      Output:
+      {
+        "status": "success",
+        "data": [
+          {
+            "id": 31,
+            "createdAt": "2025-08-03T14:14:50.507Z",
+            "title": "this is test announcement",
+            "description": "send for testing purpose",
+            "type": "role",
+            "target": "admin",
+            "announcedBy": 65
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.582Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/announcement/unknown ✅
+      Output:
+      {
+        "status": "fail",
+        "message": "Can't find /api/v1/announcement/unknown on this server!",
+        "code": "INVALID_ROUTE"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/auth.test.ts
+  ● Console
+
+    console.log
+      {
+        status: 'fail',
+        message: 'Invalid Token, Please Login again ',
+        code: 'INVALID_TOKEN'
+      }
+
+      at tests/testModules/auth.test.ts:170:13
+
+    console.log
+      Clean up failed
+
+      at tests/testHelpers/testHelper.ts:76:13
+          at Generator.throw (<anonymous>)
+
+PASS tests/testModules/leaves.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6ImUxMjgzNTJlLTQ2ZjQtNGM0ZC05NTIzLTQ4ODVkMzdiODczOSIsImlhdCI6MTc1NDIzMDQ5MCwiZXhwIjoxNzU0MjMxMzkwfQ.8gmfu1i4rYZ721qnqqrn3wOyRnr0AGH4slgdcuIqSu4",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:50.413Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {
+        "leaveType": "sick",
+        "startDate": "2025-08-05T14:14:50.464Z",
+        "endDate": "2025-08-07T14:14:50.464Z",
+        "reason": "test leave test"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 473,
+          "employeeId": 65,
+          "leaveType": "sick",
+          "startDate": "2025-08-05T00:00:00.000Z",
+          "endDate": "2025-08-07T00:00:00.000Z",
+          "reason": "test leave test",
+          "status": "pending",
+          "appliedAt": "2025-08-03T14:14:50.488Z",
+          "updatedAt": "2025-08-03T14:14:50.488Z"
+        },
+        "timestamp": "2025-08-03T14:14:50.491Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/473 ✅
+      Input:
+      {
+        "status": "rejected"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "id": 473,
+          "employeeId": 65,
+          "leaveType": "sick",
+          "startDate": "2025-08-05T00:00:00.000Z",
+          "endDate": "2025-08-07T00:00:00.000Z",
+          "reason": "test leave test",
+          "status": "rejected",
+          "appliedAt": "2025-08-03T14:14:50.488Z",
+          "updatedAt": "2025-08-03T14:14:50.508Z"
+        },
+        "timestamp": "2025-08-03T14:14:50.515Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/leave/me ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 1,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 473,
+            "leaveType": "sick",
+            "startDate": "2025-08-05T00:00:00.000Z",
+            "endDate": "2025-08-07T00:00:00.000Z",
+            "reason": "test leave test",
+            "status": "rejected",
+            "appliedAt": "2025-08-03T14:14:50.488Z",
+            "updatedAt": "2025-08-03T14:14:50.508Z"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.530Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/leave ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 239,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 222,
+            "employeeId": 44,
+            "leaveType": "Casual",
+            "startDate": "2025-08-01T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Personal reason",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 2,
+            "id": 223,
+            "employeeId": 44,
+            "leaveType": "Sick",
+            "startDate": "2025-07-30T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Travel",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 3,
+            "id": 224,
+            "employeeId": 44,
+            "leaveType": "Casual",
+            "startDate": "2025-07-28T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Fever",
+            "status": "Approved",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 4,
+            "id": 225,
+            "employeeId": 44,
+            "leaveType": "Sick",
+            "startDate": "2025-07-29T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Travel",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 5,
+            "id": 226,
+            "employeeId": 44,
+            "leaveType": "Earned",
+            "startDate": "2025-07-24T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Fever",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 6,
+            "id": 227,
+            "employeeId": 44,
+            "leaveType": "Casual",
+            "startDate": "2025-07-25T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Personal reason",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 7,
+            "id": 228,
+            "employeeId": 45,
+            "leaveType": "Earned",
+            "startDate": "2025-07-25T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Family emergency",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 8,
+            "id": 229,
+            "employeeId": 45,
+            "leaveType": "Earned",
+            "startDate": "2025-07-29T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Family emergency",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 9,
+            "id": 230,
+            "employeeId": 45,
+            "leaveType": "Sick",
+            "startDate": "2025-07-25T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Personal reason",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 10,
+            "id": 231,
+            "employeeId": 45,
+            "leaveType": "Sick",
+            "startDate": "2025-07-24T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Family emergency",
+            "status": "Approved",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.566Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/leave/44 ✅
+      Output:
+      {
+        "status": "success",
+        "offset": 0,
+        "limit": 10,
+        "total": 6,
+        "data": [
+          {
+            "srNo": 1,
+            "id": 222,
+            "leaveType": "Casual",
+            "startDate": "2025-08-01T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Personal reason",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 2,
+            "id": 223,
+            "leaveType": "Sick",
+            "startDate": "2025-07-30T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Travel",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 3,
+            "id": 224,
+            "leaveType": "Casual",
+            "startDate": "2025-07-28T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Fever",
+            "status": "Approved",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 4,
+            "id": 225,
+            "leaveType": "Sick",
+            "startDate": "2025-07-29T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Travel",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 5,
+            "id": 226,
+            "leaveType": "Earned",
+            "startDate": "2025-07-24T00:00:00.000Z",
+            "endDate": "2025-08-02T00:00:00.000Z",
+            "reason": "Fever",
+            "status": "Pending",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          },
+          {
+            "srNo": 6,
+            "id": 227,
+            "leaveType": "Casual",
+            "startDate": "2025-07-25T00:00:00.000Z",
+            "endDate": "2025-08-01T00:00:00.000Z",
+            "reason": "Personal reason",
+            "status": "Rejected",
+            "appliedAt": "2025-08-02T09:29:54.662Z",
+            "updatedAt": "2025-08-02T09:29:54.662Z"
+          }
+        ],
+        "timestamp": "2025-08-03T14:14:50.596Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      GET ✅ /api/v1/leave/summary ✅
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "totalLeaveRequest30Days": 239,
+          "totalApproved30Days": 0,
+          "totalPending30Days": 0,
+          "totalRejected30Days": 1
+        },
+        "timestamp": "2025-08-03T14:14:50.676Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {
+        "leaveType": "casual",
+        "startDate": "2025-08-08T14:14:50.684Z",
+        "endDate": "2025-08-06T14:14:50.684Z",
+        "reason": "end before start"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "endDate",
+            "message": "End date must be after start date"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {
+        "leaveType": "casual",
+        "startDate": "2025-08-01T14:14:50.701Z",
+        "endDate": "2025-08-02T14:14:50.701Z",
+        "reason": "past leave"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "startDate",
+            "message": "Start date must be today or later"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {
+        "leaveType": "casual",
+        "startDate": "2025-08-04T14:14:50.719Z",
+        "endDate": "2025-08-05T14:14:50.719Z",
+        "reason": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "reason",
+            "message": "Description must be at most 100 characters"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/999999 ✅
+      Input:
+      {
+        "status": "approved"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "No record found with given id",
+        "code": "NOT_FOUND"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/bad-id ✅
+      Input:
+      {
+        "status": "rejected"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Params validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "id",
+            "message": "ID must contain only digits"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/473 ✅
+      Input:
+      {
+        "status": "banana"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "status",
+            "message": "Invalid enum value. Expected 'approved' | 'rejected', received 'banana'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {}
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "leaveType",
+            "message": "Required"
+          },
+          {
+            "field": "startDate",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "endDate",
+            "message": "A valid date is required"
+          },
+          {
+            "field": "reason",
+            "message": "Required"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      POST ✅ /api/v1/leave/me ✅
+      Input:
+      {
+        "leaveType": "alien-leave",
+        "startDate": "2025-08-05T14:14:50.844Z",
+        "endDate": "2025-08-06T14:14:50.844Z",
+        "reason": "just testing"
+      }
+      Output:
+      {
+        "status": "fail",
+        "message": "Body validation failed",
+        "code": "VALIDATION_ERROR",
+        "error": [
+          {
+            "field": "leaveType",
+            "message": "Invalid enum value. Expected 'sick' | 'urgent' | 'casual', received 'alien-leave'"
+          }
+        ]
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+PASS tests/testModules/websockt.test.ts
+  ● Console
+
+    console.log
+      POST ✅ /api/v1/auth/login ✅
+      Input:
+      {
+        "username": "rajwinder",
+        "password": "user"
+      }
+      Output:
+      {
+        "status": "success",
+        "data": {
+          "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NjUsInNlc3Npb25JZCI6IjI1NWEzM2I1LWE5ZmYtNGQyZi1hZmU0LTdmYWI2ZmFjYzdiOSIsImlhdCI6MTc1NDIzMDQ5MCwiZXhwIjoxNzU0MjMxMzkwfQ.fHuyuM7v5_H7AihRKdSsLwCwTepgxE-7KIkDqetznrk",
+          "userId": 65
+        },
+        "timestamp": "2025-08-03T14:14:50.841Z"
+      }
+      TimeStamp: Sun Aug 03 2025 19:44:50 GMT+0530 (India Standard Time)
+
+      at testFactory.logOutput (tests/testHelpers/testFactory.ts:189:13)
+
+    console.log
+      User 65 connected
+
+      at WebSocketServer.<anonymous> (src/core/utils/websocket.ts:25:15)
+
+    console.log
+      JsonWebTokenError {
+        name: 'JsonWebTokenError',
+        message: 'jwt malformed'
+      }
+
+      at WebSocketServer.<anonymous> (src/core/utils/websocket.ts:27:15)
+
+
+Test Suites: 15 passed, 15 total
+Tests:       163 passed, 163 total
+Snapshots:   0 total
+Time:        28.448 s, estimated 36 s
+Ran all test suites.
