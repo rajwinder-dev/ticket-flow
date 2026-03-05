@@ -1,9 +1,39 @@
+# dependencies
 node_modules
-# Keep environment variables out of version control
-.env
-.env.production
-.env.test
-.prisma
+
+# build outputs
 dist
-generated
+build
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# uploads
+uploads
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode
+.idea
+
+# coverage
 coverage
+
+# pnpm store (optional if local)
+.pnpm-store
+
+# prisma
+prisma/migrations/*
+!prisma/migrations/.keep
+generated

@@ -5,10 +5,9 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
-
 import { appError } from "./core/utils/appError";
 import { globalHandler } from "./core/utils/globalHandler";
-
+console.log(CreateTicketSchema)
 import { devMode } from "./config/appConfig";
 
 import dashboardRoute from "./modules/dashboard/dashboard.route";
@@ -25,6 +24,7 @@ import path from "path";
 import roleRouter from "./modules/role/role.route";
 import roleAssignRouter from "./modules/roleAssign/roleAssign.routes";
 import teamRouter from "./modules/teams/team.route";
+import { CreateTicketSchema } from "@repo/schemas";
 
 export const app = express();
 

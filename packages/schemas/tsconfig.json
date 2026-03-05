@@ -1,0 +1,8 @@
+{
+  "exclude": ["../tsconfig.base.json"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true
+  },
+  "include": ["schemas/src", "schemas"]
+}
