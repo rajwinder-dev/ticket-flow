@@ -14,7 +14,7 @@ export async function connectUntilSuccess(
 
       log.success("Database connected");
       return true;
-    } catch (error) {
+    } catch {
       attempts++;
 
       log.error(`Database connection failed (${attempts}/${maxRetries})`);
@@ -23,7 +23,7 @@ export async function connectUntilSuccess(
         throw new Error("Database connection failed after maximum retries");
       }
 
-      log.info(`⏳ Retrying in ${delayMs / 1000}s...`);
+      log.info(`Retrying in ${delayMs / 1000}s...`);
       await new Promise((res) => setTimeout(res, delayMs));
     }
   }
