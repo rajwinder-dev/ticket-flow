@@ -25,7 +25,7 @@ export const validBigDescription = z
 // Timestamp/date validations
 export const validTimestamp = z.preprocess(
   (arg) => (typeof arg === "string" || typeof arg === "number" || arg instanceof Date ? new Date(arg) : arg),
-  z.date({ required_error: "A valid date is required" })
+  z.date({ error: "A valid date is required" })
 );
 
 export const validDeadline = validTimestamp.refine(

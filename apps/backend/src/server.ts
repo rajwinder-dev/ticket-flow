@@ -1,27 +1,28 @@
+import dotenv from "dotenv";
 import http from "http";
+import { AddressInfo } from "net";
 import { app } from "./app";
 import { devMode } from "./config/appConfig";
-import { socket } from "./core/utils/websocket";
-import { AddressInfo } from "net";
+import { env } from "./config/env";
+import { log } from "./core/helper/extraHelper";
 import { connectUntilSuccess } from "./core/utils/dbConnect";
+import { socket } from "./core/utils/websocket";
+dotenv.config({ path: "./.env" });
 
-const port = Number(process.env.PORT) || 4000;
+const port = Number(env.port);
 export const server = http.createServer(app);
 export const wss = socket(server);
-connectUntilSuccess();
 
-if (process.env.NODE_ENV !== "test")
-  server.listen(port, () => {
+if (env.nodeEnv !== "test")
+  server.listen(port, async () => {
+    await connectUntilSuccess();
     const actualPort = (server.address() as AddressInfo).port;
-    console.log(
-      `🚀 Server running at http://localhost:${actualPort} ${
-        process.env.WSS
-          ? `with WebSocket on same port`
-          : `(WebSocket not enabled)`
-      } ${devMode ? "in development mode" : ""}`
-    );
+    log.success(`Server running at http://localhost:${actualPort}`);
+    if (env.wss) log.success("Websocket is running");
+    else log.info("Websocket is disabled");
+    if (devMode) log.info("🪛  Development Mode");
   });
-// Listens for unhandled promise rejections—basically, when a Promise throws an error that isn’t caught with .catch() or try/catch.
+
 process.on("unhandledRejection", (err: Error) => {
   console.log("UNHANDLED REJECTION! 💥 Shutting down...");
   console.log(err.name, err.message);
@@ -29,7 +30,7 @@ process.on("unhandledRejection", (err: Error) => {
     process.exit(1);
   });
 });
-// Listens for the SIGTERM signal, which is a system-level signal sent to terminate a process.
+
 process.on("SIGTERM", () => {
   console.log("👋 SIGTERM RECEIVED. Shutting down gracefully");
   server.close(() => {

@@ -12,21 +12,16 @@ describe("testing auth routes", () => {
   let authData: Authorization | null;
 
   beforeAll(async () => {
-    const role = await prisma.roles.findFirst({
+    const role = await prisma.role.findFirst({
       where: {
         name: "admin",
       },
     });
     if (!role) throw "No role found";
 
-    const department = await prisma.departments.findFirst({
-      where: {
-        department: "administration",
-      },
-    });
-    if (!department) throw "No department found";
+
     await testCatchAsync(async () => {
-      const newEmployee = await prisma.employees.create({
+      const newEmployee = await prisma.user.create({
         data: {
           createdAt: new Date(),
           uuid: String(faker.finance.creditCardNumber()),
@@ -42,7 +37,6 @@ describe("testing auth routes", () => {
           hireDate: faker.date.past(),
           jobTitle: "admin",
           description: "new employee",
-          departmentId: department?.id,
         },
       });
       if (!newEmployee) throw "No employee found";
@@ -51,7 +45,7 @@ describe("testing auth routes", () => {
           username: `${newEmployee.firstName}${newEmployee.lastName}`,
           password:
             "$2a$12$sgeo0uQSAGy4gKAMnh1ET.MG4BinlMO/5vblUnPDgldRdqakxRoWK",
-          employeeId: newEmployee.id,
+          userId: newEmployee.id,
           roleId: role.id,
         },
       });
@@ -194,9 +188,9 @@ describe("testing auth routes", () => {
           username: authData?.username,
         },
       });
-      await prisma.employees.deleteMany({
+      await prisma.user.deleteMany({
         where: {
-          id: authData?.employeeId,
+          id: authData?.userId,
         },
       });
     });

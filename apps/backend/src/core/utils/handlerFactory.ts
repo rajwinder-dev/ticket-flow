@@ -4,15 +4,7 @@ import { appError } from "./appError";
 import { APIFeatures } from "./apiFeatures";
 import response from "./response";
 import { notificationServer } from "../../modules/notification/notification.service";
-/**
- * Generic CRUD handler factory for prisma
- * usage:
- * ```ts
- * const handler = new HandleFactory(prisma.user);
- * route.get("/user/id", handler.getOne({exclude: ['password']}))
- * ```
- * each method support configuration via the `type<T>`
- */
+
 interface types<T> {
   exclude?: Extract<keyof T, string>[];
   select?: Extract<keyof T, string>[];
@@ -53,7 +45,7 @@ export default class HandleFactory<Data> {
       let filterOptions: Record<string, any> = {};
       let property;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.employeeId };
+        property = { [options?.useField || "id"]: req.user.userId };
       } else if (req.params.id) {
         property = { [options?.params || "id"]: Number(req.params.id) };
       }
@@ -119,7 +111,7 @@ export default class HandleFactory<Data> {
       }
       if (property && isNaN(Object.values(property)[0])) property = undefined;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.employeeId };
+        property = { [options?.useField || "id"]: req.user.userId };
       } else if (req.params.id) {
         property = { [options?.params || "id"]: Number(req.params.id) };
         const verifyExist = await this.Model.findFirst({
@@ -156,11 +148,11 @@ export default class HandleFactory<Data> {
         const {
           params = "id",
           protect,
-          useField = "employeeId",
+          useField = "userId",
           exclude,
         } = options;
         if (req.params.id) input[params] = Number(req.params.id);
-        if (protect) input[useField] = req.user.employeeId;
+        if (protect) input[useField] = req.user.userId;
         if (exclude) this.restrictFieldsToChange(input, exclude);
       }
       //  handle data
@@ -169,8 +161,8 @@ export default class HandleFactory<Data> {
       });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.employeeId),
-          data?.employeeId || req.user.employeeId,
+          Number(req.user.userId),
+          data?.userId || req.user.userId,
           options?.notify,
           options?.broadCast
         );
@@ -183,7 +175,7 @@ export default class HandleFactory<Data> {
       if (options?.exclude) this.restrictFieldsToChange(input, options.exclude);
       let property: Record<string, any>;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.employeeId };
+        property = { [options?.useField || "id"]: req.user.userId };
       } else {
         property = { [options?.params || "id"]: Number(req.params.id) };
       }
@@ -194,8 +186,8 @@ export default class HandleFactory<Data> {
       });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.employeeId),
-          data?.employeeId || req.user.employeeId,
+          Number(req.user.userId),
+          data?.userId || req.user.userId,
           options?.notify,
           options?.broadCast
         );
@@ -225,8 +217,8 @@ export default class HandleFactory<Data> {
 
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.employeeId),
-          data?.employeeId || req.user.employeeId,
+          Number(req.user.userId),
+          data?.userId || req.user.userId,
           options?.notify,
           options?.broadCast
         );
@@ -239,8 +231,8 @@ export default class HandleFactory<Data> {
       const data = await this.Model.delete({ where: property });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.employeeId),
-          data?.employeeId || req.user.employeeId,
+          Number(req.user.userId),
+          data?.userId || req.user.userId,
           options?.notify,
           options?.broadCast
         );

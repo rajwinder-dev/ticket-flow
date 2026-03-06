@@ -1,15 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { prisma } from "../../src/core/utils/prismaClient";
 
-export async function getDepartmentId(department?: string) {
-  const data = await prisma.departments.findFirst(
-    department ? { where: { department } } : undefined // or just {}
-  );
-  return data?.id;
-}
-
 export async function getEmployeeId() {
-  const data = await prisma.employees.findFirst({
+  const data = await prisma.user.findFirst({
     where: {
       email: "test@gmail.com",
     },
@@ -17,29 +10,26 @@ export async function getEmployeeId() {
   return data?.id;
 }
 export async function getRandomEmployee(index?: number) {
-  const data = await prisma.employees.findMany();
+  const data = await prisma.user.findMany();
   return data[index || 0];
 }
 export async function getRandomRole(index?: number) {
-  const data = await prisma.roles.findMany();
+  const data = await prisma.role.findMany();
   return data[index || 0];
 }
 export async function getRandomAuth(index?: number) {
   const data = await prisma.authorization.findMany({
     where: {
-      Roles: {
+      Role: {
         name: "employee",
       },
     },
   });
   return data[index || 0];
 }
-export async function getRandomDepartment(index?: number) {
-  const data = await prisma.departments.findMany();
-  return data[index || 0];
-}
+
 export async function getRoleId() {
-  const data = await prisma.roles.findUnique({
+  const data = await prisma.role.findUnique({
     where: {
       name: "testRole",
     },
@@ -47,7 +37,6 @@ export async function getRoleId() {
   return data?.id;
 }
 export async function getNewEmployeeData(department?: string) {
-  const departmentId = await getDepartmentId(department);
   return {
     uuid: String(faker.finance.creditCardNumber()),
     gender: faker.person.sex(),
@@ -62,12 +51,11 @@ export async function getNewEmployeeData(department?: string) {
     hireDate: faker.date.past().toISOString().split("T")[0],
     jobTitle: "test job",
     description: "added for testing",
-    departmentId: departmentId,
   };
 }
 export async function testCatchAsync(
   callback: () => Promise<void>,
-  errorStack?: boolean
+  errorStack?: boolean,
 ) {
   try {
     await callback();

@@ -1,5 +1,5 @@
 import cors from "cors";
-import dotenv from "dotenv";
+
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -7,7 +7,7 @@ import hpp from "hpp";
 import morgan from "morgan";
 import { appError } from "./core/utils/appError";
 import { globalHandler } from "./core/utils/globalHandler";
-console.log(CreateTicketSchema)
+
 import { devMode } from "./config/appConfig";
 
 import dashboardRoute from "./modules/dashboard/dashboard.route";
@@ -28,7 +28,7 @@ import { CreateTicketSchema } from "@repo/schemas";
 
 export const app = express();
 
-dotenv.config({ path: "./.env" });
+
 
 // dev logs
 if (devMode) app.use(morgan("dev"));

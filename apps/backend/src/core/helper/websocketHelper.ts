@@ -1,7 +1,8 @@
 import { verify } from "jsonwebtoken";
+import { env } from "../../config/env";
 
 export function decodeToken(token: string) {
-  const userData = verify(token, process.env.ACCESS_SECRET as string) as {
+  const userData = verify(token, env.accessSecret as string ) as {
     id: string;
     role: string;
   };

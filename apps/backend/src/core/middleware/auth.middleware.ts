@@ -4,6 +4,7 @@ import { catchAsync } from "../utils/catchAsync";
 import bcrypt from "bcrypt";
 import { prisma } from "../utils/prismaClient";
 import { authService } from "../../modules/auth/auth.service";
+import { env } from "../../config/env";
 
 
 export class authMiddleware {
@@ -36,7 +37,7 @@ export class authMiddleware {
         )
       );
     try {
-      decoded = verify(token, process.env.ACCESS_SECRET as string) as {
+      decoded = verify(token, env.accessSecret as string) as {
         id: string;
         sessionId: string;
         iat: number;

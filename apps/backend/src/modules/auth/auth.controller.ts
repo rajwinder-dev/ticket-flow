@@ -12,6 +12,7 @@ import {
   getClientIp,
 } from "../../core/helper/generalHelper";
 import { clearCookie, responseCookie } from "../../core/utils/cookies";
+import { env } from "../../config/env";
 
 export class authController {
   private static handler = new HandleFactory<Authorization>(
@@ -35,17 +36,17 @@ export class authController {
         // we generate token
         let accessToken;
         let refreshToken;
-        if (process.env.ACCESS_SECRET && process.env.REFRESH_SECRET) {
+        if (env.accessSecret && env.refreshSecret) {
           // *access token used for accessing api
           accessToken = jwt.sign(
             { id: userData.userId, sessionId },
-            process.env.ACCESS_SECRET,
+            env.accessSecret,
             { expiresIn: accessTokenExpire }
           );
           // *refresh token used for renew token and put in http cookies
           refreshToken = jwt.sign(
             { id: userData.userId, sessionId },
-            process.env.REFRESH_SECRET,
+            env.refreshSecret,
             { expiresIn: refreshTokenExpire }
           );
         }
@@ -75,9 +76,9 @@ export class authController {
 
     // 1. Verify and decode refresh token
     let sessionId: string;
-    if (process.env.REFRESH_SECRET) {
+    if (env.refreshSecret) {
       try {
-        const decoded = jwt.verify(token, process.env.REFRESH_SECRET) as {
+        const decoded = jwt.verify(token, env.refreshSecret) as {
           sessionId: string;
         };
         sessionId = decoded?.sessionId;
@@ -95,9 +96,9 @@ export class authController {
     const token = req.cookies.refreshToken;
     // fetch sessionId
     let sessionId: string;
-    if (process.env.REFRESH_SECRET) {
+    if (env.refreshSecret) {
       try {
-        const decoded = jwt.verify(token, process.env.REFRESH_SECRET) as {
+        const decoded = jwt.verify(token, env.refreshSecret) as {
           sessionId: string;
         };
         sessionId = decoded?.sessionId;
@@ -106,13 +107,13 @@ export class authController {
       }
     }
     if (!token) return res.sendStatus(401);
-    if (process.env.REFRESH_SECRET)
+    if (env.refreshSecret)
       jwt.verify(
         token,
-        process.env.REFRESH_SECRET,
+        env.refreshSecret,
         (err: jwt.VerifyErrors | null, decoded: unknown) => {
           if (err) return res.sendStatus(403);
-          if (process.env.ACCESS_SECRET && decoded) {
+          if (env.accessSecret && decoded) {
             const { id } = decoded as {
               id: number;
             };
@@ -121,7 +122,7 @@ export class authController {
                 id,
                 sessionId,
               },
-              process.env.ACCESS_SECRET,
+              env.accessSecret,
               { expiresIn: "30s" }
             );
             return res.json({ accessToken: newAccessToken });

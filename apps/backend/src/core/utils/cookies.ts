@@ -1,6 +1,7 @@
-// not used yet in this project 
+// not used yet in this project
 import { Response } from "express";
-const isTestMode = process.env.NODE_ENV === "test" || false
+import { env } from "../../config/env";
+const isTestMode = env.nodeEnv === "test" || false
 export function responseCookie(
   res: Response,
   cookieName: string,

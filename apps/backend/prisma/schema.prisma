@@ -1,10 +1,147 @@
 generator client {
   provider      = "prisma-client-js"
   output        = "../generated/prisma"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
+
+model Authorization {
+  id          String        @id @unique @default(uuid())
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  active      Boolean       @default(true)
+  User        User?         @relation(fields: [userId], references: [id])
+  userId      String        @unique
+  Role        Role?         @relation(fields: [roleId], references: [id])
+  roleId      String
+  username    String        @unique
+  password    String
+  AssignedTo  TeamMembers[] @relation("assignedTo")
+  AssignedBy  TeamMembers[] @relation("assignedBy")
+  UserId      TeamMembers[] @relation("userId")
+  teamMembers TeamMembers[]
+}
+
+model LoginActivity {
+  id        String    @id @unique @default(uuid())
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  userId    String
+  User      User?     @relation(fields: [userId], references: [id])
+  loginAt   DateTime  @default(now()) @db.Timestamptz(6)
+  logoutAt  DateTime? @db.Timestamptz(6)
+  sessionId String    @unique
+  clientIp  String?
+}
+
+model Role {
+  id            String          @id @unique @default(uuid())
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(6)
+  name          String          @unique
+  description   String?
+  active        Boolean         @default(true)
+  Authorization Authorization[]
+}
+model User {
+  id            String          @id @unique @default(uuid())
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime?       @updatedAt @db.Timestamptz(6)
+  uuid          String          @unique
+  nationalId    String
+  idType        String
+  firstName     String
+  lastName      String
+  email         String          @unique
+  phoneNumber   String
+  dateOfBirth   DateTime
+  gender        String?
+  address       String
+  jobTitle      String
+  hireDate      DateTime
+  image         String?
+  active        Boolean         @default(true)
+  description   String?
+  Authorization Authorization[]
+
+  NotificationFrom Notification[]  @relation("notificationFrom")
+  NotificationTo   Notification[]  @relation("notificationTo")
+  ChatCreatedBy    ChatRoom[]
+  Participant      Participant[]
+  Messaging        Messaging[]
+  LoginActivity    LoginActivity[]
+}
+
+model TeamMembers {
+  id              String         @id @unique @default(uuid())
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
+  AssignedTo      Authorization? @relation("assignedTo", fields: [assignedTo], references: [userId])
+  assignedTo      String
+  AssignedBy      Authorization? @relation("assignedBy", fields: [assignedBy], references: [userId])
+  assignedBy      String
+  User            Authorization? @relation("userId", fields: [userId], references: [userId])
+  userId          String         @unique
+  authorization   Authorization? @relation(fields: [authorizationId], references: [id])
+  authorizationId String?
+
+  @@unique([assignedTo, assignedBy, userId])
+}
+
+model ChatRoom {
+  id          String        @id @unique @default(uuid())
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  chatId      String        @unique
+  chatType    String
+  roomName    String?
+  User        User          @relation(fields: [cratedBy], references: [id])
+  cratedBy    String
+  Participant Participant[]
+  Messaging   Messaging[]
+}
+
+model Participant {
+  id        String   @id @unique @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  ChatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
+  chatId    String
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
+  isActive  Boolean  @default(false)
+
+  @@unique([chatId, userId])
+}
+
+model Messaging {
+  id          String    @id @unique @default(uuid())
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  User        User?     @relation(fields: [senderId], references: [id])
+  senderId    String
+  message     String
+  iv          String
+  tag         String
+  readAt      DateTime?
+  isDelivered Boolean   @default(false)
+  isRead      Boolean   @default(false)
+  isAchieve   Boolean   @default(false)
+  ChatRoom    ChatRoom? @relation(fields: [chatId], references: [chatId])
+  chatId      String
+}
+
+model Notification {
+  id               String   @id @unique @default(uuid())
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  message          String
+  isRead           Boolean  @default(false)
+  NotificationFrom User?    @relation("notificationFrom", fields: [from], references: [id])
+  from             String?
+  NotificationTo   User?    @relation("notificationTo", fields: [to], references: [id])
+  to               String?
+}
+
+
+
+
+
+

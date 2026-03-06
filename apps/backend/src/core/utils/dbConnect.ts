@@ -1,28 +1,32 @@
+import { log } from "../helper/extraHelper";
 import { prisma } from "./prismaClient";
 
-export async function connectUntilSuccess(delayMs = 5000, maxRetries = 2) {
+export async function connectUntilSuccess(
+  delayMs = 5000,
+  maxRetries = 5,
+): Promise<boolean> {
   let attempts = 0;
 
   while (attempts < maxRetries) {
     try {
       await prisma.$connect();
+      await prisma.$queryRaw`SELECT 1`;
 
-      return true; 
+      log.success("Database connected");
+      return true;
     } catch (error) {
       attempts++;
-      console.error(
-        `❌ Failed to connect (Attempt ${attempts}/${maxRetries}):`,
-        error
-      );
+
+      log.error(`Database connection failed (${attempts}/${maxRetries})`);
 
       if (attempts >= maxRetries) {
-        throw new Error(
-          "❌ Could not connect to the database after maximum retries."
-        );
+        throw new Error("Database connection failed after maximum retries");
       }
 
-      console.log(`⏳ Retrying in ${delayMs / 1000} seconds...`);
+      log.info(`⏳ Retrying in ${delayMs / 1000}s...`);
       await new Promise((res) => setTimeout(res, delayMs));
     }
   }
+
+  return false;
 }

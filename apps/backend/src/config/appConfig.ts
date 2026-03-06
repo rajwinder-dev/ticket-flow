@@ -1,1 +1,3 @@
-export const devMode = process.env.NODE_ENV === "development"
+import { env } from "./env";
+
+export const devMode = env.nodeEnv === "development"

@@ -1,9 +1,9 @@
 import crypto from "crypto";
+import { env } from "../../config/env";
 
 const ALGO = "aes-256-gcm";
 const IV_LENGTH = 12;
-
-const key = Buffer.from(process.env.ENCRYPTION_KEY!, "hex");
+const key = Buffer.from(env.encryptionKey!, "hex");
 
 export function encrypt(text: string) {
   const iv = crypto.randomBytes(IV_LENGTH);
