@@ -1,9 +1,9 @@
 import express from "express";
-import { params } from "../../core/zod/global.zod";
-import { teamMemberSchema } from "./team.zod";
-import { authMiddleware } from "../../core/middleware/auth.middleware";
-import { teamController } from "./team.controller";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
+import { params } from "../../core/zod/global.zod";
+import { authMiddleware } from "../auth/auth.middleware";
+import { teamController } from "./team.controller";
+import { teamMemberSchema } from "./team.zod";
 
 const teamRouter = express.Router();
 teamRouter.use(authMiddleware.protectedRoute);

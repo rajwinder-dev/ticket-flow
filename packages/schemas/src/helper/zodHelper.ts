@@ -1,4 +1,3 @@
-import { startOfDay } from "date-fns";
 import { z } from "zod";
 
 // ID must be a string of digits (e.g., "123")
@@ -23,18 +22,15 @@ export const validBigDescription = z
   .max(200, "Description must be at most 200 characters");
 
 // Timestamp/date validations
-export const validTimestamp = z.preprocess(
-  (arg) => (typeof arg === "string" || typeof arg === "number" || arg instanceof Date ? new Date(arg) : arg),
-  z.date({ error: "A valid date is required" })
-);
 
-export const validDeadline = validTimestamp.refine(
-  (date) => date >= startOfDay(new Date()),
-  {
-    message: "Date must be today or in the future",
-    path: ["startDate"], // Optional; remove if you want global message
-  }
-);
+
+// export const validDeadline = validTimestamp.refine(
+//   (date) => date >= startOfDay(new Date()),
+//   {
+//     message: "Date must be today or in the future",
+//     path: ["startDate"], // Optional; remove if you want global message
+//   }
+// );
 
 // Phone number (E.164 format)
 export const validPhoneNo = z

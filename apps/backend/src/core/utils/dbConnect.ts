@@ -1,4 +1,4 @@
-import { log } from "../helper/extraHelper";
+import { log } from "../helper/log";
 import { prisma } from "./prismaClient";
 
 export async function connectUntilSuccess(

@@ -1,14 +1,11 @@
 import express from "express";
-import { authMiddleware } from "../../core/middleware/auth.middleware";
-import { roleController } from "./role.controller";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
+import { authMiddleware } from "../auth/auth.middleware";
+import { roleController } from "./role.controller";
 import { roleSchema, updateRoleSchema } from "./role.zod";
 const roleRouter = express.Router();
 
-roleRouter.use(
-  authMiddleware.protectedRoute,
-  authMiddleware.restrictRote("admin")
-);
+roleRouter.use(authMiddleware.protectedRoute, authMiddleware.restrictRote("admin"));
 
 roleRouter
   .route("/")

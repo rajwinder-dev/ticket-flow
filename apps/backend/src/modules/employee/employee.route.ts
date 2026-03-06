@@ -2,15 +2,14 @@ import express from "express";
 
 import { employeeSchema, updateMyDetails } from "./employee.zod";
 
-import { params } from "../../core/zod/global.zod";
-import { authMiddleware } from "../../core/middleware/auth.middleware";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import EmployeeController from "./employee.controller";
 import {
-
   processImagesMiddleware,
   upload,
 } from "../../core/middleware/processImageUpload.middleware";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware";
+import { params } from "../../core/zod/global.zod";
+import { authMiddleware } from "../auth/auth.middleware";
+import EmployeeController from "./employee.controller";
 
 const employeeRouter = express.Router();
 employeeRouter.use(authMiddleware.protectedRoute);
@@ -22,7 +21,7 @@ employeeRouter
     upload.single("image"),
     processImagesMiddleware,
     validationMiddleware(updateMyDetails),
-    EmployeeController.updateMyDetails
+    EmployeeController.updateMyDetails,
   );
 
 employeeRouter.use(authMiddleware.restrictRote("admin"));
@@ -34,7 +33,7 @@ employeeRouter
     upload.single("image"),
     processImagesMiddleware,
     validationMiddleware(employeeSchema),
-    EmployeeController.createEmployee
+    EmployeeController.createEmployee,
   );
 
 employeeRouter.route("/summary").get(EmployeeController.employeeSummary);

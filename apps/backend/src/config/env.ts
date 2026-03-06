@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { log } from "../core/helper/extraHelper";
+import { log } from "../core/helper/log";
 dotenv.config();
 
 export const env = {
@@ -19,16 +19,11 @@ const required = [
   "refreshSecret",
 ];
 
-let hasError = false;
 
 for (const key of required) {
   if (!env[key as keyof typeof env]) {
     log.error(`Missing environment variable: ${key}`);
-    hasError = true;
   }
 }
 
-if (hasError) {
-  log.error("Environment validation failed. Stopping server.");
-  process.exit(1);
-}
+

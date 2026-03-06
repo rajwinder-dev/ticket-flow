@@ -37,7 +37,6 @@ export function validationMiddleware({
             formatZodErrors(result.error)
           )
         );
-      req.params = result.data;
     }
 
     if (querySchema) {
