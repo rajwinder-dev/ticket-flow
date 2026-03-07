@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-blue: #305aff;
+  --color-sky: #b5d2ff;
+  --color-sky1: #d8f1ff;
+  --color-sky2: #f4f8ff;
+  --color-blue2: #305aff;
+  --color-blue3: "#4F46E5";
+  --color-blue4: "rgba(48, 90, 255, 0.1)";
+  --color-lightWhite: #f5f7fa;
+  --color-lightWhite2: #f5f5fa;
+  --color-lightWhite3: #fafafa;
+  --color-lightWhite4: #f9fbfc;
+  --color-lightWhite5: #fdfdfd;
+  --color-lightWhite6: #fbfbfb;
+  --color-lightWhite7: #e5e7eb;
+  --color-lightWhite8: #eaeaea;
+  --color-white: #fff;
+  --color-green1: #19c79f;
+  --color-green2: #007032;
+  --color-green3: #28c76f;
+  --color-green4: #f6fcf8;
+  --color-skin1: #ffd2bf;
+  --color-pink1: #ffc9e1;
+  --color-pink2: #fbf6fd;
+  --color-red1: #ff4c51;
+  --color-gray1: #1c1c1c;
+  --color-gray2: #f8f8f8;
+  --color-gary3: #e0e3dd;
+  --color-gary4: #979797;
+  --color-gray5: #646464;
+  --color-gray6: #666666;
+  --color-gray7: #888888;
+  --color-gray8: #696969;
+  --color-gray9: #1e1e1e;
+  --font-inter: var(--font-inter);
+  --color-gradient1: #e8f1ff;
+  --color-gradient2: #f6eefb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dark {
+    --color-blue: #5c7affcc;
+    --color-blue2: #bfcbfd;
+    --color-sky: #4a6aff;
+    --color-sky1: #3a4b75;
+    --color-sky2: #2b334d;
+    --color-white: #1a1a1a;
+    --color-lightWhite: #1a1a1a;
+    --color-lightWhite2: #1c1c1c;
+    --color-lightWhite3: #202020;
+    --color-lightWhite4: #242424;
+    --color-lightWhite5: #2a2a2a;
+    --color-lightWhite6: #2e2e2e;
+    --color-lightWhite8: #616161;
+    --color-green1: #1fe2b5;
+    --color-green2: #00a060;
+    --color-green3: #28d78f;
+    --color-green4: #112620;
+
+    --color-skin1: #ffbfa8;
+    --color-pink1: #ff99c8;
+    --color-pink2: #38293f;
+
+    --color-red1: #ff6b6b;
+
+    --color-gray1: #f5f5f5;
+    --color-gray2: #1a1a1a;
+    --color-gray3: #2f2f2f;
+    --color-gray4: #999999;
+    --color-gray5: #aaaaaa;
+    --color-gray6: #bbbbbb;
+    --color-gray7: #cccccc;
+    --color-gray8: #dddddd;
+
+    --color-gray-100: #111111;
+    --color-gray-200: #1a1a1a;
+    --color-gray-300: #2a2a2a;
+    --color-gray-700: #8a8a8a;
+    --color-gray-800: #aaaaaa;
+
+    --color-gradient1: #1c263b;
+    --color-gradient2: #2f1f3a;
+
+    --font-inter: var(--font-inter);
+  }
+}
+
+/* HTML: <div class="loader"></div> */
+
+@layer base {
+  .loader {
+    width: 60px;
+    aspect-ratio: 2;
+    --_g: no-repeat
+      radial-gradient(circle closest-side, var(--color-sky) 90%, #0000);
+    background:
+      var(--_g) 0% 50%,
+      var(--_g) 50% 50%,
+      var(--_g) 100% 50%;
+    background-size: calc(100% / 3) 50%;
+    animation: l3 1s infinite linear;
+  }
+  @keyframes l3 {
+    20% {
+      background-position:
+        0% 0%,
+        50% 50%,
+        100% 50%;
+    }
+    40% {
+      background-position:
+        0% 100%,
+        50% 0%,
+        100% 50%;
+    }
+    60% {
+      background-position:
+        0% 50%,
+        50% 100%,
+        100% 0%;
+    }
+    80% {
+      background-position:
+        0% 50%,
+        50% 50%,
+        100% 100%;
+    }
+  }
+  .loader2 {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--color-gray-200);
+    border-bottom-color: var(--color-blue-600);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

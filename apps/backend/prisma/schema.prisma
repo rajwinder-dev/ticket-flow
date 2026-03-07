@@ -1,147 +1,367 @@
 generator client {
-  provider      = "prisma-client-js"
-  output        = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model Authorization {
-  id          String        @id @unique @default(uuid())
-  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
-  active      Boolean       @default(true)
-  User        User?         @relation(fields: [userId], references: [id])
-  userId      String        @unique
-  Role        Role?         @relation(fields: [roleId], references: [id])
-  roleId      String
-  username    String        @unique
-  password    String
-  AssignedTo  TeamMembers[] @relation("assignedTo")
-  AssignedBy  TeamMembers[] @relation("assignedBy")
-  UserId      TeamMembers[] @relation("userId")
-  teamMembers TeamMembers[]
+//  ============================ ENUMS ==============================
+
+enum UserType {
+  ADMIN
+  MEMBER
 }
 
-model LoginActivity {
-  id        String    @id @unique @default(uuid())
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  userId    String
-  User      User?     @relation(fields: [userId], references: [id])
-  loginAt   DateTime  @default(now()) @db.Timestamptz(6)
-  logoutAt  DateTime? @db.Timestamptz(6)
-  sessionId String    @unique
-  clientIp  String?
+enum RoleType {
+  ADMIN
+  VIEWER
+  MANAGER
+  EMPLOYEE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING
+  RESOLVED
+  CLOSED
+}
+
+//  ============================ USERS / ROLES / ORG ==============================
+
+model User {
+  id               String             @id @unique @db.VarChar(128)
+  code             String             @unique
+  email            String             @unique
+  phoneNo          String?            @unique
+  passwordHash     String             @unique
+  userType         UserType?
+  avatar           String?
+  name             String?
+  location         String?
+  startDate        DateTime?
+  endDate          DateTime?
+  active           Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  roleId           String?            @db.Uuid
+  managerId        String?            @db.VarChar(128)
+  createdBy        String?            @db.VarChar(128)
+  role             Role?              @relation("UserRole", fields: [roleId], references: [id])
+  manager          User?              @relation("UserManager", fields: [managerId], references: [id])
+  subordinates     User[]             @relation("UserManager")
+  creator          User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdUsers     User[]             @relation("UserCreatedBy")
+  activityLogs     ActivityLog[]
+  sessions         Session[]
+  assignedProjects AssignedProject[]
+  managedProjects  Project[]          @relation("ProjectManager")
+  createdRoles     Role[]             @relation("RoleCreatedBy")
+  ticketsAssigned  Ticket[]           @relation("TicketAssignedTo")
+  ticketsCreated   Ticket[]           @relation("TicketAssignedBy")
+  ticketComments   TicketComment[]
+  fromTransitions  TicketTransition[] @relation("TransitionFromEmployee")
+  toTransitions    TicketTransition[] @relation("TransitionToEmployee")
+  customersCreated Customer[]         @relation("CustomerCreator")
+  notificationFrom Notification[]     @relation("NotificationFrom")
+  notificationTo   Notification[]     @relation("NotificationTo")
+  chatRoomsCreated ChatRoom[]         @relation("ChatCreatedBy")
+  participants     Participant[]
+  messages         Message[]
+
+  @@index([email, phoneNo, code])
 }
 
 model Role {
-  id            String          @id @unique @default(uuid())
-  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime        @updatedAt @db.Timestamptz(6)
-  name          String          @unique
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code             String            @unique
+  name             String
+  description      String
+  permissions      Json?
+  type             RoleType?
+  active           Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  createdBy        String?           @db.VarChar(128)
+  levelId          String?           @db.Uuid
+  users            User[]            @relation("UserRole")
+  creator          User?             @relation("RoleCreatedBy", fields: [createdBy], references: [id])
+  level            Level?            @relation(fields: [levelId], references: [id])
+  assignedProjects AssignedProject[]
+}
+
+model Level {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  order           Int
+  etaMinutes      Int
+  active          Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  roles           Role[]
+  tickets         Ticket[]
+  fromTransitions TicketTransition[] @relation("TransitionFromLevel")
+  toTransitions   TicketTransition[] @relation("TransitionToLevel")
+}
+
+model Department {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  code      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tickets Ticket[]
+}
+
+//  ============================ ACTIVITY / SESSIONS ==============================
+
+model ActivityLog {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entityName    String?
+  entityId      String?
+  action        String
   description   String?
-  active        Boolean         @default(true)
-  Authorization Authorization[]
-}
-model User {
-  id            String          @id @unique @default(uuid())
-  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime?       @updatedAt @db.Timestamptz(6)
-  uuid          String          @unique
-  nationalId    String
-  idType        String
-  firstName     String
-  lastName      String
-  email         String          @unique
-  phoneNumber   String
-  dateOfBirth   DateTime
-  gender        String?
-  address       String
-  jobTitle      String
-  hireDate      DateTime
-  image         String?
-  active        Boolean         @default(true)
-  description   String?
-  Authorization Authorization[]
-
-  NotificationFrom Notification[]  @relation("notificationFrom")
-  NotificationTo   Notification[]  @relation("notificationTo")
-  ChatCreatedBy    ChatRoom[]
-  Participant      Participant[]
-  Messaging        Messaging[]
-  LoginActivity    LoginActivity[]
+  logStatus     String?
+  metaData      Json?
+  userAgent     String?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  performedById String?  @db.VarChar(128)
+  performer     User?    @relation(fields: [performedById], references: [id])
 }
 
-model TeamMembers {
-  id              String         @id @unique @default(uuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
-  updatedAt       DateTime       @updatedAt @db.Timestamptz(6)
-  AssignedTo      Authorization? @relation("assignedTo", fields: [assignedTo], references: [userId])
-  assignedTo      String
-  AssignedBy      Authorization? @relation("assignedBy", fields: [assignedBy], references: [userId])
-  assignedBy      String
-  User            Authorization? @relation("userId", fields: [userId], references: [userId])
-  userId          String         @unique
-  authorization   Authorization? @relation(fields: [authorizationId], references: [id])
-  authorizationId String?
-
-  @@unique([assignedTo, assignedBy, userId])
+model Session {
+  id        String   @id
+  userId    String   @db.VarChar(128)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 }
+
+//  ============================ PROJECTS ==============================
+
+model Project {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code             String            @unique @db.VarChar(128)
+  name             String?
+  description      String?
+  priority         Priority          @default(MEDIUM)
+  tags             Json?
+  isDraft          Boolean           @default(true)
+  active           Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  managerId        String?           @db.VarChar(128)
+  manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
+  assignedProjects AssignedProject[]
+  tickets          Ticket[]
+  customers        Customer[]
+
+  @@index([id, code])
+}
+
+model AssignedProject {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assignedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String   @db.VarChar(128)
+  projectId  String   @db.Uuid
+  roleId     String   @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  project    Project  @relation(fields: [projectId], references: [id])
+  role       Role     @relation(fields: [roleId], references: [id])
+
+  @@index([projectId, roleId])
+}
+
+//  ============================ TICKET MANAGEMENT ==============================
+
+model Ticket {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code                String             @unique
+  subject             String
+  category            String
+  tags                Json?
+  recommendedSolution String?
+  note                String?
+  rootCause           String?
+  resolution          String?
+  description         String             @db.Text
+  status              TicketStatus       @default(OPEN)
+  priority            Priority           @default(MEDIUM)
+  attachments         Json?
+  active              Boolean            @default(true)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  levelId             String?            @db.Uuid
+  projectId           String?            @db.Uuid
+  departmentId        String?            @db.Uuid
+  customerId          String?            @db.Uuid
+  assignedTo          String?            @db.VarChar(128)
+  assignedBy          String?            @db.VarChar(128)
+  assignedByUser      User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
+  assignedToUser      User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
+  customer            Customer?          @relation(fields: [customerId], references: [id])
+  level               Level?             @relation(fields: [levelId], references: [id])
+  project             Project?           @relation(fields: [projectId], references: [id])
+  department          Department?        @relation(fields: [departmentId], references: [id])
+  transitions         TicketTransition[]
+  comments            TicketComment[]
+
+  @@index([assignedTo, assignedBy, customerId, departmentId, levelId, projectId, status])
+}
+
+model TicketComment {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId   String   @db.Uuid
+  authorId   String   @db.VarChar(128)
+  comment    String   @db.Text
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id])
+}
+
+model TicketTransition {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ticketId       String?       @db.Uuid
+  fromLevelId    String?       @db.Uuid
+  toLevelId      String?       @db.Uuid
+  fromEmployeeId String?       @db.VarChar(128)
+  toEmployeeId   String?       @db.VarChar(128)
+  changedBy      String?
+  note           String?
+  fromPriority   Priority?
+  toPriority     Priority?
+  fromStatus     TicketStatus?
+  toStatus       TicketStatus?
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  ticket         Ticket?       @relation(fields: [ticketId], references: [id])
+  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
+  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
+  fromLevel      Level?        @relation("TransitionFromLevel", fields: [fromLevelId], references: [id])
+  toLevel        Level?        @relation("TransitionToLevel", fields: [toLevelId], references: [id])
+}
+
+//  ============================ CUSTOMER SUPPORT ==============================
+
+model Customer {
+  id              String           @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  externalId      String           @unique @db.VarChar(128)
+  email           String?          @db.VarChar(255)
+  name            String?          @db.VarChar(255)
+  phoneNumber     String?          @db.VarChar(20)
+  avatar          String?          @db.VarChar(500)
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       String?          @db.VarChar(128)
+  projectId       String?          @db.Uuid
+  creator         User?            @relation("CustomerCreator", fields: [createdBy], references: [id])
+  project         Project?         @relation(fields: [projectId], references: [id])
+  tickets         Ticket[]
+  featureRequests FeatureRequest[]
+  feedback        FeedBack[]
+
+  @@index([externalId])
+}
+
+model FeatureRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerId  String   @db.Uuid
+  title       String
+  description String
+  useCase     String
+  priority    Priority @default(LOW)
+  votes       Int      @default(0)
+  status      String   @default("new")
+  attachments Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customer    Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+}
+
+model FeedBack {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerId  String   @db.Uuid
+  rating      Int
+  attachments Json?
+  comment     String?
+  createdAt   DateTime @default(now())
+  customer    Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+}
+
+//  ============================ CHATS / ROOMS ==============================
 
 model ChatRoom {
-  id          String        @id @unique @default(uuid())
-  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
-  chatId      String        @unique
-  chatType    String
-  roomName    String?
-  User        User          @relation(fields: [cratedBy], references: [id])
-  cratedBy    String
-  Participant Participant[]
-  Messaging   Messaging[]
+  id           String        @id @unique @default(uuid())
+  chatId       String        @unique
+  chatType     String
+  roomName     String?
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  createdBy    String        @db.VarChar(128)
+  creator      User          @relation("ChatCreatedBy", fields: [createdBy], references: [id])
+  participants Participant[]
+  messages     Message[]
 }
 
 model Participant {
   id        String   @id @unique @default(uuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  ChatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
   chatId    String
-  User      User     @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String   @db.VarChar(128)
   isActive  Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  chatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([chatId, userId])
 }
 
-model Messaging {
+model Message {
   id          String    @id @unique @default(uuid())
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-  User        User?     @relation(fields: [senderId], references: [id])
-  senderId    String
-  message     String
+  chatId      String
+  senderId    String    @db.VarChar(128)
+  message     String    @db.Text
   iv          String
   tag         String
-  readAt      DateTime?
   isDelivered Boolean   @default(false)
   isRead      Boolean   @default(false)
-  isAchieve   Boolean   @default(false)
-  ChatRoom    ChatRoom? @relation(fields: [chatId], references: [chatId])
-  chatId      String
+  isArchived  Boolean   @default(false)
+  readAt      DateTime?
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  chatRoom    ChatRoom  @relation(fields: [chatId], references: [chatId])
+  sender      User      @relation(fields: [senderId], references: [id])
 }
+
+//  ============================ NOTIFICATIONS ==============================
 
 model Notification {
-  id               String   @id @unique @default(uuid())
-  createdAt        DateTime @default(now()) @db.Timestamptz(6)
-  message          String
-  isRead           Boolean  @default(false)
-  NotificationFrom User?    @relation("notificationFrom", fields: [from], references: [id])
-  from             String?
-  NotificationTo   User?    @relation("notificationTo", fields: [to], references: [id])
-  to               String?
+  id        String   @id @unique @default(uuid())
+  message   String
+  isRead    Boolean  @default(false)
+  fromId    String?  @db.VarChar(128)
+  toId      String?  @db.VarChar(128)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  fromUser  User?    @relation("NotificationFrom", fields: [fromId], references: [id])
+  toUser    User?    @relation("NotificationTo", fields: [toId], references: [id])
 }
-
-
-
-
-
-

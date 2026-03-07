@@ -12,10 +12,6 @@ export class seedData {
     await prisma.messaging.deleteMany();
     await prisma.participant.deleteMany();
     await prisma.chatRoom.deleteMany();
-    await prisma.loginActivity.deleteMany();
-
-    await prisma.authorization.deleteMany();
-
     await prisma.role.deleteMany();
     await prisma.notification.deleteMany();
   }
