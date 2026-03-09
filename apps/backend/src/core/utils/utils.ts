@@ -2,6 +2,7 @@
 
 import path from "path";
 import fs from "fs";
+import { customAlphabet } from "nanoid";
 /**
  * this recursive function used to remove files for nested object ,
  * found this function on internet
@@ -41,4 +42,9 @@ export function deleteUploadedFilesLocal(filePaths: string[]) {
       else console.log("Deleted file due to error:", filePath);
     });
   });
+}
+const nanoid = customAlphabet("1234567890", 6)
+
+export function readableId(preFlex:string) {
+  return ` ${preFlex}-${nanoid()}`
 }

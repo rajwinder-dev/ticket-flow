@@ -22,6 +22,7 @@ export function response(
     cleanData = deepStrip(data, [
       "active",
       "password",
+      "passwordHash",
       ...(options.hideFields ?? []),
     ]);
   else cleanData = null;

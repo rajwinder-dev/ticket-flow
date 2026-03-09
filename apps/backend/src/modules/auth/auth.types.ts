@@ -1,14 +1,15 @@
 export interface LoginService {
-  username: string;
+  email: string;
   password: string;
 }
 export interface SignupService extends LoginService {
   email: string;
-  confirmPassword: string;
+     name: string
 }
 export interface ChangePasswordService {
   currentPassword: string;
   password: string;
   confirmPassword: string;
   userId: string;
+
 }

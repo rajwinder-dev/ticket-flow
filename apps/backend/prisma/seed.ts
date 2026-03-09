@@ -9,7 +9,7 @@ export class seedData {
   }
 
   static async clearData() {
-    await prisma.messaging.deleteMany();
+    await prisma.message.deleteMany();
     await prisma.participant.deleteMany();
     await prisma.chatRoom.deleteMany();
     await prisma.role.deleteMany();

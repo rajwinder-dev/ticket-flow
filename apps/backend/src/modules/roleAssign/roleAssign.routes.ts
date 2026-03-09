@@ -1,7 +1,7 @@
 import express from "express";
 
+import { params } from "@repo/schemas/src/global.zod";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { params } from "../../core/zod/global.zod";
 import { authMiddleware } from "../auth/auth.middleware";
 import { roleAssignController } from "./roleAssign.controller";
 import { roleAssignSchema, updateRoleAssignSchema } from "./roleAssign.zod";

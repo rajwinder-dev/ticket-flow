@@ -1,69 +1,55 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { accessTokenExpire, refreshTokenExpire } from "./auth.constants";
-import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
-import { ChangePasswordService, LoginService } from "./auth.types";
+import { readableId } from "../../core/utils/utils";
+import { ChangePasswordService, LoginService, SignupService } from "./auth.types";
+import { JwtService } from "./jwt.service";
+import { BcryptService } from "./bcrypt.service";
 
 export default class AuthService {
-  static async signupUser() {}
-  static async loginUser({ username, password }: LoginService) {
-    const userData = await prisma.authorization.findUnique({
-      where: { username: username },
+  static async signupUser({ password, email, name }: SignupService) {
+    const passwordHash = await BcryptService.hashPassword(password);
+    const exist = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (exist) throw new appError("User already exist ", 409, "CONFLICT_ERROR");
+    const data = await prisma.user.create({
+      data: {
+        code: readableId("USR"),
+        name,
+        email,
+        passwordHash,
+        userType: "ADMIN",
+      },
+    });
+    return data;
+  }
+  static async loginUser({ email, password }: LoginService) {
+    const userData = await prisma.user.findUnique({
+      where: { email: email },
+      select: {
+        passwordHash: true,
+        id: true,
+      },
     });
     if (!userData) throw new appError("User not found ", 404, "NOT_FOUND");
-    const sessionId = crypto.randomUUID();
-    const verify = await bcrypt.compare(password, userData.password);
-    // run when password match
-    if (verify) {
-      // we generate token
-
-      if (!env.accessSecret || !env.refreshSecret)
-        throw new appError("auth env not defined", 400, "NOT_DEFINED");
-      // *access token used for accessing api
-      const accessToken = jwt.sign({ id: userData.userId, sessionId }, env.accessSecret, {
-        expiresIn: accessTokenExpire,
-      });
-      // *refresh token used for renew token and put in http cookies
-      const refreshToken = jwt.sign({ id: userData.userId, sessionId }, env.refreshSecret, {
-        expiresIn: refreshTokenExpire,
-      });
-
-      return { accessToken, refreshToken, userData, sessionId };
-    }
-
-    throw new appError("Password or Username is invalid", 401, "INVALID_CREDENTIALS");
+    const verify = await BcryptService.verifyPassword(password, userData.passwordHash);
+    if (!verify) throw new appError("Password or Username is invalid", 401, "INVALID_CREDENTIALS");
+    const accessToken = JwtService.sign({ userId: userData.id, email }, "access");
+    const refreshToken = JwtService.sign({ userId: userData.id, email }, "refresh");
+    return { accessToken, refreshToken, userData };
   }
   static async getRefreshToken(token: string) {
-    // fetch sessionId
-    let sessionId: string;
-    if (!env.refreshSecret) throw new appError("Refresh secret not defined", 400, "SERVER_ERROR");
-    try {
-      const decoded = jwt.verify(token, env.refreshSecret) as {
-        sessionId: string;
-      };
-      sessionId = decoded?.sessionId;
-    } catch {
-      throw new appError("Invalid or expired token", 401, "INVALID_TOKEN");
-    }
+    const decoded = JwtService.verify(token, "refresh");
 
-    jwt.verify(token, env.refreshSecret, (err: jwt.VerifyErrors | null, decoded: unknown) => {
-      if (env.accessSecret && decoded) {
-        const { id } = decoded as {
-          id: number;
-        };
-        const newAccessToken = jwt.sign(
-          {
-            id,
-            sessionId,
-          },
-          env.accessSecret,
-          { expiresIn: "30s" },
-        );
-        return newAccessToken;
-      }
-    });
+    if (!decoded) throw new appError("Invalid or Expire token", 401, "INVALID_TOKEN");
+    const newAccessToken = JwtService.sign(
+      { userId: decoded.userId, email: decoded.email },
+      "access",
+    );
+    return newAccessToken;
   }
   static async changePassword({
     currentPassword,
@@ -73,19 +59,39 @@ export default class AuthService {
   }: ChangePasswordService) {
     if (password !== confirmPassword)
       throw new appError("confirm password do not match try again", 400, "PASSWORD_MATCH_ERROR");
-    const userData = await prisma.authorization.findUnique({
-      where: { userId },
-      select: { password: true },
+    const userData = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { passwordHash: true },
     });
     if (!userData) throw new appError("User do not exist", 404, "NOT_FOUND");
-    const verify = await bcrypt.compare(currentPassword, userData.password);
+    const verify = await bcrypt.compare(currentPassword, userData.passwordHash);
     if (!verify)
       throw new appError("Current password is invalid, try again!", 400, "INVALID_CREDENTIALS");
 
     const hash = await bcrypt.hash(password, 12);
-    const data = await prisma.authorization.update({
-      where: { userId },
-      data: { password: hash, updatedAt: new Date() },
+    const data = await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hash, updatedAt: new Date() },
+    });
+    return data;
+  }
+  static async getMyProfile(userId: string) {
+    const data = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        code: true,
+        userType: true,
+        email: true,
+        role: {
+          select: {
+            name: true,
+            permissions: true,
+          },
+        },
+      },
     });
     return data;
   }

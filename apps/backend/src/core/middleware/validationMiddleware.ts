@@ -56,6 +56,7 @@ export function validationMiddleware({
   });
 }
 function formatZodErrors(zodError: ZodError) {
+  console.log(zodError)
   return zodError.issues.map((issue) => ({
     field: issue.path.join("."),
     message: issue.message,

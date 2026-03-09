@@ -2,12 +2,12 @@ import express from "express";
 
 import { employeeSchema, updateMyDetails } from "./employee.zod";
 
+import { params } from "@repo/schemas/src/global.zod";
 import {
-  processImagesMiddleware,
-  upload,
+    processImagesMiddleware,
+    upload,
 } from "../../core/middleware/processImageUpload.middleware";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { params } from "../../core/zod/global.zod";
 import { authMiddleware } from "../auth/auth.middleware";
 import EmployeeController from "./employee.controller";
 

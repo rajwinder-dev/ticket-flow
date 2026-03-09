@@ -13,6 +13,6 @@
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types", "src", "tests"]
   },
-  "include": ["src/**/*.ts", "tests"],
+  "include": ["src/**/*.ts", "tests", "../../packages/schemas/src/global.zod.ts"],
   "exclude": ["node_modules", "dist", "tests"]
 }

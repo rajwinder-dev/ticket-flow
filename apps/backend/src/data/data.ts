@@ -78,7 +78,7 @@ export const jobTypes = [
   },
 ];
 
-const data2 = {
+export const data2 = {
     "uuid": "123412341234",
     "firstName": "rajwinder",
     "lastName": "singh",

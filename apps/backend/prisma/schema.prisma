@@ -39,7 +39,7 @@ enum TicketStatus {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id               String             @id @unique @db.VarChar(128)
+  id               String             @id @unique @db.VarChar(128) @default(uuid())
   code             String             @unique
   email            String             @unique
   phoneNo          String?            @unique

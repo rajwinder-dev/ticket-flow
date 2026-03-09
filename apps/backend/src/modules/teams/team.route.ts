@@ -1,6 +1,6 @@
+import { params } from "@repo/schemas/src/global.zod";
 import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { params } from "../../core/zod/global.zod";
 import { authMiddleware } from "../auth/auth.middleware";
 import { teamController } from "./team.controller";
 import { teamMemberSchema } from "./team.zod";

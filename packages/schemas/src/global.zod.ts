@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validId } from "../helper/zodHelper";
+import { validId } from "./helper/zodHelper";
 
 export const params = {
   paramsSchema: z

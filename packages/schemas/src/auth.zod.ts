@@ -1,10 +1,21 @@
 import { z } from "zod";
-import { validPassword, validString } from "./helper/zodHelper";
+import { validPassword } from "./helper/zodHelper";
+export const signupInput = {
+  bodySchema: z.object({
+    name: z.string(),
+    email: z.string(),
+    password: z.string(),
+    confirmPassword: z.string()
 
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: "Password do not match",
+    path: ["confirmPassword"]
+  }).strict()
+}
 export const loginInput = {
   bodySchema: z
     .object({
-      username: validString,
+      email: z.email(),
       password: validPassword,
     })
     .strict(),
@@ -15,7 +26,10 @@ export const changePasswordInput = {
       currentPassword: validPassword,
       password: validPassword,
       confirmPassword: validPassword,
-    })
+    }).refine((data) => data.password === data.confirmPassword, {
+    message: "Password do not match",
+    path: ["confirmPassword"]
+  })
     .strict(),
 };
 export const updatePasswordInput = {
@@ -30,3 +44,4 @@ export const updatePasswordInput = {
 export type ChangePasswordInput = z.infer<typeof changePasswordInput.bodySchema>;
 export type UpdatePasswordInput = z.infer<typeof updatePasswordInput.bodySchema>;
 export type LoginInput = z.infer<typeof loginInput.bodySchema>;
+export type SignupInput = z.infer<typeof signupInput.bodySchema>

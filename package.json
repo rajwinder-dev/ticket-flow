@@ -9,6 +9,11 @@
     "test": "pnpm -r test",
     "push": "pnpm --filter backend db:push",
     "clear": "pnpm --filter backend db:clear",
-    "seed": "pnpm --filter backend db:seed"
+    "seed": "pnpm --filter backend db:seed",
+    "migrate": "pnpm --filter backend db:migrate"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }
