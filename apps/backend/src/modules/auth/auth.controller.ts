@@ -1,14 +1,10 @@
 import { ChangePasswordInput, LoginInput, ResetPassword, SignupInput } from "@repo/schemas";
-import { User } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { clearCookie, responseCookie } from "../../core/utils/cookies";
-import HandleFactory from "../../core/utils/handlerFactory";
-import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
 import AuthService from "./auth.service";
 export class authController {
-  private static handler = new HandleFactory<User>(prisma.user);
   static signup = catchAsync(async (req, res) => {
     const input = req.body as SignupInput;
     const data = await AuthService.signupUser(input);
@@ -39,20 +35,17 @@ export class authController {
   static changePassword = catchAsync(async (req, res) => {
     const input = req.body as ChangePasswordInput;
     const userId = req.user.id;
-    await AuthService.changePassword({ ...input, userId });
+    await AuthService.changePassword(userId, input);
     clearCookie(res, "refreshToken");
     response(res, { message: "password changed successfully" }, 200);
   });
-  static updatePassword = this.handler.updateOne({
-    exclude: ["id"],
-    params: "userId",
-  });
+
   static getMyProfile = catchAsync(async (req, res) => {
     const data = await AuthService.getMyProfile(req.user.id);
     response(res, data);
   });
   static forgetPassword = catchAsync(async (req, res) => {
-    const email = req.params.email as string
+    const email = req.params.email as string;
     const data = await AuthService.forgetPassword(email);
     console.log(data);
     response(res, { message: "Reset Link Send successfully" });

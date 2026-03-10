@@ -1,12 +1,6 @@
 import express from "express";
 
-import {
-  changePasswordInput,
-  loginInput,
-  resetPasswordInput,
-  signupInput,
-  updatePasswordInput,
-} from "@repo/schemas";
+import { changePasswordInput, loginInput, resetPasswordInput, signupInput } from "@repo/schemas";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authController } from "./auth.controller";
 import { authMiddleware } from "./auth.middleware";
@@ -28,9 +22,5 @@ authRouter
 authRouter.route("/logout").post(authController.logout);
 
 authRouter.use(authMiddleware.restrictRote("admin"));
-
-authRouter
-  .route("/update-password/:id")
-  .patch(validationMiddleware(updatePasswordInput), authController.updatePassword);
 
 export default authRouter;

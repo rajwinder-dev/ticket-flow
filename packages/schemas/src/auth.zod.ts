@@ -3,7 +3,7 @@ import { validPassword } from "./helper/zodHelper";
 export const signupInput = {
   bodySchema: z
     .object({
-      name: z.string(),
+      username: z.string(),
       email: z.string(),
       password: z.string(),
       confirmPassword: z.string(),

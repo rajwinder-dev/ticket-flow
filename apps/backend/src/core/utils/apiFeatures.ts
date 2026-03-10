@@ -1,4 +1,5 @@
-import { Request } from "express";
+import { ParsedQs } from "qs";
+
 type SortOrder = "asc" | "desc";
 
 interface PrismaFilterOptions {
@@ -11,17 +12,15 @@ interface PrismaFilterOptions {
 }
 
 export class APIFeatures {
-  private req: Request;
-  private queryString: typeof this.req.query;
+  private queryString: ParsedQs;
   filterOptions: PrismaFilterOptions;
   limit: number;
   offset: number;
   ignore?: { ignore: string[] };
-  constructor(req: Request, ignore?: { ignore: string[] }) {
-    this.req = req;
+  constructor(queryString: ParsedQs, ignore?: { ignore: string[] }) {
     this.ignore = ignore;
     this.filterOptions = {};
-    this.queryString = req.query;
+    this.queryString = queryString;
     this.limit = 10;
     this.offset = 0;
     this.ignore?.ignore.map((item) => {
@@ -57,7 +56,7 @@ export class APIFeatures {
         mode: "insensitive",
       };
       delete selectedFilters.search;
-      delete selectedFilters.searchBy
+      delete selectedFilters.searchBy;
     }
     this.filterOptions = { ...this.filterOptions, where: selectedFilters };
     return this;

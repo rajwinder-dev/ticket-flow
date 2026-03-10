@@ -39,48 +39,47 @@ enum TicketStatus {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id                  String             @id @unique @default(uuid()) @db.VarChar(128)
-  code                String             @unique
-  email               String             @unique
-  phoneNo             String?            @unique
-  passwordHash        String             @unique
+  id                  String    @id @unique @default(uuid()) @db.VarChar(128)
+  code                String    @unique
+  email               String    @unique
+  phoneNo             String?   @unique
+  passwordHash        String    @unique
   passwordChangeAt    DateTime?
-  passwordResetToken  String?            @unique
+  passwordResetToken  String?   @unique
   passwordResetExpire DateTime?
   userType            UserType?
   avatar              String?
-  name                String?
+  username            String?
   location            String?
-  startDate           DateTime?
-  endDate             DateTime?
-  active              Boolean            @default(true)
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  roleId              String?            @db.Uuid
-  managerId           String?            @db.VarChar(128)
-  createdBy           String?            @db.VarChar(128)
-  role                Role?              @relation("UserRole", fields: [roleId], references: [id])
-  manager             User?              @relation("UserManager", fields: [managerId], references: [id])
-  subordinates        User[]             @relation("UserManager")
-  creator             User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
-  createdUsers        User[]             @relation("UserCreatedBy")
-  activityLogs        ActivityLog[]
-  sessions            Session[]
-  assignedProjects    AssignedProject[]
-  managedProjects     Project[]          @relation("ProjectManager")
-  createdRoles        Role[]             @relation("RoleCreatedBy")
-  ticketsAssigned     Ticket[]           @relation("TicketAssignedTo")
-  ticketsCreated      Ticket[]           @relation("TicketAssignedBy")
-  ticketComments      TicketComment[]
-  fromTransitions     TicketTransition[] @relation("TransitionFromEmployee")
-  toTransitions       TicketTransition[] @relation("TransitionToEmployee")
-  customersCreated    Customer[]         @relation("CustomerCreator")
-  notificationFrom    Notification[]     @relation("NotificationFrom")
-  notificationTo      Notification[]     @relation("NotificationTo")
-  chatRoomsCreated    ChatRoom[]         @relation("ChatCreatedBy")
-  participants        Participant[]
-  messages            Message[]
-  organization        Organization[]
+  active           Boolean            @default(true)
+  isOnboarded      Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  roleId           String?            @db.Uuid
+  managerId        String?            @db.VarChar(128)
+  createdBy        String?            @db.VarChar(128)
+  role             Role?              @relation("UserRole", fields: [roleId], references: [id])
+  manager          User?              @relation("UserManager", fields: [managerId], references: [id])
+  subordinates     User[]             @relation("UserManager")
+  creator          User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdUsers     User[]             @relation("UserCreatedBy")
+  activityLogs     ActivityLog[]
+  sessions         Session[]
+  assignedProjects AssignedProject[]
+  managedProjects  Project[]          @relation("ProjectManager")
+  createdRoles     Role[]             @relation("RoleCreatedBy")
+  ticketsAssigned  Ticket[]           @relation("TicketAssignedTo")
+  ticketsCreated   Ticket[]           @relation("TicketAssignedBy")
+  ticketComments   TicketComment[]
+  fromTransitions  TicketTransition[] @relation("TransitionFromEmployee")
+  toTransitions    TicketTransition[] @relation("TransitionToEmployee")
+  customersCreated Customer[]         @relation("CustomerCreator")
+  notificationFrom Notification[]     @relation("NotificationFrom")
+  notificationTo   Notification[]     @relation("NotificationTo")
+  chatRoomsCreated ChatRoom[]         @relation("ChatCreatedBy")
+  participants     Participant[]
+  messages         Message[]
+  organization     Organization[]
 
   @@index([email, phoneNo, code])
 }
@@ -88,7 +87,8 @@ model User {
 model Organization {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
-  description String
+  description String?
+  teamSize    Int?
   code        String   @unique
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
