@@ -1,11 +1,13 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import { addMinutes } from "date-fns";
+import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
 import { ChangePasswordService, LoginService, SignupService } from "./auth.types";
-import { JwtService } from "./jwt.service";
 import { BcryptService } from "./bcrypt.service";
-
+import { JwtService } from "./jwt.service";
 export default class AuthService {
   static async signupUser({ password, email, name }: SignupService) {
     const passwordHash = await BcryptService.hashPassword(password);
@@ -51,14 +53,7 @@ export default class AuthService {
     );
     return newAccessToken;
   }
-  static async changePassword({
-    currentPassword,
-    password,
-    confirmPassword,
-    userId,
-  }: ChangePasswordService) {
-    if (password !== confirmPassword)
-      throw new appError("confirm password do not match try again", 400, "PASSWORD_MATCH_ERROR");
+  static async changePassword({ currentPassword, password, userId }: ChangePasswordService) {
     const userData = await prisma.user.findUnique({
       where: { id: userId },
       select: { passwordHash: true },
@@ -66,12 +61,12 @@ export default class AuthService {
     if (!userData) throw new appError("User do not exist", 404, "NOT_FOUND");
     const verify = await bcrypt.compare(currentPassword, userData.passwordHash);
     if (!verify)
-      throw new appError("Current password is invalid, try again!", 400, "INVALID_CREDENTIALS");
+      throw new appError("Current password invalid, try again!", 400, "INVALID_CREDENTIALS");
 
-    const hash = await bcrypt.hash(password, 12);
+    const hash = await BcryptService.hashPassword(password);
     const data = await prisma.user.update({
       where: { id: userId },
-      data: { passwordHash: hash, updatedAt: new Date() },
+      data: { passwordHash: hash, passwordChangeAt: new Date() },
     });
     return data;
   }
@@ -91,6 +86,60 @@ export default class AuthService {
             permissions: true,
           },
         },
+      },
+    });
+    return data;
+  }
+  static async forgetPassword(email: string) {
+    const data = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!data) throw new appError("Email not Exist", 404, "NOT_FOUND");
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    const storeToken = await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        passwordResetToken,
+        passwordResetExpire: addMinutes(new Date(), 10),
+      },
+    });
+    const forgetURl = `${env.coreURL}/reset-password/${storeToken.passwordResetToken}`;
+    return forgetURl;
+  }
+  static async resetPassword({
+    passwordResetToken,
+    password,
+  }: {
+    passwordResetToken: string;
+    password: string;
+  }) {
+    const currentDate = new Date();
+    const user = await prisma.user.findFirst({
+      where: {
+        passwordResetToken,
+        passwordResetExpire: {
+          gt: currentDate,
+        },
+      },
+      select: {
+        passwordResetExpire: true,
+        id: true,
+      },
+    });
+    if (!user) throw new appError("Token Invalid or Expire", 400, "NOT_FOUND");
+    const passwordHash = await BcryptService.hashPassword(password);
+    const data = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        passwordHash,
+        passwordChangeAt: new Date(),
+        passwordResetExpire: null,
+        passwordResetToken: null,
       },
     });
     return data;

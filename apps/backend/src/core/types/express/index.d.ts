@@ -3,7 +3,7 @@ import { Request } from "express";
 declare global {
   namespace Express {
     interface Request {
-      user: { role?: string; id: string, sessionId?:string };
+      user: { role?: string; id: string, sessionId?:string, permissions?: Record<string, string[]> };
       filePaths?: string[];
     }
   }

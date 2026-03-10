@@ -16,6 +16,7 @@ import { sanitizeMiddleware } from "./core/middleware/sanitizeMiddleware";
 import authRouter from "./modules/auth/auth.route";
 
 import path from "path";
+import { env } from "./config/env";
 
 export const app = express();
 
@@ -34,7 +35,7 @@ if (!devMode) app.use(limiter);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: env.coreURL,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   }),

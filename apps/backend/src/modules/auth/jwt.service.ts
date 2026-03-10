@@ -8,6 +8,10 @@ export interface JwtPayload {
   email: string;
   iat?: number;
 }
+export interface jwtOutput extends JwtPayload {
+  iat: number;
+  exp: number
+}
 const config = {
   access: {
     secret: env.accessSecret!,
@@ -30,13 +34,13 @@ export class JwtService {
   static verify(token: string, type: TokenType) {
     const conf = config[type];
     try {
-      return jwt.verify(token, conf.secret) as JwtPayload;
+      return jwt.verify(token, conf.secret) as jwtOutput;
     } catch {
       return false;
     }
   }
 
   static decode(token: string) {
-    return jwt.decode(token);
+    return jwt.decode(token) as jwtOutput;
   }
 }

@@ -1,17 +1,19 @@
 import { z } from "zod";
 import { validPassword } from "./helper/zodHelper";
 export const signupInput = {
-  bodySchema: z.object({
-    name: z.string(),
-    email: z.string(),
-    password: z.string(),
-    confirmPassword: z.string()
-
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
-    path: ["confirmPassword"]
-  }).strict()
-}
+  bodySchema: z
+    .object({
+      name: z.string(),
+      email: z.string(),
+      password: z.string(),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Password do not match",
+      path: ["confirmPassword"],
+    })
+    .strict(),
+};
 export const loginInput = {
   bodySchema: z
     .object({
@@ -26,10 +28,11 @@ export const changePasswordInput = {
       currentPassword: validPassword,
       password: validPassword,
       confirmPassword: validPassword,
-    }).refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
-    path: ["confirmPassword"]
-  })
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Password do not match",
+      path: ["confirmPassword"],
+    })
     .strict(),
 };
 export const updatePasswordInput = {
@@ -41,7 +44,19 @@ export const updatePasswordInput = {
     })
     .strict(),
 };
+export const resetPasswordInput = {
+  bodySchema: z
+    .object({
+      password: z.string(),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Password do not match",
+      path: ["confirmPassword"],
+    }),
+};
+export type ResetPassword = z.infer<typeof resetPasswordInput.bodySchema>
 export type ChangePasswordInput = z.infer<typeof changePasswordInput.bodySchema>;
 export type UpdatePasswordInput = z.infer<typeof updatePasswordInput.bodySchema>;
 export type LoginInput = z.infer<typeof loginInput.bodySchema>;
-export type SignupInput = z.infer<typeof signupInput.bodySchema>
+export type SignupInput = z.infer<typeof signupInput.bodySchema>;

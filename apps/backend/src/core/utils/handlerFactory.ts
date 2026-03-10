@@ -45,7 +45,7 @@ export default class HandleFactory<Data> {
       let filterOptions: Record<string, any> = {};
       let property;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.userId };
+        property = { [options?.useField || "id"]: req.user.id };
       } else if (req.params.id) {
         property = { [options?.params || "id"]: Number(req.params.id) };
       }
@@ -111,7 +111,7 @@ export default class HandleFactory<Data> {
       }
       if (property && isNaN(Object.values(property)[0])) property = undefined;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.userId };
+        property = { [options?.useField || "id"]: req.user.id };
       } else if (req.params.id) {
         property = { [options?.params || "id"]: Number(req.params.id) };
         const verifyExist = await this.Model.findFirst({
@@ -141,7 +141,7 @@ export default class HandleFactory<Data> {
     });
 
   createOne = (options?: types<Data>) =>
-    catchAsync(async (req, res, _next) => {
+    catchAsync(async (req, res) => {
       // eslint-disable-next-line prefer-const
       let input = { ...req.body };
       if (options) {
@@ -152,7 +152,7 @@ export default class HandleFactory<Data> {
           exclude,
         } = options;
         if (req.params.id) input[params] = Number(req.params.id);
-        if (protect) input[useField] = req.user.userId;
+        if (protect) input[useField] = req.user.id;
         if (exclude) this.restrictFieldsToChange(input, exclude);
       }
       //  handle data
@@ -161,8 +161,8 @@ export default class HandleFactory<Data> {
       });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.userId),
-          data?.userId || req.user.userId,
+          Number(req.user.id),
+          data?.userId || req.user.id,
           options?.notify,
           options?.broadCast
         );
@@ -170,12 +170,12 @@ export default class HandleFactory<Data> {
     });
 
   updateOne = (options?: types<Data>) =>
-    catchAsync(async (req, res, _next) => {
+    catchAsync(async (req, res) => {
       const input = req.body;
       if (options?.exclude) this.restrictFieldsToChange(input, options.exclude);
       let property: Record<string, any>;
       if (options?.protect) {
-        property = { [options?.useField || "id"]: req.user.userId };
+        property = { [options?.useField || "id"]: req.user.id };
       } else {
         property = { [options?.params || "id"]: Number(req.params.id) };
       }
@@ -186,8 +186,8 @@ export default class HandleFactory<Data> {
       });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.userId),
-          data?.userId || req.user.userId,
+          Number(req.user.id),
+          data?.userId || req.user.id,
           options?.notify,
           options?.broadCast
         );
@@ -217,8 +217,8 @@ export default class HandleFactory<Data> {
 
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.userId),
-          data?.userId || req.user.userId,
+          Number(req.user.id),
+          data?.userId || req.user.id,
           options?.notify,
           options?.broadCast
         );
@@ -226,13 +226,13 @@ export default class HandleFactory<Data> {
     });
 
   removeOne = (options?: types<Data>) =>
-    catchAsync(async (req, res, _next) => {
+    catchAsync(async (req, res) => {
       const property = { [options?.params || "id"]: Number(req.params.id) };
       const data = await this.Model.delete({ where: property });
       if (options?.notify)
         notificationServer.sendNotification(
-          Number(req.user.userId),
-          data?.userId || req.user.userId,
+          Number(req.user.id),
+          data?.userId || req.user.id,
           options?.notify,
           options?.broadCast
         );

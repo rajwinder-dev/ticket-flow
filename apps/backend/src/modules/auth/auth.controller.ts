@@ -1,12 +1,12 @@
-import { ChangePasswordInput, LoginInput, SignupInput } from "@repo/schemas";
+import { ChangePasswordInput, LoginInput, ResetPassword, SignupInput } from "@repo/schemas";
 import { User } from "../../../generated/prisma";
+import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { clearCookie, responseCookie } from "../../core/utils/cookies";
 import HandleFactory from "../../core/utils/handlerFactory";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
 import AuthService from "./auth.service";
-import { appError } from "../../core/utils/appError";
 export class authController {
   private static handler = new HandleFactory<User>(prisma.user);
   static signup = catchAsync(async (req, res) => {
@@ -32,7 +32,7 @@ export class authController {
 
   static refreshToken = catchAsync(async (req, res, next) => {
     const token = req.cookies.refreshToken;
-    if(!token) return next(new appError("Refresh token not found", 404, "NOT_FOUND"))
+    if (!token) return next(new appError("Refresh token not found", 404, "NOT_FOUND"));
     const newAccessToken = await AuthService.getRefreshToken(token);
     return res.json({ accessToken: newAccessToken });
   });
@@ -50,5 +50,18 @@ export class authController {
   static getMyProfile = catchAsync(async (req, res) => {
     const data = await AuthService.getMyProfile(req.user.id);
     response(res, data);
+  });
+  static forgetPassword = catchAsync(async (req, res) => {
+    const email = req.params.email as string
+    const data = await AuthService.forgetPassword(email);
+    console.log(data);
+    response(res, { message: "Reset Link Send successfully" });
+  });
+  static resetPassword = catchAsync(async (req, res) => {
+    const token = req.params.token as string;
+    const { password } = req.body as ResetPassword;
+    await AuthService.resetPassword({ passwordResetToken: token, password });
+
+    response(res, { message: "Password change successfully" });
   });
 }
