@@ -10,9 +10,7 @@ export class authMiddleware {
 
     if (!token?.trim())
       return next(new appError("No token found, please Login to get access", 401, "INVALID_TOKEN"));
-    console.log(token)
     const decoded = JwtService.verify(token, "access");
-
     if (!decoded) return next(new appError("Invalid or Expire token", 401, "INVALID_TOKEN"));
 
     const userdata = await prisma.user.findUnique({
@@ -21,7 +19,7 @@ export class authMiddleware {
         role: true,
       },
     });
-    if (!userdata) return next(new appError("User not found", 401));
+    if (!userdata) return next(new appError("User not found", 401, "NOT_FOUND"));
 
     if (userdata?.passwordChangeAt) {
       const passwordChange = Math.floor(new Date(userdata?.passwordChangeAt).getTime() / 1000);

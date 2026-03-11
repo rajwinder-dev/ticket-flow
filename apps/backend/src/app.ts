@@ -51,6 +51,7 @@ if (devMode) app.use(devMiddleware);
 app.get("/", (_req, res) => {
   res.status(200).json({ status: "success" });
 });
+
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organization", organizationRouter);
@@ -64,7 +65,8 @@ app.use("/api/v1/user", userRouter);
 // app.use("/api/v1/chat", chatRouter);
 
 app.all(/(.*)/, (req, res, next) => {
-  next(new appError(`Can't find ${req.originalUrl} on this server!`, 404, "INVALID_ROUTE"));
+
+  return next(new appError(`Can't find ${req.originalUrl} on this server!`, 404, "INVALID_ROUTE"));
 });
 
 app.use(globalHandler);

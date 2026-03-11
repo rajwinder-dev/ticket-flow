@@ -15,7 +15,7 @@ export class authController {
     responseCookie(res, "refreshToken", refreshToken);
     response(res, { accessToken, userId: userData.id }, 200);
   });
-  static login = catchAsync(async (req, res) => {
+  static login = catchAsync(async (req, res, _next) => {
     const input = req.body as LoginInput;
     const { refreshToken, accessToken, userData } = await AuthService.loginUser(input);
     responseCookie(res, "refreshToken", refreshToken);
@@ -33,7 +33,7 @@ export class authController {
     const accessToken = await AuthService.getRefreshToken(token);
     return response(res, { accessToken });
   });
-  static changePassword = catchAsync(async (req, res) => {
+  static changePassword = catchAsync(async (req, res, _next) => {
     const input = req.body as ChangePasswordInput;
     const userId = req.user.id;
     await AuthService.changePassword(userId, input);
@@ -41,17 +41,17 @@ export class authController {
     response(res, { message: "password changed successfully" }, 200);
   });
 
-  static getMyProfile = catchAsync(async (req, res) => {
+  static getMyProfile = catchAsync(async (req, res, _next) => {
     const data = await AuthService.getMyProfile(req.user.id);
     response(res, data);
   });
-  static forgetPassword = catchAsync(async (req, res) => {
+  static forgetPassword = catchAsync(async (req, res, _next) => {
     const email = req.params.email as string;
     const data = await AuthService.forgetPassword(email);
     console.log(data);
     response(res, { message: "Reset Link Send successfully" });
   });
-  static resetPassword = catchAsync(async (req, res) => {
+  static resetPassword = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
     const { password } = req.body as ResetPassword;
     await AuthService.resetPassword({ passwordResetToken: token, password });

@@ -10,7 +10,7 @@ export class appError extends Error {
     this.code = code || "UNKNOWN"
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.message= message
-    this.isOperational = true;
+    this.isOperational = code ? false : true;
     if(data) {
       this.data = data
     }

@@ -1,10 +1,10 @@
-import express from "express";
+import { Router } from "express";
 
 import { changePasswordInput, loginInput, resetPasswordInput, signupInput } from "@repo/schemas";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authController } from "./auth.controller";
 import { authMiddleware } from "./auth.middleware";
-const authRouter = express.Router();
+const authRouter = Router();
 authRouter.route("/signUp").post(validationMiddleware(signupInput), authController.signup);
 authRouter.route("/login").post(validationMiddleware(loginInput), authController.login);
 authRouter.route("/refresh-token").get(authController.refreshToken);
