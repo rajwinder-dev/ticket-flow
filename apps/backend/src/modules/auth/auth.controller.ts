@@ -28,9 +28,10 @@ export class authController {
 
   static refreshToken = catchAsync(async (req, res, next) => {
     const token = req.cookies.refreshToken;
+    console.log(token);
     if (!token) return next(new appError("Refresh token not found", 404, "NOT_FOUND"));
-    const newAccessToken = await AuthService.getRefreshToken(token);
-    return res.json({ accessToken: newAccessToken });
+    const accessToken = await AuthService.getRefreshToken(token);
+    return response(res, { accessToken });
   });
   static changePassword = catchAsync(async (req, res) => {
     const input = req.body as ChangePasswordInput;

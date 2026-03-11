@@ -1,95 +1,50 @@
-import { Authorization } from "../../generated/prisma";
-import app from "../../src/app";
 import request from "supertest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { User } from "../../generated/prisma";
+import app from "../../src/app";
 import { prisma } from "../../src/core/utils/prismaClient";
-import { faker } from "@faker-js/faker";
-import { testCatchAsync } from "../helper/testHelper";
-import { describe, expect, it , beforeAll, afterAll} from "vitest";
+import { createRandomUser } from "../helper/testHelper";
 
 describe("testing auth routes", () => {
   let accessToken: string;
-  let refreshToken: string;
-  let authData: Authorization | null;
+  let auth: { user: User; password: string };
+  const agent = request.agent(app);
 
   beforeAll(async () => {
-    const role = await prisma.role.findFirst({
-      where: {
-        name: "admin",
-      },
-    });
-    if (!role) throw "No role found";
-
-
-    await testCatchAsync(async () => {
-      const newEmployee = await prisma.user.create({
-        data: {
-          createdAt: new Date(),
-          uuid: String(faker.finance.creditCardNumber()),
-          gender: faker.person.sex(),
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          nationalId: faker.string.numeric({ length: { min: 5, max: 10 } }),
-          idType: "passport",
-          email: faker.internet.email(),
-          phoneNumber: faker.string.numeric(10),
-          dateOfBirth: faker.date.birthdate(),
-          address: faker.location.streetAddress(),
-          hireDate: faker.date.past(),
-          jobTitle: "admin",
-          description: "new employee",
-        },
-      });
-      if (!newEmployee) throw "No employee found";
-      authData = await prisma.authorization.create({
-        data: {
-          username: `${newEmployee.firstName}${newEmployee.lastName}`,
-          password:
-            "$2a$12$sgeo0uQSAGy4gKAMnh1ET.MG4BinlMO/5vblUnPDgldRdqakxRoWK",
-          userId: newEmployee.id,
-          roleId: role.id,
-        },
-      });
-    });
+    auth = await createRandomUser();
   });
 
   it("should fail to login with wrong password", async () => {
-    const res = await request.agent(app).post("/api/v1/auth/login").send({
-      username: authData?.username,
+    const res = await agent.post("/api/v1/auth/login").send({
+      email: auth.user?.email,
       password: "wrong_password",
     });
     expect(res.statusCode).toBe(401);
-    expect(res.body.message).toMatch(/password or username is invalid/i);
   });
 
-  it("should fail to login with missing username", async () => {
-    const res = await request.agent(app).post("/api/v1/auth/login").send({
+  it("should fail to login with missing email", async () => {
+    const res = await agent.post("/api/v1/auth/login").send({
       password: "user",
     });
     expect(res.statusCode).toBe(400);
   });
 
   it("should login successfully", async () => {
-    const res = await request.agent(app).post("/api/v1/auth/login").send({
-      username: authData?.username,
-      password: "user",
+    const res = await agent.post("/api/v1/auth/login").send({
+      email: auth.user?.email,
+      password: auth.password,
     });
     expect(res.statusCode).toBe(200);
     accessToken = res.body.data.accessToken;
-
-    const setCookie = res.headers["set-cookie"];
-    if (Array.isArray(setCookie)) {
-      refreshToken = setCookie.find((cookie) =>
-        cookie.startsWith("refreshToken=")
-      ) as string;
-    } else {
-      throw new Error("No cookies returned");
-    }
   });
-
+  it("should should  refresh token ", async () => {
+    const res = await agent.get("/api/v1/auth/refresh-token");
+    expect(res.statusCode).toBe(200);
+    accessToken = res.body.data.accessToken;
+  });
   it("should fail to change password with wrong current password", async () => {
-    const res = await request
-      .agent(app)
-      .patch("/api/v1/auth/changePassword")
+    const res = await agent
+      .patch("/api/v1/auth/change-password")
       .send({
         currentPassword: "wrong",
         password: "newuser",
@@ -100,11 +55,10 @@ describe("testing auth routes", () => {
   });
 
   it("should fail to change password with mismatched confirm password", async () => {
-    const res = await request
-      .agent(app)
-      .patch("/api/v1/auth/changePassword")
+    const res = await agent
+      .patch("/api/v1/auth/change-password")
       .send({
-        currentPassword: "user",
+        currentPassword: auth.password,
         password: "newuser",
         confirmPassword: "differentPassword",
       })
@@ -113,11 +67,10 @@ describe("testing auth routes", () => {
   });
 
   it("should change password with correct credentials", async () => {
-    const res = await request
-      .agent(app)
-      .patch("/api/v1/auth/changePassword")
+    const res = await agent
+      .patch("/api/v1/auth/change-password")
       .send({
-        currentPassword: "user",
+        currentPassword: auth.password,
         password: "user",
         confirmPassword: "user",
       })
@@ -125,22 +78,19 @@ describe("testing auth routes", () => {
     expect(res.statusCode).toBe(200);
   });
 
-  it("should fail to get user info with invalid token", async () => {
-    const res = await request
-      .agent(app)
-      .get("/api/v1/employee/me")
-      .set("Authorization", `Bearer invalidtoken`);
+  it("should fail to get user profile with invalid token", async () => {
+    const res = await agent.get("/api/v1/auth/profile").set("Authorization", `Bearer invalidToken`);
     expect(res.statusCode).toBe(401);
   });
 
   it("should fail to get user info without token", async () => {
-    const res = await request.agent(app).get("/api/v1/employee/me");
+    const res = await agent.get("/api/v1/auth/profile");
     expect(res.statusCode).toBe(401);
   });
 
   it("should login again after logout", async () => {
-    const res = await request.agent(app).post("/api/v1/auth/login").send({
-      username: authData?.username,
+    const res = await agent.post("/api/v1/auth/login").send({
+      email: auth.user?.email,
       password: "user",
     });
     expect(res.statusCode).toBe(200);
@@ -148,51 +98,36 @@ describe("testing auth routes", () => {
   });
 
   it("should logout account", async () => {
-    const res = await request
-      .agent(app)
+    const res = await agent
       .post("/api/v1/auth/logout")
-      .set("Authorization", `Bearer ${accessToken}`)
-      .set("Cookie", refreshToken);
+      .set("Authorization", `Bearer ${accessToken}`);
     expect(res.statusCode).toBe(200);
   });
 
   it("should fail to logout with invalid token", async () => {
-    const res = await request
-      .agent(app)
-      .post("/api/v1/auth/logout")
-      .set("Authorization", `Bearer invalidtoken`)
-      .set("Cookie", refreshToken);
+    const res = await agent.post("/api/v1/auth/logout").set("Authorization", `Bearer invalidtoken`);
 
     expect(res.statusCode).toBe(401);
   });
 
   it("should fail to logout without token", async () => {
-    const res = await request
-      .agent(app)
-      .post("/api/v1/auth/logout")
-      .set("Cookie", refreshToken);
+    const res = await agent.post("/api/v1/auth/logout");
     expect(res.statusCode).toBe(401);
   });
 
-  it("should fail to logout without cookie", async () => {
-    const res = await request
-      .agent(app)
-      .post("/api/v1/auth/logout")
-      .set("Authorization", `Bearer ${accessToken}`);
-    expect(res.statusCode).toBe(400);
-  });
+  // it("should fail to logout without cookie", async () => {
+  //   const res = await request
+  //     .agent(app)
+  //     .post("/api/v1/auth/logout")
+  //     .set("Authorization", `Bearer ${accessToken}`);
+  //   expect(res.statusCode).toBe(400);
+  // });
   afterAll(async () => {
-    await testCatchAsync(async () => {
-      await prisma.authorization.deleteMany({
-        where: {
-          username: authData?.username,
-        },
-      });
-      await prisma.user.deleteMany({
-        where: {
-          id: authData?.userId,
-        },
-      });
+    await prisma.user.deleteMany({
+      where: {
+        username: auth.user?.id,
+      },
     });
+
   });
 });

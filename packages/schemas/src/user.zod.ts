@@ -4,7 +4,6 @@ export const onboardUserInput = {
   bodySchema: z
     .object({
       user: z.object({
-        username: z.string(),
         location: z.string().optional(),
       }),
       organization: z.object({

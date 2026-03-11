@@ -1,20 +1,21 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
-import { appError } from "./core/utils/appError";
-import { globalHandler } from "./core/utils/globalHandler";
+import path from "path";
 import { devMode } from "./config/appConfig";
-import cookieParser from "cookie-parser";
+import { env } from "./config/env";
 import { devMiddleware } from "./core/middleware/devMiddleware";
 import { sanitizeMiddleware } from "./core/middleware/sanitizeMiddleware";
-import path from "path";
-import { env } from "./config/env";
+import { appError } from "./core/utils/appError";
+import { globalHandler } from "./core/utils/globalHandler";
 
 import authRouter from "./modules/auth/auth.route";
 import organizationRouter from "./modules/organizations/organization.routes";
+import userRouter from "./modules/user/user.routes";
 
 export const app = express();
 
@@ -53,6 +54,7 @@ app.get("/", (_req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organization", organizationRouter);
+app.use("/api/v1/user", userRouter);
 // app.use("/api/v1/employee", employeeRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
 // app.use("/api/v1/role", roleRouter);
