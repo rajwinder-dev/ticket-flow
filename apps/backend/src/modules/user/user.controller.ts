@@ -7,6 +7,6 @@ export class UserController {
   static onboardUser = catchAsync(async (req, res, _next) => {
     const input = req.body as OnBoardUserInput
     const data = await UserService.onboardUser(req.user.id, input);
-    response(res, data, 200);
+    response(res, data, 201);
   });
 }

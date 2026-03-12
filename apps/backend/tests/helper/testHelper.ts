@@ -4,7 +4,7 @@ import { readableId } from "../../src/core/utils/utils";
 import { BcryptService } from "../../src/modules/auth/bcrypt.service";
 
 export async function createRandomUser() {
-  const password = faker.string.alpha({ length: { max: 20, min: 10 } });
+  const password = faker.string.alpha({ length: { max: 20, min: 18 } });
   const passwordHash = await BcryptService.hashPassword(password);
   const data = await prisma.user.create({
     data: {

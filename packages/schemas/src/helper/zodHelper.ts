@@ -41,4 +41,4 @@ export const validPhoneNo = z
 export const validPassword = z
   .string()
   .min(4, "Password must be at least 4 characters")
-  .max(18, "Password must be at most 18 characters");
+  .max(20, "Password must be at most 18 characters");

@@ -1,9 +1,8 @@
 import { ErrorRequestHandler } from "express";
-import { devMode } from "../../config/appConfig";
 import { appError } from "./appError";
 import { deleteUploadedFilesLocal } from "./utils";
 export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
-  if (devMode) console.error(error);
+  console.error(error);
   const files = req.files as Express.Multer.File[];
   if (files) {
     const paths = files.map((file: Express.Multer.File) => file.path);

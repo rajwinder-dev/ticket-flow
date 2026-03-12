@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParsedQs } from "qs";
 import { APIFeatures } from "./apiFeatures";
-interface QueryOptions {
-  select?: Record<string, boolean>;
+interface QueryOptions<T> {
+  select?: Partial<Record<keyof T, boolean>>;
   include?: Record<string, unknown>;
-  where?: Record<string, unknown>;
+  where?: Partial<Record<keyof T, unknown>>;
 }
 interface GetMany<T> {
   data: T;
@@ -22,7 +22,7 @@ export default class HandleFactory<T> {
   /**
    * Get many records with filtering, sorting, and pagination.
    */
-  async getAll(query: ParsedQs, options: QueryOptions = {}): Promise<GetMany<T>> {
+  async getAll(query: ParsedQs, options: QueryOptions<T> = {}): Promise<GetMany<T>> {
     const features = new APIFeatures(query).filter().sort().limitFields().pagination();
 
     const { filterOptions, limit, offset } = features;
@@ -50,7 +50,7 @@ export default class HandleFactory<T> {
       },
     };
   }
-  async getOne(id: string, options: QueryOptions = {}): Promise<T> {
+  async getOne(id: string, options: QueryOptions<T> = {}): Promise<T> {
     const data = await this.model.findUnique({
       where: { id, ...options.where },
       include: options.include,
@@ -59,7 +59,7 @@ export default class HandleFactory<T> {
 
     return data;
   }
-  async create(payload: Partial<T>): Promise<T> {
+  async create(payload: T): Promise<T> {
     return await this.model.create({
       data: payload,
     });
