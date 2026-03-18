@@ -3,10 +3,14 @@ import { Prisma } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import HandleFactory from "../../core/utils/handlerFactory";
 import { prisma } from "../../core/utils/prismaClient";
-import { readableId } from "../../core/utils/utils";
+import { OrganizationService } from "../organizations/organization.service";
 
 export class UserService {
   static userHandler = new HandleFactory<Prisma.UserUncheckedCreateInput>(prisma.user);
+  static roleHandler = new HandleFactory<Prisma.RoleUncheckedCreateInput>(prisma.role);
+  static memberShipHandler = new HandleFactory<Prisma.MembershipUncheckedCreateInput>(
+    prisma.membership,
+  );
   static organizationHandler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,
   );
@@ -17,13 +21,7 @@ export class UserService {
       },
     });
     if (check.isOnboarded) throw new appError("User already onboarded", 409, "CONFLICT_ERROR");
-
-    const organization = await this.organizationHandler.create({
-      createdBy: userId,
-      ...data.organization,
-      code: readableId("ORG"),
-    });
-    const user = await this.userHandler.update(userId, { ...data.user, isOnboarded: true });
-    return { user, organization };
+    const output = await OrganizationService.create(userId, data.organization);
+    return output;
   };
 }

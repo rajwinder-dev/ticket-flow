@@ -16,6 +16,7 @@ import { globalHandler } from "./core/utils/globalHandler";
 import authRouter from "./modules/auth/auth.route";
 import organizationRouter from "./modules/organizations/organization.routes";
 import userRouter from "./modules/user/user.routes";
+import roleRouter from "./modules/role/role.route";
 
 export const app = express();
 
@@ -54,11 +55,12 @@ app.get("/", (_req, res) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/organization", organizationRouter);
+app.use("/api/v1/org", organizationRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/role", roleRouter);
+
 // app.use("/api/v1/employee", employeeRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
-// app.use("/api/v1/role", roleRouter);
 // app.use("/api/v1/dashboard", dashboardRoute);
 // app.use("/api/v1/team", teamRouter);
 // app.use("/api/v1/notify", notificationRouter);

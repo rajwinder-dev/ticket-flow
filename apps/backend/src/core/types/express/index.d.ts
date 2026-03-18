@@ -1,9 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request } from "express";
+import { Express } from "express";
 declare global {
   namespace Express {
     interface Request {
-      user: { role?: string; id: string, sessionId?:string, permissions?: Record<string, string[]> };
+      user: {
+        role?: string;
+        id: string;
+        sessionId?: string;
+        permissions?: Record<string, string[]>;
+      };
+      organization: {
+        id: string,
+        isOwner: boolean
+      }
       filePaths?: string[];
     }
   }

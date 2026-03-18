@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { clearCookie } from "../../core/utils/cookies";
@@ -15,9 +16,6 @@ export class authMiddleware {
 
     const userdata = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      include: {
-        role: true,
-      },
     });
     if (!userdata) return next(new appError("User not found", 401, "NOT_FOUND"));
 
@@ -30,19 +28,72 @@ export class authMiddleware {
         return next(new appError("Password Changed , login again", 403, "EXPIRED_TOKEN"));
       }
     }
-
     req.user = {
+      ...req.user,
       id: userdata?.id,
-      role: userdata.userType === "ADMIN" ? "ADMIN" : userdata?.role?.name,
-      permissions: userdata.role?.permissions as Record<string, string[]>
     };
 
     next();
   });
-  static restrictRote = (...roles: string[]) =>
+  static tenant = catchAsync(async (req, res, next) => {
+    if (!req.user.id)
+      return next(new appError("auth Middleware missing ", 400, "VALIDATION_ERROR"));
+    const organizationId = req.header("x-organization-id");
+
+    if (!organizationId)
+      return next(new appError("x-organization-id required", 400, "VALIDATION_ERROR"));
+
+    const organizationIdParse = z.uuid().safeParse(organizationId);
+    if (!organizationIdParse.success)
+      return next(new appError("x-organization-id must be a valid UUID", 400, "VALIDATION_ERROR"));
+
+    const userId = req.user.id as string;
+
+    const member = await prisma.membership.findUnique({
+      where: {
+        organizationId_userId: {
+          userId,
+          organizationId,
+        },
+      },
+      select: {
+        organization: {
+          select: {
+            createdBy: true,
+          },
+        },
+        role: {
+          select: {
+            name: true,
+            permissions: true,
+          },
+        },
+      },
+    });
+    if (!member?.role)
+      return next(new appError("User is not a member of this organization", 403, "FORBIDDEN"));
+    req.organization = {
+      ...req.organization,
+      isOwner: member?.role?.name === "OWNER",
+      id: organizationId,
+    };
+    req.user = {
+      ...req.user,
+      role: member.role.name,
+      permissions: member.role.permissions as Record<string, string[]>,
+    };
+    next();
+  });
+  static verifyPermissions = (module: string, action: string) =>
     catchAsync(async (req, res, next) => {
-      if (req.user.role && !roles.includes(req.user.role)) {
-        return next(new appError("You do not have permission to perform this action.", 403));
+      const permissions = req.user.permissions;
+      if (req.organization.isOwner) return next();
+      if (!permissions) {
+        return next(new appError("Permissions not found on user", 500, "INTERNAL_ERROR"));
+      }
+      const resourcePermissions = permissions[module];
+      if (!resourcePermissions || !resourcePermissions.includes(action)) {
+        return next(new appError("Permission denied", 403, "FORBIDDEN"));
       }
       next();
     });

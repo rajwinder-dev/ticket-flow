@@ -4,7 +4,8 @@ export const createOrganizationInput = {
   bodySchema: z
     .object({
       name: z.string(),
-      description: z.string(),
+      description: z.string().optional(),
+      teamSize: z.number().optional()
     })
     .strict(),
 };

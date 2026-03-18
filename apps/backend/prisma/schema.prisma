@@ -9,18 +9,6 @@ datasource db {
 
 //  ============================ ENUMS ==============================
 
-enum UserType {
-  ADMIN
-  MEMBER
-}
-
-enum RoleType {
-  ADMIN
-  VIEWER
-  MANAGER
-  EMPLOYEE
-}
-
 enum Priority {
   LOW
   MEDIUM
@@ -47,7 +35,6 @@ model User {
   passwordChangeAt    DateTime?
   passwordResetToken  String?            @unique
   passwordResetExpire DateTime?
-  userType            UserType?
   avatar              String?
   username            String?
   location            String?
@@ -58,7 +45,6 @@ model User {
   roleId              String?            @db.Uuid
   managerId           String?            @db.VarChar(128)
   createdBy           String?            @db.VarChar(128)
-  role                Role?              @relation("UserRole", fields: [roleId], references: [id])
   manager             User?              @relation("UserManager", fields: [managerId], references: [id])
   subordinates        User[]             @relation("UserManager")
   creator             User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
@@ -80,40 +66,79 @@ model User {
   participants        Participant[]
   messages            Message[]
   organization        Organization[]
+  membership          Membership[]
 
   @@index([email, phoneNo, code])
 }
 
 model Organization {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
   description String?
   teamSize    Int?
-  code        String   @unique
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  code        String       @unique
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   tickets     Ticket[]
-  user        User?    @relation(fields: [createdBy], references: [id])
-  createdBy   String   @db.VarChar(128)
+  user        User?        @relation(fields: [createdBy], references: [id])
+  createdBy   String       @db.VarChar(128)
+  membership  Membership[]
+  role        Role[]
+  invite      Invite[]
+}
+
+model Membership {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         String        @db.VarChar(128)
+  role           Role?         @relation(fields: [roleId], references: [id])
+  roleId         String        @db.Uuid
+
+  @@unique([organizationId, userId])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
 }
 
 model Role {
   id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code             String            @unique
   name             String
-  description      String
-  permissions      Json?
-  type             RoleType?
+  description      String?
+  permissions      Json
   active           Boolean           @default(true)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  createdBy        String?           @db.VarChar(128)
-  levelId          String?           @db.Uuid
-  users            User[]            @relation("UserRole")
   creator          User?             @relation("RoleCreatedBy", fields: [createdBy], references: [id])
-  level            Level?            @relation(fields: [levelId], references: [id])
+  createdBy        String            @db.VarChar(128)
+  organization     Organization?     @relation(fields: [organizationId], references: [id])
+  organizationId   String            @db.Uuid
   assignedProjects AssignedProject[]
+  membership       Membership[]
+  invite           Invite[]
+}
+
+model Invite {
+  id             String        @id @default(uuid())
+  email          String
+  token          String        @unique
+  status         InviteStatus  @default(PENDING)
+  invitedBy      String?
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?       @db.Uuid
+  role           Role?         @relation(fields: [roleId], references: [id])
+  roleId         String?       @db.Uuid
 }
 
 model Level {
@@ -124,7 +149,6 @@ model Level {
   active          Boolean            @default(true)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  roles           Role[]
   tickets         Ticket[]
   fromTransitions TicketTransition[] @relation("TransitionFromLevel")
   toTransitions   TicketTransition[] @relation("TransitionToLevel")

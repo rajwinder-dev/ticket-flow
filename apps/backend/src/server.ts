@@ -29,10 +29,13 @@ process.on("unhandledRejection", (err: Error) => {
     process.exit(1);
   });
 });
+const shutdown = (signal: string) => {
+  console.log(`👋 ${signal} RECEIVED. Shutting down gracefully`);
 
-process.on("SIGTERM", () => {
-  console.log("👋 SIGTERM RECEIVED. Shutting down gracefully");
   server.close(() => {
     console.log("💥 Process terminated!");
+    process.exit(0);
   });
-});
+};
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);

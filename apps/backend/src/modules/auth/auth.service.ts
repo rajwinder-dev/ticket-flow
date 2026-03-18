@@ -23,7 +23,6 @@ export default class AuthService {
         email,
         username,
         passwordHash,
-        userType: "ADMIN",
       },
     });
     return data;
@@ -78,14 +77,7 @@ export default class AuthService {
       select: {
         id: true,
         code: true,
-        userType: true,
         email: true,
-        role: {
-          select: {
-            name: true,
-            permissions: true,
-          },
-        },
       },
     });
     return data;

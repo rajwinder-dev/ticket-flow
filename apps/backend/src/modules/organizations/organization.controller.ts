@@ -1,25 +1,37 @@
 import { CreateOrganizationInput, UpdateOrganizationInput } from "@repo/schemas";
-import { Organization } from "../../../generated/prisma";
+import { Prisma } from "../../../generated/prisma";
 import { catchAsync } from "../../core/utils/catchAsync";
 import HandleFactory from "../../core/utils/handlerFactory";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
-import { readableId } from "../../core/utils/utils";
+import { OrganizationService } from "./organization.service";
 
 export class OrganizationController {
-  private static handler = new HandleFactory<Organization>(prisma.organization);
+  private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
+    prisma.organization,
+  );
   static createOrganization = catchAsync(async (req, res) => {
     const input = req.body as CreateOrganizationInput;
-    const data = await this.handler.create({
-      ...input,
-      code: readableId("ORG"),
-      createdBy: req.user.id,
-    });
+    const data = await OrganizationService.create(req.user.id, input);
     response(res, data);
   });
-  static getAllOrganization = catchAsync(async (req, res) => {
-    const { data, pagination } = await this.handler.getAll(req.query);
-    response(res, data, 200, { otherFields: { ...pagination } });
+  static getMyOrganizations = catchAsync(async (req, res) => {
+    const membership = await prisma.membership.findMany({
+      where: {
+        userId: req.user.id,
+      },
+      select: {
+        organization: {
+          select: {
+            name: true,
+            id: true,
+            createdBy: true,
+          },
+        },
+      },
+    });
+
+    response(res, membership, 200);
   });
   static getOrganizationDetails = catchAsync(async (req, res) => {
     const id = req.params.id as string;
@@ -37,4 +49,6 @@ export class OrganizationController {
     const data = await this.handler.softDelete(id);
     response(res, data);
   });
+  static InviteUser = catchAsync(async (req, res, _next) => {});
+  static acceptInvite = catchAsync(async (req, res, _next) => {});
 }

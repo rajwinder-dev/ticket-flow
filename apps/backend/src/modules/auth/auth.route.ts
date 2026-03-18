@@ -15,12 +15,10 @@ authRouter
 
 authRouter.use(authMiddleware.protectedRoute);
 
-authRouter.route("/profile").get(authController.getMyProfile);
+authRouter.route("/details").get(authController.getMyProfile);
 authRouter
   .route("/change-password")
   .patch(validationMiddleware(changePasswordInput), authController.changePassword);
 authRouter.route("/logout").post(authController.logout);
-
-authRouter.use(authMiddleware.restrictRote("admin"));
 
 export default authRouter;

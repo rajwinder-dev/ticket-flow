@@ -1,0 +1,28 @@
+info:
+  name: OnboardUser
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/user/onboard"
+  body:
+    type: json
+    data: |-
+      {
+        "user": {
+          "location": "test"
+        },
+        "organization": {
+          "name": "tiven books",
+          "description": "this is tiven showroom",
+          "teamSize": 12
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
