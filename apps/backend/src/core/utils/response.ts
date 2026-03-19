@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { excludeResponseField } from "../../config/appConfig";
 /**
  * Quick JSON response helper function for Express.
  *
@@ -15,16 +16,10 @@ export function response(
   res: Response,
   data: object | null,
   statusCode: number = 200,
-  options: { otherFields?: object; hideFields?: string[] } = {}
+  options: { otherFields?: object; exclude?: string[] } = {},
 ) {
   let cleanData;
-  if (data)
-    cleanData = deepStrip(data, [
-      "active",
-      "password",
-      "passwordHash",
-      ...(options.hideFields ?? []),
-    ]);
+  if (data) cleanData = deepStrip(data, [...excludeResponseField, ...(options.exclude ?? [])]);
   else cleanData = null;
   res.status(statusCode).json({
     status: "success",

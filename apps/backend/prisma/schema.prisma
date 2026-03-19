@@ -129,16 +129,16 @@ model Invite {
   id             String        @id @default(uuid())
   email          String
   token          String        @unique
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?       @db.Uuid
+  role           Role?         @relation(fields: [roleId], references: [id])
+  roleId         String?       @db.Uuid
   status         InviteStatus  @default(PENDING)
   invitedBy      String?
   expiresAt      DateTime
   acceptedAt     DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?       @db.Uuid
-  role           Role?         @relation(fields: [roleId], references: [id])
-  roleId         String?       @db.Uuid
 }
 
 model Level {

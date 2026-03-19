@@ -1,24 +1,16 @@
+import { onboardUserInput, updateMyDetailsInput } from "@repo/schemas";
 import { Router } from "express";
-import { UserController } from "./user.controller";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { onboardUserInput } from "@repo/schemas";
 import { authMiddleware } from "../auth/auth.middleware";
+import { UserController } from "./user.controller";
 
 const userRouter = Router();
-userRouter.use(authMiddleware.protectedRoute)
-userRouter.post("/onboard", validationMiddleware(onboardUserInput), UserController.onboardUser)
-//  todo: user routes
-// employeeRouter.route("/me").get(EmployeeController.getMyDetails);
-// employeeRouter
-//   .route("/updateMe")
-//   .patch(
-//     upload.single("image"),
-//     processImagesMiddleware,
-//     validationMiddleware(updateMyDetails),
-//     EmployeeController.updateMyDetails,
-//   );
-
-// employeeRouter.use(authMiddleware.restrictRote("admin"));
+userRouter.use(authMiddleware.protectedRoute);
+userRouter.post("/onboard", validationMiddleware(onboardUserInput), UserController.onboardUser);
+userRouter
+  .route("/me")
+  .get(UserController.getMyDetails)
+  .patch(validationMiddleware(updateMyDetailsInput), UserController.updateMyDetails);
 
 // employeeRouter
 //   .route("/")
@@ -36,4 +28,4 @@ userRouter.post("/onboard", validationMiddleware(onboardUserInput), UserControll
 //   .get(EmployeeController.getEmployeeDetails)
 //   .patch(EmployeeController.updateEmployee)
 //   .delete(validationMiddleware(params), EmployeeController.deleteEmployee);
-export default userRouter
+export default userRouter;

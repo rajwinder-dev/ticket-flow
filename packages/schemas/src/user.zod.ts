@@ -18,14 +18,19 @@ export const onboardUserInput = {
 export const updateMyDetailsInput = {
   bodySchema: z
     .object({
-      email: z.email(),
-      phoneNo: validPhoneNo,
+      phoneNo: validPhoneNo.optional(),
       avatar: z.url().optional(),
-      gender: z.enum(["male", "female", "other"]),
-      username: z.string(),
-      location: z.string(),
+      gender: z.enum(["male", "female", "other"]).optional(),
+      location: z.string().optional(),
     })
     .strict(),
 };
-export type updateUser = z.infer<typeof updateMyDetailsInput.bodySchema>
+export type UpdateUserInput = z.infer<typeof updateMyDetailsInput.bodySchema>
 export type OnBoardUserInput = z.infer<typeof onboardUserInput.bodySchema>;
+
+
+
+
+
+
+
