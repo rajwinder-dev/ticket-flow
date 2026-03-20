@@ -1,11 +1,11 @@
 import { ChangePasswordInput, LoginInput, SignupInput } from "@repo/schemas";
 import bcrypt from "bcrypt";
-import crypto from "crypto";
 import { addMinutes } from "date-fns";
 import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
+import { TokenService } from "../token/token.service";
 import { BcryptService } from "./bcrypt.service";
 import { JwtService } from "./jwt.service";
 export default class AuthService {
@@ -52,7 +52,7 @@ export default class AuthService {
     );
     return newAccessToken;
   }
-  static async changePassword(userId: string , input: ChangePasswordInput) {
+  static async changePassword(userId: string, input: ChangePasswordInput) {
     const userData = await prisma.user.findUnique({
       where: { id: userId },
       select: { passwordHash: true },
@@ -69,8 +69,9 @@ export default class AuthService {
     });
     return data;
   }
-  static async getMyProfile(userId: string) {
-    const data = await prisma.user.findUnique({
+  static async getAuthDetails(userId: string, organizationId?: string) {
+    let data;
+    const userData = await prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -80,6 +81,21 @@ export default class AuthService {
         email: true,
       },
     });
+    data = userData;
+    if (organizationId) {
+      const permissions = await prisma.membership.findUnique({
+        where: {
+          organizationId_userId: {
+            organizationId,
+            userId,
+          },
+        },
+        include: {
+          role: true,
+        },
+      });
+      data = { ...userData, permissions: permissions?.role?.permissions };
+    }
     return data;
   }
   static async forgetPassword(email: string) {
@@ -87,18 +103,16 @@ export default class AuthService {
       where: { email },
     });
     if (!data) throw new appError("Email not Exist", 404, "NOT_FOUND");
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-    const storeToken = await prisma.user.update({
-      where: {
+    const { token } = await TokenService.createToken({
+      input: {
         email,
+        type: "RESET_PASSWORD",
+        userId: data.id,
+        createdBy: data.id,
       },
-      data: {
-        passwordResetToken,
-        passwordResetExpire: addMinutes(new Date(), 10),
-      },
+      expiresAt: addMinutes(new Date(), 10),
     });
-    const forgetURl = `${env.coreURL}/reset-password/${storeToken.passwordResetToken}`;
+    const forgetURl = `${env.coreURL}/reset-password/${token}`;
     return forgetURl;
   }
   static async resetPassword({
@@ -108,32 +122,21 @@ export default class AuthService {
     passwordResetToken: string;
     password: string;
   }) {
-    const currentDate = new Date();
-    const user = await prisma.user.findFirst({
-      where: {
-        passwordResetToken,
-        passwordResetExpire: {
-          gt: currentDate,
-        },
-      },
-      select: {
-        passwordResetExpire: true,
-        id: true,
-      },
-    });
-    if (!user) throw new appError("Token Invalid or Expire", 400, "NOT_FOUND");
+    const token = await TokenService.verifyToken(passwordResetToken);
+    if (!token?.userId)
+      throw new appError("Password reset link Invalid or Expire", 400, "INVALID_TOKEN");
     const passwordHash = await BcryptService.hashPassword(password);
     const data = await prisma.user.update({
       where: {
-        id: user.id,
+        id: token.userId,
       },
       data: {
         passwordHash,
         passwordChangeAt: new Date(),
-        passwordResetExpire: null,
-        passwordResetToken: null,
       },
     });
+    await TokenService.updateTokenStatus(passwordResetToken, "USED");
+
     return data;
   }
 }

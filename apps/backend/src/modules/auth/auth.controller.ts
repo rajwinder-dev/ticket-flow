@@ -28,7 +28,6 @@ export class authController {
 
   static refreshToken = catchAsync(async (req, res, next) => {
     const token = req.cookies.refreshToken;
-    console.log(token);
     if (!token) return next(new appError("Refresh token not found", 404, "NOT_FOUND"));
     const accessToken = await AuthService.getRefreshToken(token);
     return response(res, { accessToken });
@@ -41,8 +40,9 @@ export class authController {
     response(res, { message: "password changed successfully" }, 200);
   });
 
-  static getMyProfile = catchAsync(async (req, res, _next) => {
-    const data = await AuthService.getMyProfile(req.user.id);
+  static getAuthDetails = catchAsync(async (req, res, _next) => {
+    const organizationId = req.header("x-organization-id");
+    const data = await AuthService.getAuthDetails(req.user.id, organizationId);
     response(res, data);
   });
   static forgetPassword = catchAsync(async (req, res, _next) => {

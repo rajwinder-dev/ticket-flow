@@ -5,7 +5,7 @@ export const createOrganizationInput = {
     .object({
       name: z.string(),
       description: z.string().optional(),
-      teamSize: z.number().optional()
+      teamSize: z.number().optional(),
     })
     .strict(),
 };
@@ -16,5 +16,14 @@ export const updateOrganizationInput = {
     })
     .strict(),
 };
-export type CreateOrganizationInput = z.infer<typeof createOrganizationInput.bodySchema>
-export type UpdateOrganizationInput = z.infer<typeof updateOrganizationInput.bodySchema>
+export const inviteUserOrganizationInput = {
+  bodySchema: z
+    .object({
+      email: z.string(),
+      roleId: z.uuid(),
+    })
+    .strict(),
+};
+export type CreateOrganizationInput = z.infer<typeof createOrganizationInput.bodySchema>;
+export type UpdateOrganizationInput = z.infer<typeof updateOrganizationInput.bodySchema>;
+export type InviteUserOrganizationInput = z.infer<typeof inviteUserOrganizationInput.bodySchema>;

@@ -1,0 +1,26 @@
+info:
+  name: accept Invite
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/org/invite/:token"
+  params:
+    - name: token
+      value: a312df9f5e839ba85901fac48e6e15cbda1f361f33a8620bfa35e0ae25ccdaa4
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        email: "xyz@gmail.com",
+        roleId: "xyz"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

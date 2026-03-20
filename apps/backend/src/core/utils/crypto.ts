@@ -1,6 +1,10 @@
 import crypto from "crypto";
 import { env } from "../../config/env";
-
+export type EncryptionType =  {
+  iv: string;
+  content: string;
+  tag: string;
+}
 const ALGO = "aes-256-gcm";
 const IV_LENGTH = 12;
 const key = Buffer.from(env.encryptionKey!, "hex");
@@ -21,11 +25,7 @@ export function encrypt(text: string) {
   };
 }
 
-export function decrypt(encrypted: {
-  iv: string;
-  content: string;
-  tag: string;
-}) {
+export function decrypt(encrypted: EncryptionType) {
   const decipher = crypto.createDecipheriv(
     ALGO,
     key,

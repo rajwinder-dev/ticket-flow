@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { JsonValue } from "../../../generated/prisma/runtime/client";
 import { excludeResponseField } from "../../config/appConfig";
 /**
  * Quick JSON response helper function for Express.
@@ -14,7 +15,7 @@ import { excludeResponseField } from "../../config/appConfig";
 
 export function response(
   res: Response,
-  data: object | null,
+  data: object | null ,
   statusCode: number = 200,
   options: { otherFields?: object; exclude?: string[] } = {},
 ) {
@@ -37,10 +38,11 @@ export default response;
  * @param {string[]} [keyToRemove=[]]
  * @return {*}  {object}
  */
-function deepStrip(obj: object, keyToRemove: string[] = []): object {
+function deepStrip(obj: object, keyToRemove: string[] = []): object  {
   if (obj instanceof Date) {
     return obj;
   }
+
   if (Array.isArray(obj)) {
     return obj.map((item) => deepStrip(item, keyToRemove));
   } else if (obj && typeof obj === "object") {

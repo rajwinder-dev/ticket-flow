@@ -27,65 +27,63 @@ enum TicketStatus {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id                  String             @id @unique @default(uuid()) @db.VarChar(128)
-  code                String             @unique
-  email               String             @unique
-  phoneNo             String?            @unique
-  passwordHash        String             @unique
-  passwordChangeAt    DateTime?
-  passwordResetToken  String?            @unique
-  passwordResetExpire DateTime?
-  avatar              String?
-  username            String?
-  location            String?
-  active              Boolean            @default(true)
-  isOnboarded         Boolean            @default(false)
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  roleId              String?            @db.Uuid
-  managerId           String?            @db.VarChar(128)
-  createdBy           String?            @db.VarChar(128)
-  manager             User?              @relation("UserManager", fields: [managerId], references: [id])
-  subordinates        User[]             @relation("UserManager")
-  creator             User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
-  createdUsers        User[]             @relation("UserCreatedBy")
-  activityLogs        ActivityLog[]
-  sessions            Session[]
-  assignedProjects    AssignedProject[]
-  managedProjects     Project[]          @relation("ProjectManager")
-  createdRoles        Role[]             @relation("RoleCreatedBy")
-  ticketsAssigned     Ticket[]           @relation("TicketAssignedTo")
-  ticketsCreated      Ticket[]           @relation("TicketAssignedBy")
-  ticketComments      TicketComment[]
-  fromTransitions     TicketTransition[] @relation("TransitionFromEmployee")
-  toTransitions       TicketTransition[] @relation("TransitionToEmployee")
-  customersCreated    Customer[]         @relation("CustomerCreator")
-  notificationFrom    Notification[]     @relation("NotificationFrom")
-  notificationTo      Notification[]     @relation("NotificationTo")
-  chatRoomsCreated    ChatRoom[]         @relation("ChatCreatedBy")
-  participants        Participant[]
-  messages            Message[]
-  organization        Organization[]
-  membership          Membership[]
-
-  @@index([email, phoneNo, code])
+  id               String             @id @unique @default(uuid()) @db.VarChar(128)
+  code             String             @unique
+  email            String             @unique
+  phoneNo          String?            @unique
+  passwordHash     String             @unique
+  passwordChangeAt DateTime?
+  avatar           String?
+  username         String?
+  location         String?
+  active           Boolean            @default(true)
+  isOnboarded      Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  managerId        String?            @db.VarChar(128)
+  createdBy        String?            @db.VarChar(128)
+  manager          User?              @relation("UserManager", fields: [managerId], references: [id])
+  subordinates     User[]             @relation("UserManager")
+  creator          User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdUsers     User[]             @relation("UserCreatedBy")
+  activityLogs     ActivityLog[]
+  sessions         Session[]
+  assignedProjects AssignedProject[]
+  managedProjects  Project[]          @relation("ProjectManager")
+  createdRoles     Role[]             @relation("RoleCreatedBy")
+  ticketsAssigned  Ticket[]           @relation("TicketAssignedTo")
+  ticketsCreated   Ticket[]           @relation("TicketAssignedBy")
+  ticketComments   TicketComment[]
+  fromTransitions  TicketTransition[] @relation("TransitionFromEmployee")
+  toTransitions    TicketTransition[] @relation("TransitionToEmployee")
+  customersCreated Customer[]         @relation("CustomerCreator")
+  notificationFrom Notification[]     @relation("NotificationFrom")
+  notificationTo   Notification[]     @relation("NotificationTo")
+  chatRoomsCreated ChatRoom[]         @relation("ChatCreatedBy")
+  participants     Participant[]
+  messages         Message[]
+  organization     Organization[]
+  membership       Membership[]
+  token            Token[]
+  TokenCreatedBy   Token[]            @relation("TokenCreatedBy")
 }
 
 model Organization {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
   description String?
   teamSize    Int?
-  code        String       @unique
-  active      Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  code        String          @unique
+  active      Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   tickets     Ticket[]
-  user        User?        @relation(fields: [createdBy], references: [id])
-  createdBy   String       @db.VarChar(128)
+  user        User?           @relation(fields: [createdBy], references: [id])
+  createdBy   String          @db.VarChar(128)
   membership  Membership[]
   role        Role[]
-  invite      Invite[]
+  tokens      Token[]
+  email       EmailProvider[]
 }
 
 model Membership {
@@ -98,13 +96,6 @@ model Membership {
   roleId         String        @db.Uuid
 
   @@unique([organizationId, userId])
-}
-
-enum InviteStatus {
-  PENDING
-  ACCEPTED
-  EXPIRED
-  REVOKED
 }
 
 model Role {
@@ -122,23 +113,62 @@ model Role {
   organizationId   String            @db.Uuid
   assignedProjects AssignedProject[]
   membership       Membership[]
-  invite           Invite[]
+  tokens           Token[]
 }
 
-model Invite {
+enum TokenType {
+  INVITE_USER
+  RESET_PASSWORD
+  CHANGE_EMAIL
+  CHANGE_USERNAME
+  VERIFY_EMAIL
+}
+
+enum TokeStatus {
+  PENDING
+  USED
+  EXPIRED
+  REVOKED
+}
+
+model Token {
   id             String        @id @default(uuid())
   email          String
   token          String        @unique
+  type           TokenType
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String?       @db.Uuid
   role           Role?         @relation(fields: [roleId], references: [id])
   roleId         String?       @db.Uuid
-  status         InviteStatus  @default(PENDING)
-  invitedBy      String?
+  status         TokeStatus    @default(PENDING)
   expiresAt      DateTime
   acceptedAt     DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  user           User?         @relation(fields: [userId], references: [id])
+  userId         String?       @db.VarChar(128)
+  TokenCreatedBy User?         @relation("TokenCreatedBy", fields: [createdBy], references: [id])
+  createdBy      String        @db.VarChar(128)
+  meteData       Json?
+}
+
+enum ProviderType {
+  SMTP
+  SEND_GRID
+  MAILTRAP
+}
+
+model EmailProvider {
+  id             String        @id @default(uuid())
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+  providerType   ProviderType
+  active         Boolean       @default(true)
+  credentials    Json
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([organizationId, credentials, providerType])
 }
 
 model Level {

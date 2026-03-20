@@ -6,6 +6,7 @@ declare global {
       user: {
         role?: string;
         id: string;
+        email: string;
         sessionId?: string;
         permissions?: Record<string, string[]>;
       };

@@ -15,7 +15,7 @@ authRouter
 
 authRouter.use(authMiddleware.protectedRoute);
 
-authRouter.route("/details").get(authController.getMyProfile);
+authRouter.route("/details").get(authController.getAuthDetails);
 authRouter
   .route("/change-password")
   .patch(validationMiddleware(changePasswordInput), authController.changePassword);

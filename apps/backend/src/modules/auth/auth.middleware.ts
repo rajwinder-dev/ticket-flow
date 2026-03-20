@@ -31,6 +31,7 @@ export class authMiddleware {
     req.user = {
       ...req.user,
       id: userdata?.id,
+      email: userdata.email,
     };
 
     next();

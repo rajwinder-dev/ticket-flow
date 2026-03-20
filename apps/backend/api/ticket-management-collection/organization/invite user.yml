@@ -1,17 +1,17 @@
 info:
-  name: update my details
+  name: invite user
   type: http
   seq: 3
 
 http:
-  method: PATCH
-  url: "{{url}}/api/v1/user/me"
+  method: POST
+  url: "{{url}}/api/v1/org/invite"
   body:
     type: json
     data: |-
       {
-        "location": "testing love",
-        "phoneNo": 1456789
+        email: "xyz@gmail.com",
+        roleId: "xyz"
       }
   auth: inherit
 

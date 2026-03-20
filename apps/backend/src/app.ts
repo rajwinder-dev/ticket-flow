@@ -14,9 +14,11 @@ import { appError } from "./core/utils/appError";
 import { globalHandler } from "./core/utils/globalHandler";
 
 import authRouter from "./modules/auth/auth.route";
+import emailRouter from "./modules/email/email.routes";
+import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
-import userRouter from "./modules/user/user.routes";
 import roleRouter from "./modules/role/role.route";
+import userRouter from "./modules/user/user.routes";
 
 export const app = express();
 
@@ -39,7 +41,7 @@ app.use(
     credentials: true,
   }),
 );
-
+app.set("view engine", "ejs");
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
@@ -58,16 +60,15 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/org", organizationRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/role", roleRouter);
-
+app.use("/api/v1/member", MemberRouter);
+app.use("/api/v1/email", emailRouter);
 // app.use("/api/v1/employee", employeeRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
 // app.use("/api/v1/dashboard", dashboardRoute);
-// app.use("/api/v1/team", teamRouter);
 // app.use("/api/v1/notify", notificationRouter);
 // app.use("/api/v1/chat", chatRouter);
 
 app.all(/(.*)/, (req, res, next) => {
-
   return next(new appError(`Can't find ${req.originalUrl} on this server!`, 404, "INVALID_ROUTE"));
 });
 
