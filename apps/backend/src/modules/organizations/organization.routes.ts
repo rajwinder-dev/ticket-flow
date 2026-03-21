@@ -8,14 +8,14 @@ const organizationRouter = Router();
 organizationRouter.get("/invite/:token", OrganizationController.InviteDetails);
 organizationRouter.use(authMiddleware.protectedRoute);
 organizationRouter.post("/invite/:token", OrganizationController.acceptInvite);
-organizationRouter.use(authMiddleware.tenant);
-
-organizationRouter.get("/me", OrganizationController.getMyOrganizations);
 organizationRouter.post(
   "/",
   validationMiddleware(createOrganizationInput),
   OrganizationController.createOrganization,
 );
+organizationRouter.get("/me", OrganizationController.getMyOrganizations);
+organizationRouter.use(authMiddleware.tenant);
+
 
 organizationRouter
   .route("/:id")

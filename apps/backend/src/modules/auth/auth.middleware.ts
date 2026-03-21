@@ -98,4 +98,8 @@ export class authMiddleware {
       }
       next();
     });
+  static restrictToOwner = catchAsync(async (req, res, next) => {
+    if (!req.organization.isOwner) return next(new appError("Restrict to owner", 403, "FORBIDDEN"));
+    next()
+  });
 }

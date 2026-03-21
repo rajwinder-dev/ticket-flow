@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "email:dev": "email dev",
+    "email:dev": "email dev --dir src/templates/emails",
     "debug": "tsx watch --inspect  src/server.ts ",
     "build": "tsc && npx prisma generate",
     "start": "npx prisma migrate deploy && NODE_ENV=production node dist/server.js",
@@ -92,6 +92,7 @@
     "pg": "^8.20.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "resend": "^6.9.4",
     "sanitize-html": "^2.17.1",
     "sharp": "^0.34.5",
     "ws": "^8.19.0",

@@ -1,4 +1,5 @@
-import nodemailer from "nodemailer";
+import nodemailer, { Transporter } from "nodemailer";
+import { appError } from "../../../core/utils/appError";
 import { EmailService } from "../email.service";
 export type NodemailerConfig = {
   host: string;
@@ -7,7 +8,17 @@ export type NodemailerConfig = {
   pass: string;
 };
 export class NodeMailerService implements EmailService {
-  constructor(private config: NodemailerConfig) {}
+  private transporter: Transporter;
+  constructor(private config: NodemailerConfig) {
+    this.transporter = nodemailer.createTransport({
+      host: this.config.host,
+      port: this.config.port,
+      auth: {
+        user: this.config.user,
+        pass: this.config.pass,
+      },
+    });
+  }
   async sendMail({
     from,
     to,
@@ -19,20 +30,18 @@ export class NodeMailerService implements EmailService {
     subject: string;
     html: string;
   }) {
-    const transporter = nodemailer.createTransport({
-      host: this.config.host,
-      port: this.config.port,
-      auth: {
-        user: this.config.user,
-        pass: this.config.pass,
-      },
-    });
-    const mailOptions = {
+    return await this.transporter.sendMail({
       from,
       to,
       subject,
       html,
-    };
-    return await transporter.sendMail(mailOptions);
+    });
+  }
+  async verify() {
+    try {
+      return await this.transporter.verify();
+    } catch (error) {
+      throw new appError(error.message, 400, "VERIFICATION_FAILED");
+    }
   }
 }

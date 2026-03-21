@@ -1,4 +1,4 @@
-import { createEmailProviderInput, updateEmailProviderInput } from "@repo/schemas";
+import { createEmailProviderInput } from "@repo/schemas";
 import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
@@ -8,15 +8,16 @@ const emailRouter = express.Router();
 emailRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 emailRouter.post(
   "/",
-  authMiddleware.verifyPermissions("email", "create"),
+  authMiddleware.restrictToOwner,
   validationMiddleware(createEmailProviderInput),
   EmailController.createProvider,
 );
 emailRouter.patch(
   "/:id",
-  authMiddleware.verifyPermissions("email", "update"),
+  authMiddleware.restrictToOwner,
   validationMiddleware(createEmailProviderInput),
   EmailController.updateCredentials,
 );
+emailRouter.delete(":/id", authMiddleware.restrictToOwner, EmailController.deleteCredentials);
 emailRouter.get("/test", EmailController.testEmail);
 export default emailRouter;

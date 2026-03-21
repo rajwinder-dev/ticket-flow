@@ -10,6 +10,7 @@ type Code =
   | "INVALID_ROUTE"
   | "INVALID_CREDENTIALS"
   | "UNSUPPORTED"
+  | "VERIFICATION_FAILED"
   ;
 export class appError extends Error {
   statusCode: number;
