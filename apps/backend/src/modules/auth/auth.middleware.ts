@@ -61,7 +61,13 @@ export class authMiddleware {
         organization: {
           select: {
             createdBy: true,
+            name: true
           },
+        },
+        user: {
+          select: {
+            username: true
+          }
         },
         role: {
           select: {
@@ -77,10 +83,12 @@ export class authMiddleware {
       ...req.organization,
       isOwner: member?.role?.name === "OWNER",
       id: organizationId,
+      name: member.organization?.name as string
     };
     req.user = {
       ...req.user,
       role: member.role.name,
+      username: member.user?.username as string,
       permissions: member.role.permissions as Record<string, string[]>,
     };
     next();

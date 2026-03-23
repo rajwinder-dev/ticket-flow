@@ -7,11 +7,13 @@ declare global {
         role?: string;
         id: string;
         email: string;
+        username: string
         sessionId?: string;
         permissions?: Record<string, string[]>;
       };
       organization: {
         id: string,
+        name: string
         isOwner: boolean
       }
       filePaths?: string[];

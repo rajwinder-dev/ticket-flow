@@ -99,21 +99,21 @@ export default class AuthService {
     return data;
   }
   static async forgetPassword(email: string) {
-    const data = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
     });
-    if (!data) throw new appError("Email not Exist", 404, "NOT_FOUND");
+    if (!user) throw new appError("Email not Exist", 404, "NOT_FOUND");
     const { token } = await TokenService.createToken({
       input: {
         email,
         type: "RESET_PASSWORD",
-        userId: data.id,
-        createdBy: data.id,
+        userId: user.id,
+        createdBy: user.id,
       },
       expiresAt: addMinutes(new Date(), 10),
     });
     const forgetURl = `${env.coreURL}/reset-password/${token}`;
-    return forgetURl;
+    return {user, forgetURl};
   }
   static async resetPassword({
     passwordResetToken,

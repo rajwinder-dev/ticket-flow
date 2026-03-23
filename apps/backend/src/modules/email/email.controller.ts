@@ -1,7 +1,7 @@
 import { CreateEmailProviderInput } from "@repo/schemas";
 import { catchAsync } from "../../core/utils/catchAsync";
 import response from "../../core/utils/response";
-import Email, { WelcomeEmail } from "../../templates/emails/welcome";
+import { WelcomeEmail } from "../../templates/emails/welcome";
 import { EmailService } from "./email.service";
 
 export class EmailController {
@@ -27,7 +27,7 @@ export class EmailController {
       organizationId: req.organization.id,
       to: req.user.email,
       subject: "this is test email",
-      jsx: WelcomeEmail({userFirstname: "rajwinder"}),
+      jsx: WelcomeEmail({ userFirstname: "rajwinder" }),
     });
     response(res, { data: "email send success" });
   });

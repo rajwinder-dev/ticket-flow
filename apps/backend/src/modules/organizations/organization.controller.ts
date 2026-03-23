@@ -3,17 +3,16 @@ import {
   InviteUserOrganizationInput,
   UpdateOrganizationInput,
 } from "@repo/schemas";
-import { addDays } from "date-fns";
 import { Prisma } from "../../../generated/prisma";
-import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import HandleFactory from "../../core/utils/handlerFactory";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
+import InviteEmail from "../../templates/emails/InviteEmail";
+import { EmailService } from "../email/email.service";
 import { TokenService } from "../token/token.service";
 import { OrganizationService } from "./organization.service";
-
 export class OrganizationController {
   private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,
@@ -61,46 +60,27 @@ export class OrganizationController {
     const { email, roleId } = req.body as InviteUserOrganizationInput;
     if (email === req.user.email)
       throw new appError("self invite is not applicable", 403, "FORBIDDEN");
-    const userId = req.user.id;
-    const { token } = await TokenService.createToken({
-      input: {
-        email,
-        type: "INVITE_USER",
-        organizationId: req.organization.id,
-        roleId,
-        createdBy: userId,
-      },
-      expiresAt: addDays(new Date(), 7),
+    const { url } = await OrganizationService.inviteMember(req.user.id, {
+      organizationId: req.organization.id,
+      email,
+      roleId,
     });
-    const url = `${env.coreURL}/invite-user/${token}`;
-    console.log(url);
+    await EmailService.sendEmail({
+      organizationId: req.organization.id,
+      to: email,
+      subject: "Invite Email to our organizations",
+      jsx: InviteEmail({
+        invitedByUsername: req.user.username,
+        organization: req.organization.name,
+        inviteLink: url,
+      }),
+    });
     response(res, { message: "Invite Sent successfully" });
   });
   static acceptInvite = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
-    const userId = req.user.id;
-
-    const verifyToken = await TokenService.verifyToken(token);
-    if (!verifyToken?.organizationId || !verifyToken?.roleId)
-      throw new appError("Invite Link is Invalid or Expire", 400, "INVALID_TOKEN");
-    if (verifyToken?.email !== req.user.email)
-      throw new appError("Invite not applicable for your Email", 403, "FORBIDDEN");
-    const membership = await prisma.membership.create({
-      data: {
-        userId,
-        organizationId: verifyToken.organizationId,
-        roleId: verifyToken.roleId,
-      },
-      include: {
-        organization: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-    await TokenService.updateTokenStatus(token, "USED");
-    response(res, membership, 200, {
+    const verifyToken = await OrganizationService.acceptInvite(req.user.id, req.user.email, token);
+    response(res, verifyToken, 200, {
       otherFields: { message: "Joined Organization successfully" },
     });
   });

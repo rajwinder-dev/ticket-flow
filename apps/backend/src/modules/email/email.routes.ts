@@ -18,6 +18,6 @@ emailRouter.patch(
   validationMiddleware(createEmailProviderInput),
   EmailController.updateCredentials,
 );
-emailRouter.delete(":/id", authMiddleware.restrictToOwner, EmailController.deleteCredentials);
+emailRouter.delete("/:id", authMiddleware.restrictToOwner, EmailController.deleteCredentials);
 emailRouter.get("/test", EmailController.testEmail);
 export default emailRouter;

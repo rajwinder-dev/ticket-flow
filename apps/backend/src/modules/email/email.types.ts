@@ -6,3 +6,4 @@ export type sendEmailService = {
   subject: string;
   jsx: JSX.Element;
 };
+export type sendSystemEmailService = Omit<sendEmailService, "organizationId">;

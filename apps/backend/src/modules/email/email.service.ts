@@ -1,10 +1,12 @@
 import { render } from "@react-email/render";
 import { CreateEmailProviderInput } from "@repo/schemas";
 import { ProviderType } from "../../../generated/prisma";
+import { env } from "../../config/env";
+import { appError } from "../../core/utils/appError";
 import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto";
 import { prisma } from "../../core/utils/prismaClient";
 import { EmailConfigService } from "./email-config.service";
-import { sendEmailService } from "./email.types";
+import { sendEmailService, sendSystemEmailService } from "./email.types";
 import { emailProviderFactory } from "./providers/provider.factory";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
@@ -17,6 +19,16 @@ export class EmailService {
 
     return await provider.sendMail({ to, from: providerInfo.from, subject, html });
     // send mail
+  };
+  static sendSystemEmail = async ({ to, subject, jsx }: sendSystemEmailService) => {
+    if (!env.email.providerType || !env.email.from)
+      throw new appError("email credentials not defined in env", 404, "NOT_FOUND");
+    const credentials = env.email;
+    const provider = emailProviderFactory(env.email.providerType as ProviderType, credentials);
+    const html = await render(jsx);
+    // render template
+
+    return await provider.sendMail({ to, from: env.email.from, subject, html });
   };
   static createEmailProvider = async (
     organizationId: string,

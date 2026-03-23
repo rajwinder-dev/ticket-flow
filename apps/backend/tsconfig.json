@@ -16,6 +16,7 @@
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.tsx",
     "tests",
     "../../packages/schemas/src/global.zod.ts",
     "../../packages/schemas/src/role.zod.ts"
