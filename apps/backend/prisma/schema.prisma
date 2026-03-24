@@ -27,7 +27,7 @@ enum TicketStatus {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id               String             @id @unique @default(uuid()) @db.VarChar(128)
+  id               String             @id @unique @default(uuid())
   code             String             @unique
   email            String             @unique
   phoneNo          String?            @unique
@@ -65,10 +65,11 @@ model User {
   membership       Membership[]
   token            Token[]
   TokenCreatedBy   Token[]            @relation("TokenCreatedBy")
+  queueAgents      QueueAgent[]
 }
 
 model Organization {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String          @id @default(uuid()) @db.Uuid
   name          String
   description   String?
   teamSize      Int?
@@ -85,10 +86,12 @@ model Organization {
   email         EmailProvider[]
   customer      Customer[]
   emailMessages EmailMessage[]
+  queues        Queue[]
+  queueAgents   QueueAgent[]
 }
 
 model Membership {
-  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String        @id @default(uuid()) @db.Uuid
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
   user           User?         @relation(fields: [userId], references: [id])
@@ -100,7 +103,7 @@ model Membership {
 }
 
 model Role {
-  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String            @id @default(uuid()) @db.Uuid
   code             String            @unique
   name             String
   description      String?
@@ -159,6 +162,7 @@ enum ProviderType {
   MAILTRAP
 }
 
+// ================================= EMAIL ===================================
 model EmailProvider {
   id             String        @id @default(uuid())
   organization   Organization? @relation(fields: [organizationId], references: [id])
@@ -181,30 +185,21 @@ enum MessageDirection {
 }
 
 model EmailMessage {
-  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ticketId       String       @db.Uuid
-  ticket         Ticket       @relation(fields: [ticketId], references: [id])
-  organizationId String       @db.Uuid
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  direction MessageDirection
-  fromEmail String           @db.VarChar(255)
-  toEmail   String           @db.VarChar(255)
-  subject   String           @db.VarChar(500)
-  bodyHtml  String?          @db.Text
-  bodyText  String?          @db.Text
-
-  // --- THREADING HEADERS (The "Magic" fields) ---
-
-  // The 'Message-ID' from the incoming email header
-  messageId String @unique @db.VarChar(255)
-
-  // The 'In-Reply-To' header (points to the messageId this is a reply to)
-  inReplyTo String? @db.VarChar(255)
-
-  // The 'References' header (a string of all previous message IDs in the chain)
-  references String? @db.Text
-
-  createdAt DateTime @default(now())
+  id             String           @id @default(uuid()) @db.Uuid
+  ticketId       String           @db.Uuid
+  ticket         Ticket           @relation(fields: [ticketId], references: [id])
+  organizationId String           @db.Uuid
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  direction      MessageDirection
+  fromEmail      String           @db.VarChar(255)
+  toEmail        String           @db.VarChar(255)
+  subject        String           @db.VarChar(500)
+  bodyHtml       String?          @db.Text
+  bodyText       String?          @db.Text
+  messageId      String           @unique @db.VarChar(255)
+  inReplyTo      String?          @db.VarChar(255)
+  references     String?          @db.Text
+  createdAt      DateTime         @default(now())
 
   @@index([ticketId])
   @@index([organizationId])
@@ -212,14 +207,13 @@ model EmailMessage {
 }
 
 model Level {
-  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String             @id @default(uuid()) @db.Uuid
   name            String
   order           Int
   etaMinutes      Int
   active          Boolean            @default(true)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  tickets         Ticket[]
   fromTransitions TicketTransition[] @relation("TransitionFromLevel")
   toTransitions   TicketTransition[] @relation("TransitionToLevel")
 }
@@ -227,7 +221,7 @@ model Level {
 //  ============================ ACTIVITY / SESSIONS ==============================
 
 model ActivityLog {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String   @id @default(uuid()) @db.Uuid
   entityName    String?
   entityId      String?
   action        String
@@ -253,7 +247,7 @@ model Session {
 //  ============================ PROJECTS ==============================
 
 model Project {
-  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String            @id @default(uuid()) @db.Uuid
   code             String            @unique @db.VarChar(128)
   name             String?
   description      String?
@@ -266,13 +260,12 @@ model Project {
   managerId        String?           @db.VarChar(128)
   manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
   assignedProjects AssignedProject[]
-  tickets          Ticket[]
 
   @@index([id, code])
 }
 
 model AssignedProject {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
   assignedAt DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -286,10 +279,36 @@ model AssignedProject {
   @@index([projectId, roleId])
 }
 
+//  ============================ QUEUE / SLA ==============================
+model Queue {
+  id                       String        @id @default(uuid())
+  name                     String
+  description              String?
+  organization             Organization? @relation(fields: [organizationId], references: [id])
+  organizationId           String        @db.Uuid
+  firstResponseTimeMinutes Int
+  resolutionTimeMinutes    Int
+  active                   Boolean       @default(true)
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  queueAgents              QueueAgent[]
+  ticket                   Ticket[]
+}
+
+model QueueAgent {
+  id             String        @id @default(uuid()) @db.Uuid
+  user           User?         @relation(fields: [agentId], references: [id])
+  agentId        String
+  queue          Queue?        @relation(fields: [queueId], references: [id])
+  queueId        String
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+}
+
 //  ============================ TICKET MANAGEMENT ==============================
 
 model Ticket {
-  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  String             @id @default(uuid()) @db.Uuid
   code                String             @unique
   subject             String
   category            String?
@@ -305,8 +324,6 @@ model Ticket {
   active              Boolean            @default(true)
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
-  levelId             String?            @db.Uuid
-  projectId           String?            @db.Uuid
   organization        Organization?      @relation(fields: [organizationId], references: [id])
   organizationId      String?            @db.Uuid
   customerId          String?            @db.Uuid
@@ -315,17 +332,17 @@ model Ticket {
   assignedByUser      User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
   assignedToUser      User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
   customer            Customer?          @relation(fields: [customerId], references: [id])
-  level               Level?             @relation(fields: [levelId], references: [id])
-  project             Project?           @relation(fields: [projectId], references: [id])
   transitions         TicketTransition[]
   comments            TicketComment[]
   emailMessages       EmailMessage[]
+  queue               Queue?             @relation(fields: [queueId], references: [id])
+  queueId             String?
 
-  @@index([assignedTo, assignedBy, customerId, organizationId, levelId, projectId, status])
+  @@index([assignedTo, assignedBy, customerId, organizationId])
 }
 
 model TicketComment {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
   ticketId   String   @db.Uuid
   authorId   String   @db.VarChar(128)
   comment    String   @db.Text
@@ -337,7 +354,7 @@ model TicketComment {
 }
 
 model TicketTransition {
-  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String        @id @default(uuid()) @db.Uuid
   ticketId       String?       @db.Uuid
   fromLevelId    String?       @db.Uuid
   toLevelId      String?       @db.Uuid
@@ -361,14 +378,14 @@ model TicketTransition {
 
 //  ============================ CUSTOMER SUPPORT ==============================
 model CustomerIdentity {
-  id       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String     @id @default(uuid()) @db.Uuid
   email    String     @unique @db.VarChar(255)
   // Global metadata (e.g., global opt-out, primary language)
   customer Customer[] // Link to all their organization-specific profiles
 }
 
 model Customer {
-  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
   identityId     String           @db.Uuid
   identity       CustomerIdentity @relation(fields: [identityId], references: [id])
   organizationId String           @db.Uuid
@@ -383,7 +400,7 @@ model Customer {
 }
 
 model FeatureRequest {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   customerId  String   @db.Uuid
   title       String
   description String
@@ -399,7 +416,7 @@ model FeatureRequest {
 }
 
 model FeedBack {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   customerId  String   @db.Uuid
   rating      Int
   attachments Json?

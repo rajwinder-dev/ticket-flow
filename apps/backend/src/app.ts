@@ -20,6 +20,7 @@ import organizationRouter from "./modules/organizations/organization.routes";
 import roleRouter from "./modules/role/role.route";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
+import QueueRoutes from "./modules/queue/queue.routes";
 
 export const app = express();
 
@@ -65,6 +66,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/role", roleRouter);
 app.use("/api/v1/member", MemberRouter);
 app.use("/api/v1/email", emailRouter);
+app.use("/api/v1/queue", QueueRoutes);
 // app.use("/api/v1/employee", employeeRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
 // app.use("/api/v1/dashboard", dashboardRoute);

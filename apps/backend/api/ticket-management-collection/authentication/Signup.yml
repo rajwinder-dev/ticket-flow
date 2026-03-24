@@ -10,12 +10,19 @@ http:
     type: json
     data: |-
       {
-        "username": "test",
-        "email": "test2@gmail.com",
+        "username": "rajwinder",
+        "email": "rajwindersxxx@gmail.com",
         "password": "8968585382",
         "confirmPassword": "8968585382"
       }
   auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody()
+        bru.setEnvVar("accessToken", body.data.accessToken)
 
 settings:
   encodeUrl: true

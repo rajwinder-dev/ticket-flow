@@ -78,7 +78,7 @@ export class authMiddleware {
       },
     });
     if (!member?.role)
-      return next(new appError("User is not a member of this organization", 403, "FORBIDDEN"));
+      return next(new appError("user not member of any organization", 403, "FORBIDDEN"));
     req.organization = {
       ...req.organization,
       isOwner: member?.role?.name === "OWNER",
