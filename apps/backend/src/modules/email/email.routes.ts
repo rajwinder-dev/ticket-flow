@@ -5,6 +5,7 @@ import { authMiddleware } from "../auth/auth.middleware";
 import { EmailController } from "./email.controller";
 
 const emailRouter = express.Router();
+emailRouter.post("/webhook/:orgId", EmailController.webHook);
 emailRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 emailRouter.post(
   "/",

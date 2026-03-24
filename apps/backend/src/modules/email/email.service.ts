@@ -1,6 +1,6 @@
 import { render } from "@react-email/render";
 import { CreateEmailProviderInput } from "@repo/schemas";
-import { ProviderType } from "../../../generated/prisma";
+import { EmailProvider, ProviderType } from "../../../generated/prisma";
 import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto";
@@ -10,15 +10,20 @@ import { sendEmailService, sendSystemEmailService } from "./email.types";
 import { emailProviderFactory } from "./providers/provider.factory";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
-    //  fetch the config
-    const providerInfo = await EmailConfigService.getEmailCredentials(organizationId);
-    const credentials = JSON.parse(decrypt(providerInfo?.credentials as EncryptionType));
-    const provider = emailProviderFactory(providerInfo.providerType, credentials);
     const html = await render(jsx);
-    // render template
-
-    return await provider.sendMail({ to, from: providerInfo.from, subject, html });
-    // send mail
+    //  fetch the config
+    const { preferred, fallback } = await EmailConfigService.getEmailCredentials(organizationId);
+    try {
+      if (preferred) return await this.sendEmailLogic(preferred, { to, subject, html });
+    } catch (err) {
+      console.error("Preferred provider failed:", err);
+    }
+    try {
+      if (fallback) return await this.sendEmailLogic(fallback, { to, subject, html });
+    } catch (err) {
+      console.error("Fallback provider failed:", err);
+    }
+    throw new appError("All email providers failed", 500, "EMAIL_FAILED");
   };
   static sendSystemEmail = async ({ to, subject, jsx }: sendSystemEmailService) => {
     if (!env.email.providerType || !env.email.from)
@@ -33,8 +38,20 @@ export class EmailService {
   static createEmailProvider = async (
     organizationId: string,
     userEmail: string,
-    { credentials, providerType, from }: CreateEmailProviderInput,
+    {
+      credentials,
+      providerType,
+      from,
+      webhookSecret,
+    }: { credentials: unknown; providerType: ProviderType; from: string; webhookSecret?: string },
   ) => {
+    const existingProviderCount = await prisma.emailProvider.count({
+      where: {
+        organizationId,
+      },
+    });
+    if (existingProviderCount === 2)
+      throw new appError("Max 2 provider per organization is allowed", 400, "CONFLICT_ERROR");
     const encryptCredentials = encrypt(JSON.stringify(credentials));
     await this.verifyProvider(userEmail, providerType, credentials);
     return await prisma.emailProvider.create({
@@ -43,6 +60,7 @@ export class EmailService {
         credentials: encryptCredentials,
         providerType,
         from,
+        webhookSecret,
       },
     });
   };
@@ -81,5 +99,14 @@ export class EmailService {
   ) => {
     const provider = emailProviderFactory(providerType, credentials);
     return await provider.verify(email);
+  };
+  static sendEmailLogic = async (
+    emailProvider: EmailProvider,
+    { to, subject, html }: { to: string; subject: string; html: string },
+  ) => {
+    const credentials = JSON.parse(decrypt(emailProvider?.credentials as EncryptionType));
+    const provider = emailProviderFactory(emailProvider.providerType, credentials);
+    // render template
+    return await provider.sendMail({ to, from: emailProvider.from, subject, html });
   };
 }

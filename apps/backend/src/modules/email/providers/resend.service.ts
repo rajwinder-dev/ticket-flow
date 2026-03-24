@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { Webhook } from 'svix';
 import { appError } from "../../../core/utils/appError";
 import { EmailService } from "../email.service";
 export type ResendConfig = {
@@ -45,5 +46,13 @@ export class ResendService implements EmailService {
       throw new appError(error.message, 400, "VERIFICATION_FAILED");
     }
     return data;
+  }
+  static async verifyWebhook(
+    payload: string,
+    secret: string,
+    headers: { "svix-id": string; "svix-timestamp": string; "svix-signature": string },
+  ) {
+    const wh = new Webhook(secret);
+    return wh.verify(payload, headers);
   }
 }

@@ -15,10 +15,10 @@ import * as React from "react";
 
 void React;
 interface WelcomeEmailProps {
-  userFirstname: string;
+  userFirstName: string;
 }
 
-export const WelcomeEmail = ({ userFirstname = "there" }: WelcomeEmailProps) => {
+export const WelcomeEmail = ({ userFirstName = "there" }: WelcomeEmailProps) => {
   return (
     <Html>
       <Head />
@@ -51,7 +51,7 @@ export const WelcomeEmail = ({ userFirstname = "there" }: WelcomeEmailProps) => 
               Welcome to <strong>BrandName</strong>
             </Text>
 
-            <Text className="text-[14px] leading-6 text-black">Hello {userFirstname},</Text>
+            <Text className="text-[14px] leading-6 text-black">Hello {userFirstName},</Text>
 
             <Text className="text-[14px] leading-6 text-black">
               We're excited to have you join us! You're now part of a community dedicated to

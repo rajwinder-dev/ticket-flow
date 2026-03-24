@@ -11,6 +11,7 @@ type Code =
   | "INVALID_CREDENTIALS"
   | "UNSUPPORTED"
   | "VERIFICATION_FAILED"
+  | "INVALID_WEBHOOK"
   ;
 export class appError extends Error {
   statusCode: number;

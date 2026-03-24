@@ -19,6 +19,7 @@ import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
 import roleRouter from "./modules/role/role.route";
 import userRouter from "./modules/user/user.routes";
+import webhookRouter from "./modules/webhook/webhook.routes";
 
 export const app = express();
 
@@ -42,7 +43,9 @@ app.use(
   }),
 );
 app.set("view engine", "ejs");
+// app.use("/webhooks",express.raw({ type: "application/json" }), webhookRouter)
 app.use(express.json({ limit: "10kb" }));
+app.use("/webhooks", webhookRouter);
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 // custom middleware

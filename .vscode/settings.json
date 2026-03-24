@@ -1,4 +1,4 @@
 {
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-  "cSpell.words": ["autoincrement", "dbgenerated", "Timestamptz"],
+  "cSpell.words": ["autoincrement", "dbgenerated", "svix", "Timestamptz"]
 }

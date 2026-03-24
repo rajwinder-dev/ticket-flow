@@ -1,18 +1,20 @@
 import z from "zod";
 
-const smtpSchema = z.object({
-  providerType: z.literal("SMTP"),
-  from: z.string(),
-  credentials: z.object({
-    host: z.string(),
-    port: z.number(),
-    user: z.string(),
-    pass: z.string(),
+const smtpSchema = {
+  bodySchema: z.object({
+    from: z.string(),
+    credentials: z.object({
+      host: z.string(),
+      port: z.number(),
+      user: z.string(),
+      pass: z.string(),
+    }),
   }),
-});
+};
 const resendSchema = z.object({
   providerType: z.literal("RESEND"),
   from: z.string(),
+  webhookSecret: z.string(),
   credentials: z.object({
     apiKey: z.string(),
   }),
@@ -20,6 +22,7 @@ const resendSchema = z.object({
 
 const mailtrapSchema = z.object({
   providerType: z.literal("MAILTRAP"),
+  webhookSecret: z.string(),
   from: z.string(),
   credentials: z.object({
     user: z.string(),
@@ -27,7 +30,7 @@ const mailtrapSchema = z.object({
   }),
 });
 export const createEmailProviderInput = {
-  bodySchema: z.discriminatedUnion("providerType", [smtpSchema, mailtrapSchema, resendSchema]),
+  bodySchema: z.discriminatedUnion("providerType", [mailtrapSchema, resendSchema]),
 };
 export const updateEmailProviderInput = {
   bodySchema: z
@@ -38,6 +41,6 @@ export const updateEmailProviderInput = {
     .strict(),
 };
 export type CreateEmailProviderInput = z.infer<typeof createEmailProviderInput.bodySchema>;
-export type SMTPSchema = z.infer<typeof smtpSchema>;
+export type SMTPSchema = z.infer<typeof smtpSchema.bodySchema>;
 export type ResendSchema = z.infer<typeof resendSchema>;
 export type UpdateEmailProviderInput = z.infer<typeof updateEmailProviderInput.bodySchema>;

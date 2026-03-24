@@ -1,0 +1,25 @@
+info:
+  name: simulate email recive
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/webhooks/example"
+  body:
+    type: json
+    data: |-
+      {
+        "from": "user@gmail.com",
+        "to": "support@resend.tiven.xyz",
+        "subject": "this is subject",
+        "messageId": "klsjfwieoujlgijlsdf@",
+        "html": "<h1>hello</h1>"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -79,13 +79,13 @@ export class OrganizationService {
     const url = `${env.coreURL}/invite-user/${token}`;
     return { url };
   };
-  static acceptInvite = async (userId: string,email: string, token: string) => {
+  static acceptInvite = async (userId: string, email: string, token: string) => {
     const verifyToken = await TokenService.verifyToken(token);
     if (!verifyToken?.organizationId || !verifyToken?.roleId)
       throw new appError("Invite Link is Invalid or Expire", 400, "INVALID_TOKEN");
     if (verifyToken?.email !== email)
       throw new appError("Invite not applicable for your Email", 403, "FORBIDDEN");
-    const data =  await prisma.membership.create({
+    const data = await prisma.membership.create({
       data: {
         userId,
         organizationId: verifyToken.organizationId,
@@ -100,6 +100,6 @@ export class OrganizationService {
       },
     });
     await TokenService.updateTokenStatus(token, "USED");
-    return data
+    return data;
   };
 }

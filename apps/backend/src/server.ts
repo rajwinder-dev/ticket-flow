@@ -9,16 +9,15 @@ import { socket } from "./core/utils/websocket";
 
 const port = Number(env.port);
 export const server = http.createServer(app);
-export const wss = socket(server);
+const wss = env.wss && socket(server);
 
 if (env.nodeEnv !== "test")
   server.listen(port, async () => {
     await connectUntilSuccess();
-
     const actualPort = (server.address() as AddressInfo).port;
     log.success(`Server running at http://localhost:${actualPort}`);
-    if (env.wss) log.success("Websocket is running");
-    else log.info("Websocket is disabled");
+    if (wss) log.success("Websocket is running");
+
     if (devMode) log.info("🪛  Development Mode");
   });
 
@@ -29,13 +28,25 @@ process.on("unhandledRejection", (err: Error) => {
     process.exit(1);
   });
 });
-const shutdown = (signal: string) => {
+
+const shutdown = async (signal: string) => {
   console.log(`👋 ${signal} RECEIVED. Shutting down gracefully`);
 
   server.close(() => {
-    console.log("💥 Process terminated!");
-    process.exit(0);
+    console.log("HTTP server closed");
   });
+  if (wss)
+    wss.close(() => {
+      console.log("WebSocket server closed");
+    });
+
+  try {
+    // await prisma.$disconnect();
+    console.log("DB disconnected");
+  } catch (err) {
+    console.error("Error closing DB", err);
+  }
+  process.exit(0);
 };
 process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+// process.on("SIGTERM", shutdown);
