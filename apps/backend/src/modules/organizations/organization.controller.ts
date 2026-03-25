@@ -4,6 +4,7 @@ import {
   UpdateOrganizationInput,
 } from "@repo/schemas";
 import { Prisma } from "../../../generated/prisma";
+import { APIFeatures } from "../../core/utils/apiFeatures";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import HandleFactory from "../../core/utils/handlerFactory";
@@ -23,9 +24,17 @@ export class OrganizationController {
     response(res, data);
   });
   static getMyOrganizations = catchAsync(async (req, res) => {
+    const { filterOptions, limit, offset } = new APIFeatures(req.query).pagination();
+    const total = await prisma.membership.count({
+      where: {
+        userId: req.user.id,
+        ...filterOptions.where,
+      },
+    });
     const membership = await prisma.membership.findMany({
       where: {
         userId: req.user.id,
+        ...filterOptions.where,
       },
       select: {
         organization: {
@@ -36,9 +45,11 @@ export class OrganizationController {
           },
         },
       },
+      take: limit,
+      skip: offset,
     });
-
-    response(res, membership, 200);
+   const output = membership.map((m) => ({...m.organization, isOwner: m.organization?.createdBy === req.user.id}));
+    response(res, output, 200, { otherFields: { limit, offset, total } });
   });
   static getOrganizationDetails = catchAsync(async (req, res) => {
     const id = req.params.id as string;

@@ -27,11 +27,11 @@ enum TicketStatus {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id               String             @id @unique @default(uuid())
+  id               String             @id @default(uuid()) @db.Uuid
   code             String             @unique
   email            String             @unique
   phoneNo          String?            @unique
-  passwordHash     String             @unique
+  passwordHash     String
   passwordChangeAt DateTime?
   avatar           String?
   username         String?
@@ -40,11 +40,8 @@ model User {
   isOnboarded      Boolean            @default(false)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
-  managerId        String?            @db.VarChar(128)
-  createdBy        String?            @db.VarChar(128)
-  manager          User?              @relation("UserManager", fields: [managerId], references: [id])
-  subordinates     User[]             @relation("UserManager")
   creator          User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdBy        String?            @db.Uuid
   createdUsers     User[]             @relation("UserCreatedBy")
   activityLogs     ActivityLog[]
   sessions         Session[]
@@ -66,6 +63,7 @@ model User {
   token            Token[]
   TokenCreatedBy   Token[]            @relation("TokenCreatedBy")
   queueAgents      QueueAgent[]
+  queueGroups      QueueGroup[]
 }
 
 model Organization {
@@ -77,9 +75,9 @@ model Organization {
   active        Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  tickets       Ticket[]
   user          User?           @relation(fields: [createdBy], references: [id])
-  createdBy     String          @db.VarChar(128)
+  createdBy     String          @db.Uuid
+  tickets       Ticket[]
   membership    Membership[]
   role          Role[]
   tokens        Token[]
@@ -88,6 +86,8 @@ model Organization {
   emailMessages EmailMessage[]
   queues        Queue[]
   queueAgents   QueueAgent[]
+  queueGroups   QueueGroup[]
+  attachments   Attachment[]
 }
 
 model Membership {
@@ -95,7 +95,7 @@ model Membership {
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
   user           User?         @relation(fields: [userId], references: [id])
-  userId         String        @db.VarChar(128)
+  userId         String        @db.Uuid
   role           Role?         @relation(fields: [roleId], references: [id])
   roleId         String        @db.Uuid
 
@@ -112,7 +112,7 @@ model Role {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   creator          User?             @relation("RoleCreatedBy", fields: [createdBy], references: [id])
-  createdBy        String            @db.VarChar(128)
+  createdBy        String            @db.Uuid
   organization     Organization?     @relation(fields: [organizationId], references: [id])
   organizationId   String            @db.Uuid
   assignedProjects AssignedProject[]
@@ -150,9 +150,9 @@ model Token {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   user           User?         @relation(fields: [userId], references: [id])
-  userId         String?       @db.VarChar(128)
+  userId         String?       @db.Uuid
   TokenCreatedBy User?         @relation("TokenCreatedBy", fields: [createdBy], references: [id])
-  createdBy      String        @db.VarChar(128)
+  createdBy      String        @db.Uuid
   meteData       Json?
 }
 
@@ -218,170 +218,11 @@ model Level {
   toTransitions   TicketTransition[] @relation("TransitionToLevel")
 }
 
-//  ============================ ACTIVITY / SESSIONS ==============================
-
-model ActivityLog {
-  id            String   @id @default(uuid()) @db.Uuid
-  entityName    String?
-  entityId      String?
-  action        String
-  description   String?
-  logStatus     String?
-  metaData      Json?
-  userAgent     String?
-  ipAddress     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  performedById String?  @db.VarChar(128)
-  performer     User?    @relation(fields: [performedById], references: [id])
-}
-
-model Session {
-  id        String   @id
-  userId    String   @db.VarChar(128)
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-//  ============================ PROJECTS ==============================
-
-model Project {
-  id               String            @id @default(uuid()) @db.Uuid
-  code             String            @unique @db.VarChar(128)
-  name             String?
-  description      String?
-  priority         Priority          @default(MEDIUM)
-  tags             Json?
-  isDraft          Boolean           @default(true)
-  active           Boolean           @default(true)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  managerId        String?           @db.VarChar(128)
-  manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
-  assignedProjects AssignedProject[]
-
-  @@index([id, code])
-}
-
-model AssignedProject {
-  id         String   @id @default(uuid()) @db.Uuid
-  assignedAt DateTime @default(now())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  userId     String   @db.VarChar(128)
-  projectId  String   @db.Uuid
-  roleId     String   @db.Uuid
-  user       User     @relation(fields: [userId], references: [id])
-  project    Project  @relation(fields: [projectId], references: [id])
-  role       Role     @relation(fields: [roleId], references: [id])
-
-  @@index([projectId, roleId])
-}
-
-//  ============================ QUEUE / SLA ==============================
-model Queue {
-  id                       String        @id @default(uuid())
-  name                     String
-  description              String?
-  organization             Organization? @relation(fields: [organizationId], references: [id])
-  organizationId           String        @db.Uuid
-  firstResponseTimeMinutes Int
-  resolutionTimeMinutes    Int
-  active                   Boolean       @default(true)
-  createdAt                DateTime      @default(now())
-  updatedAt                DateTime      @updatedAt
-  queueAgents              QueueAgent[]
-  ticket                   Ticket[]
-}
-
-model QueueAgent {
-  id             String        @id @default(uuid()) @db.Uuid
-  user           User?         @relation(fields: [agentId], references: [id])
-  agentId        String
-  queue          Queue?        @relation(fields: [queueId], references: [id])
-  queueId        String
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String        @db.Uuid
-}
-
-//  ============================ TICKET MANAGEMENT ==============================
-
-model Ticket {
-  id                  String             @id @default(uuid()) @db.Uuid
-  code                String             @unique
-  subject             String
-  category            String?
-  tags                Json?
-  recommendedSolution String?
-  note                String?
-  rootCause           String?
-  resolution          String?
-  description         String             @db.Text
-  status              TicketStatus       @default(OPEN)
-  priority            Priority           @default(MEDIUM)
-  attachments         Json?
-  active              Boolean            @default(true)
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  organization        Organization?      @relation(fields: [organizationId], references: [id])
-  organizationId      String?            @db.Uuid
-  customerId          String?            @db.Uuid
-  assignedTo          String?            @db.VarChar(128)
-  assignedBy          String?            @db.VarChar(128)
-  assignedByUser      User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
-  assignedToUser      User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
-  customer            Customer?          @relation(fields: [customerId], references: [id])
-  transitions         TicketTransition[]
-  comments            TicketComment[]
-  emailMessages       EmailMessage[]
-  queue               Queue?             @relation(fields: [queueId], references: [id])
-  queueId             String?
-
-  @@index([assignedTo, assignedBy, customerId, organizationId])
-}
-
-model TicketComment {
-  id         String   @id @default(uuid()) @db.Uuid
-  ticketId   String   @db.Uuid
-  authorId   String   @db.VarChar(128)
-  comment    String   @db.Text
-  isInternal Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  ticket     Ticket   @relation(fields: [ticketId], references: [id])
-  author     User     @relation(fields: [authorId], references: [id])
-}
-
-model TicketTransition {
-  id             String        @id @default(uuid()) @db.Uuid
-  ticketId       String?       @db.Uuid
-  fromLevelId    String?       @db.Uuid
-  toLevelId      String?       @db.Uuid
-  fromEmployeeId String?       @db.VarChar(128)
-  toEmployeeId   String?       @db.VarChar(128)
-  changedBy      String?
-  note           String?
-  fromPriority   Priority?
-  toPriority     Priority?
-  fromStatus     TicketStatus?
-  toStatus       TicketStatus?
-  active         Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  ticket         Ticket?       @relation(fields: [ticketId], references: [id])
-  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
-  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
-  fromLevel      Level?        @relation("TransitionFromLevel", fields: [fromLevelId], references: [id])
-  toLevel        Level?        @relation("TransitionToLevel", fields: [toLevelId], references: [id])
-}
-
-//  ============================ CUSTOMER SUPPORT ==============================
+//  ============================ CUSTOMER ==============================
 model CustomerIdentity {
   id       String     @id @default(uuid()) @db.Uuid
   email    String     @unique @db.VarChar(255)
-  // Global metadata (e.g., global opt-out, primary language)
-  customer Customer[] // Link to all their organization-specific profiles
+  customer Customer[]
 }
 
 model Customer {
@@ -399,32 +240,185 @@ model Customer {
   @@unique([organizationId, identityId])
 }
 
-model FeatureRequest {
-  id          String   @id @default(uuid()) @db.Uuid
-  customerId  String   @db.Uuid
-  title       String
-  description String
-  useCase     String
-  priority    Priority @default(LOW)
-  votes       Int      @default(0)
-  status      String   @default("new")
-  attachments Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  @@index([customerId])
+//  ============================ QUEUE / SLA ==============================
+model QueueGroup {
+  id             String        @id @default(uuid()) @db.Uuid
+  name           String
+  description    String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+  default        Boolean       @default(false)
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdBy      String?       @db.Uuid
+  creator        User?         @relation(fields: [createdBy], references: [id])
+  queues         Queue[]
+
+  @@unique([organizationId, name, default])
 }
 
-model FeedBack {
-  id          String   @id @default(uuid()) @db.Uuid
-  customerId  String   @db.Uuid
-  rating      Int
-  attachments Json?
-  comment     String?
-  createdAt   DateTime @default(now())
-
-  @@index([customerId])
+enum priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
+
+model Queue {
+  id             String       @id @default(uuid()) @db.Uuid
+  name           String
+  description    String?
+  organizationId String       @db.Uuid
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  queueAgents    QueueAgent[]
+  ticket         Ticket[]
+  queueGroup     QueueGroup?  @relation(fields: [queueGroupId], references: [id])
+  queueGroupId   String?      @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, name])
+}
+
+model QueueAgent {
+  id             String        @id @default(uuid()) @db.Uuid
+  user           User?         @relation(fields: [agentId], references: [id])
+  agentId        String        @db.Uuid
+  queue          Queue?        @relation(fields: [queueId], references: [id])
+  queueId        String        @db.Uuid
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+}
+
+//  ============================ TICKET MANAGEMENT ==============================
+
+model Ticket {
+  id             String             @id @default(uuid()) @db.Uuid
+  code           String             @unique
+  subject        String
+  category       String?
+  description    String             @db.Text
+  status         TicketStatus       @default(OPEN)
+  priority       Priority           @default(MEDIUM)
+  active         Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  organization   Organization?      @relation(fields: [organizationId], references: [id])
+  organizationId String?            @db.Uuid
+  customerId     String?            @db.Uuid
+  assignedTo     String?            @db.Uuid
+  assignedBy     String?            @db.Uuid
+  assignedByUser User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
+  assignedToUser User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
+  customer       Customer?          @relation(fields: [customerId], references: [id])
+  transitions    TicketTransition[]
+  comments       TicketComment[]
+  emailMessages  EmailMessage[]
+  queue          Queue?             @relation(fields: [queueId], references: [id])
+  queueId        String?            @db.Uuid
+  attachments    Attachment[]
+
+  @@index([assignedTo, assignedBy, customerId, organizationId])
+}
+
+model Attachment {
+  id             String       @id @default(uuid()) @db.Uuid
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @db.Uuid
+  fileName       String
+  fileUrl        String
+  fileSize       Int
+  mimeType       String
+  ticket         Ticket?      @relation(fields: [ticketId], references: [id])
+  ticketId       String?      @db.Uuid
+  messageId      String?      @db.Uuid
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([ticketId])
+  @@index([messageId])
+}
+
+model TicketComment {
+  id         String   @id @default(uuid()) @db.Uuid
+  ticketId   String   @db.Uuid
+  authorId   String   @db.Uuid
+  comment    String   @db.Text
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id])
+}
+
+model TicketTransition {
+  id             String        @id @default(uuid()) @db.Uuid
+  ticketId       String?       @db.Uuid
+  fromLevelId    String?       @db.Uuid
+  toLevelId      String?       @db.Uuid
+  fromEmployeeId String?       @db.Uuid
+  toEmployeeId   String?       @db.Uuid
+  changedBy      String?
+  note           String?
+  fromPriority   Priority?
+  toPriority     Priority?
+  fromStatus     TicketStatus?
+  toStatus       TicketStatus?
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  ticket         Ticket?       @relation(fields: [ticketId], references: [id])
+  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
+  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
+  fromLevel      Level?        @relation("TransitionFromLevel", fields: [fromLevelId], references: [id])
+  toLevel        Level?        @relation("TransitionToLevel", fields: [toLevelId], references: [id])
+}
+
+//  ============================ ACTIVITY / SESSIONS ==============================
+
+model ActivityLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  entityName    String?
+  entityId      String?
+  action        String
+  description   String?
+  logStatus     String?
+  metaData      Json?
+  userAgent     String?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  performedById String?  @db.Uuid
+  performer     User?    @relation(fields: [performedById], references: [id])
+}
+
+model Session {
+  id        String   @id
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+
+//  ============================ NOTIFICATIONS ==============================
+
+model Notification {
+  id        String   @id @unique @default(uuid())
+  message   String
+  isRead    Boolean  @default(false)
+  fromId    String?  @db.Uuid
+  toId      String?  @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  fromUser  User?    @relation("NotificationFrom", fields: [fromId], references: [id])
+  toUser    User?    @relation("NotificationTo", fields: [toId], references: [id])
+}
+
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
 //  ============================ CHATS / ROOMS ==============================
 
@@ -434,16 +428,18 @@ model ChatRoom {
   chatType     String
   roomName     String?
   createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  createdBy    String        @db.VarChar(128)
+  createdBy    String        @db.Uuid
   creator      User          @relation("ChatCreatedBy", fields: [createdBy], references: [id])
   participants Participant[]
   messages     Message[]
 }
 
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+
 model Participant {
   id        String   @id @unique @default(uuid())
   chatId    String
-  userId    String   @db.VarChar(128)
+  userId    String   @db.Uuid
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   chatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
@@ -452,10 +448,12 @@ model Participant {
   @@unique([chatId, userId])
 }
 
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+
 model Message {
   id          String    @id @unique @default(uuid())
   chatId      String
-  senderId    String    @db.VarChar(128)
+  senderId    String    @db.Uuid
   message     String    @db.Text
   iv          String
   tag         String
@@ -468,15 +466,39 @@ model Message {
   sender      User      @relation(fields: [senderId], references: [id])
 }
 
-//  ============================ NOTIFICATIONS ==============================
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-model Notification {
-  id        String   @id @unique @default(uuid())
-  message   String
-  isRead    Boolean  @default(false)
-  fromId    String?  @db.VarChar(128)
-  toId      String?  @db.VarChar(128)
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  fromUser  User?    @relation("NotificationFrom", fields: [fromId], references: [id])
-  toUser    User?    @relation("NotificationTo", fields: [toId], references: [id])
+model Project {
+  id               String            @id @default(uuid()) @db.Uuid
+  code             String            @unique @db.Uuid
+  name             String?
+  description      String?
+  priority         Priority          @default(MEDIUM)
+  tags             Json?
+  isDraft          Boolean           @default(true)
+  active           Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  managerId        String?           @db.Uuid
+  manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
+  assignedProjects AssignedProject[]
+
+  @@index([id, code])
+}
+
+//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+
+model AssignedProject {
+  id         String   @id @default(uuid()) @db.Uuid
+  assignedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String   @db.Uuid
+  projectId  String   @db.Uuid
+  roleId     String   @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  project    Project  @relation(fields: [projectId], references: [id])
+  role       Role     @relation(fields: [roleId], references: [id])
+
+  @@index([projectId, roleId])
 }

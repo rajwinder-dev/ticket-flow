@@ -1,4 +1,12 @@
 import z from "zod";
+export const createQueueGroupInput = {
+  bodySchema: z
+    .object({
+      name: z.string(),
+      description: z.string().optional(),
+    })
+    .strict(),
+};
 
 export const createQueueInput = {
   bodySchema: z
@@ -7,6 +15,7 @@ export const createQueueInput = {
       description: z.string().optional(),
       firstResponseTimeMinutes: z.number().int().positive(),
       resolutionTimeMinutes: z.number().int().positive(),
+      nextQueueId: z.uuid().optional(),
     })
     .strict(),
 };
@@ -17,6 +26,7 @@ export const updateQueueInput = {
       description: z.string().optional(),
       firstResponseTimeMinutes: z.number().int().positive().optional(),
       resolutionTimeMinutes: z.number().int().positive().optional(),
+       nextQueueId: z.uuid().optional(),
     })
     .strict(),
 };
@@ -34,3 +44,4 @@ export type CreateQueueInput = z.infer<typeof createQueueInput.bodySchema>;
 export type UpdateQueueInput = z.infer<typeof updateQueueInput.bodySchema>;
 export type AddAgentsToQueueInput = z.infer<typeof addAgentsToQueueInput.bodySchema>;
 export type RemoveAgentsFromQueueInput = z.infer<typeof removeAgentsFromQueueInput.bodySchema>;
+export type QueueGroupInput = z.infer<typeof createQueueGroupInput.bodySchema>;

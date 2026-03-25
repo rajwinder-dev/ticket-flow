@@ -3,10 +3,18 @@ import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 
 export class QueueService {
-  static create = async (organizationId: string, input: CreateQueueInput) => {
+  static create = async (organizationId: string, queueGroupId: string, input: CreateQueueInput) => {
+    const queueOrder = await prisma.queue.count({
+      where: {
+        organizationId,
+        queueGroupId,
+      },
+    });
+
     const queue = await prisma.queue.create({
       data: {
         organizationId,
+        queueGroupId,
         ...input,
       },
     });

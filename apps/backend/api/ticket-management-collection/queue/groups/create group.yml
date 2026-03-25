@@ -1,0 +1,22 @@
+info:
+  name: create group
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/queue/group"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "general 2 ",
+        "description": "this is general queue"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

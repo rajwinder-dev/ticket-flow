@@ -14,8 +14,7 @@ http:
     type: json
     data: |-
       {
-        "name": "customer care",
-        "description": "this is the queue",
+        "description": "this is the queue updated",
         "firstResponseTimeMinutes": 15,
         "resolutionTimeMinutes": 90
       }

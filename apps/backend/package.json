@@ -10,7 +10,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": " tsx watch --clear-screen=false src/server.ts",
     "email:dev": "email dev --dir src/templates/emails",
     "debug": "tsx watch --inspect  src/server.ts ",
     "build": "tsc && npx prisma generate",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^8.4.1",
     "@react-email/preview-server": "5.2.10",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
@@ -61,7 +62,6 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@faker-js/faker": "^10.3.0",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@react-email/components": "^1.0.10",

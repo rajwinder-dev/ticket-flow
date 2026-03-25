@@ -5,6 +5,7 @@ import { devMode } from "./config/appConfig";
 import { env } from "./config/env";
 import { log } from "./core/helper/log";
 import { connectUntilSuccess } from "./core/utils/dbConnect";
+import { prisma } from "./core/utils/prismaClient";
 import { socket } from "./core/utils/websocket";
 
 const port = Number(env.port);
@@ -30,23 +31,26 @@ process.on("unhandledRejection", (err: Error) => {
 });
 
 const shutdown = async (signal: string) => {
-  console.log(`👋 ${signal} RECEIVED. Shutting down gracefully`);
-
+  console.log(`\n👋 ${signal} RECEIVED. Shutting down gracefully...`);
   server.close(() => {
-    console.log("HTTP server closed");
+    console.log("HTTP server closed.");
   });
-  if (wss)
+  if (wss) {
     wss.close(() => {
-      console.log("WebSocket server closed");
+      console.log("WebSocket server closed.");
     });
-
-  try {
-    // await prisma.$disconnect();
-    console.log("DB disconnected");
-  } catch (err) {
-    console.error("Error closing DB", err);
   }
+  try {
+    await prisma.$disconnect();
+    console.log("DB disconnected.");
+  } catch (err) {
+    console.error("Error during DB disconnect:", err);
+  }
+
+  console.log("Process terminated. 🛑");
   process.exit(0);
 };
-process.on("SIGINT", shutdown);
-// process.on("SIGTERM", shutdown);
+
+// Listen for BOTH restart and termination signals
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));

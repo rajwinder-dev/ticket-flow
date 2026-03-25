@@ -1,0 +1,26 @@
+info:
+  name: get queue groups
+  type: http
+  seq: 8
+
+http:
+  method: PATCH
+  url: "{{url}}/api/v1/queue/group/:id"
+  params:
+    - name: id
+      value: 9cb7fb24-21ab-46ce-9e75-2a7c4317fed8
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "name": "test",
+        "description": "this is test group"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

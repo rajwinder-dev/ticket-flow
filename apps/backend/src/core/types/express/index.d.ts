@@ -17,6 +17,7 @@ declare global {
         isOwner: boolean
       }
       filePaths?: string[];
+      files?: Multer.File[] |  { [fieldname: string]: Multer.File[] };
     }
   }
 }

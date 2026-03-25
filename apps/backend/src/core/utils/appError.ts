@@ -12,7 +12,7 @@ type Code =
   | "UNSUPPORTED"
   | "VERIFICATION_FAILED"
   | "INVALID_WEBHOOK"
-  ;
+  | string;
 export class appError extends Error {
   statusCode: number;
   status: string;

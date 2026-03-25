@@ -11,10 +11,10 @@ http:
     data: |-
       {
         "from": "user@gmail.com",
-        "to": "support@resend.tiven.xyz",
+        "to": "support@zilaukaraz.resend.app",
         "subject": "this is subject",
         "messageId": "klsjfwieoujlgijlsdf@",
-        "html": "<h1>hello</h1>"
+        "textBody": "<h1>hello</h1>"
       }
   auth: inherit
 
