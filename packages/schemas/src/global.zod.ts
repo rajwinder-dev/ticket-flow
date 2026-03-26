@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { validId } from "./helper/zodHelper";
 
-export const params = {
+export const validUuid = {
   paramsSchema: z
     .object({
-      id: validId,
+      id: z.uuid(),
     })
     .strict(),
 };

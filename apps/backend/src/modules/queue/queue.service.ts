@@ -15,6 +15,7 @@ export class QueueService {
       data: {
         organizationId,
         queueGroupId,
+        order: queueOrder + 1,
         ...input,
       },
     });
@@ -26,6 +27,34 @@ export class QueueService {
       agentId,
       organizationId,
     }));
+    const existingQueueAgents = await prisma.queueAgent.findMany({
+      where: {
+        organizationId,
+        agentId: {
+          in: agentIds,
+        },
+      },
+    });
+    const alreadyAssignedAgent = existingQueueAgents.map((qa) => qa.agentId);
+    const filteredQueueAgents = queueAgents.filter((qa) =>
+      alreadyAssignedAgent.includes(qa.agentId),
+    );
+    if (filteredQueueAgents.length > 0) {
+      const agentNames = await prisma.user.findMany({
+        where: {
+          id: {
+            in: filteredQueueAgents.map((qa) => qa.agentId),
+          },
+        },
+      });
+      throw new appError(
+        `Some Agents are already assigned to other queues`,
+        400,
+        "CONFLICT_ERROR",
+        { agents: agentNames.map((a) => ({ id: a.id, name: a.email })) },
+      );
+    }
+    //  return already existing agents and newly added agents
     return await prisma.queueAgent.createMany({
       data: queueAgents,
       skipDuplicates: true,
@@ -41,6 +70,18 @@ export class QueueService {
         },
       },
     });
+  };
+  static getQueueAgents = async (queueId: string, organizationId: string) => {
+    const queueAgents = await prisma.queueAgent.findMany({
+      where: {
+        queueId,
+        organizationId,
+      },
+      include: {
+        user: true,
+      },
+    });
+    return queueAgents.map((qa) => qa.user);
   };
   static update = async (id: string, organizationId: string, input: UpdateQueueInput) => {
     const queue = await prisma.queue.update({

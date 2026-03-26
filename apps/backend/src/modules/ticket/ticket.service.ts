@@ -6,7 +6,7 @@ export class TicketService {
     subject,
     description,
     organizationId,
-    customerId
+    customerId,
   }: {
     subject: string;
     description: string;

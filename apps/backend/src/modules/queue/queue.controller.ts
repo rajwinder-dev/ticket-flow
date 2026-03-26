@@ -13,6 +13,7 @@ import { QueueGroupService } from "./queue-group.service";
 import { QueueService } from "./queue.service";
 
 export class QueueController {
+  // Queue Groups
   static createQueueGroup = catchAsync(async (req, res, _next) => {
     const input = req.body as QueueGroupInput;
     const queueGroup = await QueueGroupService.createQueueGroup(
@@ -42,8 +43,9 @@ export class QueueController {
     await QueueGroupService.deleteQueueGroup(id, req.organization.id);
     response(res, null, 204);
   });
+  // Queues
   static createQueue = catchAsync(async (req, res, _next) => {
-    const groupId = req.params.groupId as string;
+    const groupId = req.params.id as string;
     const input = req.body as CreateQueueInput;
     const queue = await QueueService.create(req.organization.id, groupId, input);
     response(res, queue, 201);
@@ -61,6 +63,7 @@ export class QueueController {
     response(res, null, 204);
   });
   static getQueues = catchAsync(async (req, res, _next) => {
+    const groupId = req.params.id as string;
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
       .filter()
       .sort()
@@ -69,6 +72,7 @@ export class QueueController {
     const queues = await prisma.queue.findMany({
       where: {
         organizationId: req.organization.id,
+        queueGroupId: groupId,
         ...filterOptions.where,
         active: true,
       },
@@ -77,7 +81,11 @@ export class QueueController {
     });
     response(res, queues, 200);
   });
-
+  static getQueueAgents = catchAsync(async (req, res, _next) => {
+    const queueId = req.params.id as string;
+    const agents = await QueueService.getQueueAgents(queueId, req.organization.id);
+    response(res, agents, 200);
+   });
   static updateQueue = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const input = req.body as UpdateQueueInput;

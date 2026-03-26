@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // found this function on internet, typescript is too genetic
 
 import path from "path";
@@ -48,3 +49,26 @@ const nanoid = customAlphabet("1234567890", 6)
 export function readableId(preFlex:string) {
   return ` ${preFlex}-${nanoid()}`
 }
+export const deepNormalize = (obj: any, excludeFields: string[] = []): any => {
+  if (obj === null || typeof obj !== 'object') {
+    return typeof obj === 'string' ? obj.trim() : obj;
+  }
+  if (obj instanceof Date) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((item) => deepNormalize(item, excludeFields));
+  }
+  return Object.keys(obj).reduce((acc: any, key) => {
+    const value = obj[key];
+
+    // Check if this specific key should be ignored by the normalizer
+    if (excludeFields.includes(key)) {
+      // KEEP AS IS: No trimming, no recursion into this specific value
+      acc[key] = value;
+    } else {
+      // NORMALIZE: Trim strings and recurse into nested objects
+      acc[key] = deepNormalize(value, excludeFields);
+    }
+
+    return acc;
+  }, {});
+};

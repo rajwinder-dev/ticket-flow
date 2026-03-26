@@ -32,7 +32,7 @@ export const updateQueueInput = {
 };
 export const addAgentsToQueueInput = {
   bodySchema: z.object({
-    agentIds: z.array(z.string()),
+    agentIds: z.array(z.uuid()),
   }),
 };
 export const removeAgentsFromQueueInput = {

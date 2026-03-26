@@ -8,19 +8,19 @@ import morgan from "morgan";
 import path from "path";
 import { devMode } from "./config/appConfig";
 import { env } from "./config/env";
-import { devMiddleware } from "./core/middleware/devMiddleware";
-import { sanitizeMiddleware } from "./core/middleware/sanitizeMiddleware";
+
 import { appError } from "./core/utils/appError";
 import { globalHandler } from "./core/utils/globalHandler";
 
+import { DevMiddleware } from "./core/middleware/devMiddleware";
 import authRouter from "./modules/auth/auth.route";
 import emailRouter from "./modules/email/email.routes";
 import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
+import QueueRoutes from "./modules/queue/queue.routes";
 import roleRouter from "./modules/role/role.route";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
-import QueueRoutes from "./modules/queue/queue.routes";
 
 export const app = express();
 
@@ -50,9 +50,7 @@ app.use("/webhooks", webhookRouter);
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 // custom middleware
-app.use(sanitizeMiddleware);
-
-if (devMode) app.use(devMiddleware);
+if (devMode) app.use(DevMiddleware.logRequests);
 
 //  Routes
 app.get("/", (_req, res) => {
@@ -78,5 +76,4 @@ app.all(/(.*)/, (req, res, next) => {
 });
 
 app.use(globalHandler);
-
 export default app;

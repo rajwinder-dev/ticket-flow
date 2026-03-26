@@ -1,0 +1,30 @@
+info:
+  name: get agents
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{url}}/api/v1/queue/:id/agents"
+  params:
+    - name: id
+      value: "{{queueId}}"
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "agentIds": [
+          "27c22129-dfac-4f98-96f1-91bc04275892",
+          "58c215bf-308f-468c-94f2-09233c3a06bb",
+          "24487d10-8fe7-465a-8ab2-d240cdc23ac0",
+          "67453213-565f-4521-a08b-39b11383025a"
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

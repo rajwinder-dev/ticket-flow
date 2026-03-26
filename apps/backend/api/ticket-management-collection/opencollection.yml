@@ -21,6 +21,15 @@ request:
   auth:
     type: bearer
     token: "{{accessToken}}"
+  scripts:
+    - type: after-response
+      code: |-
+        console.log("---- ENV VARIABLES AFTER ----");
+        console.log("url: " + bru.getEnvVar("url"))
+        console.log("accesstoken: " + bru.getEnvVar("accessToken"))
+        console.log("organizationId: " + bru.getEnvVar("organizationId"))
+        console.log("queueGroupId: " + bru.getEnvVar("queueGroupId"))
+        console.log("queueId: " + bru.getEnvVar("queueId"))
 bundled: false
 extensions:
   bruno:

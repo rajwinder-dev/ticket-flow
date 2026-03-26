@@ -1,6 +1,6 @@
+import { Schema, ZodError } from "zod";
 import { appError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
-import { Schema, ZodError } from "zod";
 
 export function validationMiddleware({
   bodySchema,
@@ -20,11 +20,12 @@ export function validationMiddleware({
             "Body validation failed",
             400,
             "VALIDATION_ERROR",
-            formatZodErrors(result.error)
-          )
+            formatZodErrors(result.error),
+          ),
         );
       req.body = result.data;
     }
+    
 
     if (paramsSchema) {
       const result = paramsSchema.safeParse(req.params);
@@ -34,8 +35,8 @@ export function validationMiddleware({
             "Params validation failed",
             400,
             "VALIDATION_ERROR",
-            formatZodErrors(result.error)
-          )
+            formatZodErrors(result.error),
+          ),
         );
     }
 
@@ -47,8 +48,8 @@ export function validationMiddleware({
             "Query validation failed",
             400,
             "VALIDATION_ERROR",
-            formatZodErrors(result.error)
-          )
+            formatZodErrors(result.error),
+          ),
         );
     }
 
@@ -56,7 +57,7 @@ export function validationMiddleware({
   });
 }
 function formatZodErrors(zodError: ZodError) {
-  console.log(zodError)
+  console.log(zodError);
   return zodError.issues.map((issue) => ({
     field: issue.path.join("."),
     message: issue.message,

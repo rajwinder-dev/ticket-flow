@@ -1,0 +1,33 @@
+info:
+  name: create queue
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/queue/:id"
+  params:
+    - name: id
+      value: ""
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "queue": {
+          "name": "customer care",
+          "description": "this is the queue",
+          "orderRank": 100
+        },
+        "sla": {
+          "firstResponseTimeMinutes": 15,
+          "resolutionTimeMinutes": 90
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

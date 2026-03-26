@@ -20,4 +20,8 @@ export class log {
   static debug(msg: string) {
     console.log(`\x1b[90m[DEBUG]\x1b[0m ${msg}`);
   }
+  static data(label: string, data: unknown) {
+    console.log(`\x1b[35m[DATA] ${label}:\x1b[0m`);
+    console.dir(data, { depth: null, colors: true });
+  }
 }

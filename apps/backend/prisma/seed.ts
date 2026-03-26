@@ -3,15 +3,18 @@ import { prisma } from "../src/core/utils/prismaClient";
 import { seedMembers } from "../src/seed/membership.seed";
 import { seedOrganizations } from "../src/seed/organization.seed";
 import { seedUsers } from "../src/seed/users.seed";
+import { seedQueueGroups } from "../src/seed/queue.seed";
 export class seedData {
   static async updateFakeData() {
     await this.clearData();
-    const data = await seedUsers();
+    const users = await seedUsers();
     log.success("Users seeded successfully");
-    await seedOrganizations(data.splice(0, 10));
+    await seedOrganizations(users.splice(0, 10));
     log.success("organization seeded successfully");
-    await seedMembers(data.splice(11, 50));
+    await seedMembers(users.splice(11, 50));
     log.success("org members seeded successfully");
+    await seedQueueGroups();
+    log.success("queue groups and queues seeded successfully");
   }
   static async createOnlyAdmin() {
     console.log("not done");
