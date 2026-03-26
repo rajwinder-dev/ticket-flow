@@ -1,0 +1,22 @@
+info:
+  name: Create Customer
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/customer"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "customer1@gmail.com",
+        "name": "customer1"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

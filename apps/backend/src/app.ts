@@ -14,6 +14,7 @@ import { globalHandler } from "./core/utils/globalHandler";
 
 import { DevMiddleware } from "./core/middleware/devMiddleware";
 import authRouter from "./modules/auth/auth.route";
+import customerRoutes from "./modules/customer/customer.routes";
 import emailRouter from "./modules/email/email.routes";
 import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
@@ -65,6 +66,7 @@ app.use("/api/v1/role", roleRouter);
 app.use("/api/v1/member", MemberRouter);
 app.use("/api/v1/email", emailRouter);
 app.use("/api/v1/queue", QueueRoutes);
+app.use("/api/v1/customer", customerRoutes);
 // app.use("/api/v1/employee", employeeRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
 // app.use("/api/v1/dashboard", dashboardRoute);
