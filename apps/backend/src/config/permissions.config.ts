@@ -16,4 +16,6 @@ export const PERMISSIONS = {
   category: ["create", "edit", "delete", "view"],
   user: ["view", "assign_ticket"],
   report: ["view", "export"],
-};
+} as const;
+export  type PermissionModule = keyof typeof PERMISSIONS
+export type PermissionAction<T extends PermissionModule>  = (typeof PERMISSIONS)[T][number]

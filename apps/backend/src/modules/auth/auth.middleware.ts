@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PermissionAction, PermissionModule } from "../../config/permissions.config";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { clearCookie } from "../../core/utils/cookies";
@@ -61,13 +62,13 @@ export class authMiddleware {
         organization: {
           select: {
             createdBy: true,
-            name: true
+            name: true,
           },
         },
         user: {
           select: {
-            username: true
-          }
+            username: true,
+          },
         },
         role: {
           select: {
@@ -84,7 +85,7 @@ export class authMiddleware {
       ...req.organization,
       isOwner: member?.role?.name === "OWNER",
       id: organizationId,
-      name: member.organization?.name as string
+      name: member.organization?.name as string,
     };
     req.user = {
       ...req.user,
@@ -94,7 +95,7 @@ export class authMiddleware {
     };
     next();
   });
-  static verifyPermissions = (module: string, action: string) =>
+  static verifyPermissions = <T extends PermissionModule>(module: T, action: PermissionAction<T>) =>
     catchAsync(async (req, res, next) => {
       const permissions = req.user.permissions;
       if (req.organization.isOwner) return next();
@@ -109,6 +110,6 @@ export class authMiddleware {
     });
   static restrictToOwner = catchAsync(async (req, res, next) => {
     if (!req.organization.isOwner) return next(new appError("Restrict to owner", 403, "FORBIDDEN"));
-    next()
+    next();
   });
 }
