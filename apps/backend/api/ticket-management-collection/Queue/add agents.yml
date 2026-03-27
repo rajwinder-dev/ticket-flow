@@ -15,9 +15,12 @@ http:
     data: |-
       {
         "agentIds": [
-          "00096806-caac-4e12-9595-7ac0215b8f78",
-          "396f7e58-647b-4dbd-83d0-ddb7ab8b2234"
-        ]
+        "b818ac66-ffe7-4ebe-a21c-e3d48435fc2c",
+        "83b588dc-a334-487c-b32b-2c82134feb10",
+        "0dc93079-f8f3-4374-a187-94faca5d2b64",
+        "5712f89a-138a-4705-800d-2aeb8836c68d",
+        "f7ab60fa-1a2f-4051-9ac1-c3ee01fbf66a"
+      ]
       }
   auth: inherit
 

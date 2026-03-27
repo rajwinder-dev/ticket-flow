@@ -9,61 +9,47 @@ datasource db {
 
 //  ============================ ENUMS ==============================
 
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  PENDING
-  RESOLVED
-  CLOSED
-}
-
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id               String             @id @default(uuid()) @db.Uuid
-  code             String             @unique
-  email            String             @unique
-  phoneNo          String?            @unique
-  passwordHash     String
-  passwordChangeAt DateTime?
-  avatar           String?
-  username         String?
-  location         String?
-  active           Boolean            @default(true)
-  isOnboarded      Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  creator          User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
-  createdBy        String?            @db.Uuid
-  createdUsers     User[]             @relation("UserCreatedBy")
-  activityLogs     ActivityLog[]
-  sessions         Session[]
-  assignedProjects AssignedProject[]
-  managedProjects  Project[]          @relation("ProjectManager")
-  createdRoles     Role[]             @relation("RoleCreatedBy")
-  ticketsAssigned  Ticket[]           @relation("TicketAssignedTo")
-  ticketsCreated   Ticket[]           @relation("TicketAssignedBy")
-  ticketComments   TicketComment[]
-  fromTransitions  TicketTransition[] @relation("TransitionFromEmployee")
-  toTransitions    TicketTransition[] @relation("TransitionToEmployee")
-  notificationFrom Notification[]     @relation("NotificationFrom")
-  notificationTo   Notification[]     @relation("NotificationTo")
-  chatRoomsCreated ChatRoom[]         @relation("ChatCreatedBy")
-  participants     Participant[]
-  messages         Message[]
-  organization     Organization[]
-  membership       Membership[]
-  token            Token[]
-  TokenCreatedBy   Token[]            @relation("TokenCreatedBy")
-  queueAgents      QueueAgent[]
-  queueGroups      QueueGroup[]
+  id                String             @id @default(uuid()) @db.Uuid
+  code              String             @unique
+  email             String             @unique
+  phoneNo           String?            @unique
+  passwordHash      String
+  passwordChangeAt  DateTime?
+  avatar            String?
+  username          String?
+  location          String?
+  active            Boolean            @default(true)
+  isOnboarded       Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  creator           User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdBy         String?            @db.Uuid
+  createdUsers      User[]             @relation("UserCreatedBy")
+  activityLogs      ActivityLog[]
+  sessions          Session[]
+  assignedProjects  AssignedProject[]
+  managedProjects   Project[]          @relation("ProjectManager")
+  createdRoles      Role[]             @relation("RoleCreatedBy")
+  ticketsAssigned   Ticket[]           @relation("TicketAssignedTo")
+  ticketsCreated    Ticket[]           @relation("TicketAssignedBy")
+  ticketComments    TicketComment[]
+  fromTransitions   TicketTransition[] @relation("TransitionFromEmployee")
+  toTransitions     TicketTransition[] @relation("TransitionToEmployee")
+  notificationFrom  Notification[]     @relation("NotificationFrom")
+  notificationTo    Notification[]     @relation("NotificationTo")
+  chatRoomsCreated  ChatRoom[]         @relation("ChatCreatedBy")
+  participants      Participant[]
+  messages          Message[]
+  organization      Organization[]
+  membership        Membership[]
+  token             Token[]
+  TokenCreatedBy    Token[]            @relation("TokenCreatedBy")
+  queueAgents       QueueAgent[]
+  queueGroups       QueueGroup[]
+  ticketTransitions TicketTransition[]
 }
 
 model Organization {
@@ -206,18 +192,6 @@ model EmailMessage {
   @@index([messageId])
 }
 
-model Level {
-  id              String             @id @default(uuid()) @db.Uuid
-  name            String
-  order           Int
-  etaMinutes      Int
-  active          Boolean            @default(true)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  fromTransitions TicketTransition[] @relation("TransitionFromLevel")
-  toTransitions   TicketTransition[] @relation("TransitionToLevel")
-}
-
 //  ============================ CUSTOMER ==============================
 model CustomerIdentity {
   id       String     @id @default(uuid()) @db.Uuid
@@ -239,7 +213,6 @@ model Customer {
   // One identity can only have one profile per organization.
   @@unique([organizationId, identityId])
 }
-
 
 //  ============================ QUEUE / SLA ==============================
 model QueueGroup {
@@ -292,10 +265,27 @@ model QueueAgent {
   queueId        String        @db.Uuid
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
+  ticketCount    Int           @default(0)
+
   @@unique([queueId, agentId])
 }
 
 //  ============================ TICKET MANAGEMENT ==============================
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  ON_HOLD
+  RESOLVED
+  REOPENED
+  CLOSED
+}
 
 model Ticket {
   id             String             @id @default(uuid()) @db.Uuid
@@ -310,17 +300,17 @@ model Ticket {
   updatedAt      DateTime           @updatedAt
   organization   Organization?      @relation(fields: [organizationId], references: [id])
   organizationId String?            @db.Uuid
-  customerId     String?            @db.Uuid
-  assignedTo     String?            @db.Uuid
-  assignedBy     String?            @db.Uuid
-  assignedByUser User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
-  assignedToUser User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
+  queue          Queue?             @relation(fields: [queueId], references: [id])
+  queueId        String?            @db.Uuid
   customer       Customer?          @relation(fields: [customerId], references: [id])
+  customerId     String?            @db.Uuid
+  assignedToUser User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
+  assignedTo     String?            @db.Uuid
+  assignedByUser User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
+  assignedBy     String?            @db.Uuid
   transitions    TicketTransition[]
   comments       TicketComment[]
   emailMessages  EmailMessage[]
-  queue          Queue?             @relation(fields: [queueId], references: [id])
-  queueId        String?            @db.Uuid
   attachments    Attachment[]
 
   @@index([assignedTo, assignedBy, customerId, organizationId])
@@ -357,26 +347,27 @@ model TicketComment {
 }
 
 model TicketTransition {
-  id             String        @id @default(uuid()) @db.Uuid
-  ticketId       String?       @db.Uuid
-  fromLevelId    String?       @db.Uuid
-  toLevelId      String?       @db.Uuid
+  id String @id @default(uuid()) @db.Uuid
+
+  ticketId       String        @db.Uuid
+  ticket         Ticket        @relation(fields: [ticketId], references: [id])
+  action         String // ASSIGNED | ESCALATED | STATUS_CHANGED | etc
+  fromQueueId    String?       @db.Uuid
+  toQueueId      String?       @db.Uuid
   fromEmployeeId String?       @db.Uuid
   toEmployeeId   String?       @db.Uuid
-  changedBy      String?
-  note           String?
+  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
+  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
+  changedById    String?       @db.Uuid
+  changedBy      User?         @relation(fields: [changedById], references: [id])
   fromPriority   Priority?
   toPriority     Priority?
   fromStatus     TicketStatus?
   toStatus       TicketStatus?
-  active         Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  ticket         Ticket?       @relation(fields: [ticketId], references: [id])
-  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
-  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
-  fromLevel      Level?        @relation("TransitionFromLevel", fields: [fromLevelId], references: [id])
-  toLevel        Level?        @relation("TransitionToLevel", fields: [toLevelId], references: [id])
+
+  note String?
+
+  createdAt DateTime @default(now())
 }
 
 //  ============================ ACTIVITY / SESSIONS ==============================

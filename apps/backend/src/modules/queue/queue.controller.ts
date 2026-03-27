@@ -66,7 +66,6 @@ export class QueueController {
     const groupId = req.params.id as string;
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
       .filter()
-      .sort()
       .limitFields()
       .pagination();
     const queues = await prisma.queue.findMany({
@@ -75,6 +74,9 @@ export class QueueController {
         queueGroupId: groupId,
         ...filterOptions.where,
         active: true,
+      },
+      orderBy: {
+        order: "asc"
       },
       skip: offset,
       take: limit,

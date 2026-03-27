@@ -1,0 +1,22 @@
+info:
+  name: assign Ticket
+  type: http
+  seq: 7
+
+http:
+  method: PATCH
+  url: "{{url}}/api/v1/ticket/:id/assign"
+  params:
+    - name: id
+      value: ""
+      type: path
+  body:
+    type: json
+    data: ""
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

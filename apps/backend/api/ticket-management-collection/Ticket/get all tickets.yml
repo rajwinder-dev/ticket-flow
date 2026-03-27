@@ -1,21 +1,18 @@
 info:
-  name: Update Customer
+  name: get all tickets
   type: http
-  seq: 2
+  seq: 3
 
 http:
-  method: PATCH
-  url: "{{url}}/api/v1/customer/:id"
-  params:
-    - name: id
-      value: b792cce1-ff25-4c74-bd1b-aa64e8cff8fc
-      type: path
+  method: GET
+  url: "{{url}}/api/v1/ticket"
   body:
     type: json
     data: |-
       {
         "email": "customer1@gmail.com",
-        "name": "customer1 update"
+        "description": "this is the description",
+        "subject": "Login not working "
       }
   auth: inherit
 

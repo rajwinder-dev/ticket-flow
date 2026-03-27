@@ -116,4 +116,17 @@ export class QueueService {
       },
     });
   };
+  static getLowerOrderQueue = async (queueGroupId: string, organizationId: string) => {
+    const queues = await prisma.queue.findFirst({
+      where: {
+        queueGroupId,
+        organizationId,
+        active: true,
+      },
+      orderBy: {
+        order: "asc",
+      },
+    });
+    return queues;
+  }
 }

@@ -7,3 +7,4 @@ export * from "./team.zod";
 export * from "./user.zod";
 export * from "./webhook.zod";
 export * from "./customer.zod";
+export * from "./ticket.zod"

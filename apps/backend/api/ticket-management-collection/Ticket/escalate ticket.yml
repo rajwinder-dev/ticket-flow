@@ -1,21 +1,22 @@
 info:
-  name: Update Customer
+  name: escalate ticket
   type: http
-  seq: 2
+  seq: 6
 
 http:
-  method: PATCH
-  url: "{{url}}/api/v1/customer/:id"
+  method: POST
+  url: "{{url}}/api/v1/ticket/:id/esalate"
   params:
     - name: id
-      value: b792cce1-ff25-4c74-bd1b-aa64e8cff8fc
+      value: ""
       type: path
   body:
     type: json
     data: |-
       {
         "email": "customer1@gmail.com",
-        "name": "customer1 update"
+        "description": "this is the description",
+        "subject": "Login not working "
       }
   auth: inherit
 

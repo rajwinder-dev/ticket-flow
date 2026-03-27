@@ -20,6 +20,7 @@ import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
 import QueueRoutes from "./modules/queue/queue.routes";
 import roleRouter from "./modules/role/role.route";
+import TicketRouter from "./modules/ticket/ticket.routes";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
 
@@ -67,7 +68,7 @@ app.use("/api/v1/member", MemberRouter);
 app.use("/api/v1/email", emailRouter);
 app.use("/api/v1/queue", QueueRoutes);
 app.use("/api/v1/customer", customerRoutes);
-// app.use("/api/v1/employee", employeeRouter);
+app.use("/api/v1/ticket", TicketRouter);
 // app.use("/api/v1/roleAssign", roleAssignRouter);
 // app.use("/api/v1/dashboard", dashboardRoute);
 // app.use("/api/v1/notify", notificationRouter);

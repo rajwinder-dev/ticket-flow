@@ -5,7 +5,11 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/api/v1/member"
+  url: "{{url}}/api/v1/member?limit=100"
+  params:
+    - name: limit
+      value: "100"
+      type: query
   auth: inherit
 
 runtime:

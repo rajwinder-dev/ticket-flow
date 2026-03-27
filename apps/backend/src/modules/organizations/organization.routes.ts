@@ -3,6 +3,7 @@ import { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
 import { OrganizationController } from "./organization.controller";
+import { validUuidParams } from "@repo/schemas/src/global.zod";
 
 const organizationRouter = Router();
 organizationRouter.get("/invite/:token", OrganizationController.InviteDetails);
@@ -19,8 +20,8 @@ organizationRouter.use(authMiddleware.tenant);
 
 organizationRouter
   .route("/:id")
-  .patch(OrganizationController.updateOrganization)
-  .delete(OrganizationController.deleteOrganization);
+  .patch(validationMiddleware(validUuidParams), OrganizationController.updateOrganization)
+  .delete(validationMiddleware(validUuidParams),OrganizationController.deleteOrganization);
 
 organizationRouter.post(
   "/invite",

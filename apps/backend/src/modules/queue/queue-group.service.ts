@@ -82,4 +82,14 @@ export class QueueGroupService {
     });
     return queueGroup;
   };
+  static getDefaultGroup = async (organizationId: string) => {
+    const defaultGroup = await prisma.queueGroup.findFirst({
+      where: {
+        organizationId,
+        default: true,
+        active: true,
+      },
+    });
+    return defaultGroup;
+  }
 }

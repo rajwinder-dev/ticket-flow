@@ -3,6 +3,7 @@ import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
 import { roleController } from "./role.controller";
+import { validUuidParams } from "@repo/schemas/src/global.zod";
 const roleRouter = express.Router();
 
 roleRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
@@ -15,7 +16,7 @@ roleRouter
     validationMiddleware(creteRoleInput),
     roleController.createRole,
   );
-roleRouter.route("/:id").get(roleController.getRoleDetails);
+roleRouter.route("/:id").get( validationMiddleware(validUuidParams),roleController.getRoleDetails);
 roleRouter
   .route("/:id")
   .patch(

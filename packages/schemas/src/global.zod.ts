@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const validUuid = {
+export const validUuidParams = {
   paramsSchema: z
     .object({
       id: z.uuid(),

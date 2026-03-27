@@ -24,4 +24,15 @@ export class CustomerService {
       },
     });
   };
+  static getCustomerByEmail = async (email: string) => {
+    const data = await prisma.customerIdentity.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        customer: true,
+      },
+    });
+    return data?.customer;
+  };
 }

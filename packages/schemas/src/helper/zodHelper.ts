@@ -21,16 +21,8 @@ export const validBigDescription = z
   .min(10, "Description must be at least 10 characters")
   .max(200, "Description must be at most 200 characters");
 
-// Timestamp/date validations
 
 
-// export const validDeadline = validTimestamp.refine(
-//   (date) => date >= startOfDay(new Date()),
-//   {
-//     message: "Date must be today or in the future",
-//     path: ["startDate"], // Optional; remove if you want global message
-//   }
-// );
 
 // Phone number (E.164 format)
 export const validPhoneNo = z
@@ -41,4 +33,3 @@ export const validPhoneNo = z
 export const validPassword = z
   .string()
   .min(4, "Password must be at least 4 characters")
-  .max(20, "Password must be at most 18 characters");

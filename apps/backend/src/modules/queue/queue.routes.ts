@@ -9,7 +9,7 @@ import {
   removeAgentsFromQueueInput,
   updateQueueInput,
 } from "@repo/schemas";
-import { validUuid } from "@repo/schemas/src/global.zod";
+import { validUuidParams } from "@repo/schemas/src/global.zod";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
 import { QueueController } from "./queue.controller";
@@ -23,7 +23,7 @@ QueueRoutes.post(
 );
 QueueRoutes.delete(
   "/group/:id",
-  validationMiddleware(validUuid),
+  validationMiddleware(validUuidParams),
   QueueController.deleteQueueGroups,
 );
 QueueRoutes.get("/group", QueueController.getAllQueueGroups);
@@ -34,7 +34,7 @@ QueueRoutes.patch(
 );
 QueueRoutes.patch(
   "/group/:id/default",
-  validationMiddleware(validUuid),
+  validationMiddleware(validUuidParams),
   QueueController.setDefaultGroup,
 );
 // queues agents
@@ -52,6 +52,10 @@ QueueRoutes.delete(
 QueueRoutes.post("/:id", validationMiddleware(createQueueInput), QueueController.createQueue);
 QueueRoutes.get("/:id/group", QueueController.getQueues);
 QueueRoutes.patch("/:id", validationMiddleware(updateQueueInput), QueueController.updateQueue);
-QueueRoutes.get("/:id/agents", validationMiddleware(validUuid), QueueController.getQueueAgents);
-QueueRoutes.delete("/:id", validationMiddleware(validUuid), QueueController.deleteQueue);
+QueueRoutes.get(
+  "/:id/agents",
+  validationMiddleware(validUuidParams),
+  QueueController.getQueueAgents,
+);
+QueueRoutes.delete("/:id", validationMiddleware(validUuidParams), QueueController.deleteQueue);
 export default QueueRoutes;
