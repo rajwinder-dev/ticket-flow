@@ -15,23 +15,23 @@ const TicketRouter = Router();
 TicketRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 TicketRouter.post(
   "/",
-  authMiddleware.verifyPermissions("ticket", "create"),
+  authMiddleware.verifyPermission("ticket", "create"),
   validationMiddleware(createTicketInput),
   TicketController.createTicket,
 );
 TicketRouter.get(
   "/",
-  authMiddleware.verifyPermissions("ticket", "view_all"),
+  authMiddleware.verifyPermission("ticket", "view_all"),
   TicketController.getAllTickets,
 );
 TicketRouter.get(
   "/me",
-  authMiddleware.verifyPermissions("ticket", "view_own"),
+  authMiddleware.verifyPermission("ticket", "view_own"),
   TicketController.getAssignedTickets,
 );
 TicketRouter.patch(
   "/:id/status",
-  authMiddleware.verifyPermissions("ticket", "change_status"),
+  authMiddleware.verifyPermission("ticket", "change_status"),
   validationMiddleware(updateTicketStatusInput),
   TicketController.updateStatus,
 );
@@ -42,19 +42,19 @@ TicketRouter.patch(
 );
 TicketRouter.patch(
   "/:id/assign",
-  authMiddleware.verifyPermissions("ticket", "assign"),
+  authMiddleware.verifyPermission("ticket", "assign"),
   validationMiddleware(assignTicketInput),
   TicketController.assignTicket,
 );
 TicketRouter.post(
   "/:id/comment",
-  authMiddleware.verifyPermissions("ticket", "add_comment"),
+  authMiddleware.verifyPermission("ticket", "add_comment"),
   validationMiddleware(createTicketCommentInput),
   TicketController.addComment,
 );
 TicketRouter.post(
   "/:id/escalate",
-  authMiddleware.verifyPermissions("ticket", "view_own"),
+  authMiddleware.verifyPermission("ticket", "view_own"),
   validationMiddleware(validUuidParams),
   TicketController.escalate,
 );

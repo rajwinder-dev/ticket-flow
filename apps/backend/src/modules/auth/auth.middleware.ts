@@ -95,7 +95,7 @@ export class authMiddleware {
     };
     next();
   });
-  static verifyPermissions = <T extends PermissionModule>(module: T, action: PermissionAction<T>) =>
+  static verifyPermission = <T extends PermissionModule>(module: T, action: PermissionAction<T>) =>
     catchAsync(async (req, res, next) => {
       const permissions = req.user.permissions;
       if (req.organization.isOwner) return next();
