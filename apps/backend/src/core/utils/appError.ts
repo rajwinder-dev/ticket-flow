@@ -12,7 +12,12 @@ type Code =
   | "UNSUPPORTED"
   | "VERIFICATION_FAILED"
   | "INVALID_WEBHOOK"
-  | string;
+  | "FOREIGN_KEY_ERROR"
+  | "NULL_CONSTRAINT"
+  | "MISSING_REQUIRED_FIELD"
+  | "DB_CONNECTION_ERROR"
+  | "DB_TIMEOUT";
+
 export class appError extends Error {
   statusCode: number;
   status: string;

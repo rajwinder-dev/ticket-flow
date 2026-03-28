@@ -12,7 +12,7 @@ roleRouter
   .route("/")
   .get(roleController.getAllRoles)
   .post(
-    authMiddleware.verifyPermission("role", "create"),
+    authMiddleware.restrictToOwner,
     validationMiddleware(creteRoleInput),
     roleController.createRole,
   );
@@ -20,10 +20,10 @@ roleRouter.route("/:id").get(validationMiddleware(validUuidParams), roleControll
 roleRouter
   .route("/:id")
   .patch(
-    authMiddleware.verifyPermission("role", "update"),
+    authMiddleware.restrictToOwner,
     validationMiddleware(updateRoleInput),
     roleController.updateRole,
   )
-  .delete(authMiddleware.verifyPermission("role", "delete"), roleController.deleteRole);
+  .delete(authMiddleware.restrictToOwner, roleController.deleteRole);
 
 export default roleRouter;

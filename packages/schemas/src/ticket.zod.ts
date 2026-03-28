@@ -30,16 +30,18 @@ export const createTicketCommentInput = {
   bodySchema: z
     .object({
       comment: z.string(),
-      isInternal: z.boolean(),
+      isInternal: z.boolean().optional(),
     })
     .strict(),
   ...validUuidParams,
 };
 export const assignTicketInput = {
-  bodySchema: z.object({
-    assignId: z.uuid(),
-    targetType: z.enum(["AGENT", "QUEUE"]),
-  }).strict(),
+  bodySchema: z
+    .object({
+      assignId: z.uuid(),
+      targetType: z.enum(["AGENT", "QUEUE"]),
+    })
+    .strict(),
   ...validUuidParams,
 };
 export type CreateTicketInput = z.infer<typeof createTicketInput.bodySchema>;

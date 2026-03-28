@@ -5,19 +5,11 @@ info:
 
 http:
   method: POST
-  url: "{{url}}/api/v1/ticket/:id/esalate"
+  url: "{{url}}/api/v1/ticket/:id/escalate"
   params:
     - name: id
-      value: ""
+      value: "{{ticketId}}"
       type: path
-  body:
-    type: json
-    data: |-
-      {
-        "email": "customer1@gmail.com",
-        "description": "this is the description",
-        "subject": "Login not working "
-      }
   auth: inherit
 
 settings:

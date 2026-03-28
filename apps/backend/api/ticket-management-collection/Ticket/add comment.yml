@@ -8,15 +8,13 @@ http:
   url: "{{url}}/api/v1/ticket/:id/comment"
   params:
     - name: id
-      value: ""
+      value: "{{ticketId}}"
       type: path
   body:
     type: json
     data: |-
       {
-        "email": "customer1@gmail.com",
-        "description": "this is the description",
-        "subject": "Login not working "
+        "comment": "this is the commet from owner "
       }
   auth: inherit
 

@@ -29,20 +29,75 @@ export class TicketService {
     assignedTo?: string;
     queueId?: string;
   }) => {
-    const ticket = await prisma.ticket.create({
-      data: {
-        code: readableId("TKT"),
-        subject,
-        description,
-        organizationId,
-        customerId,
-        assignedTo,
-        queueId
-      },
+    const ticket = await prisma.$transaction(async (tx) => {
+      const data = await prisma.ticket.create({
+        data: {
+          code: readableId("TKT"),
+          subject,
+          description,
+          organizationId,
+          customerId,
+          assignedTo,
+          queueId,
+        },
+      });
+      if (assignedTo)
+        await tx.queueAgent.update({
+          where: {
+            agentId_organizationId: {
+              agentId: assignedTo,
+              organizationId,
+            },
+          },
+          data: {
+            ticketCount: {
+              increment: 1,
+            },
+          },
+        });
+      return data;
     });
     return ticket;
   };
-  static resolveQueueAssignment = async (organizationId: string) => {
+  static getTicketDetails = async (ticketId: string, organizationId: string) => {
+    const data = await prisma.ticket.findUnique({
+      where: {
+        organizationId,
+        id: ticketId,
+      },
+      include: {
+        comments: {
+          select: {
+            comment: true,
+            createdAt: true,
+            updatedAt: true,
+            author: {
+              select: {
+                email: true,
+                username: true,
+              },
+            },
+          },
+        },
+        transitions: true,
+        assignedToUser: {
+          select: {
+            email: true,
+            username: true,
+          },
+        },
+        queue: {
+          select: {
+            name: true,
+            order: true,
+          },
+        },
+      },
+    });
+
+    return data;
+  };
+  static resolveQueueAssignment = async ({ organizationId }: { organizationId: string }) => {
     // todo: later add category based select group if not then default
     let groupId, queueId;
     const group = await QueueGroupService.getDefaultGroup(organizationId);
@@ -54,19 +109,30 @@ export class TicketService {
     }
     return { groupId, queueId };
   };
-  static resolveAgentAssignment = async (queueId: string, organizationId: string) => {
+  static resolveAgentAssignment = async ({
+    queueId,
+    organizationId,
+  }: {
+    queueId: string;
+    organizationId: string;
+  }) => {
     // todo: later add strategies  round-rebin, ,load balance and availability
     const queueAgents = await QueueService.getQueueAgents(queueId, organizationId);
     if (queueAgents.length === 0) return null;
     const agent = queueAgents[0];
     return agent;
   };
-  static updateStatus = async (
-    ticketId: string,
-    organizationId: string,
-    currentStatus: TicketStatus,
-    nextStatus: TicketStatus,
-  ) => {
+  static updateStatus = async ({
+    ticketId,
+    organizationId,
+    currentStatus,
+    nextStatus,
+  }: {
+    ticketId: string;
+    organizationId: string;
+    currentStatus: TicketStatus;
+    nextStatus: TicketStatus;
+  }) => {
     if (!this.allowedTransitions[currentStatus].includes(nextStatus)) {
       throw new appError("Invalid transition", 403);
     }
@@ -80,7 +146,15 @@ export class TicketService {
       },
     });
   };
-  static updatePriority = async (ticketId: string, organizationId: string, priority: Priority) => {
+  static updatePriority = async ({
+    ticketId,
+    organizationId,
+    priority,
+  }: {
+    ticketId: string;
+    organizationId: string;
+    priority: Priority;
+  }) => {
     return await prisma.ticket.update({
       where: {
         id: ticketId,
@@ -95,7 +169,7 @@ export class TicketService {
     ticketId: string,
     authorId: string,
     comment: string,
-    isInternal: boolean,
+    isInternal?: boolean,
   ) => {
     const data = await prisma.ticketComment.create({
       data: {
@@ -107,41 +181,68 @@ export class TicketService {
     });
     return data;
   };
-  static assignTicket = async (
-    ticketId: string,
-    organizationId: string,
-    assignId: string,
-    targetType: "AGENT" | "QUEUE",
-  ) => {
+  static assignTicket = async ({
+    ticketId,
+    organizationId,
+    assignId,
+    targetType,
+  }: {
+    ticketId: string;
+    organizationId: string;
+    assignId: string;
+    targetType: "AGENT" | "QUEUE";
+  }) => {
     let queueId;
     let agentId;
-    if (targetType === "QUEUE") {
-      const data = await this.resolveAgentAssignment(ticketId, organizationId);
-      agentId = data?.id;
+    switch (targetType) {
+      // if queue given , resovle agent only
+      case "QUEUE":
+        {
+          const agentData = await this.resolveAgentAssignment({
+            queueId: assignId,
+            organizationId,
+          });
+          agentId = agentData?.id;
+        }
+        break;
+      case "AGENT":
+        // if agent given , find agent and it queueID
+        {
+          const queueData = await prisma.queueAgent.findUnique({
+            where: {
+              agentId_organizationId: {
+                agentId: assignId,
+                organizationId,
+              },
+            },
+            select: { queueId: true },
+          });
+          queueId = queueData?.queueId;
+          agentId = assignId;
+        }
+        break;
+      default:
+        throw new appError("Invalid targetType ", 400);
     }
-    if (targetType === "AGENT") {
-      const queueData = await prisma.queueAgent.findFirst({
-        where: {
-          agentId: assignId,
-          organizationId,
-        },
-        select: { queueId: true },
-      });
-      queueId = queueData?.queueId;
-      agentId = assignId;
-    }
-    if (!queueId) throw new appError("Agent is not part of any queue", 404, "NOT_FOUND");
-    return await prisma.ticket.update({
-      where: {
-        id: ticketId,
-        organizationId,
-      },
-      data: {
-        assignedTo: agentId,
-      },
+    if (!queueId) throw new appError("Queue not found ", 404, "NOT_FOUND");
+    if (!agentId) throw new appError("Agent not found in queue", 404, "NOT_FOUND");
+    if (agentId === assignId)
+      throw new appError("Already assigned to agent ", 409, "CONFLICT_ERROR");
+
+    return await this.updateTicketMovement({
+      ticketId,
+      organizationId,
+      nextAgentId: agentId,
+      nextQueueId: queueId,
     });
   };
-  static escalateTicket = async (ticketId: string, organizationId: string) => {
+  static escalateTicket = async ({
+    ticketId,
+    organizationId,
+  }: {
+    ticketId: string;
+    organizationId: string;
+  }) => {
     const currentTicket = await prisma.ticket.findUnique({
       where: { id: ticketId, organizationId },
       include: {
@@ -156,49 +257,97 @@ export class TicketService {
     if (!currentTicket?.queue) {
       throw new appError("Invalid Ticket Id", 404, "NOT_FOUND");
     }
-
     //  find next queue in same group
-    const nextQueue = await prisma.queue.findFirst({
+    const nextQueues = await prisma.queue.findMany({
       where: {
         queueGroupId: currentTicket.queue.queueGroupId,
-        order: currentTicket.queue.order + 1,
+        order: {
+          gt: currentTicket.queue.order,
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            queueAgents: true
+          }
+        }// or relation you use
+      },
+      orderBy: {
+        order: "asc",
       },
     });
-
-    // if no next queue → STOP
-    if (!nextQueue) {
-      await prisma.ticket.update({
-        where: { id: ticketId },
-        data: {
-          assignedTo: null,
-          queueId: null,
-        },
-      });
-
-      return currentTicket;
-    }
+    const nextQueue = nextQueues.find((q) => q._count.queueAgents > 0);
+    if (!nextQueue)
+      throw new appError("No further queue. Please assign manually.", 409, "CONFLICT_ERROR");
 
     // try to get agent
-    const agent = await this.resolveAgentAssignment(nextQueue.id, organizationId);
-    if (!agent) {
-      await prisma.ticket.update({
+    const agent = await this.resolveAgentAssignment({ queueId: nextQueue.id, organizationId });
+    if (!agent) throw new appError("No Agent found.", 409, "CONFLICT_ERROR");
+
+    const updatedTicket = await this.updateTicketMovement({
+      ticketId,
+      nextQueueId: nextQueue.id,
+      nextAgentId: agent.id,
+      organizationId,
+    });
+    // update ticket count for new Agent
+    return updatedTicket;
+  };
+  static updateTicketMovement = async ({
+    ticketId,
+    nextAgentId,
+    nextQueueId,
+    organizationId,
+  }: {
+    ticketId: string;
+    nextAgentId: string;
+    nextQueueId: string;
+    organizationId: string;
+  }) => {
+    const updatedTicket = await prisma.$transaction(async (tx) => {
+      const current = await tx.ticket.findUnique({
+        where: { id: ticketId },
+        select: { assignedTo: true },
+      });
+
+      // decrement previous agent (only if different)
+      if (current?.assignedTo && current.assignedTo !== nextAgentId) {
+        await tx.queueAgent.update({
+          where: {
+            agentId_organizationId: {
+              agentId: current.assignedTo,
+              organizationId,
+            },
+          },
+          data: {
+            ticketCount: { decrement: 1 },
+          },
+        });
+      }
+
+      const updated = await tx.ticket.update({
         where: { id: ticketId },
         data: {
-          assignedTo: null,
-          queueId: nextQueue.id
+          assignedTo: nextAgentId,
+          queueId: nextQueueId,
+          status: "OPEN",
         },
       });
 
-      return currentTicket;
-    }
+      // increment new agent
+      await tx.queueAgent.update({
+        where: {
+          agentId_organizationId: {
+            agentId: nextAgentId,
+            organizationId,
+          },
+        },
+        data: {
+          ticketCount: { increment: 1 },
+        },
+      });
 
-    //  success case
-    const updatedTicket = await prisma.ticket.update({
-      where: { id: ticketId },
-      data: {
-        assignedTo: agent.id,
-        queueId: nextQueue.id,
-      },
+      return updated;
     });
     return updatedTicket;
   };

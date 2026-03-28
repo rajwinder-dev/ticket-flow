@@ -1,21 +1,15 @@
 info:
-  name: update priority
+  name: get ticket details
   type: http
-  seq: 5
+  seq: 9
 
 http:
-  method: PATCH
-  url: "{{url}}/api/v1/ticket/:id/priority"
+  method: GET
+  url: "{{url}}/api/v1/ticket/:id"
   params:
     - name: id
       value: "{{ticketId}}"
       type: path
-  body:
-    type: json
-    data: |-
-      {
-        "priority": "HIGH"
-      }
   auth: inherit
 
 settings:

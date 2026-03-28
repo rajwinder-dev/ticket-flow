@@ -8,11 +8,15 @@ http:
   url: "{{url}}/api/v1/ticket/:id/assign"
   params:
     - name: id
-      value: ""
+      value: "{{ticketId}}"
       type: path
   body:
     type: json
-    data: ""
+    data: |-
+      {
+        "targetType": "AGENT",
+        "assignId": ""
+      }
   auth: inherit
 
 settings:

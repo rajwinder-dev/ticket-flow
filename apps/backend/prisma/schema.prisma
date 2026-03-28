@@ -267,7 +267,8 @@ model QueueAgent {
   organizationId String        @db.Uuid
   ticketCount    Int           @default(0)
 
-  @@unique([queueId, agentId])
+  @@unique([queueId, agentId, organizationId])
+  @@unique([agentId, organizationId])
 }
 
 //  ============================ TICKET MANAGEMENT ==============================
@@ -294,7 +295,7 @@ model Ticket {
   category       String?
   description    String             @db.Text
   status         TicketStatus       @default(OPEN)
-  priority       Priority           @default(MEDIUM)
+  priority       Priority?
   active         Boolean            @default(true)
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt

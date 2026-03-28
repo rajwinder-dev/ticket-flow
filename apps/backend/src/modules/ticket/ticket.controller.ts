@@ -15,13 +15,13 @@ import { TicketService } from "./ticket.service";
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
-    let agentId;
+    let agentId: string | undefined;
     const organizationId = req.organization.id;
     const { subject, description, email } = req.body as CreateTicketInput;
     const customerData = await CustomerService.createCustomerIdentity(email, organizationId);
-    const { groupId, queueId } = await TicketService.resolveQueueAssignment(organizationId);
+    const { groupId, queueId } = await TicketService.resolveQueueAssignment({organizationId});
     if (groupId && queueId) {
-      const agentData = await TicketService.resolveAgentAssignment(queueId, organizationId);
+      const agentData = await TicketService.resolveAgentAssignment({queueId, organizationId});
       agentId = agentData?.id;
     }
     await TicketService.createTicket({
@@ -56,6 +56,11 @@ export class TicketController {
     });
     response(res, data, 200, { otherFields: { total, offset, limit } });
   });
+  static getTicketDetails = catchAsync(async (req, res, _next) => {
+    const id = req.params.id as string;
+    const data = await TicketService.getTicketDetails(id, req.organization.id);
+    response(res, data);
+  });
   static getAssignedTickets = catchAsync(async (req, res, _next) => {
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
       .filter()
@@ -79,32 +84,33 @@ export class TicketController {
     response(res, data, 200, { otherFields: { total, offset, limit } });
   });
   static updateStatus = catchAsync(async (req, res, _next) => {
-    const id = req.params.id as string;
+    const ticketId = req.params.id as string;
     const { status } = req.body as UpdateTicketStatusInput;
-    const ticketData = await prisma.ticket.findUnique({ where: { id }, select: { status: true } });
+    const ticketData = await prisma.ticket.findUnique({ where: { id: ticketId }, select: { status: true } });
     if (!ticketData) throw new appError("Ticket not found ", 404);
     const data = await TicketService.updateStatus(
-      id,
-      req.organization.id,
-      ticketData.status,
-      status,
+     { ticketId,
+      organizationId: req.organization.id,
+      nextStatus: status,
+      currentStatus: ticketData.status,}
     );
     response(res, data, 200);
   });
   static updatePriority = catchAsync(async (req, res, _next) => {
-    const id = req.params.id as string;
+    const ticketId = req.params.id as string;
     const { priority } = req.body as UpdateTicketPriorityInput;
-    const data = await TicketService.updatePriority(id, req.organization.id, priority);
+    const data = await TicketService.updatePriority({ticketId, organizationId: req.organization.id, priority});
     response(res, data, 200);
   });
   static assignTicket = catchAsync(async (req, res, _next) => {
+    const ticketId = req.params.id as string;
     const { assignId, targetType } = req.body as AssignTicketInput;
-    const data = await TicketService.assignTicket(
-      req.user.id,
-      req.organization.id,
+    const data = await TicketService.assignTicket({
+      ticketId,
+      organizationId: req.organization.id,
       assignId,
       targetType,
-    );
+    });
     response(res, data);
   });
   static addComment = catchAsync(async (req, res, _next) => {
@@ -115,7 +121,7 @@ export class TicketController {
   });
   static escalate = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const data = await TicketService.escalateTicket(id, req.organization.id);
+    const data = await TicketService.escalateTicket({ticketId: id, organizationId: req.organization.id});
     response(res, data);
   });
 }

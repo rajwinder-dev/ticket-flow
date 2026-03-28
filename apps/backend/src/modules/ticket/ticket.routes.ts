@@ -24,6 +24,7 @@ TicketRouter.get(
   authMiddleware.verifyPermission("ticket", "view_all"),
   TicketController.getAllTickets,
 );
+TicketRouter.get("/:id", TicketController.getTicketDetails)
 TicketRouter.get(
   "/me",
   authMiddleware.verifyPermission("ticket", "view_own"),
@@ -54,7 +55,6 @@ TicketRouter.post(
 );
 TicketRouter.post(
   "/:id/escalate",
-  authMiddleware.verifyPermission("ticket", "view_own"),
   validationMiddleware(validUuidParams),
   TicketController.escalate,
 );
