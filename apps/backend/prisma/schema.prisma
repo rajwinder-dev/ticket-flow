@@ -36,8 +36,8 @@ model User {
   ticketsAssigned   Ticket[]           @relation("TicketAssignedTo")
   ticketsCreated    Ticket[]           @relation("TicketAssignedBy")
   ticketComments    TicketComment[]
-  fromTransitions   TicketTransition[] @relation("TransitionFromEmployee")
-  toTransitions     TicketTransition[] @relation("TransitionToEmployee")
+  fromTransitions   TicketTransition[] @relation("TransitionFromAgent")
+  toTransitions     TicketTransition[] @relation("TransitionToAgent")
   notificationFrom  Notification[]     @relation("NotificationFrom")
   notificationTo    Notification[]     @relation("NotificationTo")
   chatRoomsCreated  ChatRoom[]         @relation("ChatCreatedBy")
@@ -74,6 +74,8 @@ model Organization {
   queueAgents   QueueAgent[]
   queueGroups   QueueGroup[]
   attachments   Attachment[]
+  auditLogs     ActivityLog[]
+  ticketComment TicketComment[]
 }
 
 model Membership {
@@ -194,9 +196,10 @@ model EmailMessage {
 
 //  ============================ CUSTOMER ==============================
 model CustomerIdentity {
-  id       String     @id @default(uuid()) @db.Uuid
-  email    String     @unique @db.VarChar(255)
-  customer Customer[]
+  id        String     @id @default(uuid()) @db.Uuid
+  email     String     @unique @db.VarChar(255)
+  customer  Customer[]
+  createdAt DateTime   @default(now())
 }
 
 model Customer {
@@ -207,8 +210,9 @@ model Customer {
   organization   Organization     @relation(fields: [organizationId], references: [id])
   name           String?          @db.VarChar(255)
   isActive       Boolean          @default(true)
-
-  tickets Ticket[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  tickets        Ticket[]
 
   // One identity can only have one profile per organization.
   @@unique([organizationId, identityId])
@@ -216,18 +220,20 @@ model Customer {
 
 //  ============================ QUEUE / SLA ==============================
 model QueueGroup {
-  id             String        @id @default(uuid()) @db.Uuid
-  name           String
-  description    String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String        @db.Uuid
-  default        Boolean       @default(false)
-  active         Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  createdBy      String?       @db.Uuid
-  creator        User?         @relation(fields: [createdBy], references: [id])
-  queues         Queue[]
+  id                  String             @id @default(uuid()) @db.Uuid
+  name                String
+  description         String?
+  organization        Organization?      @relation(fields: [organizationId], references: [id])
+  organizationId      String             @db.Uuid
+  default             Boolean            @default(false)
+  active              Boolean            @default(true)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  createdBy           String?            @db.Uuid
+  creator             User?              @relation(fields: [createdBy], references: [id])
+  queues              Queue[]
+  TransitionFromGroup TicketTransition[] @relation("TransitionFromGroup")
+  TransitionToGroup   TicketTransition[] @relation("TransitionToGroup")
 
   @@unique([organizationId, name, default])
 }
@@ -240,19 +246,21 @@ enum priority {
 }
 
 model Queue {
-  id             String       @id @default(uuid()) @db.Uuid
-  name           String
-  description    String?
-  organizationId String       @db.Uuid
-  order          Int
-  active         Boolean      @default(true)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  queueAgents    QueueAgent[]
-  ticket         Ticket[]
-  queueGroup     QueueGroup?  @relation(fields: [queueGroupId], references: [id])
-  queueGroupId   String?      @db.Uuid
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  id                  String             @id @default(uuid()) @db.Uuid
+  name                String
+  description         String?
+  organizationId      String             @db.Uuid
+  order               Int
+  active              Boolean            @default(true)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  queueAgents         QueueAgent[]
+  ticket              Ticket[]
+  queueGroup          QueueGroup?        @relation(fields: [queueGroupId], references: [id])
+  queueGroupId        String?            @db.Uuid
+  organization        Organization       @relation(fields: [organizationId], references: [id])
+  transitionFromGroup TicketTransition[] @relation("TransitionFromQueue")
+  transitionToGroup   TicketTransition[] @relation("TransitionToQueue")
 
   @@unique([organizationId, name, order])
 }
@@ -266,8 +274,9 @@ model QueueAgent {
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
   ticketCount    Int           @default(0)
+  active         Boolean       @default(true)
 
-  @@unique([queueId, agentId, organizationId])
+  @@unique([queueId, agentId, organizationId, active])
   @@unique([agentId, organizationId])
 }
 
@@ -336,57 +345,98 @@ model Attachment {
 }
 
 model TicketComment {
-  id         String   @id @default(uuid()) @db.Uuid
-  ticketId   String   @db.Uuid
-  authorId   String   @db.Uuid
-  comment    String   @db.Text
-  isInternal Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  ticket     Ticket   @relation(fields: [ticketId], references: [id])
-  author     User     @relation(fields: [authorId], references: [id])
+  id             String        @id @default(uuid()) @db.Uuid
+  ticketId       String        @db.Uuid
+  authorId       String        @db.Uuid
+  comment        String        @db.Text
+  isInternal     Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  ticket         Ticket        @relation(fields: [ticketId], references: [id])
+  author         User          @relation(fields: [authorId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String       @db.Uuid
+}
+
+enum TicketAction {
+  ASSIGNED
+  ESCALATED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
 }
 
 model TicketTransition {
   id String @id @default(uuid()) @db.Uuid
 
-  ticketId       String        @db.Uuid
-  ticket         Ticket        @relation(fields: [ticketId], references: [id])
-  action         String // ASSIGNED | ESCALATED | STATUS_CHANGED | etc
-  fromQueueId    String?       @db.Uuid
-  toQueueId      String?       @db.Uuid
-  fromEmployeeId String?       @db.Uuid
-  toEmployeeId   String?       @db.Uuid
-  fromEmployee   User?         @relation("TransitionFromEmployee", fields: [fromEmployeeId], references: [id])
-  toEmployee     User?         @relation("TransitionToEmployee", fields: [toEmployeeId], references: [id])
-  changedById    String?       @db.Uuid
-  changedBy      User?         @relation(fields: [changedById], references: [id])
-  fromPriority   Priority?
-  toPriority     Priority?
-  fromStatus     TicketStatus?
-  toStatus       TicketStatus?
-
-  note String?
-
-  createdAt DateTime @default(now())
+  ticketId     String        @db.Uuid
+  ticket       Ticket        @relation(fields: [ticketId], references: [id])
+  action       TicketAction
+  fromQueue    Queue?        @relation("TransitionFromQueue", fields: [fromQueueId], references: [id])
+  fromQueueId  String?       @db.Uuid
+  toQueue      Queue?        @relation("TransitionToQueue", fields: [toQueueId], references: [id])
+  toQueueId    String?       @db.Uuid
+  fromAgent    User?         @relation("TransitionFromAgent", fields: [fromAgentId], references: [id])
+  fromAgentId  String?       @db.Uuid
+  toAgent      User?         @relation("TransitionToAgent", fields: [toAgentId], references: [id])
+  toAgentId    String?       @db.Uuid
+  fromGroup    QueueGroup?   @relation("TransitionFromGroup", fields: [fromGroupId], references: [id])
+  fromGroupId  String?       @db.Uuid
+  toGroup      QueueGroup?   @relation("TransitionToGroup", fields: [toGroupId], references: [id])
+  toGroupId    String?       @db.Uuid
+  changedById  String?       @db.Uuid
+  changedBy    User?         @relation(fields: [changedById], references: [id])
+  fromPriority Priority?
+  toPriority   Priority?
+  fromStatus   TicketStatus?
+  toStatus     TicketStatus?
+  note         String?
 }
 
 //  ============================ ACTIVITY / SESSIONS ==============================
 
+enum ActorType {
+  USER
+  SYSTEM
+  API_KEY
+  SUPPORT_AGENT
+}
+
+enum LogSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum EntryType {
+  TICKET
+  ORGANIZATION
+  USER
+  AUTH
+  ROLE
+}
+
 model ActivityLog {
-  id            String   @id @default(uuid()) @db.Uuid
-  entityName    String?
-  entityId      String?
-  action        String
-  description   String?
-  logStatus     String?
-  metaData      Json?
-  userAgent     String?
-  ipAddress     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  performedById String?  @db.Uuid
-  performer     User?    @relation(fields: [performedById], references: [id])
+  id             String        @id @default(uuid()) @db.Uuid
+  createdAt      DateTime      @default(now())
+  actorId        String?       @db.Uuid
+  actorType      ActorType     @default(USER)
+  actor          User?         @relation(fields: [actorId], references: [id])
+  event          String // e.g., "ticket.status_updated"
+  severity       LogSeverity   @default(INFO)
+  entityType     EntryType // e.g., "TICKET", "ORGANIZATION", "USER"
+  entityId       String?       @db.Uuid
+  changes        Json? // { "status": { "from": "OPEN", "to": "CLOSED" } }
+  message        String?       @db.Text
+  metadata       Json? // Extra context like "reason" or "source_platform"
+  ipAddress      String?       @db.Inet
+  userAgent      String?       @db.Text
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String?       @db.Uuid
+
+  // Indexes for high-speed retrieval
+  @@index([organizationId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@index([actorId])
 }
 
 model Session {

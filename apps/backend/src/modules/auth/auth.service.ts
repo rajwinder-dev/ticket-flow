@@ -5,6 +5,7 @@ import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
+import { ActivityService } from "../activity/activity.service";
 import { TokenService } from "../token/token.service";
 import { BcryptService } from "./bcrypt.service";
 import { JwtService } from "./jwt.service";
@@ -25,6 +26,14 @@ export default class AuthService {
         passwordHash,
       },
     });
+    await ActivityService.lagActivity({
+      actorId: data.id,
+      actorType: "USER",
+      message: "user signup successfully",
+      event: "user.signup",
+      entityType: "AUTH",
+      entityId: data.id,
+    });
     return data;
   }
   static async loginUser({ email, password }: LoginInput) {
@@ -40,6 +49,13 @@ export default class AuthService {
     if (!verify) throw new appError("Password or Username is invalid", 401, "INVALID_CREDENTIALS");
     const accessToken = JwtService.sign({ userId: userData.id, email }, "access");
     const refreshToken = JwtService.sign({ userId: userData.id, email }, "refresh");
+    await ActivityService.lagActivity({
+      actorId: userData.id,
+      actorType: "USER",
+      message: "user logged In successfully",
+      event: "user.signup",
+      entityType: "AUTH",
+    });
     return { accessToken, refreshToken, userData };
   }
   static async getRefreshToken(token: string) {
@@ -66,6 +82,13 @@ export default class AuthService {
     const data = await prisma.user.update({
       where: { id: userId },
       data: { passwordHash: hash, passwordChangeAt: new Date() },
+    });
+    await ActivityService.lagActivity({
+      actorId: userId,
+      actorType: "USER",
+      message: "user changed password successfully",
+      event: "user.changePassword",
+      entityType: "AUTH",
     });
     return data;
   }
@@ -112,8 +135,15 @@ export default class AuthService {
       },
       expiresAt: addMinutes(new Date(), 10),
     });
+    await ActivityService.lagActivity({
+      actorId: user.id,
+      actorType: "USER",
+      message: "user request password reset link",
+      event: "user.changePassword",
+      entityType: "AUTH",
+    });
     const forgetURl = `${env.coreURL}/reset-password/${token}`;
-    return {user, forgetURl};
+    return { user, forgetURl };
   }
   static async resetPassword({
     passwordResetToken,
@@ -136,7 +166,13 @@ export default class AuthService {
       },
     });
     await TokenService.updateTokenStatus(passwordResetToken, "USED");
-
+    await ActivityService.lagActivity({
+      actorId: data.id,
+      actorType: "USER",
+      message: "user reset password",
+      event: "user.resetPassword",
+      entityType: "AUTH",
+    });
     return data;
   }
 }

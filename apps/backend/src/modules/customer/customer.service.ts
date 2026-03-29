@@ -1,12 +1,13 @@
 import { prisma } from "../../core/utils/prismaClient";
+import { ActivityService } from "../activity/activity.service";
 
 export class CustomerService {
-  static createCustomerIdentity = async (email: string, orgId: string, displayName?: string) => {
+  static createCustomerIdentity = async (email: string, organizationId: string, displayName?: string) => {
     const customerName = displayName || email.split("@")[0];
-    return await prisma.customer.upsert({
+    const customerData = await prisma.customer.upsert({
       where: {
         organizationId_identityId: {
-          organizationId: orgId,
+          organizationId,
           identityId: (
             await prisma.customerIdentity.upsert({
               where: { email },
@@ -18,11 +19,22 @@ export class CustomerService {
       },
       update: {}, // Update name or metadata if needed
       create: {
-        organizationId: orgId,
+        organizationId,
         identityId: (await prisma.customerIdentity.findUnique({ where: { email } }))!.id,
         name: customerName,
       },
     });
+    if (customerData.createdAt === customerData.updatedAt) {
+      await ActivityService.lagActivity({
+        organizationId,
+        actorType: "SYSTEM",
+        message: "new customer is created ",
+        event: "customer.create",
+        entityId: customerData.id,
+        entityType: "ORGANIZATION",
+      });
+    }
+    return customerData;
   };
   static getCustomerByEmail = async (email: string) => {
     const data = await prisma.customerIdentity.findUnique({

@@ -2,6 +2,7 @@ import { OnBoardUserInput, UpdateUserInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { OrganizationService } from "../organizations/organization.service";
+import { ActivityService } from "../activity/activity.service";
 
 export class UserService {
   static onboardUser = async (userId: string, data: OnBoardUserInput) => {
@@ -25,11 +26,23 @@ export class UserService {
     });
   };
   static updateDetails = async (userId: string, input: UpdateUserInput) => {
-    return await prisma.user.update({
+    const existingUser = await prisma.user.findUnique({where: {id: userId}})
+    const updatedUser =  await prisma.user.update({
       data: input,
       where: {
         id: userId,
       },
     });
+    await ActivityService.lagActivity({
+      actorId: userId,
+      actorType: "USER",
+      message: "user details updated ",
+      event: "ticket.agent.assigned",
+      entityId: userId,
+      entityType: "USER",
+      oldData: existingUser,
+      newData: updatedUser
+    });
+    return updatedUser
   };
 }

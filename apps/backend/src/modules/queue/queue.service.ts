@@ -1,9 +1,20 @@
 import { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
+import { ActivityService } from "../activity/activity.service";
 
 export class QueueService {
-  static create = async (organizationId: string, queueGroupId: string, input: CreateQueueInput) => {
+  static create = async ({
+    organizationId,
+    queueGroupId,
+    input,
+    userId,
+  }: {
+    organizationId: string;
+    queueGroupId: string;
+    input: CreateQueueInput;
+    userId: string;
+  }) => {
     const queueOrder = await prisma.queue.count({
       where: {
         organizationId,
@@ -19,9 +30,28 @@ export class QueueService {
         ...input,
       },
     });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "new queue is created ",
+      event: "queue.create",
+      entityId: queue.id,
+      entityType: "ORGANIZATION",
+    });
     return queue;
   };
-  static addAgents = async (queueId: string, organizationId: string, agentIds: string[]) => {
+  static addAgents = async ({
+    queueId,
+    organizationId,
+    agentIds,
+    userId,
+  }: {
+    queueId: string;
+    organizationId: string;
+    agentIds: string[];
+    userId: string;
+  }) => {
     const queueAgents = agentIds.map((agentId) => ({
       queueId,
       agentId,
@@ -33,6 +63,7 @@ export class QueueService {
         agentId: {
           in: agentIds,
         },
+        active: true,
       },
     });
     const alreadyAssignedAgent = existingQueueAgents.map((qa) => qa.agentId);
@@ -55,23 +86,77 @@ export class QueueService {
       );
     }
     //  return already existing agents and newly added agents
-    return await prisma.queueAgent.createMany({
+    const updatedAgents = await prisma.queueAgent.createManyAndReturn({
       data: queueAgents,
       skipDuplicates: true,
     });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "agents added in queue ",
+      event: "queue.agents.added",
+      entityId: queueId,
+      oldData: existingQueueAgents,
+      newData: updatedAgents,
+      entityType: "ORGANIZATION",
+    });
+    return updatedAgents;
   };
-  static removeAgents = async (queueId: string, organizationId: string, agentIds: string[]) => {
-    return await prisma.queueAgent.deleteMany({
+  static removeAgents = async ({
+    queueId,
+    organizationId,
+    agentIds,
+    userId,
+  }: {
+    queueId: string;
+    organizationId: string;
+    agentIds: string[];
+    userId: string;
+  }) => {
+    const currentState = await prisma.queueAgent.findMany({
       where: {
         queueId,
         organizationId,
         agentId: {
           in: agentIds,
         },
+        active: true,
       },
     });
+    const deletedAgents = await prisma.queueAgent.updateManyAndReturn({
+      where: {
+        queueId,
+        organizationId,
+        agentId: {
+          in: agentIds,
+        },
+        active: true,
+      },
+      data: {
+        active: false,
+      },
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "agents removed from queue ",
+      event: "queue.agent.remove",
+      entityId: queueId,
+      oldData: currentState,
+      newData: deletedAgents,
+      entityType: "ORGANIZATION",
+    });
+    return deletedAgents;
   };
-  static getQueueAgents = async (queueId: string, organizationId: string) => {
+  static getQueueAgents = async ({
+    queueId,
+    organizationId,
+  }: {
+    queueId: string;
+    organizationId: string;
+  }) => {
     const queueAgents = await prisma.queueAgent.findMany({
       where: {
         queueId,
@@ -83,20 +168,52 @@ export class QueueService {
     });
     return queueAgents.map((qa) => qa.user);
   };
-  static update = async (id: string, organizationId: string, input: UpdateQueueInput) => {
-    const queue = await prisma.queue.update({
+  static update = async ({
+    queueId,
+    organizationId,
+    input,
+    userId,
+  }: {
+    queueId: string;
+    organizationId: string;
+    input: UpdateQueueInput;
+    userId: string;
+  }) => {
+    const updatedQueue = await prisma.queue.update({
       where: {
-        id,
+        id: queueId,
         organizationId,
+        active: true,
       },
       data: input,
     });
-    return queue;
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "queue details updated ",
+      event: "queue.update",
+      entityId: queueId,
+      oldData: input,
+      newData: updatedQueue,
+      entityType: "ORGANIZATION",
+    });
+    return updatedQueue;
   };
-  static delete = async (id: string, organizationId: string) => {
+  static delete = async ({
+    queueId,
+    organizationId,
+    userId,
+  }: {
+    queueId: string;
+    organizationId: string;
+    userId: string;
+  }) => {
+    const exitingQueue = await prisma.ticket.findUnique({where: {id: queueId}, select: {active: true}})
+    if(!exitingQueue?.active) throw new appError("Queue is already deleted", 409, "CONFLICT_ERROR")
     const activeTickets = await prisma.ticket.count({
       where: {
-        queueId: id,
+        queueId,
         organizationId,
         status: {
           not: "CLOSED",
@@ -106,17 +223,37 @@ export class QueueService {
     if (activeTickets > 0) {
       throw new appError("Cannot delete queue with active tickets", 400, "CONFLICT_ERROR");
     }
-    await prisma.queue.update({
+   const deletedQueue = await prisma.queue.update({
       where: {
-        id,
+        id: queueId,
         organizationId,
       },
       data: {
         active: false,
       },
+      select: {
+        active: true
+      }
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "queue deleted successfully ",
+      event: "queue.update",
+      entityId: queueId,
+      oldData: exitingQueue,
+      newData: deletedQueue,
+      entityType: "ORGANIZATION",
     });
   };
-  static getLowerOrderQueue = async (queueGroupId: string, organizationId: string) => {
+  static getLowerOrderQueue = async ({
+    queueGroupId,
+    organizationId,
+  }: {
+    queueGroupId: string;
+    organizationId: string;
+  }) => {
     const queues = await prisma.queue.findFirst({
       where: {
         queueGroupId,
@@ -128,5 +265,5 @@ export class QueueService {
       },
     });
     return queues;
-  }
+  };
 }

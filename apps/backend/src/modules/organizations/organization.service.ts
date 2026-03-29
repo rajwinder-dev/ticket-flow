@@ -5,6 +5,7 @@ import { PERMISSIONS } from "../../config/permissions.config";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
+import { ActivityService } from "../activity/activity.service";
 import { TokenService } from "../token/token.service";
 
 export class OrganizationService {
@@ -35,7 +36,15 @@ export class OrganizationService {
           roleId: role.id,
         },
       });
-
+      await ActivityService.lagActivity({
+        organizationId: organization.id,
+        actorId: userId,
+        actorType: "USER",
+        message: "User created new organization ",
+        event: "organization.create",
+        entityId: organization.id,
+        entityType: "ORGANIZATION",
+      });
       return { organization, membership };
     });
   };
@@ -66,7 +75,7 @@ export class OrganizationService {
       },
     });
     if (!user) throw new appError("Owner Details not found", 404, "NOT_FOUND");
-    const { token } = await TokenService.createToken({
+    const { token, id } = await TokenService.createToken({
       input: {
         email,
         type: "INVITE_USER",
@@ -77,6 +86,15 @@ export class OrganizationService {
       expiresAt: addDays(new Date(), 7),
     });
     const url = `${env.coreURL}/invite-user/${token}`;
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "created invite link to join organization",
+      event: "organization.invite",
+      entityId: id,
+      entityType: "ORGANIZATION",
+    });
     return { url };
   };
   static acceptInvite = async (userId: string, email: string, token: string) => {
@@ -95,11 +113,25 @@ export class OrganizationService {
         organization: {
           select: {
             name: true,
+            id: true,
           },
         },
       },
     });
     await TokenService.updateTokenStatus(token, "USED");
+    await ActivityService.lagActivity({
+      organizationId: data.organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "user joined organization",
+      event: "organization.join",
+      entityId: data.id,
+      entityType: "ORGANIZATION",
+      metadata: {
+        memberShipId: data.id,
+        roleId: data.roleId,
+      },
+    });
     return data;
   };
 }

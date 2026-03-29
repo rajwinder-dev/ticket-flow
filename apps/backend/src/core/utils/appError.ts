@@ -16,8 +16,8 @@ type Code =
   | "NULL_CONSTRAINT"
   | "MISSING_REQUIRED_FIELD"
   | "DB_CONNECTION_ERROR"
-  | "DB_TIMEOUT";
-
+  | "DB_TIMEOUT"
+  | "EMAIL_FAILED";
 export class appError extends Error {
   statusCode: number;
   status: string;

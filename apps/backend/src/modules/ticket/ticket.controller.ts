@@ -19,9 +19,9 @@ export class TicketController {
     const organizationId = req.organization.id;
     const { subject, description, email } = req.body as CreateTicketInput;
     const customerData = await CustomerService.createCustomerIdentity(email, organizationId);
-    const { groupId, queueId } = await TicketService.resolveQueueAssignment({organizationId});
+    const { groupId, queueId } = await TicketService.resolveQueueAssignment({ organizationId });
     if (groupId && queueId) {
-      const agentData = await TicketService.resolveAgentAssignment({queueId, organizationId});
+      const agentData = await TicketService.resolveAgentAssignment({ queueId, organizationId });
       agentId = agentData?.id;
     }
     await TicketService.createTicket({
@@ -31,6 +31,7 @@ export class TicketController {
       organizationId,
       customerId: customerData.id,
       queueId,
+      userId: req.user.id,
     });
 
     response(res, { groupId, queueId, agentId }, 201);
@@ -58,7 +59,7 @@ export class TicketController {
   });
   static getTicketDetails = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const data = await TicketService.getTicketDetails(id, req.organization.id);
+    const data = await TicketService.getTicketDetails({ticketId: id, organizationId: req.organization.id});
     response(res, data);
   });
   static getAssignedTickets = catchAsync(async (req, res, _next) => {
@@ -86,26 +87,36 @@ export class TicketController {
   static updateStatus = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { status } = req.body as UpdateTicketStatusInput;
-    const ticketData = await prisma.ticket.findUnique({ where: { id: ticketId }, select: { status: true } });
+    const ticketData = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: { status: true },
+    });
     if (!ticketData) throw new appError("Ticket not found ", 404);
-    const data = await TicketService.updateStatus(
-     { ticketId,
+    const data = await TicketService.updateStatus({
+      ticketId,
+      userId: req.user.id,
       organizationId: req.organization.id,
       nextStatus: status,
-      currentStatus: ticketData.status,}
-    );
+      currentStatus: ticketData.status,
+    });
     response(res, data, 200);
   });
   static updatePriority = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { priority } = req.body as UpdateTicketPriorityInput;
-    const data = await TicketService.updatePriority({ticketId, organizationId: req.organization.id, priority});
+    const data = await TicketService.updatePriority({
+      userId: req.user.id,
+      ticketId,
+      organizationId: req.organization.id,
+      priority,
+    });
     response(res, data, 200);
   });
   static assignTicket = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { assignId, targetType } = req.body as AssignTicketInput;
     const data = await TicketService.assignTicket({
+      userId: req.user.id,
       ticketId,
       organizationId: req.organization.id,
       assignId,
@@ -116,12 +127,21 @@ export class TicketController {
   static addComment = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const { comment, isInternal } = req.body as CreateTicketCommentInput;
-    const data = await TicketService.createTicketComment(id, req.user.id, comment, isInternal);
+    const data = await TicketService.createTicketComment({
+      organizationId: req.organization.id,
+      ticketId: id,
+      userId: req.user.id,
+      comment,
+      isInternal,
+    });
     response(res, data, 200);
   });
   static escalate = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const data = await TicketService.escalateTicket({ticketId: id, organizationId: req.organization.id});
+    const data = await TicketService.escalateTicket({
+      ticketId: id,
+      organizationId: req.organization.id,
+    });
     response(res, data);
   });
 }

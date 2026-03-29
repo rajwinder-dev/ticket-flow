@@ -1,8 +1,8 @@
 import { Server } from "http";
 import { WebSocket, WebSocketServer } from "ws";
-import { chatServer } from "../../modules/chats/chat.service";
-import { messageSchema, messageStatus } from "../../modules/chats/chat.zod";
-import { chatStatusServer } from "../../modules/chats/chatStatus.service";
+import { chatServer } from "../../modules/x chats /chat.service";
+import { messageSchema, messageStatus } from "../../modules/x chats /chat.zod";
+import { chatStatusServer } from "../../modules/x chats /chatStatus.service";
 import { decodeToken } from "../helper/websocketHelper";
 export const clients = new Map<string, WebSocket>();
 

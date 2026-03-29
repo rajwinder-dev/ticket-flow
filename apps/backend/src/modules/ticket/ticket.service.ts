@@ -1,7 +1,8 @@
-import { Priority, TicketStatus } from "../../../generated/prisma";
+import { Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
+import { ActivityService } from "../activity/activity.service";
 import { QueueGroupService } from "../queue/queue-group.service";
 import { QueueService } from "../queue/queue.service";
 
@@ -21,6 +22,7 @@ export class TicketService {
     customerId,
     assignedTo,
     queueId,
+    userId,
   }: {
     subject: string;
     description: string;
@@ -28,38 +30,38 @@ export class TicketService {
     customerId: string;
     assignedTo?: string;
     queueId?: string;
+    userId: string;
   }) => {
-    const ticket = await prisma.$transaction(async (tx) => {
-      const data = await prisma.ticket.create({
-        data: {
-          code: readableId("TKT"),
-          subject,
-          description,
-          organizationId,
-          customerId,
-          assignedTo,
-          queueId,
-        },
-      });
-      if (assignedTo)
-        await tx.queueAgent.update({
-          where: {
-            agentId_organizationId: {
-              agentId: assignedTo,
-              organizationId,
-            },
-          },
-          data: {
-            ticketCount: {
-              increment: 1,
-            },
-          },
-        });
-      return data;
+    const ticket = await prisma.ticket.create({
+      data: {
+        code: readableId("TKT"),
+        subject,
+        description,
+        organizationId,
+        customerId,
+        assignedTo,
+        queueId,
+      },
     });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "new ticket is created",
+      event: "ticket.created",
+      entityId: ticket.id,
+      entityType: "TICKET",
+    });
+
     return ticket;
   };
-  static getTicketDetails = async (ticketId: string, organizationId: string) => {
+  static getTicketDetails = async ({
+    ticketId,
+    organizationId,
+  }: {
+    ticketId: string;
+    organizationId: string;
+  }) => {
     const data = await prisma.ticket.findUnique({
       where: {
         organizationId,
@@ -104,7 +106,10 @@ export class TicketService {
     if (group) {
       groupId = group.id;
       // always select lower order queue
-      const queue = await QueueService.getLowerOrderQueue(group.id, organizationId);
+      const queue = await QueueService.getLowerOrderQueue({
+        queueGroupId: group.id,
+        organizationId,
+      });
       if (queue) queueId = queue.id;
     }
     return { groupId, queueId };
@@ -117,7 +122,7 @@ export class TicketService {
     organizationId: string;
   }) => {
     // todo: later add strategies  round-rebin, ,load balance and availability
-    const queueAgents = await QueueService.getQueueAgents(queueId, organizationId);
+    const queueAgents = await QueueService.getQueueAgents({ queueId, organizationId });
     if (queueAgents.length === 0) return null;
     const agent = queueAgents[0];
     return agent;
@@ -127,57 +132,128 @@ export class TicketService {
     organizationId,
     currentStatus,
     nextStatus,
+    userId,
   }: {
     ticketId: string;
     organizationId: string;
     currentStatus: TicketStatus;
     nextStatus: TicketStatus;
+    userId: string;
   }) => {
     if (!this.allowedTransitions[currentStatus].includes(nextStatus)) {
       throw new appError("Invalid transition", 403);
     }
-    return await prisma.ticket.update({
-      where: {
-        id: ticketId,
-        organizationId,
-      },
-      data: {
-        status: nextStatus,
-      },
+    const ticket = await prisma.$transaction(async (tx) => {
+      const updatedTicket = await prisma.ticket.update({
+        where: {
+          id: ticketId,
+          organizationId,
+        },
+        data: {
+          status: nextStatus,
+        },
+      });
+      await tx.ticketTransition.create({
+        data: {
+          ticketId,
+          action: "STATUS_CHANGED",
+          fromStatus: currentStatus,
+          toStatus: updatedTicket.status,
+        },
+      });
+      return updatedTicket;
     });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "ticket status updated ",
+      event: "ticket.update",
+      entityId: ticket.id,
+      entityType: "TICKET",
+      oldData: { status: currentStatus },
+      newData: { status: ticket.priority },
+    });
+    return ticket;
   };
   static updatePriority = async ({
     ticketId,
     organizationId,
     priority,
+    userId,
   }: {
     ticketId: string;
     organizationId: string;
     priority: Priority;
+    userId: string;
   }) => {
-    return await prisma.ticket.update({
-      where: {
-        id: ticketId,
-        organizationId,
-      },
-      data: {
-        priority,
-      },
+    const currentTicket = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: { priority: true },
     });
+    const ticket = await prisma.$transaction(async (tx) => {
+      const updatedTicket = await tx.ticket.update({
+        where: {
+          id: ticketId,
+          organizationId,
+        },
+        data: {
+          priority,
+        },
+      });
+      await tx.ticketTransition.create({
+        data: {
+          ticketId,
+          action: "PRIORITY_CHANGED",
+          toPriority: updatedTicket.priority,
+          fromPriority: currentTicket?.priority,
+        },
+      });
+      return updatedTicket;
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "ticket priority changed ",
+      event: "ticket.update",
+      entityId: ticket.id,
+      entityType: "TICKET",
+      oldData: { status: currentTicket?.priority },
+      newData: { status: ticket.priority },
+    });
+    return ticket;
   };
-  static createTicketComment = async (
-    ticketId: string,
-    authorId: string,
-    comment: string,
-    isInternal?: boolean,
-  ) => {
+  static createTicketComment = async ({
+    organizationId,
+    ticketId,
+    userId,
+    comment,
+    isInternal,
+  }: {
+    ticketId: string;
+    userId: string;
+    comment: string;
+    isInternal?: boolean;
+    organizationId: string;
+  }) => {
     const data = await prisma.ticketComment.create({
       data: {
-        authorId,
+         authorId: userId,
         ticketId,
         comment,
         isInternal,
+        organizationId,
       },
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "user added comment in ticket ",
+      event: "ticket.comment.created",
+      entityId: data.id,
+      entityType: "TICKET",
     });
     return data;
   };
@@ -186,11 +262,13 @@ export class TicketService {
     organizationId,
     assignId,
     targetType,
+    userId,
   }: {
     ticketId: string;
     organizationId: string;
     assignId: string;
     targetType: "AGENT" | "QUEUE";
+    userId: string;
   }) => {
     let queueId;
     let agentId;
@@ -229,19 +307,34 @@ export class TicketService {
     if (agentId === assignId)
       throw new appError("Already assigned to agent ", 409, "CONFLICT_ERROR");
 
-    return await this.updateTicketMovement({
+    const { updatedTicket, currentTicket } = await this.updateTicketMovement({
       ticketId,
       organizationId,
       nextAgentId: agentId,
       nextQueueId: queueId,
+      action: "ASSIGNED",
     });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "ticket assignment updated ",
+      event: "ticket.agent.assigned",
+      entityId: ticketId,
+      entityType: "TICKET",
+      oldData: currentTicket,
+      newData: updatedTicket,
+    });
+    return updatedTicket;
   };
   static escalateTicket = async ({
     ticketId,
     organizationId,
+    userId,
   }: {
     ticketId: string;
     organizationId: string;
+    userId?: string;
   }) => {
     const currentTicket = await prisma.ticket.findUnique({
       where: { id: ticketId, organizationId },
@@ -253,7 +346,7 @@ export class TicketService {
         },
       },
     });
-
+    if (!currentTicket?.priority) throw new appError("Update priority before escalate", 400);
     if (!currentTicket?.queue) {
       throw new appError("Invalid Ticket Id", 404, "NOT_FOUND");
     }
@@ -268,9 +361,9 @@ export class TicketService {
       include: {
         _count: {
           select: {
-            queueAgents: true
-          }
-        }// or relation you use
+            queueAgents: true,
+          },
+        }, // or relation you use
       },
       orderBy: {
         order: "asc",
@@ -289,6 +382,18 @@ export class TicketService {
       nextQueueId: nextQueue.id,
       nextAgentId: agent.id,
       organizationId,
+      action: "ESCALATED",
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: userId ? "USER" : "SYSTEM",
+      message: "ticket escalated ",
+      event: "ticket.agent.escalated",
+      entityId: ticketId,
+      entityType: "TICKET",
+      oldData: currentTicket,
+      newData: updatedTicket,
     });
     // update ticket count for new Agent
     return updatedTicket;
@@ -298,24 +403,25 @@ export class TicketService {
     nextAgentId,
     nextQueueId,
     organizationId,
+    action,
   }: {
     ticketId: string;
     nextAgentId: string;
     nextQueueId: string;
     organizationId: string;
+    action: TicketAction;
   }) => {
-    const updatedTicket = await prisma.$transaction(async (tx) => {
-      const current = await tx.ticket.findUnique({
+    const ticketData = await prisma.$transaction(async (tx) => {
+      const currentTicket = await tx.ticket.findUnique({
         where: { id: ticketId },
-        select: { assignedTo: true },
       });
 
       // decrement previous agent (only if different)
-      if (current?.assignedTo && current.assignedTo !== nextAgentId) {
+      if (currentTicket?.assignedTo && currentTicket.assignedTo !== nextAgentId) {
         await tx.queueAgent.update({
           where: {
             agentId_organizationId: {
-              agentId: current.assignedTo,
+              agentId: currentTicket.assignedTo,
               organizationId,
             },
           },
@@ -325,7 +431,7 @@ export class TicketService {
         });
       }
 
-      const updated = await tx.ticket.update({
+      const updatedTicket = await tx.ticket.update({
         where: { id: ticketId },
         data: {
           assignedTo: nextAgentId,
@@ -333,7 +439,16 @@ export class TicketService {
           status: "OPEN",
         },
       });
-
+      await tx.ticketTransition.create({
+        data: {
+          ticketId,
+          action,
+          fromQueueId: currentTicket?.queueId,
+          toQueueId: updatedTicket.queueId,
+          fromAgentId: currentTicket?.assignedTo,
+          toAgentId: updatedTicket.assignedTo,
+        },
+      });
       // increment new agent
       await tx.queueAgent.update({
         where: {
@@ -347,8 +462,8 @@ export class TicketService {
         },
       });
 
-      return updated;
+      return { currentTicket, updatedTicket };
     });
-    return updatedTicket;
+    return ticketData;
   };
 }

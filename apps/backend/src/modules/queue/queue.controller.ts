@@ -16,17 +16,22 @@ export class QueueController {
   // Queue Groups
   static createQueueGroup = catchAsync(async (req, res, _next) => {
     const input = req.body as QueueGroupInput;
-    const queueGroup = await QueueGroupService.createQueueGroup(
-      req.user.id,
-      req.organization.id,
+    const queueGroup = await QueueGroupService.createQueueGroup({
+      userId: req.user.id,
+      organizationId: req.organization.id,
       input,
-    );
+    });
     response(res, queueGroup, 201);
   });
   static updateQueueGroup = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const input = req.body as QueueGroupInput;
-    const queueGroup = await QueueGroupService.updateQueueGroup(id, req.organization.id, input);
+    const queueGroup = await QueueGroupService.updateQueueGroup({
+      groupId: id,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+      input,
+    });
     response(res, queueGroup, 200);
   });
   static getAllQueueGroups = catchAsync(async (req, res, _next) => {
@@ -35,31 +40,54 @@ export class QueueController {
   });
   static setDefaultGroup = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    await QueueGroupService.setDefaultGroup(id, req.organization.id);
+    await QueueGroupService.setDefaultGroup({
+      groupId: id,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+    });
     response(res, null, 204);
   });
   static deleteQueueGroups = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    await QueueGroupService.deleteQueueGroup(id, req.organization.id);
+    await QueueGroupService.deleteQueueGroup({
+      groupId: id,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+    });
     response(res, null, 204);
   });
   // Queues
   static createQueue = catchAsync(async (req, res, _next) => {
     const groupId = req.params.id as string;
     const input = req.body as CreateQueueInput;
-    const queue = await QueueService.create(req.organization.id, groupId, input);
+    const queue = await QueueService.create({
+      organizationId: req.organization.id,
+      queueGroupId: groupId,
+      input,
+      userId: req.user.id,
+    });
     response(res, queue, 201);
   });
   static addAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
     const { agentIds } = req.body as AddAgentsToQueueInput;
-    const data = await QueueService.addAgents(queueId, req.organization.id, agentIds);
+    const data = await QueueService.addAgents({
+      queueId,
+      organizationId: req.organization.id,
+      agentIds,
+      userId: req.user.id,
+    });
     response(res, data, 200);
   });
   static removeAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
     const { agentIds } = req.body.agentIds as RemoveAgentsFromQueueInput;
-    await QueueService.removeAgents(queueId, req.organization.id, agentIds);
+    await QueueService.removeAgents({
+      queueId,
+      organizationId: req.organization.id,
+      agentIds,
+      userId: req.user.id,
+    });
     response(res, null, 204);
   });
   static getQueues = catchAsync(async (req, res, _next) => {
@@ -76,7 +104,7 @@ export class QueueController {
         active: true,
       },
       orderBy: {
-        order: "asc"
+        order: "asc",
       },
       skip: offset,
       take: limit,
@@ -85,19 +113,31 @@ export class QueueController {
   });
   static getQueueAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
-    const agents = await QueueService.getQueueAgents(queueId, req.organization.id);
+    const agents = await QueueService.getQueueAgents({
+      queueId,
+      organizationId: req.organization.id,
+    });
     response(res, agents, 200);
-   });
+  });
   static updateQueue = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const input = req.body as UpdateQueueInput;
-    const queue = await QueueService.update(id, req.organization.id, input);
+    const queue = await QueueService.update({
+      queueId: id,
+      organizationId: req.organization.id,
+      input,
+      userId: req.user.id,
+    });
     response(res, queue, 200);
   });
 
   static deleteQueue = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    await QueueService.delete(id, req.organization.id);
+    await QueueService.delete({
+      queueId: id,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+    });
     response(res, null, 204);
   });
 }
