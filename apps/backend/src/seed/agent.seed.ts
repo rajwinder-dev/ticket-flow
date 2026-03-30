@@ -5,7 +5,6 @@ export async function seedAgents() {
       log.info(`seeding agents to unique queues.`);
 
   // 1. Fetch organizations.
-  // IMPORTANT: Check if agentId in your schema points to 'User' or 'Membership'
   const organizations = await prisma.organization.findMany({
     where: {
       membership: {

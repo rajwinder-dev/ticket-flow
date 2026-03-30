@@ -1,5 +1,5 @@
 import { validUuidParams } from "@repo/schemas/src/global.zod";
-import { creteRoleInput, updateRoleInput } from "@repo/schemas/src/role.zod";
+import {  createRoleInput, updateRoleInput } from "@repo/schemas/src/role.zod";
 import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
@@ -13,7 +13,7 @@ roleRouter
   .get(roleController.getAllRoles)
   .post(
     authMiddleware.restrictToOwner,
-    validationMiddleware(creteRoleInput),
+    validationMiddleware(createRoleInput),
     roleController.createRole,
   );
 roleRouter.route("/:id").get(validationMiddleware(validUuidParams), roleController.getRoleDetails);

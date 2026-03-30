@@ -11,7 +11,7 @@ http:
     data: |-
       {
         "email": "customer1@gmail.com",
-        "description": "this is the description",
+        "description": "this is the description 2",
         "subject": "Login not working "
       }
   auth: inherit

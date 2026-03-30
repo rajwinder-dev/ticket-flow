@@ -17,7 +17,6 @@ export class EmailController {
   static createSMTP = catchAsync(async (req, res, _next) => {
     const input = req.body as SMTPSchema;
     await EmailService.createEmailProvider(req.organization.id, req.user.email, {
-      providerType: "SMTP",
       ...input,
     });
     response(res, { message: "SMTP Provider added successfully" }, 201);

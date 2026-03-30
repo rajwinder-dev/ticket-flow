@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { validPhoneNo } from "./helper/zodHelper";
+import { validDescription, validEmail, validPhoneNo, validString } from "./helper/zodHelper";
 
 export const createTeamMemberInput = {
   bodySchema: z
     .object({
-      email: z.email(),
+      username: validString,
+      email: validEmail, // Automatically trims and lowercases
       phoneNo: validPhoneNo,
-      avatar: z.url().optional(),
-      gender: z.enum(["male", "female", "other"]),
-      username: z.string(),
-      location: z.string(),
-      roleId: z.uuid(),
+      avatar: z.url("Invalid avatar URL").optional(),
+      gender: z.enum(["male", "female", "other"], { message: "Please select a valid gender" }),
+      location: validString,
+      roleId: z.string().uuid("Invalid Role ID"),
     })
     .strict(),
 };
@@ -18,12 +18,18 @@ export const createTeamMemberInput = {
 export const updateTeamMemberInput = {
   bodySchema: z
     .object({
-      email: z.email().optional(),
-      phoneNumber: validPhoneNo.optional(),
-      location: z.string().optional(),
-      avatar: z.url().optional(),
-      jobTitle: z.string().optional(),
-      description: z.string().optional(),
+      username: validString.optional(),
+      email: validEmail.optional(),
+      phoneNo: validPhoneNo.optional(), // Fixed naming: changed phoneNumber to phoneNo
+      location: validString.optional(),
+      avatar: z.string().url("Invalid avatar URL").optional(),
+      jobTitle: validString.optional(),
+      description: validDescription.optional(),
+      gender: z.enum(["male", "female", "other"]).optional(),
     })
     .strict(),
 };
+
+// --- Inferred Types ---
+export type CreateTeamMemberInput = z.infer<typeof createTeamMemberInput.bodySchema>;
+export type UpdateTeamMemberInput = z.infer<typeof updateTeamMemberInput.bodySchema>;

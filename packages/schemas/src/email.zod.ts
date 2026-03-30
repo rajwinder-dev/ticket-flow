@@ -1,46 +1,59 @@
-import z from "zod";
+import { z } from "zod";
+import { validDomain, validEmail } from "./helper/zodHelper";
 
-const smtpSchema = {
-  bodySchema: z.object({
-    from: z.string(),
-    credentials: z.object({
-      host: z.string(),
-      port: z.number(),
-      user: z.string(),
-      pass: z.string(),
-    }),
+// --- Sub-Schemas for Credentials ---
+
+const smtpSchema = z.object({
+  providerType: z.literal("SMTP"),
+  domain: validDomain,
+  credentials: z.object({
+    host: z.string().trim().min(1, "Host is required"),
+    port: z.number().int().positive().max(65535),
+    user: z.string().trim().min(1, "Username is required"),
+    pass: z.string().min(1, "Password is required"),
   }),
-};
+});
+
 const resendSchema = z.object({
   providerType: z.literal("RESEND"),
-  from: z.string(),
-  webhookSecret: z.string(),
+  domain: validDomain,
+  webhookSecret: z.string().trim().optional(),
   credentials: z.object({
-    apiKey: z.string(),
+    apiKey: z.string().trim().min(1, "API Key is required"),
   }),
 });
 
 const mailtrapSchema = z.object({
   providerType: z.literal("MAILTRAP"),
-  webhookSecret: z.string(),
-  from: z.string(),
+  domain: validDomain,
+  webhookSecret: z.string().trim().optional(),
   credentials: z.object({
-    user: z.string(),
-    pass: z.string(),
+    user: z.string().trim().min(1, "Username is required"),
+    pass: z.string().min(1, "Password is required"),
   }),
 });
+
+// --- Main Inputs ---
+
 export const createEmailProviderInput = {
-  bodySchema: z.discriminatedUnion("providerType", [mailtrapSchema, resendSchema]),
+  bodySchema: z.discriminatedUnion("providerType", [smtpSchema, resendSchema, mailtrapSchema]),
 };
+
 export const updateEmailProviderInput = {
   bodySchema: z
     .object({
-      credentials: z.object({}).catchall(z.any()),
-      active: z.boolean(),
+      domain: validDomain.optional(),
+      credentials: z.record(z.string(), z.any()).optional(),
+      active: z.boolean().optional(),
     })
     .strict(),
 };
+
+// --- Inferred Types ---
 export type CreateEmailProviderInput = z.infer<typeof createEmailProviderInput.bodySchema>;
-export type SMTPSchema = z.infer<typeof smtpSchema.bodySchema>;
-export type ResendSchema = z.infer<typeof resendSchema>;
 export type UpdateEmailProviderInput = z.infer<typeof updateEmailProviderInput.bodySchema>;
+
+// Individual types for helper functions
+export type SMTPSchema = z.infer<typeof smtpSchema>;
+export type ResendSchema = z.infer<typeof resendSchema>;
+export type MailtrapSchema = z.infer<typeof mailtrapSchema>;

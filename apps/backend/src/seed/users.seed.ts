@@ -16,9 +16,8 @@ export async function seedUsers(count: number = 50) {
   const emails = new Set<string>();
 
   while (users.length < count) {
-    const email = faker.internet.email();
+    const email = faker.internet.email().toLocaleLowerCase();
     if (emails.has(email)) continue;
-    emails.add(email);
     users.push({
       email,
       code: readableId("USR"),

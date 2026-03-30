@@ -1,14 +1,15 @@
 import z from "zod";
+import { validEmail, validString } from "./helper/zodHelper";
 
 export const crateCustomerInput = {
   bodySchema: z.object({
-    email: z.email(),
-    name: z.string(),
+    email: validEmail,
+    name: validString,
   }),
 };
 export const updateCustomerInput = {
   bodySchema: z.object({
-    name: z.string(),
+    name: validString,
   }),
 };
 export type CreateCustomerInput = z.infer<typeof crateCustomerInput.bodySchema>;

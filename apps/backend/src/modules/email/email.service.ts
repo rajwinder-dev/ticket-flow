@@ -41,9 +41,9 @@ export class EmailService {
     {
       credentials,
       providerType,
-      from,
+      domain,
       webhookSecret,
-    }: { credentials: unknown; providerType: ProviderType; from: string; webhookSecret?: string },
+    }: { credentials: unknown; providerType: ProviderType; domain: string; webhookSecret?: string },
   ) => {
     const existingProviderCount = await prisma.emailProvider.count({
       where: {
@@ -59,7 +59,7 @@ export class EmailService {
         organizationId,
         credentials: encryptCredentials,
         providerType,
-        from,
+        domain,
         webhookSecret,
       },
     });
@@ -68,7 +68,7 @@ export class EmailService {
     id: string,
     userEmail: string,
     organizationId: string,
-    { credentials, providerType, from }: CreateEmailProviderInput,
+    { credentials, providerType, domain }: CreateEmailProviderInput,
   ) => {
     const encryptCredentials = encrypt(JSON.stringify(credentials));
     await this.verifyProvider(userEmail, providerType, credentials);
@@ -77,7 +77,7 @@ export class EmailService {
         id,
         organizationId,
         providerType,
-        from,
+        domain,
       },
       data: {
         credentials: encryptCredentials,
@@ -107,6 +107,6 @@ export class EmailService {
     const credentials = JSON.parse(decrypt(emailProvider?.credentials as EncryptionType));
     const provider = emailProviderFactory(emailProvider.providerType, credentials);
     // render template
-    return await provider.sendMail({ to, from: emailProvider.from, subject, html });
+    return await provider.sendMail({ to, from: emailProvider.domain, subject, html });
   };
 }

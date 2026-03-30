@@ -162,7 +162,7 @@ model EmailProvider {
   webhookSecret  String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  from           String        @unique
+  domain         String        @unique
 
   @@unique([organizationId, credentials, providerType])
 }
@@ -354,7 +354,7 @@ model TicketComment {
   ticket         Ticket        @relation(fields: [ticketId], references: [id])
   author         User          @relation(fields: [authorId], references: [id])
   organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String       @db.Uuid
+  organizationId String        @db.Uuid
 }
 
 enum TicketAction {

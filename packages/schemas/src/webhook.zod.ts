@@ -1,15 +1,24 @@
 import { z } from "zod";
+import { validEmail } from "./helper/zodHelper";
 
-export const IncomingEmailSchema = {
-  bodySchema: z.object({
-    from: z.email(),
-    fromName: z.string().optional(), // May be null
-    to: z.email(), // Used to identify the Organization
-    subject: z.string().default("(No Subject)"),
-    textBody: z.string(),
-    messageId: z.string(), // For threading
-    inReplyTo: z.string().optional(), // For threading
-  }),
+export const incomingEmailSchema = {
+  bodySchema: z
+    .object({
+      // Normalizing to lowercase is vital for lookup in your DB
+      from: validEmail,
+      fromName: z.string().trim().optional(),
+      to: validEmail,
+      subject: z
+        .string()
+        .trim()
+        .default("(No Subject)")
+        .transform((val) => (val === "" ? "(No Subject)" : val)),
+      textBody: z.string().min(1, "Email body cannot be empty"),
+      messageId: z.string().min(1, "Message-ID is required for threading"),
+      inReplyTo: z.string().trim().optional(),
+    })
+    .strict(),
 };
 
-export type IncomingEmailSchema = z.infer<typeof IncomingEmailSchema.bodySchema>;
+// --- Inferred Type ---
+export type IncomingEmail = z.infer<typeof incomingEmailSchema.bodySchema>;
