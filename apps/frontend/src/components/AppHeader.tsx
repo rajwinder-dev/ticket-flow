@@ -1,0 +1,53 @@
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UserProfile } from "@/components/UserProfile";
+import { Link, useLocation } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+export function AppHeader() {
+  const location = useLocation();
+  const showSidebar = location.pathname !== "/dashboard/organization";
+  const breadCrumpData = location.pathname.split("/");
+  return (
+    <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <div className="flex items-center gap-2 px-4">
+        {showSidebar && (
+          <>
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                {breadCrumpData.slice(1, breadCrumpData.length).map((link, index) => (
+                  <Fragment key={link}>
+                    <BreadcrumbItem className="hidden md:block" key={link}>
+                      <BreadcrumbLink asChild>
+                        <Link
+                          to={breadCrumpData.slice(0, index + 2).join("/")}
+                          className="capitalize"
+                        >
+                          {link}
+                        </Link>
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    {index !== breadCrumpData.length - 2 && (
+                      <BreadcrumbSeparator className="hidden md:block" />
+                    )}
+                  </Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </>
+        )}
+      </div>
+      <div>
+        <UserProfile />
+      </div>
+    </header>
+  );
+}

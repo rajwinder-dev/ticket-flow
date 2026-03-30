@@ -15,6 +15,7 @@ import { globalHandler } from "./core/utils/globalHandler";
 import { DevMiddleware } from "./core/middleware/devMiddleware";
 import authRouter from "./modules/auth/auth.route";
 import customerRoutes from "./modules/customer/customer.routes";
+import dashboardRouter from "./modules/dashboard/dashboard.route";
 import emailRouter from "./modules/email/email.routes";
 import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
@@ -23,7 +24,6 @@ import roleRouter from "./modules/role/role.route";
 import TicketRouter from "./modules/ticket/ticket.routes";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
-import dashboardRouter from "./modules/dashboard/dashboard.route";
 
 export const app = express();
 

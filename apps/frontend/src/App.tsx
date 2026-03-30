@@ -1,50 +1,46 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { navLinks } from "./data/Links";
-import DashboardLayout from "./layouts/DashboardLayout";
-import Login from "./features/login/Login";
-import { ModalProvider } from "./context/ModalContext";
-import { GeneralProvider } from "./context/generalContext";
 import { ToastContainer } from "react-toastify";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { AuthProvider } from "./context/AuthContext";
+import DashboardLayout from "./layouts/DashboardLayout";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import OrganizationPage from "./pages/OrganizationPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import SignupPage from "./pages/SignupPage";
 
 const queryclient = new QueryClient();
 function App() {
   return (
     <>
       <QueryClientProvider client={queryclient}>
-        <GeneralProvider>
-          <ModalProvider>
-            <BrowserRouter>
-              <AuthProvider>
-                <ToastContainer />
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <ProtectedRoute>
-                        <DashboardLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    {navLinks.map((route) => {
-                      if (route.index)
-                        return <Route index element={route.component} />;
-                      if (route.component)
-                        return (
-                          <Route path={route.href} element={route.component} />
-                        );
-                    })}
-                  </Route>
-                  <Route path="/login" element={<Login />} />
-                </Routes>
-              </AuthProvider>
-            </BrowserRouter>
-          </ModalProvider>
-        </GeneralProvider>
-        <ReactQueryDevtools />
+        <TooltipProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <ToastContainer />
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<div>home page</div>} />
+                  +
+                  <Route path="org/:id" element={<div>Dashboard based on </div>} />
+                  <Route path="org/new" element={<div>Create Organization </div>} />
+                  <Route path="organization" element={<OrganizationPage />} />
+                </Route>
+
+                {/* Auth */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forget-password" element={<ForgetPasswordPage />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+          <ReactQueryDevtools />
+        </TooltipProvider>
       </QueryClientProvider>
     </>
   );
