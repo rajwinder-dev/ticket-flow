@@ -1,14 +1,16 @@
 import { Organization, User } from "../../generated/prisma";
 import { PERMISSIONS } from "../config/permissions.config";
+import { log } from "../core/helper/log";
 import { prisma } from "../core/utils/prismaClient";
 
 /**
  * Seed random number of organizations (1-12) for each user
  */
-export async function seedOrganizations(owners: User[]) {
+export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
+  log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`)
   const orgData: Organization[] = [];
   for (const owner of owners) {
-    const orgCount = Math.floor(Math.random() * 12) + 1;
+    const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
 
     for (let i = 0; i < orgCount; i++) {
       try {
@@ -24,7 +26,7 @@ export async function seedOrganizations(owners: User[]) {
         orgData.push(organizationData);
         await seedRolesAndMembership(organizationData, owner.id);
 
-        console.log(`Successfully created Org: ${organizationData.name}`);
+        log.success(`Successfully created Org: ${organizationData.name}`);
       } catch (err) {
         console.error("Error creating org:", err);
       }

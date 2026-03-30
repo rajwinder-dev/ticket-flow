@@ -1,7 +1,9 @@
 import { User } from "../../generated/prisma";
+import { log } from "../core/helper/log";
 import { prisma } from "../core/utils/prismaClient";
 
 export async function seedMembers(users: User[]) {
+  log.info(`creating membership of ${users.length} users`);
   const organizations = await prisma.organization.findMany({
     include: {
       role: true,
@@ -10,7 +12,6 @@ export async function seedMembers(users: User[]) {
 
   for (const org of organizations) {
     if (!org.role || org.role.length === 0) {
-      console.warn(`Skipping Org ${org.id}: No roles found.`);
       continue;
     }
     const memberCount = Math.floor(Math.random() * 20) + 1;
@@ -33,4 +34,5 @@ export async function seedMembers(users: User[]) {
       }
     }
   }
+  log.success("org members seeded successfully");
 }

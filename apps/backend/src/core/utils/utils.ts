@@ -44,7 +44,7 @@ export function deleteUploadedFilesLocal(filePaths: string[]) {
     });
   });
 }
-const nanoid = customAlphabet("1234567890", 6)
+const nanoid = customAlphabet("1234567890ABCEDFGHIJKLMNOPQURSTUVWXYZ", 6)
 
 export function readableId(preFlex:string) {
   return ` ${preFlex}-${nanoid()}`

@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Prisma } from "../../generated/prisma";
+import { log } from "../core/helper/log";
 import { prisma } from "../core/utils/prismaClient";
 import { readableId } from "../core/utils/utils";
 import { BcryptService } from "../modules/auth/bcrypt.service";
@@ -8,7 +9,7 @@ import { BcryptService } from "../modules/auth/bcrypt.service";
  * Seed users
  */
 export async function seedUsers(count: number = 50) {
-  console.log(`Seeding ${count} users...`);
+  log.info(`Seeding ${count} users...`);
 
   const users: Prisma.UserUncheckedCreateInput[] = [];
 
@@ -29,13 +30,11 @@ export async function seedUsers(count: number = 50) {
     users.map(async (user) => ({
       ...user,
       passwordHash: await BcryptService.hashPassword("123456"),
-    }))
+    })),
   );
   const createdUsers = await prisma.user.createManyAndReturn({
     data: hashedUsers,
   });
-
-  console.log(`Created ${createdUsers.length} users`);
-
+  log.success(`Created ${createdUsers.length} users`);
   return createdUsers;
 }

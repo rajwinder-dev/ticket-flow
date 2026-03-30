@@ -277,7 +277,6 @@ model QueueAgent {
   active         Boolean       @default(true)
 
   @@unique([queueId, agentId, organizationId, active])
-  @@unique([agentId, organizationId])
 }
 
 //  ============================ TICKET MANAGEMENT ==============================

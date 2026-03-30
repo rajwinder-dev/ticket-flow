@@ -18,10 +18,7 @@ export class ActivityService {
     ipAddress,
   }: ActivityLogService) => {
     try {
-      // 1. Calculate the diff if both old and new data are provided
       const changes = oldData && newData ? this.getDiff(oldData, newData) : null;
-
-      // 2. Create the log entry
       return await prisma.activityLog.create({
         data: {
           organizationId,
