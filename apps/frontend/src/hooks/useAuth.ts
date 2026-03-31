@@ -1,23 +1,15 @@
-import { login, logOut, tokenManager } from "../actions/auth";
+import type { LoginInput } from "@repo/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-
-// import { useNavigate } from 'react-router-dom';
-
-function useAuthentication() {
+import { toast } from "react-toastify";
+import { login, logOut, tokenManager } from "../api/auth.api";
+function useAuth() {
   const navigate = useNavigate();
   const { mutate: loginUser, isPending: isLoggingIn } = useMutation({
-    mutationFn: ({
-      username,
-      password,
-    }: {
-      username: string;
-      password: string;
-    }) => login({ username, password }),
+    mutationFn: (data: LoginInput) => login(data),
     onSuccess: (data) => {
       tokenManager.set(data.accessToken);
-      navigate("/");
+      navigate("/dashboard/organization");
     },
     onError: (error) => {
       toast.error(error.message);
@@ -40,4 +32,4 @@ function useAuthentication() {
   };
 }
 
-export default useAuthentication;
+export default useAuth;

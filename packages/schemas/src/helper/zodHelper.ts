@@ -3,7 +3,7 @@ import { z } from "zod";
 // --- Base Validations ---
 
 // Fixed: z.email() is not a function, it's z.string().email()
-export const validEmail = z.string().trim().email("Invalid email format").lowercase();
+export const validEmail = z.email("Invalid email format").toLowerCase();
 
 // ID validation - ensured it's not empty
 export const validId = z

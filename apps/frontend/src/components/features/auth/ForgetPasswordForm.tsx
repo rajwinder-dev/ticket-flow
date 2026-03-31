@@ -4,28 +4,53 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+import { useForm } from "react-hook-form";
+
 export function ForgetPasswordForm({ className, ...props }: React.ComponentProps<"div">) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<{ email: string }>();
+
+  const onSubmit = async (data: { email: string }) => {
+    console.log(data);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Forget You password</CardTitle>
-          <CardDescription>
-            Enter your email te get reset <link rel="stylesheet" href="" />
-          </CardDescription>
+          <CardTitle>Forgot your password</CardTitle>
+          <CardDescription>Enter your email to get a reset link</CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
+              {/* EMAIL */}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  {...register("email")}
+                  className={cn(errors.email && "border-red-500")}
+                />
+
+                {errors.email && (
+                  <FieldDescription className="text-red-500">
+                    {errors.email.message}
+                  </FieldDescription>
+                )}
               </Field>
-
+              {/* SUBMIT */}
               <Field>
-                <Button type="submit">Send Link</Button>
-
-                <FieldDescription className="text-center"></FieldDescription>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Link"}
+                </Button>
               </Field>
             </FieldGroup>
           </form>

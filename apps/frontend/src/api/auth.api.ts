@@ -1,7 +1,8 @@
 // import { jwtDecode } from "jwt-decode";
-import { api, postRequest, refreshClient } from "../utils/axis";
-import type { AuthData, AuthLogin } from "../types/authTypes";
+import type { ChangePasswordInput, LoginInput, SignupInput } from "@repo/schemas";
 import type { InternalAxiosRequestConfig } from "axios";
+import type { AuthData } from "../types/authTypes";
+import { api, postRequest, refreshClient } from "../utils/axis";
 let accessToken: string | undefined;
 
 export const tokenManager = {
@@ -13,29 +14,51 @@ export const tokenManager = {
     accessToken = undefined;
   },
 };
-
-export async function login({ username, password }: AuthLogin) {
+export async function signUp(input: SignupInput) {
   const data = await postRequest<AuthData>({
-    path: "/auth/login",
-    data: { username, password },
+    path: "/auth/signup",
+    data: input,
   });
   tokenManager.set(data.accessToken);
   return data;
 }
-
+export async function login(input: LoginInput) {
+  const data = await postRequest<AuthData>({
+    path: "/auth/login",
+    data: input,
+  });
+  tokenManager.set(data.accessToken);
+  return data;
+}
+export async function refreshToken() {
+  const res = await refreshClient.post("/auth/refresh-token", {});
+  return res.data.accessToken;
+}
+export async function forgetPassword(email: string) {
+  const res = await refreshClient.post(`/auth/forget-password/${email}`, {});
+  return res.data.accessToken;
+}
+export async function resetPassword(token: string) {
+  const res = await refreshClient.post(`/auth/reset-password/${token}`, {});
+  return res.data.accessToken;
+}
+export async function changePassword(input: ChangePasswordInput) {
+  const data = await postRequest({
+    path: "/auth/change-password",
+    data: input,
+  });
+  return data;
+}
 export async function logOut() {
   const data = await postRequest({
     path: "/auth/logout",
-    data: {},
+    data: null,
   });
   return data;
 }
 
 // handle refresh token
-export async function refreshToken() {
-  const res = await refreshClient.post("/auth/refresh-token", {});
-  return res.data.accessToken;
-}
+
 
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
@@ -54,10 +77,7 @@ api.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    if (
-      error.response.data.code === "INVALID_TOKEN" &&
-      !originalRequest._retry
-    ) {
+    if (error.response.data.code === "INVALID_TOKEN" && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const accessToken = await refreshToken();
