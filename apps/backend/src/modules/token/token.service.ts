@@ -32,6 +32,13 @@ export class TokenService {
           gt: currentDate,
         },
       },
+      include: {
+        role: {
+          select: {
+            name: true
+          }
+        }
+      },
       orderBy: {
         createdAt: "desc",
       },

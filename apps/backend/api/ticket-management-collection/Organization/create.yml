@@ -11,8 +11,8 @@ http:
     data: |-
       {
         "name": "tivenbook2",
-        "description": "this is description",
-        "teamSize": 23
+        "type": "PERSONAL",
+        "slug": "test"
       }
   auth: inherit
 

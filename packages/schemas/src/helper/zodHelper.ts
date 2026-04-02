@@ -14,7 +14,7 @@ export const validId = z
 
 // --- Text Validations ---
 
-// Added .trim() to ensure users don't just send spaces
+// Added .trim() to ensure users don't just send spacesdsf
 export const validString = z
   .string()
   .trim()
@@ -49,11 +49,12 @@ export const validPhoneNo = z
 // Password validation - Strengthened to 8 chars + 1 special char recommendation
 export const validPassword = z
   .string()
+  .trim()
   .min(8, "Password must be at least 8 characters")
-  .max(50, "Password must be less the 50 characters")
-  // .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-  // .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  // .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });
+  .max(50, "Password must be less the 50 characters");
+// .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+// .regex(/[0-9]/, { message: "Password must contain at least one number" })
+// .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });
 
 // --- New Recommended Helpers ---
 export const validBoolean = z.preprocess((val) => {
@@ -65,7 +66,7 @@ export const validBoolean = z.preprocess((val) => {
 }, z.boolean());
 export const validPermissions = z.record(
   z.string().trim().min(1),
-  z.array(z.string().trim().min(1)).min(1, "Each resource must have at least one permission")
+  z.array(z.string().trim().min(1)).min(1, "Each resource must have at least one permission"),
 );
 const domainRegex = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-12]{2,}$/i;
 
@@ -76,5 +77,5 @@ export const validDomain = z
   .min(4, "Domain is too short")
   .max(253, "Domain is too long")
   .regex(domainRegex, {
-    message: "Invalid domain format (e.g., 'example.com'). Do not include http:// or slashes."
+    message: "Invalid domain format (e.g., 'example.com'). Do not include http:// or slashes.",
   });

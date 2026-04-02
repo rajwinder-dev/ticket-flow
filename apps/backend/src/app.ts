@@ -24,6 +24,7 @@ import roleRouter from "./modules/role/role.route";
 import TicketRouter from "./modules/ticket/ticket.routes";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
+import tokenRoute from "./modules/token/token.routes";
 
 export const app = express();
 
@@ -62,6 +63,7 @@ app.get("/", (_req, res) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/token", tokenRoute);
 app.use("/api/v1/org", organizationRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/role", roleRouter);

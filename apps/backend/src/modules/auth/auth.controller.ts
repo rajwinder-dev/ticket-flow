@@ -67,12 +67,12 @@ export class authController {
   });
   static forgetPassword = catchAsync(async (req, res, _next) => {
     const email = req.params.email as string;
-    // const { user, forgetURl } = await AuthService.forgetPassword(email);
-    // await EmailService.sendSystemEmail({
-    //   to: email,
-    //   subject: "Reset your password",
-    //   jsx: ForgotPasswordEmail({ userName: user.username!, resetLink: forgetURl }),
-    // });
+    const { user, forgetURl } = await AuthService.forgetPassword(email);
+    await EmailService.sendSystemEmail({
+      to: email,
+      subject: "Reset your password",
+      jsx: ForgotPasswordEmail({ userName: user.username!, resetLink: forgetURl }),
+    });
     response(res, "Reset Link Send successfully");
   });
   static resetPassword = catchAsync(async (req, res, _next) => {

@@ -57,7 +57,9 @@ model Organization {
   name          String
   description   String?
   teamSize      Int?
+  slug          String?         @unique
   code          String          @unique
+  type          String?
   active        Boolean         @default(true)
   logo          String?
   createdAt     DateTime        @default(now())

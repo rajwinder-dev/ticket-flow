@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validEmail, validPassword, validPermissions } from "./helper/zodHelper";
+import { validEmail, validPassword, validPermissions, validString } from "./helper/zodHelper";
 
 // 2. A helper function for the common "Password Match" refinement
 const passwordMatchRefine = (data: any) => data.password === data.confirmPassword;
@@ -32,9 +32,9 @@ export const loginInput = {
 export const changePasswordInput = {
   bodySchema: z
     .object({
-      currentPassword: z.string(),
+      currentPassword: validString,
       password: validPassword,
-      confirmPassword: z.string(),
+      confirmPassword: validPassword,
     })
     .strict()
     .refine(passwordMatchRefine, passwordMatchError),

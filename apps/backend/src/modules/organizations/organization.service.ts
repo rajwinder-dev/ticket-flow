@@ -17,6 +17,12 @@ export class OrganizationService {
           ...input,
           code: readableId("ORG"),
         },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          type: true,
+        },
       });
       //  create role for member too
       const role = await tx.role.create({

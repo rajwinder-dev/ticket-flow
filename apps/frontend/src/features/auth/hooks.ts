@@ -1,19 +1,24 @@
 import { tokenManager } from "@/lib/tokenManager";
-import type { ChangePasswordInput, LoginInput, ResetPasswordInput, SignupInput } from "@repo/schemas";
+import type {
+  ChangePasswordInput,
+  LoginInput,
+  ResetPasswordInput,
+  SignupInput,
+} from "@repo/schemas";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { changePassword, forgetPassword, gatAuthDetails, login, logOut, resetPassword, signUp } from "./api";
+import { authApi } from "./api";
 
 function useAuth() {
   const navigate = useNavigate();
   const { data: authDetails, isLoading: isLoadingAuthDetails } = useQuery({
-    queryFn: gatAuthDetails,
+    queryFn: authApi.getDetails,
     queryKey: ["auth-details"],
-    retry:false
+    retry: false,
   });
   const { mutate: loginUser, isPending: isLoggingIn } = useMutation({
-    mutationFn: (data: LoginInput) => login(data),
+    mutationFn: (data: LoginInput) => authApi.login(data),
     onSuccess: (data) => {
       tokenManager.set(data.data.accessToken);
       navigate("/org");
@@ -23,7 +28,7 @@ function useAuth() {
     },
   });
   const { mutate: signupUser, isPending: isSigningUp } = useMutation({
-    mutationFn: (data: SignupInput) => signUp(data),
+    mutationFn: (data: SignupInput) => authApi.signUp(data),
     onSuccess: (data) => {
       tokenManager.set(data.data.accessToken);
       navigate("/org");
@@ -33,9 +38,9 @@ function useAuth() {
     },
   });
   const { mutate: forgetPasswordMutate, isPending: isForgettingPassword } = useMutation({
-    mutationFn: (email: string) => forgetPassword(email),
+    mutationFn: (email: string) => authApi.forgotPassword(email),
     onSuccess: (data) => {
-      console.log(data)
+      console.log(data);
       toast.success(data.message);
     },
     onError: (error) => {
@@ -43,16 +48,18 @@ function useAuth() {
     },
   });
   const { mutate: resetPasswordMutate, isPending: isResettingPassword } = useMutation({
-    mutationFn: ({token, input}: {token: string, input: ResetPasswordInput}) => resetPassword({token, input}),
+    mutationFn: ({ token, input }: { token: string; input: ResetPasswordInput }) =>
+      authApi.resetPassword({ token, input }),
     onSuccess: (data) => {
       toast.success(data.message);
+      navigate("/login");
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
   const { mutate: changePasswordMutate, isPending: isChangingPassword } = useMutation({
-    mutationFn: (data: ChangePasswordInput) => changePassword(data),
+    mutationFn: (data: ChangePasswordInput) => authApi.changePassword(data),
     onSuccess: (data) => {
       toast.success(data.message);
     },
@@ -61,7 +68,7 @@ function useAuth() {
     },
   });
   const { mutate: logoutUser, isPending: isLoggingOut } = useMutation({
-    mutationFn: logOut,
+    mutationFn: authApi.logout,
     onSuccess: () => {
       navigate("/login");
     },

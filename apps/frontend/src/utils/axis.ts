@@ -1,9 +1,9 @@
-import { refreshToken } from "@/features/auth/api";
 import { tokenManager } from "@/lib/tokenManager";
 import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 import { redirect } from "react-router";
 import { apiUrl } from "../config/apiconfig";
 import type { ApiResponse, geneticApiResponse, PaginateResponse } from "../types/genetic";
+import { authApi } from "@/features/auth/api";
 
 type PostRequest = {
   path: string;
@@ -179,7 +179,7 @@ api.interceptors.response.use(
     if (error.response.data.code === "INVALID_TOKEN" && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await refreshToken();
+        const res = await authApi.refresh();
         tokenManager.set(res.data.accessToken);
         originalRequest.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
         return api(originalRequest);

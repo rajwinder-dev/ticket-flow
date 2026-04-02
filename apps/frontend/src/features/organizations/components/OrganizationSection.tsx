@@ -15,6 +15,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import OrganizationList from "@/features/organizations/components/OrganizationList";
 import useOrganizations from "@/features/organizations/hooks";
+import { Link } from "react-router-dom";
 
 const OrganizationSection = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,10 +41,12 @@ const OrganizationSection = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button>
-          <Plus />
-          New organization
-        </Button>
+        <Link to={"/org/new"}>
+          <Button>
+            <Plus />
+            New organization
+          </Button>
+        </Link>
       </div>
 
       {/* Organization Card Grid */}
@@ -61,7 +64,9 @@ const OrganizationSection = () => {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent className="flex-row justify-center gap-2">
-              <Button>Create Organization</Button>
+              <Link to={"org/new"}>
+                <Button asChild>Create Organization</Button>
+              </Link>
             </EmptyContent>
           </Empty>
         </Card>

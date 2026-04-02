@@ -1,5 +1,6 @@
 import {
   CreateOrganizationInput,
+  createOrganizationResponse,
   InviteUserOrganizationInput,
   UpdateOrganizationInput,
 } from "@repo/schemas";
@@ -20,8 +21,8 @@ export class OrganizationController {
   );
   static createOrganization = catchAsync(async (req, res) => {
     const input = req.body as CreateOrganizationInput;
-    const data = await OrganizationService.create(req.user.id, input);
-    response(res, data);
+    const { organization } = await OrganizationService.create(req.user.id, input);
+    response(res, organization, 201, { schema: createOrganizationResponse });
   });
   static getMyOrganizations = catchAsync(async (req, res) => {
     const { filterOptions, limit, offset } = new APIFeatures(req.query).pagination();
