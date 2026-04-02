@@ -1,14 +1,16 @@
-import { Navigate } from "react-router";
-import { useAuth } from "../context/AuthContext";
-import type { ReactNode } from "react";
-interface props {
-  children: ReactNode;
-}
-const ProtectedRoute = ({ children }: props) => {
-  const { isLoggedIn, isFetchingRole } = useAuth();
-  if (isFetchingRole) return <div>Loading</div>;
-  if (!isLoggedIn && !isFetchingRole) return <Navigate to="/login" />;
-  return <>{children}</>;
+import useAuth from "@/features/auth/hooks";
+import { Navigate, Outlet } from "react-router";
+import { Spinner } from "./ui/spinner";
+const ProtectedRoute = () => {
+  const { authDetails, isLoadingAuthDetails } = useAuth();
+  if (isLoadingAuthDetails)
+    return (
+      <div className="flex justify-center items-center w-screen h-screen">
+        <Spinner className="size-8"/>
+      </div>
+    );
+  if (!authDetails) return <Navigate to="/login" />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

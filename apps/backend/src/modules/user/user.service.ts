@@ -1,8 +1,8 @@
-import { OnBoardUserInput, UpdateUserInput } from "@repo/schemas";
+import { OnBoardUserInput, UpdateMyDetailsInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
-import { OrganizationService } from "../organizations/organization.service";
 import { ActivityService } from "../activity/activity.service";
+import { OrganizationService } from "../organizations/organization.service";
 
 export class UserService {
   static onboardUser = async (userId: string, data: OnBoardUserInput) => {
@@ -19,15 +19,18 @@ export class UserService {
     return output;
   };
   static getDetails = async (userId: string) => {
-    return await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
+    if (!user) throw new appError("User missing after auth", 500);
+
+    return user;
   };
-  static updateDetails = async (userId: string, input: UpdateUserInput) => {
-    const existingUser = await prisma.user.findUnique({where: {id: userId}})
-    const updatedUser =  await prisma.user.update({
+  static updateDetails = async (userId: string, input: UpdateMyDetailsInput) => {
+    const existingUser = await prisma.user.findUnique({ where: { id: userId } });
+    const updatedUser = await prisma.user.update({
       data: input,
       where: {
         id: userId,
@@ -41,8 +44,8 @@ export class UserService {
       entityId: userId,
       entityType: "USER",
       oldData: existingUser,
-      newData: updatedUser
+      newData: updatedUser,
     });
-    return updatedUser
+    return updatedUser;
   };
 }

@@ -1,8 +1,8 @@
-import { LoginForm } from "@/components/features/auth/LoginForm";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 
 const LoginPage = () => {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className=" bg-muted flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         <LoginForm />
       </div>

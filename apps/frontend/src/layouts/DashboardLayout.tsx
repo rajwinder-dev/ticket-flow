@@ -5,14 +5,14 @@ import { Outlet, useLocation } from "react-router";
 
 export default function DashboardLayout() {
   const location = useLocation();
-  const showSidebar = location.pathname !== "/dashboard/organization";
+  const showSidebar = location.pathname !== "/org";
 
   return (
     <SidebarProvider>
       {showSidebar && <AppSidebar />}
       <SidebarInset>
         <AppHeader />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4 p-2 ">
           <Outlet />
         </div>
       </SidebarInset>

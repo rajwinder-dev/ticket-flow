@@ -51,9 +51,9 @@ export const validPassword = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(50, "Password must be less the 50 characters")
-  .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-  .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });
+  // .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+  // .regex(/[0-9]/, { message: "Password must contain at least one number" })
+  // .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });
 
 // --- New Recommended Helpers ---
 export const validBoolean = z.preprocess((val) => {

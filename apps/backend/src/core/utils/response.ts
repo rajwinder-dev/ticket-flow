@@ -1,58 +1,49 @@
 import { Response } from "express";
-import { JsonValue } from "../../../generated/prisma/runtime/client";
-import { excludeResponseField } from "../../config/appConfig";
-/**
- * Quick JSON response helper function for Express.
- *
- * @export
- * @param {Response} res - Express response object.
- * @param {object | null} data - The data to send in the response body.
- * @param {number} [statusCode=200] - HTTP status code (default: 200).
- * @param {Object} [options={}] - Additional response options.
- * @param {object} [options.otherFields] - Extra fields to include in the response (e.g., pagination data).
- * @param {string[]} [options.hideFields] - Keys to exclude from the response object (e.g., 'password', 'active').
- */
+import z from "zod";
+import { appError } from "./appError";
 
-export function response(
+/**
+ * TYPES & INTERFACES
+ */
+type InferInput<T> = T extends z.ZodTypeAny ? z.input<T> : unknown;
+
+interface ResponseOptions<T extends z.ZodTypeAny> {
+  schema?: T; // Optional Zod schema to validate the outgoing data
+  otherFields?: object; // Any extra metadata (pagination, etc.)
+}
+
+/**
+ * Sends a standardized JSON response.
+ * Handles both simple messages and complex, validated data objects.
+ */
+export function sendResponse<T extends z.ZodTypeAny>(
   res: Response,
-  data: object | null ,
+  data: InferInput<T> | string,
   statusCode: number = 200,
-  options: { otherFields?: object; exclude?: string[] } = {},
+  options: ResponseOptions<T> = {},
 ) {
-  let cleanData;
-  if (data) cleanData = deepStrip(data, [...excludeResponseField, ...(options.exclude ?? [])]);
-  else cleanData = null;
-  res.status(statusCode).json({
-    status: "success",
-    ...{ ...options.otherFields },
-    data: cleanData,
-    timestamp: new Date().toISOString(),
-  });
-}
+  let finalPayload: InferInput<T> | string | z.output<T> = data;
 
-export default response;
-/**
- *
- *
- * @param {object} obj
- * @param {string[]} [keyToRemove=[]]
- * @return {*}  {object}
- */
-function deepStrip(obj: object, keyToRemove: string[] = []): object  {
-  if (obj instanceof Date) {
-    return obj;
-  }
+  // 1. VALIDATION: If a schema is provided, parse the data
+  if (options.schema && typeof data !== "string") {
+    const result = options.schema.safeParse(data);
 
-  if (Array.isArray(obj)) {
-    return obj.map((item) => deepStrip(item, keyToRemove));
-  } else if (obj && typeof obj === "object") {
-    const newObj: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      if (!keyToRemove.includes(key)) {
-        newObj[key] = deepStrip(value, keyToRemove);
-      }
+    if (!result.success) {
+      console.error("❌ RESPONSE VALIDATION FAILED:", result.error.format());
+      throw new appError("Internal Server Error: Malformed response data", 500);
     }
-    return newObj;
+    finalPayload = result.data;
   }
-  return obj;
+
+  // 2. CONSTRUCTION: Build the standard response object
+  const isMessageOnly = typeof data === "string";
+  const finalResponse = {
+    status: statusCode >= 400 ? "error" : "success",
+    timestamp: new Date().toISOString(),
+    ...(options.otherFields ?? {}),
+    ...(isMessageOnly ? { message: data } : { data: finalPayload }),
+  };
+  return res.status(statusCode).json(finalResponse);
 }
+
+export default sendResponse;

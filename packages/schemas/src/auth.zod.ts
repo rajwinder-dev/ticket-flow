@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validEmail, validPassword } from "./helper/zodHelper";
+import { validEmail, validPassword, validPermissions } from "./helper/zodHelper";
 
 // 2. A helper function for the common "Password Match" refinement
 const passwordMatchRefine = (data: any) => data.password === data.confirmPassword;
@@ -60,10 +60,22 @@ export const resetPasswordInput = {
     .strict()
     .refine(passwordMatchRefine, passwordMatchError),
 };
-
+// Response types
+export const authToken = z.object({
+  accessToken: z.string(),
+})
+export const authDetails = z.object({
+  id: z.uuid(),
+})
+export const authPermissions = z.object({
+  permissions: z.record(z.string(), z.array(z.string())),
+})
 // Types
+export type AuthToken = z.infer<typeof authToken>
+export type AuthDetails = z.infer<typeof authDetails>
+export type AuthPermissions = z.infer<typeof authPermissions>
 export type SignupInput = z.infer<typeof signupInput.bodySchema>;
 export type LoginInput = z.infer<typeof loginInput.bodySchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordInput.bodySchema>;
 export type UpdatePasswordInput = z.infer<typeof updatePasswordInput.bodySchema>;
-export type ResetPassword = z.infer<typeof resetPasswordInput.bodySchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordInput.bodySchema>;

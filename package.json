@@ -6,6 +6,7 @@
     "dev:backend": "pnpm --filter backend dev",
     "debug:backend": "pnpm --filter backend debug",
     "dev:frontend": "pnpm --filter frontend dev",
+    "shadcn": "pnpm --filter frontend shadcn:add",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",

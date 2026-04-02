@@ -1,4 +1,12 @@
-import { ChangePasswordInput, LoginInput, ResetPassword, SignupInput } from "@repo/schemas";
+import {
+  authDetails,
+  authPermissions,
+  authToken,
+  ChangePasswordInput,
+  LoginInput,
+  ResetPasswordInput,
+  SignupInput,
+} from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { clearCookie, responseCookie } from "../../core/utils/cookies";
@@ -11,29 +19,29 @@ export class authController {
   static signup = catchAsync(async (req, res) => {
     const input = req.body as SignupInput;
     const data = await AuthService.signupUser(input);
-    const { refreshToken, accessToken, userData } = await AuthService.loginUser({
+    const { refreshToken, accessToken } = await AuthService.loginUser({
       email: data.email,
       password: input.password,
     });
     responseCookie(res, "refreshToken", refreshToken);
-    response(res, { accessToken, userId: userData.id }, 200);
+    response(res, { accessToken }, 200, { schema: authToken });
   });
   static login = catchAsync(async (req, res, _next) => {
     const input = req.body as LoginInput;
-    const { refreshToken, accessToken, userData } = await AuthService.loginUser(input);
+    const { refreshToken, accessToken } = await AuthService.loginUser(input);
     responseCookie(res, "refreshToken", refreshToken);
-    response(res, { accessToken, userId: userData.id }, 200);
+    response(res, { accessToken }, 200, { schema: authToken });
   });
   static logout = catchAsync(async (req, res) => {
     clearCookie(res, "refreshToken");
-    response(res, { message: "Logged out successfully" }, 200);
+    response(res, "Logged out successfully", 200);
   });
 
   static refreshToken = catchAsync(async (req, res, next) => {
     const token = req.cookies.refreshToken;
     if (!token) return next(new appError("Refresh token not found", 404, "NOT_FOUND"));
     const accessToken = await AuthService.getRefreshToken(token);
-    return response(res, { accessToken });
+    return response(res, { accessToken }, 200, { schema: authToken });
   });
   static changePassword = catchAsync(async (req, res, _next) => {
     const input = req.body as ChangePasswordInput;
@@ -45,33 +53,37 @@ export class authController {
       jsx: ResetConfirmEmail(),
     });
     clearCookie(res, "refreshToken");
-    response(res, { message: "password changed successfully" }, 200);
+    response(res, "password changed successfully");
   });
 
   static getAuthDetails = catchAsync(async (req, res, _next) => {
-    const organizationId = req.header("x-organization-id");
-    const data = await AuthService.getAuthDetails(req.user.id, organizationId);
-    response(res, data);
+    const data = await AuthService.getAuthDetails(req.user.id);
+    response(res, data!, 200, { schema: authDetails });
+  });
+  static getPermissions = catchAsync(async (req, res, _next) => {
+    const data = await AuthService.getPermissions(req.user.id, req.organization.id);
+    const parsed = authPermissions.parse({ permissions: data });
+    response(res, parsed, 200, { schema: authPermissions });
   });
   static forgetPassword = catchAsync(async (req, res, _next) => {
     const email = req.params.email as string;
-    const { user, forgetURl } = await AuthService.forgetPassword(email);
-    await EmailService.sendSystemEmail({
-      to: email,
-      subject: "Reset your password",
-      jsx: ForgotPasswordEmail({ userName: user.username!, resetLink: forgetURl }),
-    });
-    response(res, { message: "Reset Link Send successfully" });
+    // const { user, forgetURl } = await AuthService.forgetPassword(email);
+    // await EmailService.sendSystemEmail({
+    //   to: email,
+    //   subject: "Reset your password",
+    //   jsx: ForgotPasswordEmail({ userName: user.username!, resetLink: forgetURl }),
+    // });
+    response(res, "Reset Link Send successfully");
   });
   static resetPassword = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
-    const { password } = req.body as ResetPassword;
-   const data =  await AuthService.resetPassword({ passwordResetToken: token, password });
-   await EmailService.sendSystemEmail({
+    const { password } = req.body as ResetPasswordInput;
+    const data = await AuthService.resetPassword({ passwordResetToken: token, password });
+    await EmailService.sendSystemEmail({
       to: data.email,
       subject: "Password changed conformation",
       jsx: ResetConfirmEmail(),
     });
-    response(res, { message: "Password change successfully" });
+    response(res, "Password change successfully");
   });
 }

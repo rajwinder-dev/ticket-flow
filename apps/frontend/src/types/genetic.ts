@@ -6,12 +6,14 @@ export type PaginateResponse<T> = {
   total: number;
   data: T[];
 };
-export type ApiResponse<T> = {
+export type geneticApiResponse = {
   status: string;
   message?: string;
-  data: T;
   timestamp: string;
 };
+export interface ApiResponse<T> extends geneticApiResponse {
+  data: T;
+}
 
 export type FilterOptions = {
   limit: number;
@@ -20,3 +22,6 @@ export type FilterOptions = {
   filter?: Record<string, string | number>;
   fields?: string[];
 };
+export interface ApiMessage {
+  message: string;
+}

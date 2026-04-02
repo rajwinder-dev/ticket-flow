@@ -12,11 +12,11 @@ import { Link, useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 export function AppHeader() {
   const location = useLocation();
-  const showSidebar = location.pathname !== "/dashboard/organization";
+  const showSidebar = location.pathname !== "/org";
   const breadCrumpData = location.pathname.split("/");
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex items-center gap-2 ">
         {showSidebar && (
           <>
             <SidebarTrigger className="-ml-1" />
@@ -31,7 +31,7 @@ export function AppHeader() {
                           to={breadCrumpData.slice(0, index + 2).join("/")}
                           className="capitalize"
                         >
-                          {link}
+                          {link.length < 10 ? link : `${link.slice(0,8)}...`}
                         </Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>

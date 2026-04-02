@@ -3,162 +3,92 @@
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import {
-  AudioWave01Icon,
-  BookOpen02Icon,
-  CommandIcon,
-  ComputerTerminalIcon,
-  CropIcon,
-  LayoutBottomIcon,
-  MapsIcon,
-  PieChartIcon,
-  RoboticIcon,
+  HomeIcon,
+  Layers01Icon,
   Settings05Icon,
+  Ticket01Icon,
+  UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+const navMainItems = [
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: <HugeiconsIcon icon={HomeIcon} strokeWidth={2} />,
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: <HugeiconsIcon icon={LayoutBottomIcon} strokeWidth={2} />,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: <HugeiconsIcon icon={AudioWave01Icon} strokeWidth={2} />,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: <HugeiconsIcon icon={CommandIcon} strokeWidth={2} />,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: <HugeiconsIcon icon={RoboticIcon} strokeWidth={2} />,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: <HugeiconsIcon icon={BookOpen02Icon} strokeWidth={2} />,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: <HugeiconsIcon icon={CropIcon} strokeWidth={2} />,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: <HugeiconsIcon icon={PieChartIcon} strokeWidth={2} />,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: <HugeiconsIcon icon={MapsIcon} strokeWidth={2} />,
-    },
-  ],
-};
+  {
+    title: "Tickets",
+    url: "/tickets",
+    icon: <HugeiconsIcon icon={Ticket01Icon} strokeWidth={2} />,
+    isActive: true,
+    items: [
+      {
+        title: "All Tickets",
+        url: "/ticket",
+      },
+      {
+        title: "My Tickets",
+        url: "/ticket?filter=my",
+      },
+      {
+        title: "Unassigned",
+        url: "/ticket?filter=unassigned",
+      },
+      {
+        title: "Closed",
+        url: "/ticket?status=closed",
+      },
+    ],
+  },
+  {
+    title: "Queues",
+    url: "/queue",
+    icon: <HugeiconsIcon icon={Layers01Icon} strokeWidth={2} />,
+    items: [
+      {
+        title: "All Queues",
+        url: "/queue",
+      },
+      {
+        title: "Queue Groups",
+        url: "/queue-group",
+      },
+    ],
+  },
+  {
+    title: "Members",
+    url: "/member",
+    icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />,
+  },
+  {
+    title: "Settings",
+    url: "/setting",
+    icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
+    items: [
+      {
+        title: "General",
+        url: "/setting",
+      },
+      {
+        title: "Roles & Permissions",
+        url: "/setting/rbac",
+      },
+    ],
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <OrganizationSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={navMainItems} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
 
       <SidebarRail />

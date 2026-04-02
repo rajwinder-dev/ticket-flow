@@ -34,7 +34,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
   } else if (error.code === "P2024") {
     error = new appError("Database request timed out.", 504, "DB_TIMEOUT");
   }
-  console.error(error);
+  console.error(error.message);
 
   res.status(error.statusCode || 500).json({
     status: error.status || "error",

@@ -22,6 +22,7 @@ export async function seedUsers(count: number = 50) {
       email,
       code: readableId("USR"),
       phoneNo: faker.phone.number(),
+      username: faker.internet.userName(),
       passwordHash: "", // temp placeholder
     });
   }

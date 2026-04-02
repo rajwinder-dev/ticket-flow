@@ -9,14 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import useAuth from "@/features/auth/hooks";
+import useUser from "@/features/users/hooks";
 import { CheckmarkBadgeIcon, Gear, LogoutIcon, NotificationIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-const user = {
-  name: "rajwinder",
-  email: "rajwindersxx@gmail.com",
-  avatar: "xyz",
-};
+
 export function UserProfile() {
+  const { userDetails } = useUser();
+  const { logoutUser } = useAuth();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -27,12 +27,17 @@ export function UserProfile() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage
+                  src={`${userDetails?.data.avatar}`}
+                  alt={`${userDetails?.data.username} Profile picture`}
+                />
+                <AvatarFallback className="rounded-lg">
+                  {userDetails?.data.username?.[0] || "P"}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{userDetails?.data.username}</span>
+                <span className="truncate text-xs">{userDetails?.data.email}</span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -45,12 +50,17 @@ export function UserProfile() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage
+                    src={`${userDetails?.data.avatar}`}
+                    alt={`${userDetails?.data.username} Profile picture`}
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {userDetails?.data.username?.[0] || "P"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{userDetails?.data.username}</span>
+                  <span className="truncate text-xs">{userDetails?.data.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -70,7 +80,7 @@ export function UserProfile() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logoutUser()}>
               <HugeiconsIcon icon={LogoutIcon} strokeWidth={2} />
               Log out
             </DropdownMenuItem>

@@ -1,4 +1,4 @@
-import { Schema, ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { appError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 
@@ -7,9 +7,9 @@ export function validationMiddleware({
   paramsSchema,
   querySchema,
 }: {
-  bodySchema?: Schema;
-  paramsSchema?: Schema;
-  querySchema?: Schema;
+  bodySchema?: z.Schema;
+  paramsSchema?: z.Schema;
+  querySchema?: z.Schema;
 }) {
   return catchAsync(async (req, res, next) => {
     if (bodySchema) {
@@ -25,7 +25,6 @@ export function validationMiddleware({
         );
       req.body = result.data;
     }
-    
 
     if (paramsSchema) {
       const result = paramsSchema.safeParse(req.params);

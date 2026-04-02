@@ -42,13 +42,17 @@ export class OrganizationController {
             name: true,
             id: true,
             createdBy: true,
+            logo: true,
           },
         },
       },
       take: limit,
       skip: offset,
     });
-   const output = membership.map((m) => ({...m.organization, isOwner: m.organization?.createdBy === req.user.id}));
+    const output = membership.map((m) => ({
+      ...m.organization,
+      isOwner: m.organization?.createdBy === req.user.id,
+    }));
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });
   static getOrganizationDetails = catchAsync(async (req, res) => {

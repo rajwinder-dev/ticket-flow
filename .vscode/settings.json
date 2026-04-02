@@ -1,13 +1,14 @@
 {
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "tailwindCSS.lint.suggestCanonicalClasses": "ignore",
   "cSpell.words": [
     "autoincrement",
     "dbgenerated",
     "fontsource",
+    "Hugeicons",
     "seedorganization",
     "shadcn",
     "svix",
     "Timestamptz"
-  ],
-
+  ]
 }

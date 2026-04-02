@@ -6,15 +6,15 @@ import { OrganizationController } from "./organization.controller";
 import { validUuidParams } from "@repo/schemas/src/global.zod";
 
 const organizationRouter = Router();
-organizationRouter.get("/invite/:token", OrganizationController.InviteDetails);
+organizationRouter.get("/:token/invite/", OrganizationController.InviteDetails);
 organizationRouter.use(authMiddleware.protectedRoute);
-organizationRouter.post("/invite/:token", OrganizationController.acceptInvite);
+organizationRouter.get("/me", OrganizationController.getMyOrganizations);
+organizationRouter.post("/:token/invite/", OrganizationController.acceptInvite);
 organizationRouter.post(
   "/",
   validationMiddleware(createOrganizationInput),
   OrganizationController.createOrganization,
 );
-organizationRouter.get("/me", OrganizationController.getMyOrganizations);
 organizationRouter.use(authMiddleware.tenant);
 
 

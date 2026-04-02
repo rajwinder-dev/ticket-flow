@@ -92,20 +92,19 @@ export default class AuthService {
     });
     return data;
   }
-  static async getAuthDetails(userId: string, organizationId?: string) {
-    let data;
+  static async getAuthDetails(userId: string,) {
     const userData = await prisma.user.findUnique({
       where: {
         id: userId,
       },
       select: {
-        id: true,
-        code: true,
-        email: true,
+        id: true
       },
     });
-    data = userData;
-    if (organizationId) {
+     ;
+    return userData;
+  }
+    static async getPermissions(userId: string, organizationId: string) {
       const permissions = await prisma.membership.findUnique({
         where: {
           organizationId_userId: {
@@ -117,9 +116,7 @@ export default class AuthService {
           role: true,
         },
       });
-      data = { ...userData, permissions: permissions?.role?.permissions };
-    }
-    return data;
+    return {permissions: permissions?.role?.permissions};
   }
   static async forgetPassword(email: string) {
     const user = await prisma.user.findUnique({

@@ -1,10 +1,13 @@
-import axios, { type AxiosRequestConfig } from "axios";
+import { refreshToken } from "@/features/auth/api";
+import { tokenManager } from "@/lib/tokenManager";
+import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
+import { redirect } from "react-router";
 import { apiUrl } from "../config/apiconfig";
-import type { ApiResponse, PaginateResponse } from "../types/genetic";
+import type { ApiResponse, geneticApiResponse, PaginateResponse } from "../types/genetic";
 
 type PostRequest = {
   path: string;
-  data: object | null;
+  data?: object;
   headers?: string;
   options?: AxiosRequestConfig;
 };
@@ -20,20 +23,13 @@ export const api = axios.create({
   baseURL: apiUrl,
   withCredentials: true,
 });
-export const refreshClient = axios.create({
-  baseURL: apiUrl,
-  headers: {
-    "Content-type": "application/json",
-  },
-  withCredentials: true,
-});
 
-export async function postRequest<T>({
+export async function postRequest<T = geneticApiResponse>({
   path,
   data,
   headers = "application/json",
   options,
-}: PostRequest): Promise<T> {
+}: PostRequest): Promise<ApiResponse<T>> {
   return await catchError(async () => {
     const response = await api.post<ApiResponse<T>>(`${path}`, data, {
       headers: {
@@ -42,12 +38,11 @@ export async function postRequest<T>({
       ...(options || {}),
     });
     const res = response.data;
-    if (res.status === "fail") throw new Error(res.message);
-    return res.data;
+    return res;
   });
 }
 
-export async function getRequest<T>({
+export async function getRequest<T = geneticApiResponse>({
   path,
   filterOptions,
   headers = "application/json",
@@ -55,7 +50,7 @@ export async function getRequest<T>({
   path: string;
   filterOptions?: FilterOptions;
   headers?: string;
-}): Promise<T> {
+}): Promise<ApiResponse<T>> {
   return await catchError(async () => {
     let query = "";
     if (filterOptions) query = buildQuery(filterOptions);
@@ -66,7 +61,8 @@ export async function getRequest<T>({
     });
     const res = response.data;
     if (res.status === "fail") throw new Error(res.message);
-    return res.data;
+
+    return res;
   });
 }
 export async function getRequestMany<T>({
@@ -81,7 +77,7 @@ export async function getRequestMany<T>({
   return await catchError(async () => {
     let query = "";
     if (filterOptions) query = buildQuery(filterOptions);
-    const response = await api.get<PaginateResponse<T>>(`${path}?${query}`, {
+    const response = await api.get<PaginateResponse<T>>(`${path}${query}`, {
       headers: {
         "Content-Type": headers,
       },
@@ -91,11 +87,11 @@ export async function getRequestMany<T>({
     return res;
   });
 }
-export async function patchRequest<T>({
+export async function patchRequest<T = geneticApiResponse>({
   path,
   data,
   headers = "application/json",
-}: PostRequest): Promise<T> {
+}: PostRequest): Promise<ApiResponse<T>> {
   return await catchError(async () => {
     const response = await api.patch<ApiResponse<T>>(`${path}`, data, {
       headers: {
@@ -104,10 +100,10 @@ export async function patchRequest<T>({
     });
     const res = response.data;
     if (res.status === "fail") throw new Error(res.message);
-    return res.data;
+    return res;
   });
 }
-export async function deleteRequest<T>({
+export async function deleteRequest<T = geneticApiResponse>({
   path,
   filterOptions,
   headers = "application/json",
@@ -115,7 +111,7 @@ export async function deleteRequest<T>({
   path: string;
   filterOptions?: FilterOptions;
   headers?: string;
-}): Promise<T> {
+}): Promise<ApiResponse<T>> {
   let query = "";
   if (filterOptions) query = buildQuery(filterOptions);
   return await catchError(async () => {
@@ -126,13 +122,11 @@ export async function deleteRequest<T>({
     });
     const res = response.data;
     if (res.status === "fail") throw new Error(res.message);
-    return res.data;
+    return res;
   });
 }
 // axios helper
-export function buildQuery(
-  input: Record<string, string | number | boolean | string[] | object>,
-) {
+export function buildQuery(input: Record<string, string | number | boolean | string[] | object>) {
   const array: string[] = [];
   for (const [key, value] of Object.entries(input)) {
     if (Array.isArray(value)) {
@@ -154,9 +148,51 @@ export async function catchError<T>(callback: () => Promise<T>): Promise<T> {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const apiMsg = error.response?.data?.message || error.message;
-      if (apiMsg) throw new Error(apiMsg);
-      throw error;
+      const customError = new Error(apiMsg);
+      throw customError;
     }
-    throw new Error("Unknown error occurred");
+    const unknownError = new Error("Unknown error occurred");
+    throw unknownError;
   }
+}
+
+api.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const token = tokenManager.get();
+    const organizationId = getOrgIdFromUrl();
+    console.log(organizationId);
+    if (token) config.headers["Authorization"] = `Bearer ${token}`;
+    if (organizationId) config.headers["x-org-id"] = organizationId;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async function (error) {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
+    if (error.response.data.code === "INVALID_TOKEN" && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const res = await refreshToken();
+        tokenManager.set(res.data.accessToken);
+        originalRequest.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
+        return api(originalRequest);
+      } catch (error) {
+        redirect("/login");
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+// apiClient.ts
+export function getOrgIdFromUrl() {
+  const match = window.location.pathname.match(/org\/([^/]+)/);
+  return match?.[1];
 }
