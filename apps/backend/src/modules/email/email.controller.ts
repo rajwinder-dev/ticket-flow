@@ -18,6 +18,8 @@ export class EmailController {
     const input = req.body as SMTPSchema;
     await EmailService.createEmailProvider(req.organization.id, req.user.email, {
       ...input,
+      providerType: "SMTP",
+      domain: null
     });
     response(res, { message: "SMTP Provider added successfully" }, 201);
   });

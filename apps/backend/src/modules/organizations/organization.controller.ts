@@ -2,6 +2,7 @@ import {
   CreateOrganizationInput,
   createOrganizationResponse,
   InviteUserOrganizationInput,
+  organizationSchemaResponse,
   UpdateOrganizationInput,
 } from "@repo/schemas";
 import { Prisma } from "../../../generated/prisma";
@@ -56,15 +57,18 @@ export class OrganizationController {
     }));
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });
-  static getOrganizationDetails = catchAsync(async (req, res) => {
-    const id = req.params.id as string;
-    const data = await this.handler.getOne(id);
-    response(res, data, 200);
+  static getCurrentOrganization = catchAsync(async (req, res, _next) => {
+    const data = await prisma.organization.findUnique({
+      where: {
+        id: req.organization.id,
+      },
+    });
+    if (!data) throw new appError("Organization not found ", 404);
+    response(res, data, 200, { schema: organizationSchemaResponse });
   });
   static updateOrganization = catchAsync(async (req, res) => {
     const input = req.body as UpdateOrganizationInput;
-    const id = req.params.id as string;
-    const data = await this.handler.update(id, input);
+    const data = await this.handler.update(req.organization.id, input);
     response(res, data);
   });
   static deleteOrganization = catchAsync(async (req, res) => {

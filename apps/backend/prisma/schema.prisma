@@ -165,9 +165,9 @@ model EmailProvider {
   webhookSecret  String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  domain         String        @unique
+  domain         String       
 
-  @@unique([organizationId, credentials, providerType])
+  @@unique([organizationId, domain])
 }
 
 enum MessageDirection {

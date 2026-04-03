@@ -1,5 +1,5 @@
 import { deleteRequest, getRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import type { CreateOrganizationInput, CreateOrganizationResponse, InviteUserOrganizationInput, UpdateOrganizationInput } from "@repo/schemas";
+import type { CreateOrganizationInput, CreateOrganizationResponse, InviteUserOrganizationInput, OrganizationSchemaResponse, UpdateOrganizationInput } from "@repo/schemas";
 import type { InviteDetails, Organization } from "./types";
 
 export const orgApi = {
@@ -23,7 +23,12 @@ export const orgApi = {
     });
     return data;
   },
-
+  getCurrent: async () => {
+    const data = await getRequest<OrganizationSchemaResponse>({
+      path: "/org/current"
+    })
+    return data
+  },
   create: async (input: CreateOrganizationInput) => {
     const data = await postRequest<CreateOrganizationResponse>({
       path: `/org`,

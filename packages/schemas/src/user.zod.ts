@@ -1,5 +1,12 @@
-import { z } from "zod";
-import { validBigDescription, validPhoneNo, validString } from "./helper/zodHelper";
+import { optional, z } from "zod";
+import {
+  emptyToUndefined,
+  optionalInput,
+  validBigDescription,
+  validPhoneNo,
+  validString,
+  validUrl,
+} from "./helper/zodHelper";
 
 export const onboardUserInput = {
   bodySchema: z
@@ -21,32 +28,27 @@ export const onboardUserInput = {
 export const updateMyDetailsInput = {
   bodySchema: z
     .object({
-      phoneNo: validPhoneNo.optional(),
-      avatar: z.url("Please provide a valid image URL").optional(),
-      gender: z
-        .enum(["male", "female", "other"], { message: "Select a valid gender option" })
-        .optional(),
-      location: validString.optional(),
+      phoneNo:optionalInput(validPhoneNo),
+      avatar:  optionalInput(validUrl),
+      location: optionalInput(validString),
     })
     .strict(),
 };
 
-export const userSchema = z
-  .object({
-    location: z.string().nullable(),
-    phoneNo: z.string().nullable(),
-    avatar: z.string().nullable(),
-    id: z.string(),
-    code: z.string(),
-    active: z.boolean(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    email: z.email(),
-    username: z.string().nullable(),
-  })
-  ;
+export const userSchemaResponse = z.object({
+  location: z.string().nullable(),
+  phoneNo: z.string().nullable(),
+  avatar: z.string().nullable(),
+  id: z.string(),
+  code: z.string(),
+  active: z.boolean(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  email: z.email(),
+  username: z.string().nullable(),
+});
 
 // --- Inferred Types ---
-export type UserSchema = z.infer<typeof userSchema>
+export type UserSchema = z.infer<typeof userSchemaResponse>;
 export type UpdateMyDetailsInput = z.infer<typeof updateMyDetailsInput.bodySchema>;
 export type OnBoardUserInput = z.infer<typeof onboardUserInput.bodySchema>;

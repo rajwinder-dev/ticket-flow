@@ -1,9 +1,9 @@
+import { authApi } from "@/features/auth/api";
 import { tokenManager } from "@/lib/tokenManager";
 import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 import { redirect } from "react-router";
 import { apiUrl } from "../config/apiconfig";
 import type { ApiResponse, geneticApiResponse, PaginateResponse } from "../types/genetic";
-import { authApi } from "@/features/auth/api";
 
 type PostRequest = {
   path: string;
@@ -160,9 +160,8 @@ api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = tokenManager.get();
     const organizationId = getOrgIdFromUrl();
-    console.log(organizationId);
     if (token) config.headers["Authorization"] = `Bearer ${token}`;
-    if (organizationId) config.headers["x-org-id"] = organizationId;
+    if (organizationId) config.headers["x-organization-id"] = organizationId;
     return config;
   },
   (error) => {
@@ -173,6 +172,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async function (error) {
+    console.error(error.response.data);
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };

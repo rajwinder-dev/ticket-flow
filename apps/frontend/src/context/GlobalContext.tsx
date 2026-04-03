@@ -5,11 +5,14 @@ type Theme = "light" | "dark";
 type ThemeContextType = {
   theme: Theme;
   toggleTheme: () => void;
+  setOrgId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  orgId?: string | undefined;
 };
 
 const GlobalContext = createContext<ThemeContextType | null>(null);
 
-export const GlobalProvider = ({ children }: { children: ReactNode; }) => {
+export const GlobalProvider = ({ children }: { children: ReactNode }) => {
+  const [orgId, setOrgId] = useState<string | undefined>(undefined);
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem("theme") as Theme) || "light";
   });
@@ -24,7 +27,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode; }) => {
   }, [theme]);
 
   return (
-    <GlobalContext.Provider value={{ theme, toggleTheme  }}>
+    <GlobalContext.Provider value={{ theme, toggleTheme, setOrgId, orgId }}>
       {children}
     </GlobalContext.Provider>
   );

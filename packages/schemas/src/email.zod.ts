@@ -1,11 +1,9 @@
 import { z } from "zod";
-import { validDomain, validEmail } from "./helper/zodHelper";
+import { validDomain } from "./helper/zodHelper";
 
 // --- Sub-Schemas for Credentials ---
 
 const smtpSchema = z.object({
-  providerType: z.literal("SMTP"),
-  domain: validDomain,
   credentials: z.object({
     host: z.string().trim().min(1, "Host is required"),
     port: z.number().int().positive().max(65535),
@@ -36,7 +34,7 @@ const mailtrapSchema = z.object({
 // --- Main Inputs ---
 
 export const createEmailProviderInput = {
-  bodySchema: z.discriminatedUnion("providerType", [smtpSchema, resendSchema, mailtrapSchema]),
+  bodySchema: z.discriminatedUnion("providerType", [resendSchema, mailtrapSchema]),
 };
 
 export const updateEmailProviderInput = {

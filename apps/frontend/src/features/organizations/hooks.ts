@@ -4,11 +4,12 @@ import type {
   UpdateOrganizationInput,
 } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { orgApi } from "../organizations/api";
 
 function useOrganizations() {
+  const {orgId} = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -17,6 +18,11 @@ function useOrganizations() {
     queryFn: orgApi.getMine,
     queryKey: ["organizations"],
     retry: false,
+  });
+  const { data: currentOrganization, isLoading: isLoadingCurrent } = useQuery({
+    queryFn: orgApi.getCurrent,
+    queryKey: ["organization"],
+    enabled: !!orgId,
   });
 
   // --- Mutations ---
@@ -89,6 +95,8 @@ function useOrganizations() {
     isInvitingUser,
     acceptInviteMutate,
     isAcceptingInvite,
+    currentOrganization,
+    isLoadingCurrent,
   };
 }
 

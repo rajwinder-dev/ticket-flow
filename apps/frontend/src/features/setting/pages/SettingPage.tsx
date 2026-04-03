@@ -21,7 +21,7 @@ export default function SettingsPage() {
         defaultValue="profile"
         className="flex space-y-8 md:flex-row md:space-y-0 md:space-x-12"
       >
-        <aside className="md:w-1/5">
+        <aside className="md:w-1/5 ">
           <TabsList className="flex h-auto justify-start space-y-1 p-0 md:bg-transparent">
             <TabsTrigger
               value="profile"
@@ -49,7 +49,7 @@ export default function SettingsPage() {
             </TabsTrigger>
           </TabsList>
         </aside>
-        <div className="flex-1 md:max-w-2xl">
+        <div className="flex-1 md:max-w-2xl my-4">
           {/* Profile Tab */}
           <TabsContent value="profile" className="mt-0">
             <ProfileTab />

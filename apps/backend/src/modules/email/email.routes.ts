@@ -13,6 +13,7 @@ emailRouter.post(
   validationMiddleware(createEmailProviderInput),
   EmailController.createProvider,
 );
+emailRouter.post("/fallback", authMiddleware.restrictToOwner, EmailController.createSMTP);
 emailRouter.patch(
   "/:id",
   authMiddleware.restrictToOwner,
