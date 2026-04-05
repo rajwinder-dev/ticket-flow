@@ -1,4 +1,4 @@
-import OrganizationSection from "@/features/organizations/components/OrganizationSection";
+import OrganizationSection from "@/features/organization/components/OrganizationSection";
 
 const OrganizationPage = () => {
   return (

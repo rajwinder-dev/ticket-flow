@@ -1,4 +1,4 @@
-import { CreateRoleInput, updateRoleInput } from "@repo/schemas";
+import { CreateRoleInput, UpdateRoleInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
@@ -32,7 +32,7 @@ export class RoleService {
     userId,
   }: {
     roleId: string;
-    input: updateRoleInput;
+    input: UpdateRoleInput;
     userId: string;
     organizationId: string;
   }) => {
@@ -42,6 +42,9 @@ export class RoleService {
       where: {
         id: roleId,
         organizationId,
+        name: {
+          not: "OWNER",
+        },
       },
     });
     await ActivityService.lagActivity({

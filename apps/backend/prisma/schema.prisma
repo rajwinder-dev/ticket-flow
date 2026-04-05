@@ -159,15 +159,17 @@ model EmailProvider {
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
   providerType   ProviderType
-  isPrimary      Boolean       @default(false)
+  priority       Int
   active         Boolean       @default(true)
   credentials    Json
   webhookSecret  String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  domain         String       
+  domain         String
+  fromEmail      String
 
   @@unique([organizationId, domain])
+  @@unique([organizationId, priority])
 }
 
 enum MessageDirection {
@@ -279,7 +281,7 @@ model QueueAgent {
   ticketCount    Int           @default(0)
   active         Boolean       @default(true)
 
-  @@unique([queueId, agentId, organizationId, active])
+  @@unique([queueId, agentId, organizationId])
 }
 
 //  ============================ TICKET MANAGEMENT ==============================

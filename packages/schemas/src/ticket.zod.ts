@@ -1,10 +1,6 @@
 import { z } from "zod";
-import {
-  validEmail,
-  validString,
-  validBigDescription,
-} from "./helper/zodHelper";
 import { validUuidParams } from "./global.zod";
+import { validBigDescription, validEmail, validString } from "./helper/zodHelper";
 
 export const createTicketInput = {
   bodySchema: z
@@ -15,18 +11,18 @@ export const createTicketInput = {
     })
     .strict(),
 };
-
+export const updateTicketInput = {
+  bodySchema: z
+    .object({
+      subject: validString, // Trims and enforces 2-50 chars
+      description: validBigDescription, // Trims and enforces 10+ chars
+    })
+    .strict(),
+};
 export const updateTicketStatusInput = {
   bodySchema: z
     .object({
-      status: z.enum([
-        "OPEN",
-        "IN_PROGRESS",
-        "ON_HOLD",
-        "RESOLVED",
-        "REOPENED",
-        "CLOSED"
-      ]),
+      status: z.enum(["OPEN", "IN_PROGRESS", "ON_HOLD", "RESOLVED", "REOPENED", "CLOSED"]),
     })
     .strict(),
   ...validUuidParams,
@@ -64,6 +60,7 @@ export const assignTicketInput = {
 
 // --- Inferred Types ---
 export type CreateTicketInput = z.infer<typeof createTicketInput.bodySchema>;
+export type UpdateTicketInput = z.infer<typeof updateTicketInput.bodySchema>;
 export type UpdateTicketStatusInput = z.infer<typeof updateTicketStatusInput.bodySchema>;
 export type UpdateTicketPriorityInput = z.infer<typeof updateTicketPriorityInput.bodySchema>;
 export type CreateTicketCommentInput = z.infer<typeof createTicketCommentInput.bodySchema>;

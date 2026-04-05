@@ -50,7 +50,6 @@ export class authMiddleware {
       return next(new appError("x-organization-id must be a valid UUID", 400, "VALIDATION_ERROR"));
 
     const userId = req.user.id as string;
-    console.log(organizationId, userId);
     const member = await prisma.membership.findUnique({
       where: {
         organizationId_userId: {

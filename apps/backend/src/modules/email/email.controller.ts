@@ -1,4 +1,4 @@
-import { CreateEmailProviderInput, SMTPSchema } from "@repo/schemas";
+import { CreateEmailProviderInput, CreateSmtpInput, emailProviderSchema } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
@@ -6,22 +6,29 @@ import response from "../../core/utils/response";
 import { WelcomeEmail } from "../../templates/emails/welcome";
 import { EmailService } from "./email.service";
 import { ResendService } from "./providers/resend.service";
+import z from "zod";
 
 export class EmailController {
   static createProvider = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateEmailProviderInput;
-
-    await EmailService.createEmailProvider(req.organization.id, req.user.email, input);
+    await EmailService.createEmailProvider(req.organization.id, req.user.email, {
+      ...input,
+      priority: 1,
+    });
     response(res, { message: "Email Provider added successfully" }, 201);
   });
   static createSMTP = catchAsync(async (req, res, _next) => {
-    const input = req.body as SMTPSchema;
+    const input = req.body as CreateSmtpInput;
     await EmailService.createEmailProvider(req.organization.id, req.user.email, {
       ...input,
       providerType: "SMTP",
-      domain: null
+      priority: 2,
     });
     response(res, { message: "SMTP Provider added successfully" }, 201);
+  });
+  static getProviders = catchAsync(async (req, res, _next) => {
+    const data = await EmailService.getEmailProviders(req.organization.id);
+    response(res, data, 200, {schema: z.array(emailProviderSchema)});
   });
   static updateCredentials = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

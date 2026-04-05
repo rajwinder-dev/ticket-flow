@@ -1,0 +1,22 @@
+info:
+  name: invite details
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{url}}/api/v1/org/invite/:token"
+  params:
+    - name: token
+      value: a312df9f5e839ba85901fac48e6e15cbda1f361f33a8620bfa35e0ae25ccdaa4
+      type: path
+  body:
+    type: json
+    data: ""
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -13,8 +13,8 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
-import OrganizationList from "@/features/organizations/components/OrganizationList";
-import useOrganizations from "@/features/organizations/hooks";
+import OrganizationList from "@/features/organization/components/OrganizationList";
+import useOrganizations from "@/features/organization/hooks";
 import { Link } from "react-router-dom";
 
 const OrganizationSection = () => {

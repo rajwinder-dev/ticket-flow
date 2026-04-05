@@ -6,10 +6,10 @@ import type {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
-import { orgApi } from "../organizations/api";
+import { orgApi } from "./api";
 
 function useOrganizations() {
-  const {orgId} = useParams();
+  const { orgId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 

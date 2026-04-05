@@ -11,17 +11,13 @@ import { emailProviderFactory } from "./providers/provider.factory";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
     const html = await render(jsx);
-    //  fetch the config
-    const { preferred, fallback } = await EmailConfigService.getEmailCredentials(organizationId);
-    try {
-      if (preferred) return await this.sendEmailLogic(preferred, { to, subject, html });
-    } catch (err) {
-      console.error("Preferred provider failed:", err);
-    }
-    try {
-      if (fallback) return await this.sendEmailLogic(fallback, { to, subject, html });
-    } catch (err) {
-      console.error("Fallback provider failed:", err);
+    const providers = await EmailConfigService.getEmailCredentials(organizationId);
+    for (const provider of providers) {
+      try {
+        return await this.sendEmailLogic(provider, { to, subject, html });
+      } catch (err) {
+        console.error(`Provider ${provider.providerType} failed:`, err);
+      }
     }
     throw new appError("All email providers failed", 500, "EMAIL_FAILED");
   };
@@ -35,15 +31,37 @@ export class EmailService {
 
     return await provider.sendMail({ to, from: env.email.from, subject, html });
   };
+  static getEmailProviders = async (organizationId: string) => {
+    const providers = await prisma.emailProvider.findMany({
+      where: {
+        organizationId,
+      },
+      select: {
+        id: true,
+        providerType: true,
+        fromEmail: true,
+        domain: true,
+        priority: true,
+      },
+    });
+    return providers;
+  };
   static createEmailProvider = async (
     organizationId: string,
     userEmail: string,
     {
       credentials,
       providerType,
-      domain,
+      fromEmail,
       webhookSecret,
-    }: { credentials: unknown; providerType: ProviderType; domain: string; webhookSecret?: string },
+      priority,
+    }: {
+      credentials: unknown;
+      providerType: ProviderType;
+      fromEmail: string;
+      webhookSecret?: string;
+      priority: number;
+    },
   ) => {
     const existingProviderCount = await prisma.emailProvider.count({
       where: {
@@ -58,8 +76,10 @@ export class EmailService {
       data: {
         organizationId,
         credentials: encryptCredentials,
+        priority,
         providerType,
-        domain,
+        fromEmail,
+        domain: fromEmail.split("@")[1],
         webhookSecret,
       },
     });
@@ -68,7 +88,7 @@ export class EmailService {
     id: string,
     userEmail: string,
     organizationId: string,
-    { credentials, providerType, domain }: CreateEmailProviderInput,
+    { credentials, providerType, fromEmail }: CreateEmailProviderInput,
   ) => {
     const encryptCredentials = encrypt(JSON.stringify(credentials));
     await this.verifyProvider(userEmail, providerType, credentials);
@@ -77,7 +97,8 @@ export class EmailService {
         id,
         organizationId,
         providerType,
-        domain,
+        fromEmail,
+        domain: fromEmail.split("@")[1],
       },
       data: {
         credentials: encryptCredentials,

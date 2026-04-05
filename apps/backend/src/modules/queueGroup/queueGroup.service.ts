@@ -1,4 +1,4 @@
-import { QueueGroupInput } from "@repo/schemas";
+import { CreateQueueGroupInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { ActivityService } from "../activity/activity.service";
@@ -11,7 +11,7 @@ export class QueueGroupService {
   }: {
     userId: string;
     organizationId: string;
-    input: QueueGroupInput;
+    input: CreateQueueGroupInput;
   }) => {
     const existingDefaultGroup = await prisma.queueGroup.findFirst({
       where: {
@@ -55,7 +55,7 @@ export class QueueGroupService {
   }: {
     groupId: string;
     organizationId: string;
-    input: QueueGroupInput;
+    input: CreateQueueGroupInput;
     userId: string;
   }) => {
     const queueGroup = await prisma.queueGroup.update({

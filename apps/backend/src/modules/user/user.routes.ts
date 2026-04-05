@@ -12,20 +12,4 @@ userRouter
   .get(UserController.getMyDetails)
   .patch(validationMiddleware(updateMyDetailsInput), UserController.updateMyDetails);
 
-// employeeRouter
-//   .route("/")
-//   .get(EmployeeController.getAllEmployees)
-//   .post(
-//     upload.single("image"),
-//     processImagesMiddleware,
-//     validationMiddleware(employeeSchema),
-//     EmployeeController.createEmployee,
-//   );
-
-// employeeRouter.route("/summary").get(EmployeeController.employeeSummary);
-// employeeRouter
-//   .route("/:id")
-//   .get(EmployeeController.getEmployeeDetails)
-//   .patch(EmployeeController.updateEmployee)
-//   .delete(validationMiddleware(params), EmployeeController.deleteEmployee);
 export default userRouter;

@@ -1,3 +1,7 @@
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Send } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,29 +13,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Send } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { createEmailProviderInput, type CreateEmailProviderInput } from "@repo/schemas";
+
+
+
+
 const EmailProviderForm = () => {
-  // 2. Initialize the form
+  // 2. Initialize the form with the resolver
   const {
     register,
     handleSubmit,
-    setValue,
+    control,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<CreateEmailProviderInput>({
+    resolver: zodResolver(createEmailProviderInput.bodySchema),
     defaultValues: {
-      primaryProvider: "RESEND",
-      primaryApiKey: "",
+      providerType: "RESEND",
+      fromEmail: "",
+      webhookSecret: "",
+      credentials: {
+        apiKey: ''
+      }
     },
   });
 
-  // Watch the provider to update the label dynamically
-  const selectedProvider = watch("primaryProvider");
+  const selectedProvider = watch("providerType");
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: CreateEmailProviderInput) => {
     console.log("Form Submitted:", data);
-    // Add your API logic here
   };
 
   return (
@@ -45,26 +55,43 @@ const EmailProviderForm = () => {
           <CardDescription>Managed API service for main delivery.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
-          {/* Provider Select */}
+
+          {/* Provider Select - Using Controller for Shadcn Select */}
           <div className="space-y-2">
             <Label>Provider</Label>
-            <Select
-              defaultValue="RESEND"
-              onValueChange={(val) => setValue("primaryProvider", val, { shouldValidate: true })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select provider" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="RESEND">Resend</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.primaryProvider && (
-              <p className="text-destructive text-xs">{errors.primaryProvider.message}</p>
+            <Controller
+              control={control}
+              name="providerType"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="RESEND">Resend</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.providerType && (
+              <p className="text-destructive text-xs">{errors.providerType.message}</p>
             )}
           </div>
 
-          {/* API Key Input */}
+          {/* From Email Input */}
+          <div className="space-y-2">
+            <Label htmlFor="fromEmail">From Email</Label>
+            <Input
+              id="fromEmail"
+              placeholder="hello@example.com"
+              {...register("fromEmail")}
+            />
+            {errors.fromEmail && (
+              <p className="text-destructive text-xs">{errors.fromEmail.message}</p>
+            )}
+          </div>
+
+          {/* API Key Input - Nested path */}
           <div className="space-y-2">
             <Label htmlFor="apiKey">
               {selectedProvider.charAt(0) + selectedProvider.slice(1).toLowerCase()} API Key
@@ -72,11 +99,24 @@ const EmailProviderForm = () => {
             <Input
               id="apiKey"
               type="password"
-              placeholder="sk_..."
-              {...register("primaryApiKey")}
+              placeholder="re_..."
+              {...register("credentials.apiKey")}
             />
-            {errors.primaryApiKey && (
-              <p className="text-destructive text-xs">{errors.primaryApiKey.message}</p>
+            {errors.credentials?.message && (
+              <p className="text-destructive text-xs">{errors.credentials.message}</p>
+            )}
+          </div>
+
+          {/* Webhook Secret Input */}
+          <div className="space-y-2">
+            <Label htmlFor="webhookSecret">Webhook Secret (Optional)</Label>
+            <Input
+              id="webhookSecret"
+              placeholder="whsec_..."
+              {...register("webhookSecret")}
+            />
+            {errors.webhookSecret && (
+              <p className="text-destructive text-xs">{errors.webhookSecret.message}</p>
             )}
           </div>
         </CardContent>

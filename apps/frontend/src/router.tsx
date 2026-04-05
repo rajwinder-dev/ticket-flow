@@ -1,14 +1,15 @@
 import { createBrowserRouter } from "react-router"; // or "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute";
-import DashboardLayout from "./layouts/DashboardLayout";
-import OrgLayout from "./layouts/OrgLayout";
-import CreateOrganizationPage from "./features/organizations/pages/CreateOrganizationPage";
 import ForgetPasswordPage from "./features/auth/pages/ForgetPasswordPage";
 import LoginPage from "./features/auth/pages/LoginPage";
-import OrganizationPage from "./features/organizations/pages/OrganizationPage";
 import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage";
-import SettingsPage from "./features/setting/pages/SettingPage";
 import SignupPage from "./features/auth/pages/SignupPage";
+import CreateOrganizationPage from "./features/organization/pages/CreateOrganizationPage";
+import OrganizationPage from "./features/organization/pages/OrganizationPage";
+import SettingsPage from "./features/setting/pages/SettingPage";
+import DashboardLayout from "./layouts/DashboardLayout";
+import OrgLayout from "./layouts/OrgLayout";
+import RolePage from "./features/role/components/RolesPage";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
                   { path: "queue", element: <div>view queue details</div> },
                   { path: "queue-group", element: <div>view groups details</div> },
                   { path: "setting", element: <SettingsPage /> },
-                  { path: "setting/rbac", element: <div>manage rbac</div> },
+                  { path: "setting/rbac", element: <RolePage /> },
                   { path: "member", element: <div>Organization members</div> },
                 ],
               },
@@ -64,4 +65,4 @@ const router = createBrowserRouter([
     element: <ResetPasswordPage />,
   },
 ]);
-export default router
+export default router;

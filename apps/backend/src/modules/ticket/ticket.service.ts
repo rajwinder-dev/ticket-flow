@@ -3,8 +3,8 @@ import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
 import { ActivityService } from "../activity/activity.service";
-import { QueueGroupService } from "../queue/queue-group.service";
 import { QueueService } from "../queue/queue.service";
+import { QueueGroupService } from "../queueGroup/queueGroup.service";
 
 export class TicketService {
   private static allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
@@ -239,7 +239,7 @@ export class TicketService {
   }) => {
     const data = await prisma.ticketComment.create({
       data: {
-         authorId: userId,
+        authorId: userId,
         ticketId,
         comment,
         isInternal,
@@ -286,12 +286,11 @@ export class TicketService {
       case "AGENT":
         // if agent given , find agent and it queueID
         {
-          const queueData = await prisma.queueAgent.findUnique({
+          const queueData = await prisma.queueAgent.findFirst({
             where: {
-              agentId_organizationId: {
-                agentId: assignId,
-                organizationId,
-              },
+              agentId,
+              organizationId,
+              active: true
             },
             select: { queueId: true },
           });
@@ -415,14 +414,17 @@ export class TicketService {
       const currentTicket = await tx.ticket.findUnique({
         where: { id: ticketId },
       });
-
+// ! ts ignore undefined case
+//  todo: if queue id not in ticket then find
       // decrement previous agent (only if different)
       if (currentTicket?.assignedTo && currentTicket.assignedTo !== nextAgentId) {
         await tx.queueAgent.update({
           where: {
-            agentId_organizationId: {
+            queueId_agentId_organizationId: {
               agentId: currentTicket.assignedTo,
               organizationId,
+
+              queueId: currentTicket.queueId!
             },
           },
           data: {
@@ -452,9 +454,11 @@ export class TicketService {
       // increment new agent
       await tx.queueAgent.update({
         where: {
-          agentId_organizationId: {
+          queueId_agentId_organizationId: {
             agentId: nextAgentId,
             organizationId,
+            // ! ts ignore undefined field
+            queueId: updatedTicket.queueId!
           },
         },
         data: {

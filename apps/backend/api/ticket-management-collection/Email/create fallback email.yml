@@ -1,0 +1,27 @@
+info:
+  name: create fallback email
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{url}}/api/v1/email/fallback"
+  body:
+    type: json
+    data: |-
+      {
+        "fromEmail": "test@gmail.com",
+        "credentials": {
+          "host": "sandbox.smtp.mailtrap.io",
+          "port": 587,
+          "user": "196df487e5f27a",
+          "pass": "604ec16ec6a46d"
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

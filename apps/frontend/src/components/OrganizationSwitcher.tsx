@@ -15,10 +15,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import useOrganizations from "@/features/organizations/hooks";
+import useOrganizations from "@/features/organization/hooks";
 import { PlusSignIcon, UnfoldMoreIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function OrganizationSwitcher() {
@@ -26,7 +26,10 @@ export function OrganizationSwitcher() {
   const { organizations } = useOrganizations();
   const { orgId } = useParams();
   const navigate = useNavigate();
-  const handleChangeOrg = (orgId: string) => navigate(`/org/${orgId}`);
+  const location = useLocation();
+
+  const handleChangeOrg = (orgId: string) =>
+    navigate(`/org/${orgId}/${location.pathname.split("/").slice(3).join("/")}`);
   const activeOrganization = organizations?.data.find((item) => item.id === orgId);
 
   return (

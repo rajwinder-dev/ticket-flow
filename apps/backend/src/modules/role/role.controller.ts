@@ -1,4 +1,4 @@
-import { CreateRoleInput, updateRoleInput } from "@repo/schemas";
+import { CreateRoleInput, UpdateRoleInput } from "@repo/schemas";
 import { Prisma } from "../../../generated/prisma";
 import { catchAsync } from "../../core/utils/catchAsync";
 import HandleFactory from "../../core/utils/handlerFactory";
@@ -24,24 +24,39 @@ export class roleController {
       where: {
         organizationId: req.organization.id,
         active: true,
+        name: {
+          not: "OWNER",
+        }
       },
       select: {
         id: true,
         code: true,
         name: true,
+        description: true,
+        permissions: true,
       },
     });
+
     response(res, data, 200, { otherFields: { ...pagination } });
   });
   static updateRole = catchAsync(async (req, res, _next) => {
-    const input = req.body as updateRoleInput;
+    const input = req.body as UpdateRoleInput;
     const roleId = req.params.id as string;
-    const data = await RoleService.update(roleId, input);
+    const data = await RoleService.update({
+      roleId,
+      input,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+    });
     response(res, data);
   });
   static deleteRole = catchAsync(async (req, res, _next) => {
     const roleId = req.params.id as string;
-    const data = await RoleService.delete(roleId);
+    const data = await RoleService.delete({
+      roleId,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+    });
     response(res, data, 201);
   });
 }

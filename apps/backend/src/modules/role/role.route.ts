@@ -1,5 +1,5 @@
 import { validUuidParams } from "@repo/schemas/src/global.zod";
-import {  createRoleInput, updateRoleInput } from "@repo/schemas/src/role.zod";
+import { createRoleInput, updateRoleInput } from "@repo/schemas/src/role.zod";
 import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";

@@ -1,16 +1,15 @@
 import { z } from "zod";
-import { validDescription, validPermissions, validString } from "./helper/zodHelper";
+import { optionalInput, validDescription, validString } from "./helper/zodHelper";
 
 // Permissions pattern: { "resource": ["action1", "action2"] }
 // Example: { "users": ["create", "read"], "billing": ["view"] }
-
 
 export const createRoleInput = {
   bodySchema: z
     .object({
       name: validString,
-      description: validDescription.optional(),
-      permissions: validPermissions,
+      description: optionalInput(validDescription).nullable(),
+      permissions: z.record(z.string(), z.array(z.string())),
     })
     .strict(),
 };
@@ -18,15 +17,20 @@ export const createRoleInput = {
 export const updateRoleInput = {
   bodySchema: z
     .object({
-      // Allowed name updates as well, just in case of typos
       name: validString.optional(),
-      description: validDescription.optional(),
-      permissions: validPermissions.optional(),
+      description: optionalInput(validDescription).nullable(),
+      permissions: z.record(z.string(), z.array(z.string())),
     })
     .strict(),
 };
-
+export const roleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  permissions: z.record(z.string(), z.array(z.string())),
+});
 // --- Inferred Types ---
 // Fixed casing: types should usually be PascalCase
+export type RoleSchema = z.infer<typeof roleSchema>;
 export type CreateRoleInput = z.infer<typeof createRoleInput.bodySchema>;
 export type UpdateRoleInput = z.infer<typeof updateRoleInput.bodySchema>;

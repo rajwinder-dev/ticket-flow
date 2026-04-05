@@ -26,5 +26,7 @@ organizationRouter.post(
   validationMiddleware(inviteUserOrganizationInput),
   OrganizationController.sendInvite,
 );
+organizationRouter.get("/member", OrganizationController.getMembers)
+
 
 export default organizationRouter;

@@ -1,4 +1,4 @@
-import { createEmailProviderInput } from "@repo/schemas";
+import { createEmailProviderInput, createSmtpInput } from "@repo/schemas";
 import express from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
@@ -13,7 +13,13 @@ emailRouter.post(
   validationMiddleware(createEmailProviderInput),
   EmailController.createProvider,
 );
-emailRouter.post("/fallback", authMiddleware.restrictToOwner, EmailController.createSMTP);
+emailRouter.get("/", EmailController.getProviders);
+emailRouter.post(
+  "/smtp",
+  authMiddleware.restrictToOwner,
+  validationMiddleware(createSmtpInput),
+  EmailController.createSMTP,
+);
 emailRouter.patch(
   "/:id",
   authMiddleware.restrictToOwner,

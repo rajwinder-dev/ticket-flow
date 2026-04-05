@@ -17,14 +17,14 @@ import authRouter from "./modules/auth/auth.route";
 import customerRoutes from "./modules/customer/customer.routes";
 import dashboardRouter from "./modules/dashboard/dashboard.route";
 import emailRouter from "./modules/email/email.routes";
-import MemberRouter from "./modules/member/member.route";
 import organizationRouter from "./modules/organizations/organization.routes";
 import QueueRoutes from "./modules/queue/queue.routes";
+import QueueGroupRoutes from "./modules/queueGroup/queueGroup.routes";
 import roleRouter from "./modules/role/role.route";
 import TicketRouter from "./modules/ticket/ticket.routes";
+import tokenRoute from "./modules/token/token.routes";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
-import tokenRoute from "./modules/token/token.routes";
 
 export const app = express();
 
@@ -67,9 +67,9 @@ app.use("/api/v1/token", tokenRoute);
 app.use("/api/v1/org", organizationRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/role", roleRouter);
-app.use("/api/v1/member", MemberRouter);
 app.use("/api/v1/email", emailRouter);
 app.use("/api/v1/queue", QueueRoutes);
+app.use("/api/v1/queue-group", QueueGroupRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/ticket", TicketRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
