@@ -1,5 +1,5 @@
 import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import type { CreateQueueGroupInput } from "@repo/schemas";
+import { type QueueGroupSchemaResponse, type CreateQueueGroupInput } from "@repo/schemas";
 
 const queueGroupApi = {
   create: async (data: CreateQueueGroupInput) => {
@@ -16,7 +16,7 @@ const queueGroupApi = {
     return res;
   },
   getAll: async () => {
-    const res = await getRequestMany({
+    const res = await getRequestMany<QueueGroupSchemaResponse>({
       path: "/queue-group",
     });
     return res;

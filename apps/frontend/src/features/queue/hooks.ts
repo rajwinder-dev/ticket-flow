@@ -1,15 +1,13 @@
 import type { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
 import { toast } from "sonner";
 import { queueApi } from "./api";
 
-export function useQueued() {
-  const { groupId } = useParams();
+export function useQueue(groupId?: string | null) {
   const queryClient = useQueryClient();
-  const { data: queue, isLoading: isLoadingQueue } = useQuery({
+  const { data: queues, isLoading: isLoadingQueues } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
-    queryKey: ["queue"],
+    queryKey: ["queue", groupId],
     enabled: !!groupId,
   });
 
@@ -48,8 +46,8 @@ export function useQueued() {
   });
 
   return {
-    queue,
-    isLoadingQueue,
+    queues,
+    isLoadingQueues,
     createdQueue,
     isCreatingQueue,
     updatedQueue,

@@ -10,6 +10,7 @@ import SettingsPage from "./features/setting/pages/SettingPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import OrgLayout from "./layouts/OrgLayout";
 import RolePage from "./features/role/components/RolesPage";
+import QueuePage from "./features/queueGroups/components/QueuePage";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
                   { index: true, element: <div>Dashboard based</div> },
                   { path: "ticket", element: <div>Ticket page</div> },
                   { path: "ticket/:id", element: <div>view ticket details</div> },
-                  { path: "queue", element: <div>view queue details</div> },
+                  { path: "queue", element: <QueuePage /> },
                   { path: "queue-group", element: <div>view groups details</div> },
                   { path: "setting", element: <SettingsPage /> },
                   { path: "setting/rbac", element: <RolePage /> },

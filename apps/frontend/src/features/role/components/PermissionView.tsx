@@ -2,15 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PERMISSIONS } from "@repo/schemas";
 import { Shield, ShieldCheck } from "lucide-react";
-import { useSearchParams } from "react-router";
 import useRole from "../hooks";
 import { MODULE_META } from "../meta.constants";
+import { useRoleStore } from "../store";
 
 export function PermissionReadView() {
   const { roles } = useRole();
-  const [searchparams] = useSearchParams();
-  const roleId = searchparams.get("roleId");
-  const selectedRole = roles?.data.find(role => role.id === roleId)
+  const { roleId } = useRoleStore();
+  const selectedRole = roles?.data.find((role) => role.id === roleId);
   if (!selectedRole) {
     return (
       <div className="text-muted-foreground flex h-full flex-col items-center justify-center py-20 text-center">
@@ -24,7 +23,9 @@ export function PermissionReadView() {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-bold">{selectedRole.name}</h2>
-        {selectedRole.description && <p className="text-muted-foreground text-sm">{selectedRole.description}</p>}
+        {selectedRole.description && (
+          <p className="text-muted-foreground text-sm">{selectedRole.description}</p>
+        )}
       </div>
 
       <Separator />

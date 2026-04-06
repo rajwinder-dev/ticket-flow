@@ -7,7 +7,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
     const paths = files.map((file: Express.Multer.File) => file.path);
     deleteUploadedFilesLocal(paths);
   }
-
+  console.dir(error);
   if (error.name === "PrismaClientValidationError") {
     error = new appError("Invalid Input , please check your query", 400, "VALIDATION_ERROR");
   }
@@ -34,7 +34,6 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
   } else if (error.code === "P2024") {
     error = new appError("Database request timed out.", 504, "DB_TIMEOUT");
   }
-  console.error(error.message);
 
   res.status(error.statusCode || 500).json({
     status: error.status || "error",

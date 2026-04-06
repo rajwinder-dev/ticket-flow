@@ -14,32 +14,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PermissionModule, RoleSchema } from "@repo/schemas";
 import { ChevronRight, Pencil, ShieldCheck, Trash2 } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router";
+import useRole from "../hooks";
 import { MODULE_META } from "../meta.constants";
+import { useRoleStore } from "../store";
 import { totalPermCount } from "../utils";
 import { RoleFormDialog } from "./RoleFormDialog";
-import useRole from "../hooks";
 
 interface RoleCardProps {
   role: RoleSchema;
 }
 
 export function RoleCard({ role }: RoleCardProps) {
+  const { setRoleId, roleId } = useRoleStore();
   const total = totalPermCount(role?.permissions);
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const SelectedRoleId = searchParams.get("roleId");
-  const isSelected = role.id === SelectedRoleId;
-  const handleClick = (roleId: string) => {
-    navigate(`?roleId=${roleId}`);
-  };
-  const {deleteRole } =  useRole();
+  const isSelected = role.id === roleId;
+
+  const { deleteRole } = useRole();
   return (
     <Card
       className={`hover:border-primary/40 cursor-pointer transition-all hover:shadow-md ${
         isSelected ? "border-primary ring-primary/20 shadow-md ring-2" : ""
       }`}
-      onClick={() => handleClick(role.id)}
+      onClick={() => setRoleId(role.id)}
     >
       <CardHeader className="pr-3 pb-2">
         <div className="flex items-start justify-between gap-2">

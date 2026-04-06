@@ -1,9 +1,13 @@
 import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import type { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
+import {
+  type CreateQueueInput,
+  type QueueSchemaResponse,
+  type UpdateQueueInput,
+} from "@repo/schemas";
 
 export const queueApi = {
   getByGroupId: async (groupId: string) => {
-    const res = await getRequestMany({
+    const res = await getRequestMany<QueueSchemaResponse>({
       path: `/queue/${groupId}`,
     });
     return res;
@@ -53,4 +57,3 @@ export const queueApi = {
     return res;
   },
 };
-

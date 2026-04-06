@@ -1,4 +1,6 @@
 import { CreateQueueGroupInput } from "@repo/schemas";
+import { ParsedQs } from "qs";
+import { APIFeatures } from "../../core/utils/apiFeatures";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { ActivityService } from "../activity/activity.service";
@@ -24,7 +26,8 @@ export class QueueGroupService {
         organizationId,
         createdBy: userId,
         default: existingDefaultGroup ? false : true,
-        ...input,
+        name: input.name,
+        description: input.description
       },
     });
     await ActivityService.lagActivity({
@@ -38,14 +41,62 @@ export class QueueGroupService {
     });
     return queueGroup;
   };
-  static getAllQueueGroups = async (organizationId: string) => {
+  static getAllQueueGroups = async (organizationId: string, queryString: ParsedQs) => {
+    const { filterOptions, limit, offset } = new APIFeatures(queryString).pagination();
     const queueGroups = await prisma.queueGroup.findMany({
       where: {
         organizationId,
         active: true,
+        ...filterOptions.where,
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        default: true,
+        _count: {
+          select: {
+            queues: true,
+          },
+        },
+        queues: {
+          select: {
+            _count: {
+              select: {
+                queueAgents: true,
+              },
+            },
+            queueAgents: {
+              select: {
+                ticketCount: true,
+              },
+            },
+          },
+        },
+      },
+      skip: offset,
+      take: limit,
+    });
+    const total = await prisma.queueGroup.count({
+      where: {
+        organizationId,
+        active: true,
+        ...filterOptions.where,
       },
     });
-    return queueGroups;
+    const result = queueGroups.map((group) => {
+      const totalAgents = group.queues.reduce((sum, q) => sum + q._count.queueAgents, 0);
+
+      return {
+        id: group.id,
+        name: group.name,
+        description: group.description,
+        queueCount: group._count.queues,
+        queueAgentsCount: totalAgents,
+        default: group.default,
+      };
+    });
+    return { data: result, pagination: { total, limit, offset } };
   };
   static updateQueueGroup = async ({
     groupId,
@@ -63,7 +114,10 @@ export class QueueGroupService {
         id: groupId,
         organizationId,
       },
-      data: input,
+      data: {
+        name: input.name,
+        description: input.description
+      },
     });
     await ActivityService.lagActivity({
       organizationId,
@@ -130,6 +184,7 @@ export class QueueGroupService {
     const currentState = await prisma.queueGroup.findFirst({
       where: {
         organizationId,
+        id: groupId
       },
       select: {
         default: true,

@@ -228,7 +228,7 @@ model QueueGroup {
   id                  String             @id @default(uuid()) @db.Uuid
   name                String
   description         String?
-  organization        Organization?      @relation(fields: [organizationId], references: [id])
+  organization        Organization      @relation(fields: [organizationId], references: [id])
   organizationId      String             @db.Uuid
   default             Boolean            @default(false)
   active              Boolean            @default(true)

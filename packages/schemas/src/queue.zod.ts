@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  validString,
-  validDescription,
-  validBigDescription
-} from "./helper/zodHelper";
+import { validBigDescription, validDescription, validString } from "./helper/zodHelper";
 
 // --- Queue Groups ---
 
@@ -12,6 +8,7 @@ export const createQueueGroupInput = {
     .object({
       name: validString,
       description: validDescription.optional(),
+      isDefault: z.boolean(),
     })
     .strict(),
 };
@@ -50,7 +47,9 @@ export const updateQueueInput = {
 export const addAgentsToQueueInput = {
   bodySchema: z
     .object({
-      agentIds: z.array(z.string().uuid("Each Agent ID must be a valid UUID")).min(1, "At least one agent ID is required"),
+      agentIds: z
+        .array(z.string().uuid("Each Agent ID must be a valid UUID"))
+        .min(1, "At least one agent ID is required"),
     })
     .strict(),
 };
@@ -58,12 +57,32 @@ export const addAgentsToQueueInput = {
 export const removeAgentsFromQueueInput = {
   bodySchema: z
     .object({
-      agentIds: z.array(z.string().uuid("Each Agent ID must be a valid UUID")).min(1, "At least one agent ID is required"),
+      agentIds: z
+        .array(z.string().uuid("Each Agent ID must be a valid UUID"))
+        .min(1, "At least one agent ID is required"),
     })
     .strict(),
 };
-
+export const queueGroupSchemaResponse = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  queueCount: z.number(),
+  queueAgentsCount: z.number(),
+  default: z.boolean(),
+});
+export const queueSchemaResponse = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  order: z.number(),
+  agentsCount: z.number(),
+  ticketsCount: z.number(),
+  createdAt: z.date(),
+});
 // --- Inferred Types ---
+export type QueueGroupSchemaResponse = z.infer<typeof queueGroupSchemaResponse>;
+export type QueueSchemaResponse = z.infer<typeof queueSchemaResponse>;
 export type CreateQueueGroupInput = z.infer<typeof createQueueGroupInput.bodySchema>;
 export type CreateQueueInput = z.infer<typeof createQueueInput.bodySchema>;
 export type UpdateQueueInput = z.infer<typeof updateQueueInput.bodySchema>;

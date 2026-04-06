@@ -1,9 +1,11 @@
 import {
   AddAgentsToQueueInput,
   CreateQueueInput,
+  queueSchemaResponse,
   RemoveAgentsFromQueueInput,
   UpdateQueueInput,
 } from "@repo/schemas";
+import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
@@ -57,13 +59,52 @@ export class QueueController {
         ...filterOptions.where,
         active: true,
       },
+      select: {
+        name: true,
+        description: true,
+        order: true,
+        createdAt: true,
+        id: true,
+        _count: {
+          select: {
+            queueAgents: true,
+          },
+        },
+        queueAgents: {
+          select: {
+            ticketCount: true,
+          },
+        },
+      },
+
       orderBy: {
         order: "asc",
       },
       skip: offset,
       take: limit,
     });
-    response(res, queues, 200);
+    const total = await prisma.queue.count({
+      where: {
+        organizationId: req.organization.id,
+        queueGroupId: groupId,
+        ...filterOptions.where,
+        active: true,
+      },
+    });
+    const result = queues.map((queue) => ({
+      id: queue.id,
+      name: queue.name,
+      description: queue.description,
+      order: queue.order,
+      agentsCount: queue._count.queueAgents,
+      ticketsCount: queue.queueAgents.reduce((sum, agent) => sum + agent.ticketCount, 0),
+      createdAt: queue.createdAt,
+    }));
+
+    response(res, result, 200, {
+      otherFields: { total, limit, offset },
+      schema: z.array(queueSchemaResponse),
+    });
   });
   static getQueueAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;

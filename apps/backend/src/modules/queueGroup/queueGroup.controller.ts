@@ -1,4 +1,5 @@
-import { CreateQueueGroupInput } from "@repo/schemas";
+import { CreateQueueGroupInput, queueGroupSchemaResponse } from "@repo/schemas";
+import z from "zod";
 import { catchAsync } from "../../core/utils/catchAsync";
 import response from "../../core/utils/response";
 import { QueueGroupService } from "../queueGroup/queueGroup.service";
@@ -10,6 +11,13 @@ export class QueueGroupController {
       organizationId: req.organization.id,
       input,
     });
+    if (input.isDefault) {
+      await QueueGroupService.setDefaultGroup({
+        groupId: queueGroup.id,
+        organizationId: req.organization.id,
+        userId: req.user.id,
+      });
+    }
     response(res, queueGroup, 201);
   });
   static updateQueueGroup = catchAsync(async (req, res, _next) => {
@@ -21,11 +29,24 @@ export class QueueGroupController {
       userId: req.user.id,
       input,
     });
+    if (input.isDefault) {
+      await QueueGroupService.setDefaultGroup({
+        groupId: queueGroup.id,
+        organizationId: req.organization.id,
+        userId: req.user.id,
+      });
+    }
     response(res, queueGroup, 200);
   });
   static getAllQueueGroups = catchAsync(async (req, res, _next) => {
-    const queueGroups = await QueueGroupService.getAllQueueGroups(req.organization.id);
-    response(res, queueGroups, 200);
+    const { data, pagination } = await QueueGroupService.getAllQueueGroups(
+      req.organization.id,
+      req.query,
+    );
+    response(res, data, 200, {
+      schema: z.array(queueGroupSchemaResponse),
+      otherFields: { ...pagination },
+    });
   });
   static setDefaultGroup = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

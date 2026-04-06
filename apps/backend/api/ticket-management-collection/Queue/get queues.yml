@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/api/v1/queue/:id/group"
+  url: "{{url}}/api/v1/queue/:id"
   params:
     - name: id
       value: "{{queueGroupId}}"

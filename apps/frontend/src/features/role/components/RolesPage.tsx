@@ -1,13 +1,8 @@
-import type { RoleSchema } from "@repo/schemas";
 import { PermissionReadView } from "./PermissionView";
 import { RoleList } from "./RoleList";
 import { RolesPageHeader } from "./RolePageHeader";
 
-interface RolesPageProps {
-  initialRoles?: RoleSchema[];
-}
-
-export default function RolesPage({ initialRoles = [] }: RolesPageProps) {
+export default function RolesPage() {
   return (
     <div>
       <RolesPageHeader />

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/api/v1/queue/group"
+  url: "{{url}}/api/v1/queue-group"
   body:
     type: json
     data: ""
