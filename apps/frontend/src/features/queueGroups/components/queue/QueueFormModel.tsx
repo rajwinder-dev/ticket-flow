@@ -2,44 +2,48 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useQueue } from "@/features/queue/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createQueueInput, type CreateQueueInput } from "@repo/schemas";
+import { updateQueueInput, type QueueSchemaResponse, type UpdateQueueInput } from "@repo/schemas";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useQueueGroup } from "../hooks";
-import { useQueueGroupStore } from "../store";
+import { toast } from "sonner";
 
-interface CreateQueueDialogProps {
+interface QueueFormModalProps {
   open: boolean;
+  queue: QueueSchemaResponse | null;
   onClose: () => void;
 }
 
-export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
-  const { selectedId } = useQueueGroupStore();
-  const { queueGroups } = useQueueGroup();
-  const selectedGroup = queueGroups?.data.find((item) => item.id === selectedId);
-  const { createQueue, isCreatingQueue } = useQueue(selectedId!);
+export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
+  const { updatedQueue, isUpdatingQueue } = useQueue();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateQueueInput>({
-    resolver: zodResolver(createQueueInput.bodySchema),
+  } = useForm<UpdateQueueInput>({
+    resolver: zodResolver(updateQueueInput.bodySchema),
   });
-
-  function handleFormSubmit(data: CreateQueueInput) {
-    if (!selectedId) return console.error("groupId not found ");
-    createQueue(
-      {groupId: selectedId, data},
+   useEffect(()=> {
+    reset({
+      name: queue?.name,
+      description: queue?.description || ''
+    })
+   }, [queue, reset])
+  function handleFormSubmit(data: UpdateQueueInput) {
+    if (!queue?.id) return toast.error("Queue Id not defined ");
+    updatedQueue(
+      { queueId: queue?.id, data },
       {
         onSuccess: () => {
           reset();
-          onClose();
+          onClose()
         },
       },
     );
@@ -47,26 +51,29 @@ export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
 
   function handleOpenChange(isOpen: boolean) {
     if (!isOpen) {
-      reset();
       onClose();
+      reset();
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
-          <DialogTitle>Add Queue — {selectedGroup?.name}</DialogTitle>
+          <DialogTitle>Edit Queue</DialogTitle>
+          <DialogDescription>
+            Update the name and description for <strong>{queue?.name}</strong>.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-1">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 pt-2">
           <div className="space-y-1.5">
-            <label htmlFor="q-name" className="text-sm font-medium">
-              Queue name
+            <label htmlFor="queue-name" className="text-sm font-medium">
+              Name
             </label>
             <input
-              id="q-name"
-              placeholder="e.g. Urgent Issues"
+              id="queue-name"
+              placeholder="Queue name"
               className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               {...register("name")}
             />
@@ -74,13 +81,13 @@ export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="q-desc" className="text-sm font-medium">
+            <label htmlFor="queue-description" className="text-sm font-medium">
               Description
             </label>
             <textarea
-              id="q-desc"
-              placeholder="What kind of tickets go here?"
-              rows={2}
+              id="queue-description"
+              placeholder="Optional description…"
+              rows={3}
               className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full resize-none rounded-md border px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               {...register("description")}
             />
@@ -89,12 +96,12 @@ export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
             )}
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+          <DialogFooter className="pt-2">
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isCreatingQueue}>
-              Add Queue
+            <Button type="submit" disabled={isUpdatingQueue}>
+              Save changes
             </Button>
           </DialogFooter>
         </form>

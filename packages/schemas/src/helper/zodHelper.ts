@@ -19,7 +19,7 @@ export const validId = z
 // --- Text Validations ---
 
 // Added .trim() to ensure users don't just send spacesdsf
-export const validString = z.string().trim().max(50, "Must be at most 50 characters").toLowerCase();
+export const validString = z.string().trim().min(1, "Must be at at least 2 characters").max(50, "Must be at most 50 characters").toLowerCase();
 
 export const validDescription = z
   .string()

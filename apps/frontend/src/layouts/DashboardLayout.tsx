@@ -12,7 +12,8 @@ export default function DashboardLayout() {
       {showSidebar && <AppSidebar />}
       <SidebarInset>
         <AppHeader />
-        <div className="flex flex-1 flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4  overflow-auto max-h-[calc(100vh-4rem)]">
+
           <Outlet />
         </div>
       </SidebarInset>

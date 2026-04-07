@@ -11,9 +11,9 @@ import {
 import type { QueueGroupSchemaResponse } from "@repo/schemas";
 import { ChevronRight, Pencil, Trash2, Users } from "lucide-react";
 import { useState } from "react";
-import { useQueueGroup } from "../hooks";
-import { useQueueGroupStore } from "../store";
-import EditQueueGroupDialog from "./EditQueueDialog";
+import { useQueueGroup } from "../../hooks";
+import { useQueueGroupStore } from "../../store";
+import EditQueueGroupDialog from "./EditQueueGroupDialog";
 
 interface GroupCardProps {
   group: QueueGroupSchemaResponse;

@@ -3,7 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queueApi } from "./api";
 
-export function useQueue(groupId?: string | null) {
+export function useQueue(groupId?: string ) {
+
   const queryClient = useQueryClient();
   const { data: queues, isLoading: isLoadingQueues } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
@@ -11,8 +12,8 @@ export function useQueue(groupId?: string | null) {
     enabled: !!groupId,
   });
 
-  const { mutate: createdQueue, isPending: isCreatingQueue } = useMutation({
-    mutationFn: ({ groupId, data }: { groupId: string; data: CreateQueueInput }) =>
+  const { mutate: createQueue, isPending: isCreatingQueue } = useMutation({
+    mutationFn: ({groupId, data}:{groupId: string,  data: CreateQueueInput }) =>
       queueApi.create(groupId, data),
     onSuccess: () => {
       toast.success("queue created successfully");
@@ -24,7 +25,7 @@ export function useQueue(groupId?: string | null) {
   });
 
   const { mutate: updatedQueue, isPending: isUpdatingQueue } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateQueueInput }) => queueApi.update(id, data),
+    mutationFn: ({ queueId, data }: { queueId: string; data: UpdateQueueInput }) => queueApi.update(queueId, data),
     onSuccess: () => {
       toast.success("queue updated successfully");
       queryClient.invalidateQueries({ queryKey: ["queue"] });
@@ -48,7 +49,7 @@ export function useQueue(groupId?: string | null) {
   return {
     queues,
     isLoadingQueues,
-    createdQueue,
+    createQueue,
     isCreatingQueue,
     updatedQueue,
     isUpdatingQueue,

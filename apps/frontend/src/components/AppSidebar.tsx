@@ -44,19 +44,10 @@ const navMainItems = [
     ],
   },
   {
-    title: "Queues",
+    title: "Queues & Groups",
     url: "/queue",
     icon: <HugeiconsIcon icon={Layers01Icon} strokeWidth={2} />,
-    items: [
-      {
-        title: "All Queues",
-        url: "/queue",
-      },
-      {
-        title: "Queue Groups",
-        url: "/queue-group",
-      },
-    ],
+
   },
   {
     title: "Members",

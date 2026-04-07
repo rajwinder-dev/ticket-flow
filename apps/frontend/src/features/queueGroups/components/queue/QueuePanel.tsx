@@ -2,13 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useQueue } from "@/features/queue/hooks";
 import { Inbox, Layers, Plus } from "lucide-react";
-import type { Group } from "../groups";
-import { useQueueGroup } from "../hooks";
-import { useQueueGroupStore } from "../store";
+import { useQueueGroup } from "../../hooks";
+import { useQueueGroupStore } from "../../store";
+import { NoGroupSelected } from "../groups/NoGroupSelected";
 import { QueueTable } from "./QueueTable";
 
 interface QueuePanelProps {
-  group: Group;
   onAddQueue: () => void;
 }
 
@@ -32,21 +31,27 @@ function QueueEmptyState({ onAddQueue }: { onAddQueue: () => void }) {
   );
 }
 
-export function QueuePanel({ group, onAddQueue }: QueuePanelProps) {
+export function QueuePanel({ onAddQueue }: QueuePanelProps) {
   const { selectedId } = useQueueGroupStore();
   const { queueGroups } = useQueueGroup();
-  const { queues, isLoadingQueues } = useQueue(selectedId);
+  const { queues, isLoadingQueues } = useQueue(selectedId!);
   const selectedGroup = queueGroups?.data.find((item) => item.id === selectedId);
+
+  if (isLoadingQueues)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Spinner className="h-8 w-8" />
+      </div>
+    );
+  if (!selectedGroup) return <NoGroupSelected />;
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
+
       <div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-3">
-          <div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-            style={{ backgroundColor: `${group.color}18` }}
-          >
-            <Layers className="h-4 w-4" style={{ color: group.color }} />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">
+            <Layers className="h-4 w-4" />
           </div>
           <div>
             <h2 className="text-sm font-semibold">{selectedGroup?.name}</h2>
@@ -65,11 +70,10 @@ export function QueuePanel({ group, onAddQueue }: QueuePanelProps) {
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
-        {isLoadingQueues && <Spinner />}
         {queues?.data.length === 0 ? (
           <QueueEmptyState onAddQueue={onAddQueue} />
         ) : (
-          <QueueTable group={group} queues={queues?.data} />
+          <QueueTable group={selectedGroup} queues={queues?.data} />
         )}
       </div>
     </div>

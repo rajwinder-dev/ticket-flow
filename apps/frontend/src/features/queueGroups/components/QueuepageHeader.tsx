@@ -7,16 +7,6 @@ export function QueuePageHeader() {
          Organize queues and groups to streamline ticket management
         </p>
       </div>
-
-      {/* <RoleFormDialog
-        mode="create"
-        trigger={
-          <Button size="sm" className="gap-1.5">
-            <Plus className="h-4 w-4" />
-            New Role
-          </Button>
-        }
-      /> */}
     </div>
   );
 }

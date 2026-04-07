@@ -209,8 +209,13 @@ export class QueueService {
     organizationId: string;
     userId: string;
   }) => {
-    const exitingQueue = await prisma.ticket.findUnique({where: {id: queueId}, select: {active: true}})
-    if(!exitingQueue?.active) throw new appError("Queue is already deleted", 409, "CONFLICT_ERROR")
+    const exitingQueue = await prisma.queue.findUnique({
+      where: { id: queueId },
+      select: { active: true },
+    });
+    if (!exitingQueue) throw new appError("Queue not found", 404, "NOT_FOUND");
+    if (!exitingQueue?.active)
+      throw new appError("Queue is already deleted", 409, "CONFLICT_ERROR");
     const activeTickets = await prisma.ticket.count({
       where: {
         queueId,
@@ -223,7 +228,7 @@ export class QueueService {
     if (activeTickets > 0) {
       throw new appError("Cannot delete queue with active tickets", 400, "CONFLICT_ERROR");
     }
-   const deletedQueue = await prisma.queue.update({
+    const deletedQueue = await prisma.queue.update({
       where: {
         id: queueId,
         organizationId,
@@ -232,9 +237,20 @@ export class QueueService {
         active: false,
       },
       select: {
-        active: true
-      }
+        active: true,
+        queueGroupId: true,
+      },
     });
+    // rearrange queue order
+    const unorderedQueues = await prisma.queue.findMany({
+      where: { queueGroupId: deletedQueue.queueGroupId, active: true },
+    });
+    for (const [index, value] of unorderedQueues.entries()) {
+      const newOrder = index + 1;
+      if (newOrder !== value.order)
+        await prisma.queue.update({ where: { id: value.id }, data: { order: newOrder } });
+    }
+
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
