@@ -128,6 +128,6 @@ export class EmailService {
     const credentials = JSON.parse(decrypt(emailProvider?.credentials as EncryptionType));
     const provider = emailProviderFactory(emailProvider.providerType, credentials);
     // render template
-    return await provider.sendMail({ to, from: emailProvider.domain, subject, html });
+    return await provider.sendMail({ to, from: emailProvider.fromEmail, subject, html });
   };
 }

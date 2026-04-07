@@ -1,11 +1,27 @@
+import PageHeader from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { PermissionReadView } from "./PermissionView";
+import { RoleFormDialog } from "./RoleFormDialog";
 import { RoleList } from "./RoleList";
-import { RolesPageHeader } from "./RolePageHeader";
 
 export default function RolesPage() {
   return (
     <div>
-      <RolesPageHeader />
+      <PageHeader
+        title="Roles & Permissions"
+        description="Manage roles and define what each one can d"
+      >
+        <RoleFormDialog
+          mode="create"
+          trigger={
+            <Button size="sm" className="gap-1.5">
+              <Plus className="h-4 w-4" />
+              New Role
+            </Button>
+          }
+        />
+      </PageHeader>
       <div className="flex h-[calc(100vh-145px)]">
         <RoleList />
 

@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { NavMain } from "@/components/nav-main";
 import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
@@ -10,9 +8,11 @@ import {
   Layers01Icon,
   Settings05Icon,
   Ticket01Icon,
+  UserAccountIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import * as React from "react";
 const navMainItems = [
   {
     title: "Dashboard",
@@ -47,12 +47,16 @@ const navMainItems = [
     title: "Queues & Groups",
     url: "/queue",
     icon: <HugeiconsIcon icon={Layers01Icon} strokeWidth={2} />,
-
   },
   {
     title: "Members",
     url: "/member",
     icon: <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />,
+  },
+  {
+    title: "Customers",
+    url: "/customer",
+    icon: <HugeiconsIcon icon={UserAccountIcon} strokeWidth={2} />,
   },
   {
     title: "Settings",

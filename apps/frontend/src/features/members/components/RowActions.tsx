@@ -23,7 +23,6 @@ export function RowActions({ member }: RowActionsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-muted-foreground opacity-0 group-hover/row:opacity-100"
         >
           <MoreHorizontal size={15} />
         </Button>

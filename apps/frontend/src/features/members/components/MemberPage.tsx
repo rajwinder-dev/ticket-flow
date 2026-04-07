@@ -1,34 +1,57 @@
+import PageHeader from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
+import { UserPlus } from "lucide-react";
+import useMember from "../hooks";
 import { BulkActionsBar } from "./BulkActionBar";
-import { MemberMetrics } from "./MemberMetrics";
 import { MembersTable } from "./MemberStable";
 import { MemberToolbar } from "./MemberToolbar";
+import { OrganizationInvite } from "./OrganizationInvite";
 
 export default function MembersPage() {
-  function handleInvite() {
-    // Open your invite modal / sheet here
-    alert("Open invite modal");
-  }
-
+  const { members, isLoadingMembers } = useMember();
+  if (isLoadingMembers) return <Spinner />;
   return (
     <div className="">
       {/* Page header */}
-      <div className="flex items-center justify-between gap-4 border-b px-6 py-4">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">Members</h1>
-          <p className="text-muted-foreground text-sm">
-            members of your organization, You can also invite new members and manage existing ones.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Members"
+        description="members of your organization, You can also invite new members and manage existing ones."
+      >
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="sm" className="ml-auto h-8 gap-1.5 text-xs">
+              <UserPlus size={13} />
+              Invite member
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Invite user to current organization</DialogTitle>
+              <DialogDescription>
+                Invite new members to your organization by entering their email address.
+              </DialogDescription>
+              <OrganizationInvite />
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </PageHeader>
 
       {/* Analytics strip */}
-      <MemberMetrics />
 
       {/* Table card */}
       <div className="space-y-2">
-        <MemberToolbar onInvite={handleInvite} />
+        <MemberToolbar />
         <BulkActionsBar />
-        <MembersTable />
+        {members?.data && <MembersTable memberData={members?.data} />}
       </div>
     </div>
   );

@@ -8,51 +8,54 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
-import { RowActions } from "./RowActions";
-import { useMembersStore } from "../membersStore";
-import { Avatar, RoleBadge, StatusBadge } from "./MemberBandges";
+import { Avatar } from "./MemberBandges";
 
-export function MembersTable() {
-  // Select raw primitives — never call derived functions inside a selector
-  // (they return new references every time, causing infinite re-render loops)
-  const members = useMembersStore((s) => s.members);
-  const search = useMembersStore((s) => s.search);
-  const roleFilter = useMembersStore((s) => s.roleFilter);
-  const statusFilter = useMembersStore((s) => s.statusFilter);
-  const selected = useMembersStore((s) => s.selected);
-  const toggleRow = useMembersStore((s) => s.toggleRow);
-  const toggleAll = useMembersStore((s) => s.toggleAll);
+interface MemberProps {
+  id: string;
+  email: string;
+  username: string | null;
+  avatar: string | null;
+  role: string | null;
+  createdAt: Date;
+  organizationId: string;
+  totalTickets: number;
+  // Updated to match your provided nested object structure
+  queues: {
+    name: string;
+    ticketCount: number;
+  }[];
+  status?: string;
+}
 
-  // Derive filtered rows locally — stable between renders unless inputs change
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    return members.filter((m) => {
-      const matchSearch =
-        !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
-      const matchRole = roleFilter === "all" || m.role === roleFilter;
-      const matchStatus = statusFilter === "all" || m.status === statusFilter;
-      return matchSearch && matchRole && matchStatus;
-    });
-  }, [members, search, roleFilter, statusFilter]);
+interface Props {
+  memberData: MemberProps[];
+}
 
-  const rowIds = rows.map((r) => r.id);
-  const allChecked = rowIds.length > 0 && rowIds.every((id) => selected.has(id));
-  const someChecked = rowIds.some((id) => selected.has(id)) && !allChecked;
+export function MembersTable({ memberData }: Props) {
+  // // Global filter states from Zustand
+  // const search = useMembersStore((s) => s.search);
+  // const roleFilter = useMembersStore((s) => s.roleFilter);
+  // const statusFilter = useMembersStore((s) => s.statusFilter);
+
+  // // Selection state and actions
+  // const selected = useMembersStore((s) => s.selected);
+  // const toggleRow = useMembersStore((s) => s.toggleRow);
+  // const toggleAll = useMembersStore((s) => s.toggleAll);
+
+  // Derive rows by filtering the 'memberData' prop
 
   return (
-    <div className="border-border overflow-hidden rounded-lg border">
+    <div className="border-border overflow-hidden rounded-md border">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-10 pl-4">
-              <Checkbox
+              {/* <Checkbox
                 checked={allChecked}
-                // indeterminate state via data attribute
                 data-state={someChecked ? "indeterminate" : allChecked ? "checked" : "unchecked"}
                 onCheckedChange={(v) => toggleAll(rowIds, !!v)}
                 aria-label="Select all"
-              />
+              /> */}
             </TableHead>
             <TableHead>Member</TableHead>
             <TableHead>Role</TableHead>
@@ -65,7 +68,7 @@ export function MembersTable() {
         </TableHeader>
 
         <TableBody>
-          {rows.length === 0 && (
+          {memberData.length === 0 && (
             <TableRow>
               <TableCell colSpan={8} className="text-muted-foreground py-10 text-center text-sm">
                 No members match your filters.
@@ -73,53 +76,60 @@ export function MembersTable() {
             </TableRow>
           )}
 
-          {rows.map((member, i) => {
-            const isSelected = selected.has(member.id);
+          {memberData.map((member, i) => {
+            // const isSelected = selected.has(member.id);
             return (
               <TableRow
                 key={member.id}
-                className={cn("group/row", isSelected && "bg-violet-50/60 dark:bg-violet-900/10")}
+                className={cn(
+                  "group/row",
+                  // isSelected && "bg-violet-50/60 dark:bg-violet-900/10"
+                )}
               >
-                {/* Checkbox */}
                 <TableCell className="pl-4">
                   <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => toggleRow(member.id)}
-                    aria-label={`Select ${member.name}`}
+                    // checked={isSelected}
+                    // onCheckedChange={() => toggleRow(member.id)}
+                    aria-label={`Select ${member.username}`}
                   />
                 </TableCell>
 
-                {/* Member */}
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Avatar name={member.name} index={i} />
+                    <Avatar name={member.username ?? "User"} index={i} />
                     <div>
-                      <p className="text-sm leading-tight font-medium">{member.name}</p>
+                      <p className="text-sm leading-tight font-medium">
+                        {member.username ?? "Unknown User"}
+                      </p>
                       <p className="text-muted-foreground text-[11px]">{member.email}</p>
                     </div>
                   </div>
                 </TableCell>
 
-                {/* Role */}
                 <TableCell>
-                  <RoleBadge role={member.role} />
+                  <span
+                    className={cn(
+                      "bg-accent inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium capitalize",
+                    )}
+                  >
+                    {member.role}
+                  </span>
                 </TableCell>
 
-                {/* Status */}
                 <TableCell>
-                  <StatusBadge status={member.status} />
+                  {/* Defaulting to "active" if status is null in your data */}
+                  {/* <StatusBadge status={member.status ?? "active"} /> */}
                 </TableCell>
 
-                {/* Queues */}
                 <TableCell>
-                  {member.queues.length > 0 ? (
+                  {member.queues && member.queues.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {member.queues.map((q) => (
                         <span
-                          key={q}
+                          key={q.name}
                           className="border-border bg-muted/50 text-muted-foreground inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px]"
                         >
-                          {q}
+                          {q.name}
                         </span>
                       ))}
                     </div>
@@ -128,16 +138,15 @@ export function MembersTable() {
                   )}
                 </TableCell>
 
-                {/* Tasks */}
-                <TableCell className="text-right text-sm font-medium">{member.tasks}</TableCell>
-
-                {/* Joined */}
-                <TableCell className="text-muted-foreground text-xs">{member.joined}</TableCell>
-
-                {/* Row actions */}
-                <TableCell className="pr-3">
-                  <RowActions member={member} />
+                <TableCell className="text-right text-sm font-medium">
+                  {member.totalTickets}
                 </TableCell>
+
+                <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
+                  {member.createdAt ? new Date(member.createdAt).toLocaleDateString() : ""}
+                </TableCell>
+
+                <TableCell className="pr-3">{/* <RowActions member={member} /> */}</TableCell>
               </TableRow>
             );
           })}

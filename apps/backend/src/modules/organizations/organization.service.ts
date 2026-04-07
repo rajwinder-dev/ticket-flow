@@ -138,6 +138,6 @@ export class OrganizationService {
         roleId: data.roleId,
       },
     });
-    return data;
+    return { organizationId: data.organizationId };
   };
 }

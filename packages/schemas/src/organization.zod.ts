@@ -21,7 +21,7 @@ export const createOrganizationInput = {
 export const updateOrganizationInput = {
   bodySchema: z
     .object({
-      name: (validString.optional()),
+      name: validString.optional(),
       description: validDescription.optional(),
       slug: z
         .string()
@@ -71,9 +71,34 @@ export const organizationSchemaResponse = z.object({
   updatedAt: z.date(),
   createdBy: z.uuid(),
 });
+const queueSchema = z.object({
+  name: z.string(),
+  ticketCount: z.number(),
+});
+
+export const memberSchemaResponse = z.object({
+  id: z.uuid(),
+  email: z.email(),
+  username: z.string().nullable(),
+  avatar: z.string().nullable(),
+  role: z.string().nullable(),
+  createdAt: z.date(),
+  organizationId: z.uuid(),
+  totalTickets: z.number(),
+  queues: z.array(queueSchema),
+});
+export const inviteMemberDetailsResponse = z.object({
+    organization: z.string(),
+  role: z.string(),
+  invitedTo: z.string(),
+  invitedBy: z.string(),
+  expiresAt: z.date()
+})
 //  --response --
 export type CreateOrganizationResponse = z.infer<typeof createOrganizationResponse>;
 export type OrganizationSchemaResponse = z.infer<typeof organizationSchemaResponse>;
+export type MemberSchemaResponse = z.infer<typeof memberSchemaResponse>;
+export type InviteMemberDetailsResponse = z.infer<typeof inviteMemberDetailsResponse>;
 // --- Inferred Types ---
 export type CreateOrganizationInput = z.infer<typeof createOrganizationInput.bodySchema>;
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationInput.bodySchema>;

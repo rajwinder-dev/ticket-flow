@@ -1,31 +1,27 @@
-import { Trash2, UserCog, ListPlus, PowerOff, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useMembersStore, type Role } from "../membersStore"
+} from "@/components/ui/dropdown-menu";
+import { ListPlus, PowerOff, Trash2, UserCog, X } from "lucide-react";
+import { useMembersStore, type Role } from "../membersStore";
 
-const ROLES: Role[] = ["admin", "manager", "member", "viewer"]
-const QUEUES = ["Support", "Onboarding", "Engineering", "Design", "Growth", "Infra", "Marketing"]
+const ROLES: Role[] = ["admin", "manager", "member", "viewer"];
+const QUEUES = ["Support", "Onboarding", "Engineering", "Design", "Growth", "Infra", "Marketing"];
 
 export function BulkActionsBar() {
-  const selected        = useMembersStore((s) => s.selected)
-  const clearSelection  = useMembersStore((s) => s.clearSelection)
-  const bulkRemove      = useMembersStore((s) => s.bulkRemove)
-  const bulkDeactivate  = useMembersStore((s) => s.bulkDeactivate)
-  const bulkChangeRole  = useMembersStore((s) => s.bulkChangeRole)
-  const bulkAssignQueue = useMembersStore((s) => s.bulkAssignQueue)
+  const { selected, clearSelection, bulkRemove, bulkDeactivate, bulkChangeRole, bulkAssignQueue } =
+    useMembersStore();
 
-  const count = selected.size
-  if (count === 0) return null
+  const count = selected.size;
+  if (count === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/60 px-4 py-2.5 text-sm">
+    <div className="border-border flex items-center gap-2 border px-4 py-2.5 text-sm">
       <span className="font-medium">{count} selected</span>
-      <div className="mx-2 h-4 w-px bg-border" />
+      <div className="bg-border mx-2 h-4 w-px" />
 
       {/* Change role */}
       <DropdownMenu>
@@ -62,12 +58,7 @@ export function BulkActionsBar() {
       </DropdownMenu>
 
       {/* Deactivate */}
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-7 gap-1.5 text-xs"
-        onClick={bulkDeactivate}
-      >
+      <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs" onClick={bulkDeactivate}>
         <PowerOff size={13} />
         Deactivate
       </Button>
@@ -76,7 +67,7 @@ export function BulkActionsBar() {
       <Button
         variant="outline"
         size="sm"
-        className="h-7 gap-1.5 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+        className="text-destructive hover:bg-destructive/10 hover:text-destructive h-7 gap-1.5 text-xs"
         onClick={bulkRemove}
       >
         <Trash2 size={13} />
@@ -86,12 +77,12 @@ export function BulkActionsBar() {
       <Button
         variant="ghost"
         size="sm"
-        className="ml-auto h-7 gap-1 text-xs text-muted-foreground"
+        className="text-muted-foreground ml-auto h-7 gap-1 text-xs"
         onClick={clearSelection}
       >
         <X size={13} />
         Clear
       </Button>
     </div>
-  )
+  );
 }

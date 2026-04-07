@@ -30,19 +30,19 @@ model User {
   createdUsers      User[]             @relation("UserCreatedBy")
   activityLogs      ActivityLog[]
   sessions          Session[]
-  assignedProjects  AssignedProject[]
-  managedProjects   Project[]          @relation("ProjectManager")
+  // assignedProjects  AssignedProject[]
+  // managedProjects   Project[]          @relation("ProjectManager")
   createdRoles      Role[]             @relation("RoleCreatedBy")
   ticketsAssigned   Ticket[]           @relation("TicketAssignedTo")
   ticketsCreated    Ticket[]           @relation("TicketAssignedBy")
   ticketComments    TicketComment[]
   fromTransitions   TicketTransition[] @relation("TransitionFromAgent")
   toTransitions     TicketTransition[] @relation("TransitionToAgent")
-  notificationFrom  Notification[]     @relation("NotificationFrom")
-  notificationTo    Notification[]     @relation("NotificationTo")
-  chatRoomsCreated  ChatRoom[]         @relation("ChatCreatedBy")
-  participants      Participant[]
-  messages          Message[]
+  // notificationFrom  Notification[]     @relation("NotificationFrom")
+  // notificationTo    Notification[]     @relation("NotificationTo")
+  // chatRoomsCreated  ChatRoom[]         @relation("ChatCreatedBy")
+  // participants      Participant[]
+  // messages          Message[]
   organization      Organization[]
   membership        Membership[]
   token             Token[]
@@ -89,7 +89,7 @@ model Membership {
   userId         String        @db.Uuid
   role           Role?         @relation(fields: [roleId], references: [id])
   roleId         String        @db.Uuid
-
+  createdAt       DateTime        @default(now())
   @@unique([organizationId, userId])
 }
 
@@ -106,7 +106,7 @@ model Role {
   createdBy        String            @db.Uuid
   organization     Organization?     @relation(fields: [organizationId], references: [id])
   organizationId   String            @db.Uuid
-  assignedProjects AssignedProject[]
+  // assignedProjects AssignedProject[]
   membership       Membership[]
   tokens           Token[]
 }
@@ -451,102 +451,102 @@ model Session {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-//  ============================ NOTIFICATIONS ==============================
+// //  ============================ NOTIFICATIONS ==============================
 
-model Notification {
-  id        String   @id @unique @default(uuid())
-  message   String
-  isRead    Boolean  @default(false)
-  fromId    String?  @db.Uuid
-  toId      String?  @db.Uuid
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  fromUser  User?    @relation("NotificationFrom", fields: [fromId], references: [id])
-  toUser    User?    @relation("NotificationTo", fields: [toId], references: [id])
-}
+// model Notification {
+//   id        String   @id @unique @default(uuid())
+//   message   String
+//   isRead    Boolean  @default(false)
+//   fromId    String?  @db.Uuid
+//   toId      String?  @db.Uuid
+//   createdAt DateTime @default(now()) @db.Timestamptz(6)
+//   fromUser  User?    @relation("NotificationFrom", fields: [fromId], references: [id])
+//   toUser    User?    @relation("NotificationTo", fields: [toId], references: [id])
+// }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-//  ============================ CHATS / ROOMS ==============================
+// //  ============================ CHATS / ROOMS ==============================
 
-model ChatRoom {
-  id           String        @id @unique @default(uuid())
-  chatId       String        @unique
-  chatType     String
-  roomName     String?
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  createdBy    String        @db.Uuid
-  creator      User          @relation("ChatCreatedBy", fields: [createdBy], references: [id])
-  participants Participant[]
-  messages     Message[]
-}
+// model ChatRoom {
+//   id           String        @id @unique @default(uuid())
+//   chatId       String        @unique
+//   chatType     String
+//   roomName     String?
+//   createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+//   createdBy    String        @db.Uuid
+//   creator      User          @relation("ChatCreatedBy", fields: [createdBy], references: [id])
+//   participants Participant[]
+//   messages     Message[]
+// }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-model Participant {
-  id        String   @id @unique @default(uuid())
-  chatId    String
-  userId    String   @db.Uuid
-  isActive  Boolean  @default(false)
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  chatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
-  user      User     @relation(fields: [userId], references: [id])
+// model Participant {
+//   id        String   @id @unique @default(uuid())
+//   chatId    String
+//   userId    String   @db.Uuid
+//   isActive  Boolean  @default(false)
+//   createdAt DateTime @default(now()) @db.Timestamptz(6)
+//   chatRoom  ChatRoom @relation(fields: [chatId], references: [chatId])
+//   user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([chatId, userId])
-}
+//   @@unique([chatId, userId])
+// }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-model Message {
-  id          String    @id @unique @default(uuid())
-  chatId      String
-  senderId    String    @db.Uuid
-  message     String    @db.Text
-  iv          String
-  tag         String
-  isDelivered Boolean   @default(false)
-  isRead      Boolean   @default(false)
-  isArchived  Boolean   @default(false)
-  readAt      DateTime?
-  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
-  chatRoom    ChatRoom  @relation(fields: [chatId], references: [chatId])
-  sender      User      @relation(fields: [senderId], references: [id])
-}
+// model Message {
+//   id          String    @id @unique @default(uuid())
+//   chatId      String
+//   senderId    String    @db.Uuid
+//   message     String    @db.Text
+//   iv          String
+//   tag         String
+//   isDelivered Boolean   @default(false)
+//   isRead      Boolean   @default(false)
+//   isArchived  Boolean   @default(false)
+//   readAt      DateTime?
+//   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+//   chatRoom    ChatRoom  @relation(fields: [chatId], references: [chatId])
+//   sender      User      @relation(fields: [senderId], references: [id])
+// }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-model Project {
-  id               String            @id @default(uuid()) @db.Uuid
-  code             String            @unique @db.Uuid
-  name             String?
-  description      String?
-  priority         Priority          @default(MEDIUM)
-  tags             Json?
-  isDraft          Boolean           @default(true)
-  active           Boolean           @default(true)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  managerId        String?           @db.Uuid
-  manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
-  assignedProjects AssignedProject[]
+// model Project {
+//   id               String            @id @default(uuid()) @db.Uuid
+//   code             String            @unique @db.Uuid
+//   name             String?
+//   description      String?
+//   priority         Priority          @default(MEDIUM)
+//   tags             Json?
+//   isDraft          Boolean           @default(true)
+//   active           Boolean           @default(true)
+//   createdAt        DateTime          @default(now())
+//   updatedAt        DateTime          @updatedAt
+//   managerId        String?           @db.Uuid
+//   manager          User?             @relation("ProjectManager", fields: [managerId], references: [id])
+//   assignedProjects AssignedProject[]
 
-  @@index([id, code])
-}
+//   @@index([id, code])
+// }
 
-//  !============================ EXTRA TABLES NOT USEABLE YET==============================
+// //  !============================ EXTRA TABLES NOT USEABLE YET==============================
 
-model AssignedProject {
-  id         String   @id @default(uuid()) @db.Uuid
-  assignedAt DateTime @default(now())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  userId     String   @db.Uuid
-  projectId  String   @db.Uuid
-  roleId     String   @db.Uuid
-  user       User     @relation(fields: [userId], references: [id])
-  project    Project  @relation(fields: [projectId], references: [id])
-  role       Role     @relation(fields: [roleId], references: [id])
+// model AssignedProject {
+//   id         String   @id @default(uuid()) @db.Uuid
+//   assignedAt DateTime @default(now())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   userId     String   @db.Uuid
+//   projectId  String   @db.Uuid
+//   roleId     String   @db.Uuid
+//   user       User     @relation(fields: [userId], references: [id])
+//   project    Project  @relation(fields: [projectId], references: [id])
+//   role       Role     @relation(fields: [roleId], references: [id])
 
-  @@index([projectId, roleId])
-}
+//   @@index([projectId, roleId])
+// }

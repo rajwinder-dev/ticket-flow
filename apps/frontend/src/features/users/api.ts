@@ -1,4 +1,4 @@
-import { getRequest, getRequestMany, patchRequest } from "@/utils/axis";
+import { getRequest, patchRequest } from "@/utils/axis";
 import type { UpdateMyDetailsInput, UserSchema } from "@repo/schemas";
 
 export const userApi = {
@@ -12,12 +12,6 @@ export const userApi = {
     const data = await patchRequest<UserSchema>({
       path: `/user/me`,
       data: input,
-    });
-    return data;
-  },
-  getMembers: async () => {
-    const data = await getRequestMany<UserSchema>({
-      path: `/org/member`,
     });
     return data;
   },

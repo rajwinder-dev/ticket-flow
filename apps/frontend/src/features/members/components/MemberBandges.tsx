@@ -1,20 +1,13 @@
 import { cn } from "@/lib/utils"
 import type { Role, Status } from "../membersStore";
 
-// ── Role badge ────────────────────────────────────────────────
-const roleStyles: Record<Role, string> = {
-  admin:   "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",
-  manager: "bg-blue-100   text-blue-800   dark:bg-blue-900/40   dark:text-blue-300",
-  member:  "bg-stone-100  text-stone-700  dark:bg-stone-800     dark:text-stone-300",
-  viewer:  "bg-amber-100  text-amber-800  dark:bg-amber-900/40  dark:text-amber-300",
-}
 
 export function RoleBadge({ role }: { role: Role }) {
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium capitalize",
-        roleStyles[role]
+        "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300"
       )}
     >
       {role}

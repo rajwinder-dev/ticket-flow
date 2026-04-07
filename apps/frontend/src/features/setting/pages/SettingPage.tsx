@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator";
+import PageHeader from "@/components/PageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileTab from "@/features/setting/ProfileTab";
 import GeneralTab from "@/features/setting/tabs/GeneralTab";
@@ -8,20 +8,18 @@ import { Building2, Lock, Settings2, User } from "lucide-react";
 
 export default function SettingsPage() {
   return (
-    <div className="block space-y-6 p-10 pb-16">
-      <div className="space-y-0.5">
-        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
-        </p>
-      </div>
-      <Separator className="my-6" />
+    <div className="block">
+      <PageHeader
+        title="Settings"
+        description="mange your account and organization settings, including profile information, security
+            preferences, and general application settings."
+      />
 
       <Tabs
         defaultValue="profile"
-        className="flex space-y-8 md:flex-row md:space-y-0 md:space-x-12"
+        className="flex space-y-8 p-8 md:flex-row md:space-y-0 md:space-x-12"
       >
-        <aside className="md:w-1/5 ">
+        <aside className="md:w-1/5">
           <TabsList className="flex h-auto justify-start space-y-1 p-0 md:bg-transparent">
             <TabsTrigger
               value="profile"
@@ -49,7 +47,7 @@ export default function SettingsPage() {
             </TabsTrigger>
           </TabsList>
         </aside>
-        <div className="flex-1 md:max-w-2xl my-4">
+        <div className="my-4 flex-1 md:max-w-2xl">
           {/* Profile Tab */}
           <TabsContent value="profile" className="mt-0">
             <ProfileTab />

@@ -1,8 +1,4 @@
-import type {
-  CreateOrganizationInput,
-  InviteUserOrganizationInput,
-  UpdateOrganizationInput,
-} from "@repo/schemas";
+import type { CreateOrganizationInput, UpdateOrganizationInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -60,28 +56,6 @@ function useOrganizations() {
     },
   });
 
-  const { mutate: inviteUserMutate, isPending: isInvitingUser } = useMutation({
-    mutationFn: (data: InviteUserOrganizationInput) => orgApi.inviteUser(data),
-    onSuccess: () => {
-      toast.success("Invitation sent successfully");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const { mutate: acceptInviteMutate, isPending: isAcceptingInvite } = useMutation({
-    mutationFn: (token: string) => orgApi.acceptInvite(token),
-    onSuccess: () => {
-      toast.success("Joined organization successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      navigate("/org");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
   return {
     organizations,
     isLoadingOrganizations,
@@ -91,10 +65,7 @@ function useOrganizations() {
     isUpdatingOrg,
     deleteOrg,
     isDeletingOrg,
-    inviteUserMutate,
-    isInvitingUser,
-    acceptInviteMutate,
-    isAcceptingInvite,
+
     currentOrganization,
     isLoadingCurrent,
   };

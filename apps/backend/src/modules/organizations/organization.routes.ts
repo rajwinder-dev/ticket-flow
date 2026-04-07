@@ -14,7 +14,7 @@ organizationRouter.post(
   validationMiddleware(createOrganizationInput),
   OrganizationController.createOrganization,
 );
-organizationRouter.use(authMiddleware.tenant);
+organizationRouter.use(authMiddleware.tenant, authMiddleware.restrictToOwner);
 
 organizationRouter
   .route("/")

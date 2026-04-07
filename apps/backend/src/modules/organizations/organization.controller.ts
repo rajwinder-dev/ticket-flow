@@ -148,13 +148,56 @@ export class OrganizationController {
         organizationId: req.organization.id,
         ...filterOptions.where,
       },
-      include: {
-        user: true,
+      select: {
+        organizationId: true,
+        id: true,
+        createdAt: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            username: true,
+            avatar: true,
+            queueAgents: {
+              select: {
+                ticketCount: true,
+                queue: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       skip: offset,
       take: limit,
     });
-    const data = membership.map((item) => ({ ...item.user, organizationId: item.organizationId }));
+    const data = membership.map((item) => {
+      const user = item.user;
+
+      const totalTickets = user?.queueAgents.reduce((sum, qa) => sum + qa.ticketCount, 0);
+
+      return {
+        id: item.id,
+        email: user?.email,
+        username: user?.username,
+        avatar: user?.avatar,
+        role: item.role?.name,
+        createdAt: item.createdAt,
+        organizationId: item.organizationId,
+        totalTickets,
+        queues: user?.queueAgents.map((qa) => ({
+          name: qa.queue?.name,
+          ticketCount: qa.ticketCount,
+        })),
+      };
+    });
     const total = await prisma.membership.count({
       where: {
         organizationId: req.organization.id,

@@ -1,26 +1,21 @@
-import { Search, UserPlus } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { useMembersStore } from "../membersStore"
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
+import { useMembersStore } from "../membersStore";
 
-interface MemberToolbarProps {
-  onInvite?: () => void
-}
-
-export function MemberToolbar({ onInvite }: MemberToolbarProps) {
-  const search        = useMembersStore((s) => s.search)
-  const roleFilter    = useMembersStore((s) => s.roleFilter)
-  const statusFilter  = useMembersStore((s) => s.statusFilter)
-  const setSearch     = useMembersStore((s) => s.setSearch)
-  const setRoleFilter = useMembersStore((s) => s.setRoleFilter)
-  const setStatusFilter = useMembersStore((s) => s.setStatusFilter)
+export function MemberToolbar() {
+  const search = useMembersStore((s) => s.search);
+  const roleFilter = useMembersStore((s) => s.roleFilter);
+  const statusFilter = useMembersStore((s) => s.statusFilter);
+  const setSearch = useMembersStore((s) => s.setSearch);
+  const setRoleFilter = useMembersStore((s) => s.setRoleFilter);
+  const setStatusFilter = useMembersStore((s) => s.setStatusFilter);
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-2">
@@ -28,7 +23,7 @@ export function MemberToolbar({ onInvite }: MemberToolbarProps) {
       <div className="relative">
         <Search
           size={14}
-          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          className="text-muted-foreground absolute top-1/2 left-2.5 -translate-y-1/2"
         />
         <Input
           value={search}
@@ -66,10 +61,6 @@ export function MemberToolbar({ onInvite }: MemberToolbarProps) {
       </Select>
 
       {/* Invite */}
-      <Button size="sm" className="ml-auto h-8 gap-1.5 text-xs" onClick={onInvite}>
-        <UserPlus size={13} />
-        Invite member
-      </Button>
     </div>
-  )
+  );
 }
