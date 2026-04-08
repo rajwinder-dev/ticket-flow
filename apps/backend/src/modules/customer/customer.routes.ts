@@ -1,4 +1,4 @@
-import { crateCustomerInput, updateCustomerInput } from "@repo/schemas";
+import { createCustomerInput, updateCustomerInput } from "@repo/schemas";
 import { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
@@ -9,7 +9,7 @@ customerRoutes.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 customerRoutes.get("/", CustomerController.getAllCustomers);
 customerRoutes.post(
   "/",
-  validationMiddleware(crateCustomerInput),
+  validationMiddleware(createCustomerInput),
   CustomerController.createCustomer,
 );
 customerRoutes.patch(

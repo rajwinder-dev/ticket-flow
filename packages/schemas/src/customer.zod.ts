@@ -1,10 +1,12 @@
 import z from "zod";
-import { validEmail, validString } from "./helper/zodHelper";
+import { optionalInput, validEmail, validPhoneNo, validString, validUrl } from "./helper/zodHelper";
 
-export const crateCustomerInput = {
+export const createCustomerInput = {
   bodySchema: z.object({
     email: validEmail,
     name: validString,
+    phone: optionalInput(validPhoneNo),
+    avatarUrl: optionalInput(validUrl),
   }),
 };
 export const updateCustomerInput = {
@@ -12,5 +14,16 @@ export const updateCustomerInput = {
     name: validString,
   }),
 };
-export type CreateCustomerInput = z.infer<typeof crateCustomerInput.bodySchema>;
+export const customerSchemaResponse = z.object({
+  id: z.uuid(),
+  name: z.string().nullable(),
+  email: z.email(),
+  phone: z.string().nullable(),
+  avatarUrl: z.url().nullable(),
+
+  totalTickets: z.number().int().nonnegative(),
+  openTickets: z.number().int().nonnegative(),
+});
+export type CustomerSchemaResponse = z.infer<typeof customerSchemaResponse>;
+export type CreateCustomerInput = z.infer<typeof createCustomerInput.bodySchema>;
 export type UpdateCustomerInput = z.infer<typeof updateCustomerInput.bodySchema>;

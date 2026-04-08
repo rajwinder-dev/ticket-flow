@@ -5,10 +5,10 @@ variables:
   - secret: true
     name: accessToken
   - name: organizationId
-    value: cd24ca2f-735e-4c82-80d0-fdb6f2a9f517
+    value: 8f38f1cc-22e9-464c-9708-25a65b7e09ba
   - name: queueGroupId
     value: 91191951-840a-43f7-8ae7-b98e9536d9ec
   - name: queueId
     value: b2cc94e2-90df-44ce-a507-e3563555e3ea
   - name: ticketId
-    value: da25969c-8f6e-4158-9ef9-bb30558dbee4
+    value: 879b42a2-6397-4009-b1e2-bf844257265a

@@ -1,9 +1,9 @@
 import { getRequestMany, postRequest } from "@/utils/axis";
-import type { CreateCustomerInput, UpdateCustomerInput } from "@repo/schemas";
+import type { CreateCustomerInput, CustomerSchemaResponse, UpdateCustomerInput } from "@repo/schemas";
 
 export const customerApi = {
   getAll: async () => {
-    const res = await getRequestMany({
+    const res = await getRequestMany<CustomerSchemaResponse>({
       path: "/customer",
     });
     return res;

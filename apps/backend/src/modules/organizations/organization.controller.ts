@@ -146,6 +146,7 @@ export class OrganizationController {
     const membership = await prisma.membership.findMany({
       where: {
         organizationId: req.organization.id,
+        isSystem: false,
         ...filterOptions.where,
       },
       select: {

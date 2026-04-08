@@ -89,26 +89,28 @@ model Membership {
   userId         String        @db.Uuid
   role           Role?         @relation(fields: [roleId], references: [id])
   roleId         String        @db.Uuid
-  createdAt       DateTime        @default(now())
+  createdAt      DateTime      @default(now())
+  isSystem       Boolean       @default(false)
   @@unique([organizationId, userId])
 }
 
 model Role {
-  id               String            @id @default(uuid()) @db.Uuid
-  code             String            @unique
-  name             String
-  description      String?
-  permissions      Json
-  active           Boolean           @default(true)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  creator          User?             @relation("RoleCreatedBy", fields: [createdBy], references: [id])
-  createdBy        String            @db.Uuid
-  organization     Organization?     @relation(fields: [organizationId], references: [id])
-  organizationId   String            @db.Uuid
+  id             String        @id @default(uuid()) @db.Uuid
+  code           String        @unique
+  name           String
+  description    String?
+  permissions    Json
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  creator        User?         @relation("RoleCreatedBy", fields: [createdBy], references: [id])
+  createdBy      String        @db.Uuid
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String        @db.Uuid
+  isSystem       Boolean       @default(false)
   // assignedProjects AssignedProject[]
-  membership       Membership[]
-  tokens           Token[]
+  membership     Membership[]
+  tokens         Token[]
 }
 
 enum TokenType {
@@ -201,10 +203,11 @@ model EmailMessage {
 
 //  ============================ CUSTOMER ==============================
 model CustomerIdentity {
-  id        String     @id @default(uuid()) @db.Uuid
-  email     String     @unique @db.VarChar(255)
-  customer  Customer[]
-  createdAt DateTime   @default(now())
+  id            String     @id @default(uuid()) @db.Uuid
+  email         String     @unique @db.VarChar(255)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  customer     Customer[]
 }
 
 model Customer {
@@ -214,13 +217,21 @@ model Customer {
   organizationId String           @db.Uuid
   organization   Organization     @relation(fields: [organizationId], references: [id])
   name           String?          @db.VarChar(255)
+  phone          String?          @db.VarChar(20)
+  avatarUrl      String?          @db.VarChar(500)
+  metadata       Json?
   isActive       Boolean          @default(true)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?        // soft delete
+
   tickets        Ticket[]
 
-  // One identity can only have one profile per organization.
   @@unique([organizationId, identityId])
+
+  // Recommended indexes
+  @@index([identityId])
+  @@index([organizationId])
 }
 
 //  ============================ QUEUE / SLA ==============================
@@ -228,7 +239,7 @@ model QueueGroup {
   id                  String             @id @default(uuid()) @db.Uuid
   name                String
   description         String?
-  organization        Organization      @relation(fields: [organizationId], references: [id])
+  organization        Organization       @relation(fields: [organizationId], references: [id])
   organizationId      String             @db.Uuid
   default             Boolean            @default(false)
   active              Boolean            @default(true)

@@ -24,9 +24,7 @@ export class roleController {
       where: {
         organizationId: req.organization.id,
         active: true,
-        name: {
-          not: "OWNER",
-        }
+        isSystem: false,
       },
       select: {
         id: true,
@@ -56,6 +54,7 @@ export class roleController {
       roleId,
       organizationId: req.organization.id,
       userId: req.user.id,
+
     });
     response(res, data, 201);
   });

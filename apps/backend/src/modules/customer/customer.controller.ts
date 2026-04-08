@@ -1,8 +1,9 @@
-import { CreateCustomerInput, UpdateCustomerInput } from "@repo/schemas";
+import { CreateCustomerInput, customerSchemaResponse, UpdateCustomerInput } from "@repo/schemas";
 import { APIFeatures } from "../../core/utils/apiFeatures";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
+import z from "zod";
 
 export class CustomerController {
   static getAllCustomers = catchAsync(async (req, res, _next) => {
@@ -12,15 +13,32 @@ export class CustomerController {
       .sort()
       .limitFields()
       .pagination();
-    const customer = await prisma.customer.findMany({
+    const customers = await prisma.customer.findMany({
       where: {
         organizationId,
         ...filterOptions.where,
       },
-      include: {
+      select: {
+        name: true,
+        phone: true,
+        id: true,
+        avatarUrl: true,
         identity: {
           select: {
             email: true,
+          },
+        },
+        _count: {
+          select: {
+            tickets: true,
+          },
+        },
+        tickets: {
+          where: {
+            status: "OPEN",
+          },
+          select: {
+            id: true,
           },
         },
       },
@@ -28,7 +46,23 @@ export class CustomerController {
       take: limit,
       orderBy: filterOptions.orderBy,
     });
-    response(res, customer, 200);
+    const total = await prisma.customer.count({
+      where: {
+        organizationId,
+        ...filterOptions.where,
+      },
+    });
+    // warn: not scalable yet
+const result = customers.map((c) => ({
+  id: c.id,
+  name: c.name,
+  phone: c.phone,
+  avatarUrl: c.avatarUrl,
+  email: c.identity.email,
+  totalTickets: c._count.tickets,
+  openTickets: c.tickets.length,
+}));
+    response(res, result, 200, { otherFields: { limit, offset, total }, schema: z.array(customerSchemaResponse) });
   });
   static createCustomer = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
@@ -36,7 +70,7 @@ export class CustomerController {
     const customer = await prisma.customerIdentity.create({
       data: {
         email,
-        customer: {
+        customers: {
           create: {
             name,
             organizationId,

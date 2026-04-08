@@ -42,9 +42,7 @@ export class RoleService {
       where: {
         id: roleId,
         organizationId,
-        name: {
-          not: "OWNER",
-        },
+        isSystem: false,
       },
     });
     await ActivityService.lagActivity({
@@ -72,6 +70,7 @@ export class RoleService {
     const existingRole = await prisma.role.findUnique({
       where: {
         id: roleId,
+        isSystem: false
       },
       select: {
         active: true,
@@ -93,6 +92,7 @@ export class RoleService {
       where: {
         id: roleId,
         organizationId,
+        isSystem: false
       },
     });
     await ActivityService.lagActivity({

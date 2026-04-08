@@ -32,6 +32,7 @@ export class OrganizationService {
           organizationId: organization.id,
           permissions: PERMISSIONS,
           createdBy: userId,
+          isSystem: true,
         },
       });
       // create membership
@@ -40,6 +41,7 @@ export class OrganizationService {
           organizationId: role.organizationId,
           userId,
           roleId: role.id,
+          isSystem: true
         },
       });
       await ActivityService.lagActivity({
