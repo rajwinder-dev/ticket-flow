@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { CustomerSchemaResponse } from "@repo/schemas";
+import { CustomerActionsMenu } from "./CustomerActions";
 
 interface Props {
   data: CustomerSchemaResponse[];
@@ -15,7 +16,7 @@ interface Props {
 
 const CustomerTable = ({ data }: Props) => {
   return (
-    <div className=" border-t">
+    <div className="border-t">
       <Table>
         <TableHeader>
           <TableRow>
@@ -28,7 +29,6 @@ const CustomerTable = ({ data }: Props) => {
         <TableBody>
           {data.map((customer) => (
             <TableRow key={customer.id}>
-              {/* Customer Info Column */}
               <TableCell>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9">
@@ -50,17 +50,14 @@ const CustomerTable = ({ data }: Props) => {
                   </div>
                 </div>
               </TableCell>
-
-              {/* Phone Column */}
               <TableCell className="text-sm">
                 {customer.phone ?? <span className="text-muted-foreground/50">—</span>}
               </TableCell>
-
-              {/* Total Tickets Column */}
               <TableCell className="text-sm">{customer.totalTickets}</TableCell>
-
-              {/* Open Tickets Column */}
               <TableCell className="text-right font-medium">{customer.openTickets}</TableCell>
+              <TableCell className="text-right font-medium">
+                <CustomerActionsMenu data={customer} />
+              </TableCell>
             </TableRow>
           ))}
 

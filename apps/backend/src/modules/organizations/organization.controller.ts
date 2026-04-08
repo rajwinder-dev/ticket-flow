@@ -2,6 +2,7 @@ import {
   CreateOrganizationInput,
   createOrganizationResponse,
   InviteUserOrganizationInput,
+  memberSchemaResponse,
   organizationSchemaResponse,
   UpdateOrganizationInput,
 } from "@repo/schemas";
@@ -155,6 +156,7 @@ export class OrganizationController {
         createdAt: true,
         role: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -163,11 +165,14 @@ export class OrganizationController {
             email: true,
             username: true,
             avatar: true,
+
             queueAgents: {
+              where: { organizationId: req.organization.id },
               select: {
                 ticketCount: true,
                 queue: {
                   select: {
+                    id: true,
                     name: true,
                   },
                 },
@@ -190,10 +195,12 @@ export class OrganizationController {
         username: user?.username,
         avatar: user?.avatar,
         role: item.role?.name,
+        roleId: item.role?.id,
         createdAt: item.createdAt,
         organizationId: item.organizationId,
         totalTickets,
         queues: user?.queueAgents.map((qa) => ({
+          queueId: qa.queue?.id,
           name: qa.queue?.name,
           ticketCount: qa.ticketCount,
         })),
@@ -205,6 +212,6 @@ export class OrganizationController {
         ...filterOptions.where,
       },
     });
-    response(res, data, 200, { otherFields: { limit, offset, total } });
+    response(res, data, 200, { otherFields: { limit, offset, total }, schema: memberSchemaResponse });
   });
 }

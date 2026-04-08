@@ -12,6 +12,8 @@ export const createCustomerInput = {
 export const updateCustomerInput = {
   bodySchema: z.object({
     name: validString,
+    phone: optionalInput(validPhoneNo).nullable(),
+    avatarUrl: optionalInput(validUrl).nullable(),
   }),
 };
 export const customerSchemaResponse = z.object({

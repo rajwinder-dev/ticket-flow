@@ -11,13 +11,15 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { UserPlus } from "lucide-react";
 import useMember from "../hooks";
+import { useMembersStore } from "../store";
 import { BulkActionsBar } from "./BulkActionBar";
-import { MembersTable } from "./MemberStable";
 import { MemberToolbar } from "./MemberToolbar";
 import { OrganizationInvite } from "./OrganizationInvite";
+import { MembersTable } from "./Membertable";
 
 export default function MembersPage() {
   const { members, isLoadingMembers } = useMember();
+  const { selected } = useMembersStore();
   if (isLoadingMembers) return <Spinner />;
   return (
     <div className="">
@@ -50,8 +52,8 @@ export default function MembersPage() {
       {/* Table card */}
       <div className="space-y-2">
         <MemberToolbar />
-        <BulkActionsBar />
         {members?.data && <MembersTable memberData={members?.data} />}
+        {selected.size > 0 && <BulkActionsBar />}
       </div>
     </div>
   );

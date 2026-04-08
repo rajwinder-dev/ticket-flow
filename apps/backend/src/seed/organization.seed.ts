@@ -7,7 +7,7 @@ import { prisma } from "../core/utils/prismaClient";
  * Seed random number of organizations (1-12) for each user
  */
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
-  log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`)
+  log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
   const orgData: Organization[] = [];
   for (const owner of owners) {
     const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
@@ -54,6 +54,7 @@ async function seedRolesAndMembership(org: Organization, userId: string) {
           organizationId: org.id,
           createdBy: userId,
           permissions: roleDef.permissions,
+          isSystem: roleDef.name === "OWNER",
         },
       });
 
@@ -64,6 +65,7 @@ async function seedRolesAndMembership(org: Organization, userId: string) {
             organizationId: org.id,
             userId: userId,
             roleId: role.id,
+            isSystem: roleDef.name === "OWNER",
           },
         });
       }

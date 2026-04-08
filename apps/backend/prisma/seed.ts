@@ -1,6 +1,6 @@
-import { log } from "../src/core/helper/log";
 import { prisma } from "../src/core/utils/prismaClient";
 import { seedAgents } from "../src/seed/agent.seed";
+import { seedCustomers } from "../src/seed/customers.seed";
 import { seedMembers } from "../src/seed/membership.seed";
 import { seedOrganizations } from "../src/seed/organization.seed";
 import { seedQueueGroups } from "../src/seed/queue.seed";
@@ -20,7 +20,7 @@ export class seedData {
     await seedMembers(users.splice(seedConfig.ownersCount + 1, seedConfig.usersCount));
     await seedQueueGroups(seedConfig.maxGroupsPerOrg, seedConfig.maxQueuePerGroup);
     await seedAgents();
-    log.success("agents seeded successfully");
+    await seedCustomers();
   }
   static async createOnlyAdmin() {
     console.log("not done");

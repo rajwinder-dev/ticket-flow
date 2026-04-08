@@ -72,28 +72,30 @@ export const organizationSchemaResponse = z.object({
   createdBy: z.uuid(),
 });
 const queueSchema = z.object({
-  name: z.string(),
+  queueId: z.string().nullable(),
+  name: z.string().nullable(),
   ticketCount: z.number(),
 });
 
 export const memberSchemaResponse = z.object({
   id: z.uuid(),
-  email: z.email(),
+  email: z.email().nullable(),
   username: z.string().nullable(),
   avatar: z.string().nullable(),
   role: z.string().nullable(),
-  createdAt: z.date(),
-  organizationId: z.uuid(),
-  totalTickets: z.number(),
-  queues: z.array(queueSchema),
+  roleId: z.string().nullable(),
+  createdAt: z.coerce.date(),
+  organizationId: z.string().uuid(),
+  totalTickets: z.number().optional(),
+  queues: z.array(queueSchema).nullable(),
 });
 export const inviteMemberDetailsResponse = z.object({
-    organization: z.string(),
+  organization: z.string(),
   role: z.string(),
   invitedTo: z.string(),
   invitedBy: z.string(),
-  expiresAt: z.date()
-})
+  expiresAt: z.date(),
+});
 //  --response --
 export type CreateOrganizationResponse = z.infer<typeof createOrganizationResponse>;
 export type OrganizationSchemaResponse = z.infer<typeof organizationSchemaResponse>;

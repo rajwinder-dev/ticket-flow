@@ -1,5 +1,9 @@
-import { getRequestMany, postRequest } from "@/utils/axis";
-import type { CreateCustomerInput, CustomerSchemaResponse, UpdateCustomerInput } from "@repo/schemas";
+import { getRequestMany, patchRequest, postRequest } from "@/utils/axis";
+import type {
+  CreateCustomerInput,
+  CustomerSchemaResponse,
+  UpdateCustomerInput,
+} from "@repo/schemas";
 
 export const customerApi = {
   getAll: async () => {
@@ -15,12 +19,11 @@ export const customerApi = {
     });
     return res;
   },
-  update: async (id: string ,data: UpdateCustomerInput) => {
-       const res = await postRequest({
+  update: async (id: string, data: UpdateCustomerInput) => {
+    const res = await patchRequest({
       path: `/customer/${id}`,
       data,
     });
     return res;
-  }
+  },
 };
-

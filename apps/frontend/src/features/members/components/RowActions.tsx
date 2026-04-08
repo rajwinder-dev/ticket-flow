@@ -1,29 +1,23 @@
-import { MoreHorizontal, Pencil, Trash2, PowerOff, ListPlus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useMembersStore, type Member } from "../membersStore"
+} from "@/components/ui/dropdown-menu";
+import type { MemberSchemaResponse } from "@repo/schemas";
+import { ListPlus, MoreHorizontal, Pencil, PowerOff, Trash2 } from "lucide-react";
 
 interface RowActionsProps {
-  member: Member
+  member: MemberSchemaResponse;
 }
 
 export function RowActions({ member }: RowActionsProps) {
-  const removeMember  = useMembersStore((s) => s.removeMember)
-  const updateMember  = useMembersStore((s) => s.updateMember)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-        >
+        <Button variant="ghost" size="icon">
           <MoreHorizontal size={15} />
         </Button>
       </DropdownMenuTrigger>
@@ -35,19 +29,13 @@ export function RowActions({ member }: RowActionsProps) {
           <ListPlus size={13} /> Assign to queue
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="gap-2 text-xs"
-          onSelect={() => updateMember(member.id, { status: "offline" })}
-        >
+        <DropdownMenuItem className="gap-2 text-xs">
           <PowerOff size={13} /> Deactivate
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="gap-2 text-xs text-destructive focus:text-destructive"
-          onSelect={() => removeMember(member.id)}
-        >
+        <DropdownMenuItem className="text-destructive focus:text-destructive gap-2 text-xs">
           <Trash2 size={13} /> Remove member
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -8,55 +7,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import type { MemberSchemaResponse } from "@repo/schemas";
+import { useMembersStore } from "../store";
 import { Avatar } from "./MemberBandges";
-
-interface MemberProps {
-  id: string;
-  email: string;
-  username: string | null;
-  avatar: string | null;
-  role: string | null;
-  createdAt: Date;
-  organizationId: string;
-  totalTickets: number;
-  // Updated to match your provided nested object structure
-  queues: {
-    name: string;
-    ticketCount: number;
-  }[];
-  status?: string;
-}
+import { RowActionsMenu } from "./RowActionsMenu";
 
 interface Props {
-  memberData: MemberProps[];
+  memberData: MemberSchemaResponse[];
 }
 
 export function MembersTable({ memberData }: Props) {
-  // // Global filter states from Zustand
-  // const search = useMembersStore((s) => s.search);
-  // const roleFilter = useMembersStore((s) => s.roleFilter);
-  // const statusFilter = useMembersStore((s) => s.statusFilter);
-
-  // // Selection state and actions
-  // const selected = useMembersStore((s) => s.selected);
-  // const toggleRow = useMembersStore((s) => s.toggleRow);
-  // const toggleAll = useMembersStore((s) => s.toggleAll);
-
-  // Derive rows by filtering the 'memberData' prop
+  const { selected } = useMembersStore();
 
   return (
     <div className="border-border overflow-hidden rounded-md border">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead className="w-10 pl-4">
-              {/* <Checkbox
-                checked={allChecked}
-                data-state={someChecked ? "indeterminate" : allChecked ? "checked" : "unchecked"}
-                onCheckedChange={(v) => toggleAll(rowIds, !!v)}
+            {/*    <TableHead className="w-10 pl-4">
+              <Checkbox
+                // checked={allChecked}
+                // data-state={someChecked ? "indeterminate" : allChecked ? "checked" : "unchecked"}
+                onCheckedChange={(v) => toggle(rowIds, !!v)}
                 aria-label="Select all"
-              /> */}
-            </TableHead>
+              />
+            </TableHead> */}
             <TableHead>Member</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
@@ -77,22 +52,19 @@ export function MembersTable({ memberData }: Props) {
           )}
 
           {memberData.map((member, i) => {
-            // const isSelected = selected.has(member.id);
+            const isSelected = selected.has(member.id);
             return (
               <TableRow
                 key={member.id}
-                className={cn(
-                  "group/row",
-                  // isSelected && "bg-violet-50/60 dark:bg-violet-900/10"
-                )}
+                className={cn("group/row", isSelected && "bg-violet-50/60 dark:bg-violet-900/10")}
               >
-                <TableCell className="pl-4">
+                {/* <TableCell className="pl-4">
                   <Checkbox
-                    // checked={isSelected}
-                    // onCheckedChange={() => toggleRow(member.id)}
+                    checked={isSelected}
+                    onCheckedChange={() => toggle(member.id)}
                     aria-label={`Select ${member.username}`}
                   />
-                </TableCell>
+                </TableCell> */}
 
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -146,7 +118,9 @@ export function MembersTable({ memberData }: Props) {
                   {member.createdAt ? new Date(member.createdAt).toLocaleDateString() : ""}
                 </TableCell>
 
-                <TableCell className="pr-3">{/* <RowActions member={member} /> */}</TableCell>
+                <TableCell className="pr-3">
+                  <RowActionsMenu member={member} />
+                </TableCell>
               </TableRow>
             );
           })}
