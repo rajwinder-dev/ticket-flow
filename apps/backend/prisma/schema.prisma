@@ -418,8 +418,9 @@ enum ActorType {
 
 enum LogSeverity {
   INFO
-  WARNING
-  CRITICAL
+  WARN
+  ERROR
+  DEBUG
 }
 
 enum EntryType {

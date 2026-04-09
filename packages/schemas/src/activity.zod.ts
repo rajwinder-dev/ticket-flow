@@ -16,5 +16,13 @@ export const activityLogSchema = z.object({
   userAgent: z.string().nullable(),
   organizationId: z.string(),
 });
+export const activitySummaryResponse = z.object({
+  warn: z.number(),
+  info: z.number(),
+  error: z.number(),
+  total: z.number()
+})
 export type ActivityLogSchema = z.infer<typeof activityLogSchema>;
+export type ActivitySummaryResponse = z.infer<typeof activitySummaryResponse>;
+
 

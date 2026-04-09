@@ -39,6 +39,7 @@ export class ActivityService {
       console.error("Failed to create activity log:", error);
     }
   };
+
   static getActivityLogs = async (organizationId: string) => {
     return await prisma.activityLog.findMany({
       where: {
@@ -46,12 +47,27 @@ export class ActivityService {
       },
     });
   };
-  static getActivityLog = async (id: string) => {
-    return await prisma.activityLog.findUnique({
+  static getActivitySummary = async (organizationId: string) => {
+    const data = await prisma.activityLog.groupBy({
       where: {
-        id,
+        organizationId,
+      },
+      by: "severity",
+      _count: {
+        _all: true,
       },
     });
+    const total = await prisma.activityLog.count({ where: { organizationId } });
+    // Format output to group as { WARN: count, INFO: count, ERROR: count }
+    const summary = { warn: 0, info: 0, error: 0 };
+
+    data.forEach((item: any) => {
+      if (item.severity === "WARN") summary.warn = item._count._all;
+      if (item.severity === "INFO") summary.info = item._count._all;
+      if (item.severity === "ERROR") summary.error = item._count._all;
+    });
+
+    return { ...summary, total };
   };
   static getDiff = (oldData: any, newData: any) => {
     const diff: Record<string, { from: any; to: any }> = {};

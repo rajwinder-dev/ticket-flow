@@ -7,8 +7,14 @@ const useActivity = () => {
   const { data: activity, isLoading: isLoadingActivity } = useQuery({
     queryFn: activityApi.getAllActivity,
     queryKey: ["activity", orgId],
+    enabled: !!orgId,
   });
-  return { activity, isLoadingActivity };
+  const { data: activitySummary, isLoading: isLoadingActivitySummary } = useQuery({
+    queryFn: activityApi.getSummary,
+    queryKey: ["activity", "summary", orgId],
+    enabled: !!orgId,
+  });
+  return { activity, isLoadingActivity, activitySummary, isLoadingActivitySummary };
 };
 
 export default useActivity;
