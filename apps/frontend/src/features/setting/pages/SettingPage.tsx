@@ -1,10 +1,11 @@
 import PageHeader from "@/components/PageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfileTab from "@/features/setting/ProfileTab";
-import GeneralTab from "@/features/setting/tabs/GeneralTab";
-import OrganizationTab from "@/features/setting/tabs/OrganizationTab";
-import SecurityTab from "@/features/setting/tabs/SecurityTab";
+import ProfileTab from "@/features/setting/components/ProfileTab";
+
 import { Building2, Lock, Settings2, User } from "lucide-react";
+import GeneralTab from "../components/tabs/GeneralTab";
+import OrganizationTab from "../components/tabs/OrganizationTab";
+import SecurityTab from "../components/tabs/SecurityTab";
 
 export default function SettingsPage() {
   return (

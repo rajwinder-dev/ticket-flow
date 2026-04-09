@@ -37,16 +37,16 @@ const mailtrapSchema = z.object({
 // --- Main Inputs ---
 
 export const createEmailProviderInput = {
-  bodySchema: z.discriminatedUnion("providerType", [resendSchema, mailtrapSchema]),
+  bodySchema: z.discriminatedUnion("providerType", [resendSchema]),
 };
 
 export const updateEmailProviderInput = {
-  bodySchema: z.discriminatedUnion("providerType", [resendSchema, mailtrapSchema]),
+  bodySchema: z.discriminatedUnion("providerType", [resendSchema]),
 };
 
 export const emailProviderSchema = z.object({
   id: z.uuid(),
-  providerType: z.string(),
+  providerType: z.enum(["RESEND", "SMTP"]),
   fromEmail: z.email(),
   domain: z.url(),
   priority: z.number(),

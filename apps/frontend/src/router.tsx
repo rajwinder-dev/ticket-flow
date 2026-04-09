@@ -19,6 +19,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import OrgLayout from "./layouts/OrgLayout";
 import CustomerPage from "./features/customer/components/CustomerPage";
 import InviteMemberPage from "./features/members/components/InviteMemberPage";
+import ActivityPage from "./features/activity/components/ActivityPage";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
                   { path: "queue/:queueId", element: <QueueDetailPage /> },
                   { path: "setting", element: <SettingsPage /> },
                   { path: "setting/rbac", element: <RolePage /> },
+                  { path: "setting/activity", element: <ActivityPage /> },
                   { path: "member", element: <MembersPage /> },
                   { path: "customer", element: <CustomerPage /> },
                 ],

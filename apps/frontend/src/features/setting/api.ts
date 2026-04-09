@@ -2,6 +2,7 @@ import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@/util
 import type {
   CreateEmailProviderInput,
   CreateSmtpInput,
+  EmailProviderSchema,
   UpdateEmailProviderInput,
 } from "@repo/schemas";
 
@@ -15,7 +16,7 @@ export const emailApi = {
     return res;
   },
   getProviders: async () => {
-    const res = await getRequestMany({ path: "/email" });
+    const res = await getRequestMany<EmailProviderSchema>({ path: "/email" });
     return res;
   },
   updateCredentials: async (id: string, data: UpdateEmailProviderInput) => {

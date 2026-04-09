@@ -1,3 +1,4 @@
+export * from "./activity.zod";
 export * from "./auth.zod";
 export * from "./customer.zod";
 export * from "./email.zod";

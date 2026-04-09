@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"; // Added for description
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateOrganizationInput, type UpdateOrganizationInput } from "@repo/schemas";
 import { useForm } from "react-hook-form";
-import useOrganizations from "../organization/hooks";
+import useOrganizations from "../../organization/hooks";
 
 const OrganizationForm = () => {
   const { currentOrganization, isLoadingCurrent, updateOrg, isUpdatingOrg } = useOrganizations();

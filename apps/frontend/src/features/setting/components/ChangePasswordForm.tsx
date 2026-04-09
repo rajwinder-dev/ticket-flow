@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordInput, type ChangePasswordInput } from "@repo/schemas";
 import { useForm } from "react-hook-form";
-import useAuth from "../auth/hooks";
+import useAuth from "../../auth/hooks";
 
 const ChangePasswordForm = () => {
   const { changePasswordMutate, isChangingPassword } = useAuth();

@@ -39,6 +39,20 @@ export class ActivityService {
       console.error("Failed to create activity log:", error);
     }
   };
+  static getActivityLogs = async (organizationId: string) => {
+    return await prisma.activityLog.findMany({
+      where: {
+        organizationId,
+      },
+    });
+  };
+  static getActivityLog = async (id: string) => {
+    return await prisma.activityLog.findUnique({
+      where: {
+        id,
+      },
+    });
+  };
   static getDiff = (oldData: any, newData: any) => {
     const diff: Record<string, { from: any; to: any }> = {};
 

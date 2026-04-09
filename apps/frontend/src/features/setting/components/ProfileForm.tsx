@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { dirtyValues } from "@/lib/utils";
 import type { UpdateMyDetailsInput } from "@repo/schemas";
 import { useForm } from "react-hook-form";
-import useUser from "../users/hooks";
-import { dirtyValues } from "@/lib/utils";
+import useUser from "../../users/hooks";
 
 // 1. Define the schema for editable fields only
 
@@ -31,8 +31,8 @@ const ProfileForm = () => {
   });
 
   const onSubmit = async (data: UpdateMyDetailsInput) => {
-    const output = dirtyValues(dirtyFields, data)
-    updateMyDetails(output)
+    const output = dirtyValues(dirtyFields, data);
+    updateMyDetails(output);
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

@@ -16,7 +16,6 @@ function useEmail() {
   const { data: emailProviders, isLoading: isLoadingEmailProviders } = useQuery({
     queryFn: emailApi.getProviders,
     queryKey: ["email-provider"],
-    retry: false,
   });
 
   const { mutate: createEmailProvider, isPending: isCreatingEmailProvider } = useMutation({

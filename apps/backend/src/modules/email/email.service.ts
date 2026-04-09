@@ -71,7 +71,7 @@ export class EmailService {
     if (existingProviderCount === 2)
       throw new appError("Max 2 provider per organization is allowed", 400, "CONFLICT_ERROR");
     const encryptCredentials = encrypt(JSON.stringify(credentials));
-    await this.verifyProvider(userEmail, providerType, credentials);
+    // await this.verifyProvider(userEmail, providerType, credentials);
     return await prisma.emailProvider.create({
       data: {
         organizationId,

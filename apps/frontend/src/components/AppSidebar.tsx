@@ -71,6 +71,10 @@ const navMainItems = [
         title: "Roles & Permissions",
         url: "/setting/rbac",
       },
+      {
+        title: "Activity logs",
+        url: "/setting/activity",
+      },
     ],
   },
 ];

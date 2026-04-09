@@ -13,6 +13,7 @@ import { appError } from "./core/utils/appError";
 import { globalHandler } from "./core/utils/globalHandler";
 
 import { DevMiddleware } from "./core/middleware/devMiddleware";
+import ActivityRouter from "./modules/activity/activity.routes";
 import authRouter from "./modules/auth/auth.route";
 import customerRoutes from "./modules/customer/customer.routes";
 import dashboardRouter from "./modules/dashboard/dashboard.route";
@@ -75,6 +76,7 @@ app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/ticket", TicketRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/member", memberRouter);
+app.use("/api/v1/activity", ActivityRouter)
 // app.use("/api/v1/notify", notificationRouter);
 // app.use("/api/v1/chat", chatRouter);
 
