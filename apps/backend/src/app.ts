@@ -17,6 +17,7 @@ import authRouter from "./modules/auth/auth.route";
 import customerRoutes from "./modules/customer/customer.routes";
 import dashboardRouter from "./modules/dashboard/dashboard.route";
 import emailRouter from "./modules/email/email.routes";
+import memberRouter from "./modules/member/member.routes";
 import organizationRouter from "./modules/organizations/organization.routes";
 import QueueRoutes from "./modules/queue/queue.routes";
 import QueueGroupRoutes from "./modules/queueGroup/queueGroup.routes";
@@ -73,6 +74,7 @@ app.use("/api/v1/queue-group", QueueGroupRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/ticket", TicketRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/member", memberRouter);
 // app.use("/api/v1/notify", notificationRouter);
 // app.use("/api/v1/chat", chatRouter);
 

@@ -1,14 +1,36 @@
-import { getRequest, getRequestMany, postRequest } from "@/utils/axis";
-import type { InviteMemberDetailsResponse, InviteUserOrganizationInput, MemberSchemaResponse } from "@repo/schemas";
+import { deleteRequest, getRequest, getRequestMany, postRequest } from "@/utils/axis";
+import type {
+  InviteMemberDetailsResponse,
+  InviteUserOrganizationInput,
+  MemberSchemaResponse,
+} from "@repo/schemas";
 
 export const memberApi = {
   getMembers: async () => {
     const data = await getRequestMany<MemberSchemaResponse>({
-      path: `/org/member`,
+      path: `/member`,
     });
     return data;
   },
-   getInviteDetails: async (token: string) => {
+  assignQueue: async ({ queueId, userId }: { queueId: string; userId: string }) => {
+    const data = await postRequest({
+      path: `/member/${queueId}/agents/${userId}`,
+    });
+    return data;
+  },
+  unassignQueue: async ({ queueId, userId }: { queueId: string; userId: string }) => {
+    const data = await deleteRequest({
+      path: `/member/${queueId}/agents/${userId}/unassign`,
+    });
+    return data;
+  },
+  updateRole: async ({ roleId, userId }: { roleId: string; userId: string }) => {
+    const data = await postRequest({
+      path: `/member/${roleId}/roles/${userId}`,
+    });
+    return data;
+  },
+  getInviteDetails: async (token: string) => {
     const data = await getRequest<InviteMemberDetailsResponse>({
       path: `/org/${token}/invite`,
     });
@@ -22,7 +44,7 @@ export const memberApi = {
     return data;
   },
   acceptInvite: async (token: string) => {
-    const data = await postRequest<{organizationId: string}>({
+    const data = await postRequest<{ organizationId: string }>({
       path: `/org/${token}/invite`,
     });
     return data;

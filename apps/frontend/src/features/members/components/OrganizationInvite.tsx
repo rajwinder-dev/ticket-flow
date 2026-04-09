@@ -13,14 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useOrganizations from "@/features/organization/hooks";
 import useRole from "@/features/role/hooks";
 import { inviteUserOrganizationInput, type InviteUserOrganizationInput } from "@repo/schemas";
+import useMember from "../hooks";
 
 // Define the schema
 
 export function OrganizationInvite() {
-  const { inviteUserMutate, isInvitingUser } = useOrganizations();
+  const { inviteUserMutate, isInvitingUser } = useMember();
   const {
     register,
     handleSubmit,

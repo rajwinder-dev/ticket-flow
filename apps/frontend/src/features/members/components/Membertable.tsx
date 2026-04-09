@@ -11,6 +11,7 @@ import type { MemberSchemaResponse } from "@repo/schemas";
 import { useMembersStore } from "../store";
 import { Avatar } from "./MemberBandges";
 import { RowActionsMenu } from "./RowActionsMenu";
+import TableQueueCell from "./TableQueueCell";
 
 interface Props {
   memberData: MemberSchemaResponse[];
@@ -97,12 +98,7 @@ export function MembersTable({ memberData }: Props) {
                   {member.queues && member.queues.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {member.queues.map((q) => (
-                        <span
-                          key={q.name}
-                          className="border-border bg-muted/50 text-muted-foreground inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px]"
-                        >
-                          {q.name}
-                        </span>
+                        <TableQueueCell queue={q} userId={member.userId} />
                       ))}
                     </div>
                   ) : (

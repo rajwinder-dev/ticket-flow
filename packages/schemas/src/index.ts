@@ -1,6 +1,7 @@
 export * from "./auth.zod";
 export * from "./customer.zod";
 export * from "./email.zod";
+export * from "./member.zod";
 export * from "./organization.zod";
 export * from "./permissions.zod";
 export * from "./queue.zod";

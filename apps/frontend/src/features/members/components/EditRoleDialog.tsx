@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,17 +19,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useRole from "@/features/role/hooks";
+import { useState } from "react";
+import useMember from "../hooks";
 
 interface Props {
   open: boolean;
   onOpenChange: (value: boolean) => void;
-  memberId: string[];
+  userId: string;
   currentRole?: string | null;
 }
 
-const EditRoleDialog = ({ open, onOpenChange, memberId, currentRole }: Props) => {
+const EditRoleDialog = ({ open, onOpenChange, userId, currentRole }: Props) => {
   const { roles } = useRole();
-  console.log(memberId, currentRole);
+  const { updateRoleMutate, isUpdatingRole } = useMember();
+  const [roleId, setRoleId] = useState<string>(currentRole ?? "");
+
+  const canSubmit = Boolean(roleId) && !isUpdatingRole;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -41,8 +47,8 @@ const EditRoleDialog = ({ open, onOpenChange, memberId, currentRole }: Props) =>
         </DialogHeader>
         <div className="space-y-2">
           <Label>Role</Label>
-          <Select>
-            <SelectTrigger>
+          <Select value={roleId} onValueChange={setRoleId}>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
             <SelectContent>
@@ -55,10 +61,28 @@ const EditRoleDialog = ({ open, onOpenChange, memberId, currentRole }: Props) =>
           </Select>
         </div>
         <DialogFooter>
-          <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => onOpenChange(false)}
+            disabled={isUpdatingRole}
+          >
             Cancel
           </Button>
-          <Button type="button">Save changes</Button>
+          <Button
+            type="button"
+            disabled={!canSubmit}
+            onClick={() =>
+              updateRoleMutate(
+                { roleId, userId },
+                {
+                  onSuccess: () => onOpenChange(false),
+                },
+              )
+            }
+          >
+            {isUpdatingRole ? "Saving..." : "Save changes"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

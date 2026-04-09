@@ -79,13 +79,14 @@ const queueSchema = z.object({
 
 export const memberSchemaResponse = z.object({
   id: z.uuid(),
+  userId: z.uuid(),
   email: z.email().nullable(),
   username: z.string().nullable(),
   avatar: z.string().nullable(),
   role: z.string().nullable(),
   roleId: z.string().nullable(),
   createdAt: z.coerce.date(),
-  organizationId: z.string().uuid(),
+  organizationId: z.uuid(),
   totalTickets: z.number().optional(),
   queues: z.array(queueSchema).nullable(),
 });

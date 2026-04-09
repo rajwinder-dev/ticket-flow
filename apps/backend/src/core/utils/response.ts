@@ -1,5 +1,6 @@
 import { Response } from "express";
 import z from "zod";
+import { log } from "../helper/log";
 
 /**
  * TYPES & INTERFACES
@@ -26,7 +27,8 @@ export function sendResponse<T extends z.ZodTypeAny>(
     const result = options.schema.safeParse(data);
 
     if (!result.success) {
-      console.warn("⚠️ RESPONSE VALIDATION WARNING:", result.error);
+      log.warn("RESPONSE VALIDATION WARNING");
+      log.data("Error", result.error)
     } else {
       finalPayload = result.data;
     }

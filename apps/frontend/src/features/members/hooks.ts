@@ -40,6 +40,44 @@ const useMember = () => {
       toast.error(error.message);
     },
   });
+
+  const { mutate: assignQueueMutate, isPending: isAssigningQueue } = useMutation({
+    mutationFn: ({ queueId, userId }: { queueId: string; userId: string }) =>
+      memberApi.assignQueue({ queueId, userId }),
+    onSuccess: () => {
+      toast.success("Queue assigned successfully");
+      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["queue", orgId] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const { mutate: unassignQueueMutate, isPending: isUnAssigningQueue } = useMutation({
+    mutationFn: ({ queueId, userId }: { queueId: string; userId: string }) =>
+      memberApi.unassignQueue({ queueId, userId }),
+    onSuccess: () => {
+      toast.success("Queue unassigned successfully");
+      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["queue", orgId] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: updateRoleMutate, isPending: isUpdatingRole } = useMutation({
+    mutationFn: ({ roleId, userId }: { roleId: string; userId: string }) =>
+      memberApi.updateRole({ roleId, userId }),
+    onSuccess: () => {
+      toast.success("Role updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["role", orgId] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   return {
     members,
     isLoadingMembers,
@@ -47,9 +85,15 @@ const useMember = () => {
     isInvitingUser,
     acceptInviteMutate,
     isAcceptingInvite,
+    assignQueueMutate,
+    isAssigningQueue,
+    updateRoleMutate,
+    isUpdatingRole,
     inviteDetails,
     isLoadingInviteDetails,
-    InviteError
+    InviteError,
+    unassignQueueMutate,
+    isUnAssigningQueue,
   };
 };
 export default useMember;

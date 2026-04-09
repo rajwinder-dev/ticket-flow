@@ -30,13 +30,13 @@ export function RowActionsMenu({ member }: Props) {
         <EditRoleDialog
           open={openEditRole}
           onOpenChange={setOpenEditRole}
-          memberId={[member.id]}
+          userId={member.userId}
           currentRole={member?.roleId}
         />
         <AssignQueueDialog
           open={openAssignQueue}
           onOpenChange={setOpenAssignQueue}
-          memberId={[member.id]}
+          userId={member.userId}
         />
         {/* <DropdownMenuSeparator /> */}
         {/* <DisableMemberDialog
