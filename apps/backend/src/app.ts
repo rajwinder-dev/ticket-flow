@@ -27,6 +27,7 @@ import TicketRouter from "./modules/ticket/ticket.routes";
 import tokenRoute from "./modules/token/token.routes";
 import userRouter from "./modules/user/user.routes";
 import webhookRouter from "./modules/webhook/webhook.routes";
+import lookupRouter from "./modules/lookup/lookup.routes";
 
 export const app = express();
 
@@ -77,6 +78,7 @@ app.use("/api/v1/ticket", TicketRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/member", memberRouter);
 app.use("/api/v1/activity", ActivityRouter)
+app.use("/api/v1/lookup", lookupRouter)
 // app.use("/api/v1/notify", notificationRouter);
 // app.use("/api/v1/chat", chatRouter);
 

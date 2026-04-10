@@ -270,7 +270,7 @@ export class QueueService {
     queueGroupId: string;
     organizationId: string;
   }) => {
-    const queues = await prisma.queue.findFirst({
+    const queue = await prisma.queue.findFirst({
       where: {
         queueGroupId,
         organizationId,
@@ -279,7 +279,11 @@ export class QueueService {
       orderBy: {
         order: "asc",
       },
+      select: {
+        id: true,
+      },
     });
-    return queues;
+    // if (!queue?.id) throw new appError("Queue Id not found ", 400);
+    return queue?.id;
   };
 }

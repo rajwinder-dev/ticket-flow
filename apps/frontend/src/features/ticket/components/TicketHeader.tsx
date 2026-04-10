@@ -1,18 +1,10 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import TicketEditForm from "./TicketEditForm";
+import { useState } from "react";
+import { CreateTicketDialog } from "./CreateTicketDialog";
 
 const TicketHeader = () => {
+  const [openForm, setOpenForm] = useState(false);
   return (
     <div className="flex items-center justify-between gap-4 border-b px-6 py-4">
       <div>
@@ -21,27 +13,13 @@ const TicketHeader = () => {
           View and filter ticket-related data in one place.
         </p>
       </div>
-
-      <Dialog>
-        <DialogTrigger>
-          <Button>
-            <Plus /> Create Ticket
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create Ticket</DialogTitle>
-            <DialogDescription>Update ticket details and save changes.</DialogDescription>
-          </DialogHeader>
-          <TicketEditForm />
-          <DialogFooter>
-            <DialogClose>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button>Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Button onClick={() => setOpenForm(true)}>
+        <Plus /> Create Ticket
+      </Button>
+      <CreateTicketDialog
+         openForm={openForm}
+         setOpenForm={setOpenForm}
+      />
     </div>
   );
 };

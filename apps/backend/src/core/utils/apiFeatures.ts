@@ -21,7 +21,7 @@ export class APIFeatures {
     this.ignore = ignore;
     this.filterOptions = {};
     this.queryString = queryString;
-    this.limit = 10;
+    this.limit = 30;
     this.offset = 0;
     this.ignore?.ignore.map((item) => {
       delete this.queryString[item];

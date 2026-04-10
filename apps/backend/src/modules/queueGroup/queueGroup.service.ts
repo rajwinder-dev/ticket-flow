@@ -233,7 +233,10 @@ export class QueueGroupService {
         default: true,
         active: true,
       },
+      select: {
+        id: true
+      }
     });
-    return defaultGroup;
+    return defaultGroup?.id;
   };
 }

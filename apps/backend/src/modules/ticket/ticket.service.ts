@@ -1,10 +1,9 @@
-import { Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
+import { priority, Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
 import { ActivityService } from "../activity/activity.service";
 import { QueueService } from "../queue/queue.service";
-import { QueueGroupService } from "../queueGroup/queueGroup.service";
 
 export class TicketService {
   private static allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
@@ -16,16 +15,14 @@ export class TicketService {
     CLOSED: [],
   };
   static createTicket = async ({
-    subject,
-    description,
+    data,
     organizationId,
     customerId,
     assignedTo,
     queueId,
     userId,
   }: {
-    subject: string;
-    description: string;
+    data: { subject: string; description: string; priority: priority; category: string };
     organizationId: string;
     customerId: string;
     assignedTo?: string;
@@ -35,8 +32,7 @@ export class TicketService {
     const ticket = await prisma.ticket.create({
       data: {
         code: readableId("TKT"),
-        subject,
-        description,
+        ...data,
         organizationId,
         customerId,
         assignedTo,
@@ -99,20 +95,18 @@ export class TicketService {
 
     return data;
   };
-  static resolveQueueAssignment = async ({ organizationId }: { organizationId: string }) => {
-    // todo: later add category based select group if not then default
-    let groupId, queueId;
-    const group = await QueueGroupService.getDefaultGroup(organizationId);
-    if (group) {
-      groupId = group.id;
-      // always select lower order queue
-      const queue = await QueueService.getLowerOrderQueue({
-        queueGroupId: group.id,
-        organizationId,
-      });
-      if (queue) queueId = queue.id;
-    }
-    return { groupId, queueId };
+  static resolveQueueAssignment = async ({
+    organizationId,
+    groupId,
+  }: {
+    organizationId: string;
+    groupId: string;
+  }) => {
+    const queueId = await QueueService.getLowerOrderQueue({
+      queueGroupId: groupId,
+      organizationId,
+    });
+    return queueId;
   };
   static resolveAgentAssignment = async ({
     queueId,
@@ -123,9 +117,9 @@ export class TicketService {
   }) => {
     // todo: later add strategies  round-rebin, ,load balance and availability
     const queueAgents = await QueueService.getQueueAgents({ queueId, organizationId });
-    if (queueAgents.length === 0) return null;
+  
     const agent = queueAgents[0];
-    return agent;
+    return agent?.id;
   };
   static updateStatus = async ({
     ticketId,
@@ -276,11 +270,10 @@ export class TicketService {
       // if queue given , resovle agent only
       case "QUEUE":
         {
-          const agentData = await this.resolveAgentAssignment({
+          agentId = await this.resolveAgentAssignment({
             queueId: assignId,
             organizationId,
           });
-          agentId = agentData?.id;
         }
         break;
       case "AGENT":
@@ -290,7 +283,7 @@ export class TicketService {
             where: {
               agentId,
               organizationId,
-              active: true
+              active: true,
             },
             select: { queueId: true },
           });
@@ -373,13 +366,13 @@ export class TicketService {
       throw new appError("No further queue. Please assign manually.", 409, "CONFLICT_ERROR");
 
     // try to get agent
-    const agent = await this.resolveAgentAssignment({ queueId: nextQueue.id, organizationId });
-    if (!agent) throw new appError("No Agent found.", 409, "CONFLICT_ERROR");
+    const agentId = await this.resolveAgentAssignment({ queueId: nextQueue.id, organizationId });
+    if (!agentId) throw new appError("No Agent found.", 409, "CONFLICT_ERROR");
 
     const updatedTicket = await this.updateTicketMovement({
       ticketId,
       nextQueueId: nextQueue.id,
-      nextAgentId: agent.id,
+      nextAgentId: agentId,
       organizationId,
       action: "ESCALATED",
     });
@@ -414,8 +407,8 @@ export class TicketService {
       const currentTicket = await tx.ticket.findUnique({
         where: { id: ticketId },
       });
-// ! ts ignore undefined case
-//  todo: if queue id not in ticket then find
+      // ! ts ignore undefined case
+      //  todo: if queue id not in ticket then find
       // decrement previous agent (only if different)
       if (currentTicket?.assignedTo && currentTicket.assignedTo !== nextAgentId) {
         await tx.queueAgent.update({
@@ -424,7 +417,7 @@ export class TicketService {
               agentId: currentTicket.assignedTo,
               organizationId,
 
-              queueId: currentTicket.queueId!
+              queueId: currentTicket.queueId!,
             },
           },
           data: {
@@ -458,7 +451,7 @@ export class TicketService {
             agentId: nextAgentId,
             organizationId,
             // ! ts ignore undefined field
-            queueId: updatedTicket.queueId!
+            queueId: updatedTicket.queueId!,
           },
         },
         data: {

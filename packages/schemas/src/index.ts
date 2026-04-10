@@ -2,6 +2,7 @@ export * from "./activity.zod";
 export * from "./auth.zod";
 export * from "./customer.zod";
 export * from "./email.zod";
+export * from "./lookup.zod";
 export * from "./member.zod";
 export * from "./organization.zod";
 export * from "./permissions.zod";

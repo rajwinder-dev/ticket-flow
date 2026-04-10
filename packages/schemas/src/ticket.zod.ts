@@ -5,9 +5,18 @@ import { validBigDescription, validEmail, validString } from "./helper/zodHelper
 export const createTicketInput = {
   bodySchema: z
     .object({
-      subject: validString, // Trims and enforces 2-50 chars
-      description: validBigDescription, // Trims and enforces 10+ chars
-      email: validEmail, // Normalizes to lowercase
+      subject: validString,
+      description: validBigDescription,
+      email: validEmail,
+      priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+      category: validString,
+      assignment: z
+        .object({
+          groupId: z.uuid().optional(),
+          queueId: z.uuid().optional(),
+          agentId: z.uuid().optional(),
+        })
+        .optional(),
     })
     .strict(),
 };

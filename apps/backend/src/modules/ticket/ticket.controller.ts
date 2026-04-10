@@ -10,30 +10,67 @@ import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
+import { ActivityService } from "../activity/activity.service";
 import { CustomerService } from "../customer/customer.service";
+import { QueueGroupService } from "../queueGroup/queueGroup.service";
 import { TicketService } from "./ticket.service";
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
-    let agentId: string | undefined;
+    const { email, assignment, ...data } = req.body as CreateTicketInput;
+    let groupId = assignment?.groupId;
+    let queueId = assignment?.queueId;
+    let agentId = assignment?.agentId;
+
     const organizationId = req.organization.id;
-    const { subject, description, email } = req.body as CreateTicketInput;
     const customerData = await CustomerService.createCustomerIdentity(email, organizationId);
-    const { groupId, queueId } = await TicketService.resolveQueueAssignment({ organizationId });
-    if (groupId && queueId) {
-      const agentData = await TicketService.resolveAgentAssignment({ queueId, organizationId });
-      agentId = agentData?.id;
+    if (!groupId) {
+      groupId = await QueueGroupService.getDefaultGroup(organizationId);
     }
-    await TicketService.createTicket({
-      subject,
-      description,
-      assignedTo: agentId,
+    if (!queueId && groupId) {
+      queueId = await TicketService.resolveQueueAssignment({
+        organizationId,
+        groupId,
+      });
+    }
+    if (!agentId && queueId) {
+      agentId = await TicketService.resolveAgentAssignment({
+        organizationId,
+        queueId,
+      });
+    }
+    const finalAssignment = {
+      groupId,
+      queueId,
+      agentId,
+    };
+    const ticket = await TicketService.createTicket({
+      data,
+      assignedTo: finalAssignment.agentId,
       organizationId,
       customerId: customerData.id,
-      queueId,
+      queueId: finalAssignment.queueId,
       userId: req.user.id,
     });
 
+    if (agentId && queueId) {
+      await TicketService.updateTicketMovement({
+        ticketId: ticket.id,
+        nextAgentId: agentId,
+        nextQueueId: queueId,
+        organizationId,
+        action: "ASSIGNED",
+      });
+      await ActivityService.lagActivity({
+        organizationId,
+        actorId: req.user.id,
+        actorType: assignment?.agentId ? "USER" : "SYSTEM",
+        message: "ticket escalated ",
+        event: "ticket.assigned",
+        entityId: ticket.id,
+        entityType: "TICKET",
+      });
+    }
     response(res, { groupId, queueId, agentId }, 201);
   });
   static getAllTickets = catchAsync(async (req, res, _next) => {
@@ -59,7 +96,10 @@ export class TicketController {
   });
   static getTicketDetails = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const data = await TicketService.getTicketDetails({ticketId: id, organizationId: req.organization.id});
+    const data = await TicketService.getTicketDetails({
+      ticketId: id,
+      organizationId: req.organization.id,
+    });
     response(res, data);
   });
   static getAssignedTickets = catchAsync(async (req, res, _next) => {

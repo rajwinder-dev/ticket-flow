@@ -15,7 +15,7 @@ export function useTicket() {
   const queryClient = useQueryClient();
   const { data: ticket, isLoading: isLoadingTicket } = useQuery({
     queryFn: ticketApi.getAll,
-    queryKey: ["ticket"],
+    queryKey: ["ticket", orgId],
     enabled: !!orgId,
   });
   const { data: assignedTicket, isLoading: isLoadingAssigned } = useQuery({

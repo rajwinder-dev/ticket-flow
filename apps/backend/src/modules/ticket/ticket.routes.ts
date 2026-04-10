@@ -24,12 +24,12 @@ TicketRouter.get(
   authMiddleware.verifyPermission("ticket", "view_all"),
   TicketController.getAllTickets,
 );
-TicketRouter.get("/:id", TicketController.getTicketDetails)
 TicketRouter.get(
   "/me",
   authMiddleware.verifyPermission("ticket", "view_own"),
   TicketController.getAssignedTickets,
 );
+TicketRouter.get("/:id", TicketController.getTicketDetails)
 TicketRouter.patch(
   "/:id/status",
   authMiddleware.verifyPermission("ticket", "change_status"),
