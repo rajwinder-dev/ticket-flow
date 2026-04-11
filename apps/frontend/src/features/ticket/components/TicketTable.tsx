@@ -6,9 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -36,7 +33,7 @@ import { useTicket } from "../hooks";
 
 // Assuming EMPLOYEES still comes from your store for the assignment list
 import { formatDate } from "@/features/activity/utils";
-import { EMPLOYEES } from "../ticketStore";
+import { TicketEscalateDialog } from "./TicketEscalateDialog";
 import { TicketPriorityCell } from "./TicketPriorityCell";
 import { TicketStatusCell } from "./TicketStatusCell";
 
@@ -44,6 +41,7 @@ const TicketTable = () => {
   // Use the data and loading state from your custom hook
   const { ticketData, isLoadingTicketData } = useTicket();
   const [editTicketForm, setEditTicketForm] = useState(false);
+  const [escalateTicketForm, setEscalateTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<TicketSchemaResponse | null>(null);
   function handleOpenTicketForm(ticket: TicketSchemaResponse) {
     setEditTicketForm(true);
@@ -51,7 +49,12 @@ const TicketTable = () => {
   }
   function handleCloseTicketForm() {
     setEditTicketForm(false);
+    setEscalateTicketForm(false);
     setSelectedTicket(null);
+  }
+  function handleOpenEscalateForm(ticket: TicketSchemaResponse) {
+    setEscalateTicketForm(true);
+    setSelectedTicket(ticket);
   }
   return (
     <div>
@@ -159,19 +162,9 @@ const TicketTable = () => {
                       <DropdownMenuItem onClick={() => handleOpenTicketForm(ticket)}>
                         Edit ticket
                       </DropdownMenuItem>
-
-
-
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>Assign ticket</DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          {EMPLOYEES.map((employee) => (
-                            <DropdownMenuItem key={employee.id}>{employee.name}</DropdownMenuItem>
-                          ))}
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>Unassign</DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuSub>
+                      <DropdownMenuItem onClick={() => handleOpenEscalateForm(ticket)}>
+                        Escalate
+                      </DropdownMenuItem>
 
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="text-destructive">
@@ -188,6 +181,13 @@ const TicketTable = () => {
       {selectedTicket && (
         <TicketEditDialog
           open={editTicketForm}
+          setOpen={handleCloseTicketForm}
+          ticket={selectedTicket}
+        />
+      )}
+      {selectedTicket && (
+        <TicketEscalateDialog
+          open={escalateTicketForm}
           setOpen={handleCloseTicketForm}
           ticket={selectedTicket}
         />

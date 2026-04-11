@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { validUuidParams } from "./global.zod";
 import { validBigDescription, validEmail, validString } from "./helper/zodHelper";
-
+// Constants
 export const ticketPriority = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
 export const ticketStatus = [
   "OPEN",
@@ -10,7 +10,7 @@ export const ticketStatus = [
   "ON_HOLD",
   "RESOLVED",
   "REOPENED",
-  "ESCALATED"
+  "ESCALATED",
 ] as const;
 export const ticketCategory = ["BUG", "FEATURE", "TASK", "DOCS"] as const;
 export const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
@@ -22,7 +22,19 @@ export const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   REOPENED: ["IN_PROGRESS"],
   CLOSED: ["REOPENED"],
 };
+export const ESCALATION_REASONS = [
+  { value: "technical-complexity", label: "Technical Complexity" },
+  { value: "customer-dissatisfaction", label: "Customer Dissatisfaction" },
+  { value: "sla-breach", label: "SLA Breach Risk" },
+  { value: "security-concern", label: "Security Concern" },
+  { value: "billing-dispute", label: "Billing Dispute" },
+  { value: "requires-approval", label: "Requires Management Approval" },
+  { value: "repeat-issue", label: "Repeat / Recurring Issue" },
+  { value: "other", label: "Other" },
+] as const;
+const escalateTicketReasons = ESCALATION_REASONS.map(item => (item.value))
 
+// zod schemas
 export const createTicketInput = {
   bodySchema: z
     .object({
@@ -93,7 +105,11 @@ const AssignedToUserSchema = z.object({
   id: z.string().uuid(),
   username: z.string().min(1),
 });
-
+const escalateTicket = { bodySchema: z.object({
+  reason:z.enum(escalateTicketReasons),
+  priority: z.enum(ticketPriority),
+  comment: z.string().min(1, "comment is required")
+}) };
 // Main ticket schema
 export const ticketSchemaResponse = z.object({
   id: z.string().uuid(),
@@ -124,3 +140,4 @@ export type UpdateTicketStatusInput = z.infer<typeof updateTicketStatusInput.bod
 export type UpdateTicketPriorityInput = z.infer<typeof updateTicketPriorityInput.bodySchema>;
 export type CreateTicketCommentInput = z.infer<typeof createTicketCommentInput.bodySchema>;
 export type AssignTicketInput = z.infer<typeof assignTicketInput.bodySchema>;
+export type EscalateTicketInput = z.infer<typeof escalateTicket.bodySchema>;
