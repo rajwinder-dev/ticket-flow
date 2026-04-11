@@ -10,15 +10,17 @@ export const ticketStatus = [
   "ON_HOLD",
   "RESOLVED",
   "REOPENED",
+  "ESCALATED"
 ] as const;
 export const ticketCategory = ["BUG", "FEATURE", "TASK", "DOCS"] as const;
 export const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
   OPEN: ["IN_PROGRESS", "CLOSED"],
+  ESCALATED: ["IN_PROGRESS", "CLOSED"],
   IN_PROGRESS: ["RESOLVED", "ON_HOLD"],
   ON_HOLD: ["IN_PROGRESS"],
   RESOLVED: ["CLOSED", "REOPENED"],
   REOPENED: ["IN_PROGRESS"],
-  CLOSED: [],
+  CLOSED: ["REOPENED"],
 };
 
 export const createTicketInput = {

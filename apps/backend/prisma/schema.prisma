@@ -310,6 +310,7 @@ enum TicketStatus {
   RESOLVED
   REOPENED
   CLOSED
+  ESCALATED
 }
 
 model Ticket {
