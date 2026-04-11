@@ -1,38 +1,12 @@
+import {
+  escalationReasonValues,
+  ticketCategory,
+  ticketPriority,
+  ticketStatus,
+} from "@repo/constants";
 import { z } from "zod";
 import { validUuidParams } from "./global.zod";
 import { validBigDescription, validEmail, validString } from "./helper/zodHelper";
-// Constants
-export const ticketPriority = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
-export const ticketStatus = [
-  "OPEN",
-  "CLOSED",
-  "IN_PROGRESS",
-  "ON_HOLD",
-  "RESOLVED",
-  "REOPENED",
-  "ESCALATED",
-] as const;
-export const ticketCategory = ["BUG", "FEATURE", "TASK", "DOCS"] as const;
-export const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
-  OPEN: ["IN_PROGRESS", "CLOSED"],
-  ESCALATED: ["IN_PROGRESS", "CLOSED"],
-  IN_PROGRESS: ["RESOLVED", "ON_HOLD"],
-  ON_HOLD: ["IN_PROGRESS"],
-  RESOLVED: ["CLOSED", "REOPENED"],
-  REOPENED: ["IN_PROGRESS"],
-  CLOSED: ["REOPENED"],
-};
-export const ESCALATION_REASONS = [
-  { value: "technical-complexity", label: "Technical Complexity" },
-  { value: "customer-dissatisfaction", label: "Customer Dissatisfaction" },
-  { value: "sla-breach", label: "SLA Breach Risk" },
-  { value: "security-concern", label: "Security Concern" },
-  { value: "billing-dispute", label: "Billing Dispute" },
-  { value: "requires-approval", label: "Requires Management Approval" },
-  { value: "repeat-issue", label: "Repeat / Recurring Issue" },
-  { value: "other", label: "Other" },
-] as const;
-const escalateTicketReasons = ESCALATION_REASONS.map(item => (item.value))
 
 // zod schemas
 export const createTicketInput = {
@@ -105,14 +79,16 @@ const AssignedToUserSchema = z.object({
   id: z.string().uuid(),
   username: z.string().min(1),
 });
-const escalateTicket = { bodySchema: z.object({
-  reason:z.enum(escalateTicketReasons),
-  priority: z.enum(ticketPriority),
-  comment: z.string().min(1, "comment is required")
-}) };
+const escalateTicket = {
+  bodySchema: z.object({
+    reason: z.enum(escalationReasonValues),
+    priority: z.enum(ticketPriority),
+    comment: z.string().min(1, "comment is required"),
+  }),
+};
 // Main ticket schema
 export const ticketSchemaResponse = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   code: z.string().trim().min(1),
   subject: z.string().min(1),
   category: z.string(),

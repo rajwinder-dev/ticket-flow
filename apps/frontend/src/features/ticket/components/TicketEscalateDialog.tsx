@@ -20,14 +20,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
-  ESCALATION_REASONS,
-  ticketPriority,
   type EscalateTicketInput,
   type TicketSchemaResponse,
 } from "@repo/schemas";
 import { ChevronUp } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { QueueFlow } from "./QueueFlow";
+import { escalationReasons, ticketPriority } from "@repo/constants";
 
 interface TicketEscalateDialogProps {
   open: boolean;
@@ -100,7 +99,7 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
                     <SelectValue placeholder="Why is this being escalated?" />
                   </SelectTrigger>
                   <SelectContent>
-                    {ESCALATION_REASONS.map((r) => (
+                    {escalationReasons.map((r) => (
                       <SelectItem key={r.value} value={r.value}>
                         {r.label}
                       </SelectItem>

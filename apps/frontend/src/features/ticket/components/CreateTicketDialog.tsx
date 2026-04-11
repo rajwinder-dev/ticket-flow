@@ -23,12 +23,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLookupHook } from "@/features/lookup/hooks";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createTicketInput,
-  ticketCategory,
-  ticketPriority,
-  type CreateTicketInput,
-} from "@repo/schemas";
+import { ticketCategory, ticketPriority } from "@repo/constants";
+import { createTicketInput, type CreateTicketInput } from "@repo/schemas";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTicket } from "../hooks";

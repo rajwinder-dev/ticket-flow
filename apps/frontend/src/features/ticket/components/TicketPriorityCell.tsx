@@ -5,8 +5,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ticketPriority, type TicketPriority, type TicketSchemaResponse } from "@repo/schemas";
+import {  type TicketPriority, type TicketSchemaResponse } from "@repo/schemas";
 import { useTicket } from "../hooks";
+import { ticketPriority } from "@repo/constants";
 interface props {
   ticket: TicketSchemaResponse;
 }

@@ -22,13 +22,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  ticketCategory,
-  ticketPriority,
+
   updateTicketInput,
   type TicketSchemaResponse,
   type UpdateTicketInput,
 } from "@repo/schemas";
 import { useTicket } from "../hooks";
+import { ticketCategory, ticketPriority } from "@repo/constants";
 
 interface props {
   ticket: TicketSchemaResponse;

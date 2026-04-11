@@ -67,6 +67,7 @@
     "@react-email/components": "^1.0.10",
     "@react-email/render": "^2.0.4",
     "@repo/schemas": "workspace:*",
+    "@repo/constants": "workspace:*",
     "@types/cookie-parser": "^1.4.10",
     "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.11",
