@@ -1,18 +1,77 @@
+import { allowedTransitions, CreateTicketInput, UpdateTicketInput } from "@repo/schemas";
 import { priority, Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
 import { ActivityService } from "../activity/activity.service";
+import { CustomerService } from "../customer/customer.service";
 import { QueueService } from "../queue/queue.service";
+import { QueueGroupService } from "../queueGroup/queueGroup.service";
 
 export class TicketService {
-  private static allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
-    OPEN: ["IN_PROGRESS", "CLOSED"],
-    IN_PROGRESS: ["RESOLVED", "ON_HOLD"],
-    ON_HOLD: ["IN_PROGRESS"],
-    RESOLVED: ["CLOSED", "REOPENED"],
-    REOPENED: ["IN_PROGRESS"],
-    CLOSED: [],
+  static createAndAssign = async ({
+    input,
+    organizationId,
+    userId,
+  }: {
+    input: CreateTicketInput;
+    organizationId: string;
+    userId: string;
+  }) => {
+    const { email, assignment, ...data } = input;
+    let groupId = assignment?.groupId;
+    let queueId = assignment?.queueId;
+    let agentId = assignment?.agentId;
+
+    const customerData = await CustomerService.createCustomerIdentity(email, organizationId);
+    if (!groupId) {
+      groupId = await QueueGroupService.getDefaultGroup(organizationId);
+    }
+    if (!queueId && groupId) {
+      queueId = await this.resolveQueueAssignment({
+        organizationId,
+        groupId,
+      });
+    }
+    if (!agentId && queueId) {
+      agentId = await this.resolveAgentAssignment({
+        organizationId,
+        queueId,
+      });
+    }
+    const finalAssignment = {
+      groupId,
+      queueId,
+      agentId,
+    };
+    const ticket = await this.createTicket({
+      data,
+      assignedTo: finalAssignment.agentId,
+      organizationId,
+      customerId: customerData.id,
+      queueId: finalAssignment.queueId,
+      userId,
+    });
+
+    if (agentId && queueId) {
+      await this.updateTicketMovement({
+        ticketId: ticket.id,
+        nextAgentId: agentId,
+        nextQueueId: queueId,
+        organizationId,
+        action: "ASSIGNED",
+      });
+      await ActivityService.lagActivity({
+        organizationId,
+        actorId: userId,
+        actorType: assignment?.agentId ? "USER" : "SYSTEM",
+        message: "ticket escalated ",
+        event: "ticket.assigned",
+        entityId: ticket.id,
+        entityType: "TICKET",
+      });
+      return finalAssignment;
+    }
   };
   static createTicket = async ({
     data,
@@ -50,6 +109,26 @@ export class TicketService {
     });
 
     return ticket;
+  };
+  static updateTicket = async ({input, ticketId, organizationId, userId}: {input: UpdateTicketInput, ticketId: string, organizationId: string, userId: string}) => {
+    const updatedTicket = await prisma.ticket.update({
+      where: { id: ticketId, organizationId },
+      data: {
+        ...input,
+      },
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: "USER",
+      message: "ticket updated is created",
+      event: "ticket.updated",
+      entityId: ticketId,
+      entityType: "TICKET",
+      oldData: input,
+      newData: updatedTicket,
+    });
+    return updatedTicket
   };
   static getTicketDetails = async ({
     ticketId,
@@ -117,7 +196,7 @@ export class TicketService {
   }) => {
     // todo: later add strategies  round-rebin, ,load balance and availability
     const queueAgents = await QueueService.getQueueAgents({ queueId, organizationId });
-  
+
     const agent = queueAgents[0];
     return agent?.id;
   };
@@ -134,7 +213,7 @@ export class TicketService {
     nextStatus: TicketStatus;
     userId: string;
   }) => {
-    if (!this.allowedTransitions[currentStatus].includes(nextStatus)) {
+    if (!allowedTransitions[currentStatus].includes(nextStatus)) {
       throw new appError("Invalid transition", 403);
     }
     const ticket = await prisma.$transaction(async (tx) => {

@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  ticketCategory,
+  ticketPriority,
   updateTicketInput,
   type TicketSchemaResponse,
   type UpdateTicketInput,
@@ -46,7 +48,6 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
     defaultValues: {
       subject: ticket.subject,
       description: ticket.description || "",
-      status: ticket.status,
       priority: ticket.priority,
       category: ticket.category,
     },
@@ -90,31 +91,7 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Controller
-                control={control}
-                name="status"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="OPEN">Open</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="ON_HOLD">On Hold</SelectItem>
-                      <SelectItem value="RESOLVED">Resolved</SelectItem>
-                      <SelectItem value="REOPENED">Reopened</SelectItem>
-                      <SelectItem value="CLOSED">Closed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.status && <p className="text-destructive text-sm">{errors.status.message}</p>}
-            </div>
-
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Priority</Label>
               <Controller
@@ -126,10 +103,11 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                       <SelectValue placeholder="Select priority" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="LOW">Low</SelectItem>
-                      <SelectItem value="MEDIUM">Medium</SelectItem>
-                      <SelectItem value="HIGH">High</SelectItem>
-                      <SelectItem value="URGENT">Urgent</SelectItem>
+                      {ticketPriority.map((item) => (
+                        <SelectItem value={item} className="capitalize">
+                          {item.toLocaleLowerCase().split("_").join(" ")}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -150,10 +128,11 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="bug">Bug</SelectItem>
-                      <SelectItem value="feature">Feature</SelectItem>
-                      <SelectItem value="task">Task</SelectItem>
-                      <SelectItem value="docs">Docs</SelectItem>
+                      {ticketCategory.map((item) => (
+                        <SelectItem value={item} className="capitalize">
+                          {item.toLocaleLowerCase().split("_").join(" ")}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}

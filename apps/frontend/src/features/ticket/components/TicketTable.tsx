@@ -37,6 +37,8 @@ import { useTicket } from "../hooks";
 // Assuming EMPLOYEES still comes from your store for the assignment list
 import { formatDate } from "@/features/activity/utils";
 import { EMPLOYEES } from "../ticketStore";
+import { TicketPriorityCell } from "./TicketPriorityCell";
+import { TicketStatusCell } from "./TicketStatusCell";
 
 const TicketTable = () => {
   // Use the data and loading state from your custom hook
@@ -138,12 +140,10 @@ const TicketTable = () => {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="capitalize">
-                    {ticket.status.replace("_", " ").toLowerCase()}
-                  </Badge>
+                  <TicketStatusCell ticket={ticket} />
                 </TableCell>
                 <TableCell>
-                  <Badge className="capitalize">{ticket.priority.toLowerCase()}</Badge>
+                  <TicketPriorityCell ticket={ticket} />
                 </TableCell>
                 <TableCell>{ticket.assignedToUser?.username || "Unassigned"}</TableCell>
                 <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
@@ -160,16 +160,7 @@ const TicketTable = () => {
                         Edit ticket
                       </DropdownMenuItem>
 
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>Update status</DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem>Open</DropdownMenuItem>
-                          <DropdownMenuItem>In Progress</DropdownMenuItem>
-                          <DropdownMenuItem>On Hold</DropdownMenuItem>
-                          <DropdownMenuItem>Resolved</DropdownMenuItem>
-                          <DropdownMenuItem>Closed</DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuSub>
+
 
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger>Assign ticket</DropdownMenuSubTrigger>

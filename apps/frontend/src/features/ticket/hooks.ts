@@ -50,7 +50,7 @@ export function useTicket() {
       toast.error(error.message);
     },
   });
-  const { mutate: updatedTicketStatus, isPending: isUpdatingTicketStatus } = useMutation({
+  const { mutate: updateTicketStatus, isPending: isUpdatingTicketStatus } = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTicketStatusInput }) =>
       ticketApi.updateStatus(id, data),
     onSuccess: () => {
@@ -61,7 +61,7 @@ export function useTicket() {
       toast.error(error.message);
     },
   });
-  const { mutate: updatedTicketPriority, isPending: isUpdatingTicketPriority } = useMutation({
+  const { mutate: updateTicketPriority, isPending: isUpdatingTicketPriority } = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTicketPriorityInput }) =>
       ticketApi.updatePriority(id, data),
     onSuccess: () => {
@@ -109,7 +109,7 @@ export function useTicket() {
     isLoadingTicketData,
     createdTicket,
     isCreatingTicket,
-    updatedTicketPriority,
+    updateTicketPriority,
     isUpdatingTicketPriority,
     assignTicket,
     isAssigningTicket,
@@ -117,7 +117,7 @@ export function useTicket() {
     isLoadingAssigned,
     ticketDetails,
     isLoadingTicketDetails,
-    updatedTicketStatus,
+    updateTicketStatus,
     isUpdatingTicketStatus,
     commentTicket,
     isAssigningComment,

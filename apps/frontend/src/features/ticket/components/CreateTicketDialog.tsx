@@ -21,10 +21,16 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useLookupHook } from "@/features/lookup/hooks";
+import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTicketInput, type CreateTicketInput } from "@repo/schemas";
+import {
+  createTicketInput,
+  ticketCategory,
+  ticketPriority,
+  type CreateTicketInput,
+} from "@repo/schemas";
 import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTicket } from "../hooks";
 import { LoadingSelect } from "./LoadingSelect";
 
@@ -92,6 +98,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
 
   return (
     <Dialog open={openForm} onOpenChange={setOpenForm}>
+      {openForm && <DevTool control={control} placement="top-left" />}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create ticket</DialogTitle>
@@ -113,22 +120,45 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
 
           <div className="grid grid-cols-2 gap-3">
             <FieldWrapper label="Priority" error={errors.priority?.message}>
-              <Select {...register("priority")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["LOW", "MEDIUM", "HIGH", "URGENT"].map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p.charAt(0) + p.slice(1).toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="priority"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ticketPriority.map((p) => (
+                        <SelectItem key={p} value={p}>
+                          {p.charAt(0) + p.slice(1).toLowerCase()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </FieldWrapper>
 
             <FieldWrapper label="Category" error={errors.category?.message}>
-              <Input placeholder="e.g. billing, infra" {...register("category")} />
+              <Controller
+                control={control}
+                name="category"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ticketCategory.map((item) => (
+                        <SelectItem value={item} className="capitalize">
+                          {item.toLocaleLowerCase().split("_").join(" ")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </FieldWrapper>
           </div>
 
@@ -168,7 +198,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
                   <LoadingSelect
                     isLoading={isLoadingQueues}
                     placeholder="Select queue"
-                   {...register("assignment.queueId")}
+                    {...register("assignment.queueId")}
                   >
                     {queueData?.data.map((q) => (
                       <SelectItem key={q.id} value={q.id}>

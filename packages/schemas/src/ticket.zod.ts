@@ -2,13 +2,32 @@ import { z } from "zod";
 import { validUuidParams } from "./global.zod";
 import { validBigDescription, validEmail, validString } from "./helper/zodHelper";
 
+export const ticketPriority = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
+export const ticketStatus = [
+  "OPEN",
+  "CLOSED",
+  "IN_PROGRESS",
+  "ON_HOLD",
+  "RESOLVED",
+  "REOPENED",
+] as const;
+export const ticketCategory = ["BUG", "FEATURE", "TASK", "DOCS"] as const;
+export const allowedTransitions: Record<TicketStatus, TicketStatus[]> = {
+  OPEN: ["IN_PROGRESS", "CLOSED"],
+  IN_PROGRESS: ["RESOLVED", "ON_HOLD"],
+  ON_HOLD: ["IN_PROGRESS"],
+  RESOLVED: ["CLOSED", "REOPENED"],
+  REOPENED: ["IN_PROGRESS"],
+  CLOSED: [],
+};
+
 export const createTicketInput = {
   bodySchema: z
     .object({
       subject: validString,
       description: validBigDescription,
       email: validEmail,
-      priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+      priority: z.enum(ticketPriority),
       category: validString,
       assignment: z
         .object({
@@ -25,8 +44,7 @@ export const updateTicketInput = {
     .object({
       subject: z.string().min(2, "Subject is required"),
       description: z.string().optional(),
-      status: z.enum(["OPEN", "CLOSED", "IN_PROGRESS", "ON_HOLD", "RESOLVED", "REOPENED"]),
-      priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+      priority: z.enum(ticketPriority),
       category: z.string().min(1, "Category is required"),
     })
     .strict(),
@@ -34,7 +52,7 @@ export const updateTicketInput = {
 export const updateTicketStatusInput = {
   bodySchema: z
     .object({
-      status: z.enum(["OPEN", "IN_PROGRESS", "ON_HOLD", "RESOLVED", "REOPENED", "CLOSED"]),
+      status: z.enum(ticketStatus),
     })
     .strict(),
   ...validUuidParams,
@@ -43,7 +61,7 @@ export const updateTicketStatusInput = {
 export const updateTicketPriorityInput = {
   bodySchema: z
     .object({
-      priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+      priority: z.enum(ticketPriority),
     })
     .strict(),
   ...validUuidParams,
@@ -63,27 +81,12 @@ export const createTicketCommentInput = {
 export const assignTicketInput = {
   bodySchema: z
     .object({
-      assignId: z.string().uuid("Invalid Assignment ID"),
+      assignId: z.uuid("Invalid Assignment ID"),
       targetType: z.enum(["AGENT", "QUEUE"]),
     })
     .strict(),
   ...validUuidParams,
 };
-
-// Enums
-const TicketStatusEnum = z.enum([
-  "OPEN",
-  "CLOSED",
-  "IN_PROGRESS",
-  "ON_HOLD",
-  "RESOLVED",
-  "REOPENED",
-  "CLOSED",
-]);
-const TicketPriorityEnum = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
-// const TicketCategoryEnum = z.enum(["billing", "technical", "general"]);
-
-// Nested user schema
 const AssignedToUserSchema = z.object({
   id: z.string().uuid(),
   username: z.string().min(1),
@@ -96,8 +99,8 @@ export const ticketSchemaResponse = z.object({
   subject: z.string().min(1),
   category: z.string(),
   description: z.string().optional(),
-  status: TicketStatusEnum,
-  priority: TicketPriorityEnum,
+  status: z.enum(ticketStatus),
+  priority: z.enum(ticketPriority),
   active: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -109,6 +112,9 @@ export const ticketSchemaResponse = z.object({
   assignedToUser: AssignedToUserSchema,
 });
 // --- Inferred Types ---
+export type TicketPriority = (typeof ticketPriority)[number];
+export type TicketStatus = (typeof ticketStatus)[number];
+export type TicketCategory = (typeof ticketCategory)[number];
 export type TicketSchemaResponse = z.infer<typeof ticketSchemaResponse>;
 export type CreateTicketInput = z.infer<typeof createTicketInput.bodySchema>;
 export type UpdateTicketInput = z.infer<typeof updateTicketInput.bodySchema>;
