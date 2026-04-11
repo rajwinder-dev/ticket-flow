@@ -2,9 +2,12 @@ import {
   AssignTicketInput,
   CreateTicketCommentInput,
   CreateTicketInput,
+  ticketSchemaResponse,
+  UpdateTicketInput,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
 } from "@repo/schemas";
+import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
@@ -73,6 +76,28 @@ export class TicketController {
     }
     response(res, { groupId, queueId, agentId }, 201);
   });
+  static updateTicket = catchAsync(async (req, res, _next) => {
+    const input = req.body as UpdateTicketInput;
+    const ticketId = req.params.ticketId as string;
+    const updatedTicket = await prisma.ticket.update({
+      where: { id: ticketId, organizationId: req.organization.id },
+      data: {
+        ...input,
+      },
+    });
+    await ActivityService.lagActivity({
+      organizationId: req.organization.id,
+      actorId: req.user.id,
+      actorType: "USER",
+      message: "ticket updated is created",
+      event: "ticket.updated",
+      entityId: ticketId,
+      entityType: "TICKET",
+      oldData: input,
+      newData: updatedTicket,
+    });
+    response(res, updatedTicket);
+  });
   static getAllTickets = catchAsync(async (req, res, _next) => {
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
       .filter()
@@ -89,10 +114,14 @@ export class TicketController {
         organizationId: req.organization.id,
         ...filterOptions.where,
       },
+      include: { assignedToUser: { select: { id: true, username: true } } },
       take: limit,
       skip: offset,
     });
-    response(res, data, 200, { otherFields: { total, offset, limit } });
+    response(res, data, 200, {
+      otherFields: { total, offset, limit },
+      schema: z.array(ticketSchemaResponse),
+    });
   });
   static getTicketDetails = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

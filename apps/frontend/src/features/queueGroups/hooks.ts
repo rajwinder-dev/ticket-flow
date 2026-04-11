@@ -4,11 +4,11 @@ import { toast } from "sonner";
 import queueGroupApi from "./api";
 
 export function useQueueGroup() {
-  const {orgId} = useParams()
+  const { orgId } = useParams();
   const queryClient = useQueryClient();
   const { data: queueGroups, isLoading: isLoadingQueueGroups } = useQuery({
     queryFn: queueGroupApi.getAll,
-    queryKey: ["group", orgId],
+    queryKey: ["group", { orgId }],
     retry: false,
   });
 
@@ -16,7 +16,7 @@ export function useQueueGroup() {
     mutationFn: (data: CreateQueueGroupInput) => queueGroupApi.create(data),
     onSuccess: () => {
       toast.success("group created successfully");
-      queryClient.invalidateQueries({ queryKey: ["group", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["group", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -28,7 +28,7 @@ export function useQueueGroup() {
       queueGroupApi.update(id, data),
     onSuccess: () => {
       toast.success("group updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["group", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["group", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -39,7 +39,7 @@ export function useQueueGroup() {
     mutationFn: (groupId: string) => queueGroupApi.delete(groupId),
     onSuccess: () => {
       toast.success("group deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["group"] });
+      queryClient.invalidateQueries({ queryKey: ["group", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -49,7 +49,7 @@ export function useQueueGroup() {
     mutationFn: (groupId: string) => queueGroupApi.delete(groupId),
     onSuccess: () => {
       toast.success("group deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+      queryClient.invalidateQueries({ queryKey: ["group", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -69,11 +69,9 @@ export function useQueueGroup() {
   };
 }
 
-
 import { useState } from "react";
-import { GROUP_COLORS, INITIAL_GROUPS, type Group, type Queue } from "./groups";
 import { useParams } from "react-router";
-
+import { GROUP_COLORS, INITIAL_GROUPS, type Group, type Queue } from "./groups";
 
 export function useGroups() {
   const [groups, setGroups] = useState<Group[]>(INITIAL_GROUPS);
@@ -108,9 +106,7 @@ export function useGroups() {
       }),
     };
     setGroups((prev) =>
-      prev.map((g) =>
-        g.id === groupId ? { ...g, queues: [...g.queues, newQueue] } : g
-      )
+      prev.map((g) => (g.id === groupId ? { ...g, queues: [...g.queues, newQueue] } : g)),
     );
   }
 

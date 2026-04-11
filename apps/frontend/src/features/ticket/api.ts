@@ -1,10 +1,12 @@
 import { getRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import type {
-  AssignTicketInput,
-  CreateTicketCommentInput,
-  CreateTicketInput,
-  UpdateTicketPriorityInput,
-  UpdateTicketStatusInput,
+import {
+  type TicketSchemaResponse,
+  type AssignTicketInput,
+  type CreateTicketCommentInput,
+  type CreateTicketInput,
+  type UpdateTicketPriorityInput,
+  type UpdateTicketStatusInput,
+  type UpdateTicketInput,
 } from "@repo/schemas";
 
 export const ticketApi = {
@@ -16,7 +18,7 @@ export const ticketApi = {
     return res;
   },
   getAll: async () => {
-    const res = await getRequestMany({
+    const res = await getRequestMany<TicketSchemaResponse>({
       path: "/ticket",
     });
     return res;
@@ -30,6 +32,13 @@ export const ticketApi = {
   getDetails: async (ticketId: string) => {
     const res = await getRequest({
       path: `/ticket/${ticketId}`,
+    });
+    return res;
+  },
+  update: async (ticketId: string, data: UpdateTicketInput) => {
+    const res = await patchRequest({
+      path: `/ticket/${ticketId}`,
+      data,
     });
     return res;
   },
@@ -67,5 +76,5 @@ export const ticketApi = {
     });
     return res;
   },
-  
+
 };

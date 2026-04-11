@@ -2,6 +2,7 @@ import {
   assignTicketInput,
   createTicketCommentInput,
   createTicketInput,
+  updateTicketInput,
   updateTicketPriorityInput,
   updateTicketStatusInput,
 } from "@repo/schemas";
@@ -19,6 +20,12 @@ TicketRouter.post(
   validationMiddleware(createTicketInput),
   TicketController.createTicket,
 );
+TicketRouter.patch(
+  "/:ticketId",
+  authMiddleware.verifyPermission("ticket", "edit"),
+  validationMiddleware(updateTicketInput),
+  TicketController.updateTicket,
+);
 TicketRouter.get(
   "/",
   authMiddleware.verifyPermission("ticket", "view_all"),
@@ -29,7 +36,7 @@ TicketRouter.get(
   authMiddleware.verifyPermission("ticket", "view_own"),
   TicketController.getAssignedTickets,
 );
-TicketRouter.get("/:id", TicketController.getTicketDetails)
+TicketRouter.get("/:id", TicketController.getTicketDetails);
 TicketRouter.patch(
   "/:id/status",
   authMiddleware.verifyPermission("ticket", "change_status"),

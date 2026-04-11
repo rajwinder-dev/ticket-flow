@@ -9,17 +9,17 @@ export const useLookupHook = ({ queueId, groupId }: props = {}) => {
   const { orgId } = useParams();
   const { data: groupsData, isLoading: isLoadingGroups } = useQuery({
     queryFn: lookupApi.getGroups,
-    queryKey: ["lookup", "group", orgId],
+    queryKey: ["lookup", "group", { orgId }],
     enabled: !!orgId,
   });
   const { data: queueData, isLoading: isLoadingQueues } = useQuery({
     queryFn: () => lookupApi.getQueues(groupId!),
-    queryKey: ["lookup", "queue", orgId],
+    queryKey: ["lookup", "queue", { orgId }],
     enabled: !!groupId,
   });
   const { data: agentsData, isLoading: isLoadingAgents } = useQuery({
     queryFn: () => lookupApi.getAgents(queueId!),
-    queryKey: ["lookup", "agent", orgId],
+    queryKey: ["lookup", "agent", { orgId }],
     enabled: !!queueId,
   });
   return { groupsData, isLoadingGroups, queueData, isLoadingQueues, agentsData, isLoadingAgents };

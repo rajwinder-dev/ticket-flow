@@ -2,6 +2,7 @@ import type {
   AssignTicketInput,
   CreateTicketCommentInput,
   CreateTicketInput,
+  UpdateTicketInput,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
 } from "@repo/schemas";
@@ -13,25 +14,36 @@ import { ticketApi } from "./api";
 export function useTicket() {
   const { orgId, ticketId } = useParams();
   const queryClient = useQueryClient();
-  const { data: ticket, isLoading: isLoadingTicket } = useQuery({
+  const { data: ticketData, isLoading: isLoadingTicketData } = useQuery({
     queryFn: ticketApi.getAll,
-    queryKey: ["ticket", orgId],
+    queryKey: ["ticket", { orgId }],
     enabled: !!orgId,
   });
   const { data: assignedTicket, isLoading: isLoadingAssigned } = useQuery({
     queryFn: ticketApi.getAssigned,
-    queryKey: ["ticket", "me"],
+    queryKey: ["ticket", "me", { orgId }],
     enabled: !!orgId,
   });
   const { data: ticketDetails, isLoading: isLoadingTicketDetails } = useQuery({
     queryFn: () => ticketApi.getDetails(ticketId!),
-    queryKey: ["ticket", ticketId],
+    queryKey: ["ticket", { ticketId }],
     enabled: !!ticketId,
   });
   const { mutate: createdTicket, isPending: isCreatingTicket } = useMutation({
     mutationFn: (data: CreateTicketInput) => ticketApi.create(data),
     onSuccess: () => {
       toast.success("ticket created successfully");
+      queryClient.invalidateQueries({ queryKey: ["ticket"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+    const { mutate: updateTicket, isPending: isUpdatingTicket } = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateTicketInput }) =>
+      ticketApi.update(id, data),
+    onSuccess: () => {
+      toast.success("ticket updated successfully");
       queryClient.invalidateQueries({ queryKey: ["ticket"] });
     },
     onError: (error) => {
@@ -93,8 +105,8 @@ export function useTicket() {
     },
   });
   return {
-    ticket,
-    isLoadingTicket,
+    ticketData,
+    isLoadingTicketData,
     createdTicket,
     isCreatingTicket,
     updatedTicketPriority,
@@ -111,5 +123,7 @@ export function useTicket() {
     isAssigningComment,
     escalateTicket,
     isAssigningEscalate,
+    updateTicket,
+    isUpdatingTicket
   };
 }

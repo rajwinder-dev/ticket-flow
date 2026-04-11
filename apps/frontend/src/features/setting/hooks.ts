@@ -4,25 +4,26 @@ import type {
   UpdateEmailProviderInput,
 } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { emailApi } from "./api";
 
 function useEmail() {
+  const {orgId} = useParams()
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // --- Queries ---
   const { data: emailProviders, isLoading: isLoadingEmailProviders } = useQuery({
     queryFn: emailApi.getProviders,
-    queryKey: ["email-provider"],
+    queryKey: ["email-provider", { orgId }],
   });
 
   const { mutate: createEmailProvider, isPending: isCreatingEmailProvider } = useMutation({
     mutationFn: (data: CreateEmailProviderInput) => emailApi.createProvider(data),
     onSuccess: () => {
       toast.success("Provider created successfully");
-      queryClient.invalidateQueries({ queryKey: ["email-provider"] });
+      queryClient.invalidateQueries({ queryKey: ["email-provider", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -32,7 +33,7 @@ function useEmail() {
     mutationFn: (data: CreateSmtpInput) => emailApi.createSMTP(data),
     onSuccess: () => {
       toast.success("Provider created successfully");
-      queryClient.invalidateQueries({ queryKey: ["email-provider"] });
+      queryClient.invalidateQueries({ queryKey: ["email-provider", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -44,7 +45,7 @@ function useEmail() {
       emailApi.updateCredentials(id, data),
     onSuccess: () => {
       toast.success("Organization updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -55,7 +56,7 @@ function useEmail() {
     mutationFn: (id: string) => emailApi.deleteProvider(id),
     onSuccess: () => {
       toast.success("Provider deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -66,7 +67,7 @@ function useEmail() {
     mutationFn: emailApi.testProvider,
     onSuccess: () => {
       toast.success("email send successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations", { orgId }] });
       navigate("/org");
     },
     onError: (error) => {

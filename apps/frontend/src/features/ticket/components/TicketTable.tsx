@@ -27,129 +27,145 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { TicketSchemaResponse } from "@repo/schemas";
+import { useState } from "react";
+import TicketEditDialog from "./TicketEditDialog";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { formatDate } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { EMPLOYEES, INITIAL_TICKETS } from "../ticketStore";
-import TicketEditForm from "./TicketEditForm";
+import { useTicket } from "../hooks";
+
+// Assuming EMPLOYEES still comes from your store for the assignment list
+import { formatDate } from "@/features/activity/utils";
+import { EMPLOYEES } from "../ticketStore";
 
 const TicketTable = () => {
+  // Use the data and loading state from your custom hook
+  const { ticketData, isLoadingTicketData } = useTicket();
+  const [editTicketForm, setEditTicketForm] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<TicketSchemaResponse | null>(null);
+  function handleOpenTicketForm(ticket: TicketSchemaResponse) {
+    setEditTicketForm(true);
+    setSelectedTicket(ticket);
+  }
+  function handleCloseTicketForm() {
+    setEditTicketForm(false);
+    setSelectedTicket(null);
+  }
   return (
     <div>
-      {/* headers  */}
+      {/* Headers & Filters */}
       <div className="flex items-center justify-between p-4">
         <div>
-          <h2>Tickets</h2>
-          <p>Search by ticket id, title, or assignee and narrow by filters.</p>
+          <h2 className="text-xl font-bold">Tickets</h2>
+          <p className="text-muted-foreground text-sm">
+            Search by ticket code, subject, or assignee.
+          </p>
         </div>
         <div className="grid gap-2 md:w-auto md:grid-cols-3">
-          <Input placeholder="Search tickets" className="md:w-64" />
+          <Input placeholder="Search tickets..." className="md:w-64" />
+
           <Select>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="in progress">In Progress</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
+              <SelectItem value="ALL">All statuses</SelectItem>
+              <SelectItem value="OPEN">Open</SelectItem>
+              <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+              <SelectItem value="ON_HOLD">On Hold</SelectItem>
+              <SelectItem value="RESOLVED">Resolved</SelectItem>
+              <SelectItem value="REOPENED">Reopened</SelectItem>
+              <SelectItem value="CLOSED">Closed</SelectItem>
             </SelectContent>
           </Select>
+
           <Select>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter priority" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All priorities</SelectItem>
-              <SelectItem value="critical">Critical</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="ALL">All priorities</SelectItem>
+              <SelectItem value="LOW">Low</SelectItem>
+              <SelectItem value="MEDIUM">Medium</SelectItem>
+              <SelectItem value="HIGH">High</SelectItem>
+              <SelectItem value="URGENT">Urgent</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
-      {/* table */}
+
+      {/* Table */}
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Ticket ID</TableHead>
-            <TableHead>Title</TableHead>
+            <TableHead>Code</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Category</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
-            <TableHead>Assignee</TableHead>
+            <TableHead>Assigned To</TableHead>
             <TableHead>Updated</TableHead>
             <TableHead className="w-12 text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {INITIAL_TICKETS.length === 0 ? (
+          {isLoadingTicketData ? (
+            <TableRow>
+              <TableCell colSpan={7} className="py-8 text-center">
+                Loading tickets...
+              </TableCell>
+            </TableRow>
+          ) : ticketData?.data.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="text-muted-foreground py-8 text-center">
                 No tickets found for current filters.
               </TableCell>
             </TableRow>
           ) : (
-            INITIAL_TICKETS.map((ticket) => (
+            ticketData?.data.map((ticket) => (
               <TableRow key={ticket.id}>
-                <TableCell className="font-mono text-xs">{ticket.id}</TableCell>
-                <TableCell className="max-w-80 truncate hover:underline">
-                  <Link to={ticket.id}>{ticket.title}</Link>
+                {/* Using 'code' for display as it's usually the human-readable ID */}
+                <TableCell className="font-mono text-xs font-medium">{ticket.code}</TableCell>
+                <TableCell className="max-w-80 truncate font-medium hover:underline">
+                  <Link to={ticket.id}>
+                    {ticket.subject}
+                    <p className="text-muted-foreground text-xs">{ticket.description}</p>
+                  </Link>
                 </TableCell>
                 <TableCell>
-                  <Badge>{ticket.status}</Badge>
+                  <Badge variant="outline" className="capitalize">
+                    {ticket.category}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge>{ticket.priority}</Badge>
+                  <Badge variant="outline" className="capitalize">
+                    {ticket.status.replace("_", " ").toLowerCase()}
+                  </Badge>
                 </TableCell>
-                <TableCell>{ticket.assigneeId}</TableCell>
-                <TableCell>{formatDate(ticket.updatedAt)}</TableCell>
+                <TableCell>
+                  <Badge className="capitalize">{ticket.priority.toLowerCase()}</Badge>
+                </TableCell>
+                <TableCell>{ticket.assignedToUser?.username || "Unassigned"}</TableCell>
+                <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant="ghost" size="icon-sm" aria-label="Open actions">
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
                         ...
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuLabel>Ticket actions</DropdownMenuLabel>
-                      <DropdownMenuItem asChild>
-                        <Dialog>
-                          <DialogTrigger>Edit ticket</DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit ticket</DialogTitle>
-                              <DialogDescription>
-                                Update ticket details and save changes.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <TicketEditForm />
-                            <DialogFooter>
-                              <DialogClose>
-                                <Button variant="outline">Cancel</Button>
-                              </DialogClose>
-                              <Button>Save changes</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                      <DropdownMenuItem onClick={() => handleOpenTicketForm(ticket)}>
+                        Edit ticket
                       </DropdownMenuItem>
 
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger>Update status</DropdownMenuSubTrigger>
                         <DropdownMenuSubContent>
                           <DropdownMenuItem>Open</DropdownMenuItem>
-                          <DropdownMenuItem>In progress</DropdownMenuItem>
+                          <DropdownMenuItem>In Progress</DropdownMenuItem>
+                          <DropdownMenuItem>On Hold</DropdownMenuItem>
                           <DropdownMenuItem>Resolved</DropdownMenuItem>
                           <DropdownMenuItem>Closed</DropdownMenuItem>
                         </DropdownMenuSubContent>
@@ -167,7 +183,9 @@ const TicketTable = () => {
                       </DropdownMenuSub>
 
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem variant="destructive">Delete ticket</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">
+                        Delete ticket
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -176,6 +194,13 @@ const TicketTable = () => {
           )}
         </TableBody>
       </Table>
+      {selectedTicket && (
+        <TicketEditDialog
+          open={editTicketForm}
+          setOpen={handleCloseTicketForm}
+          ticket={selectedTicket}
+        />
+      )}
     </div>
   );
 };

@@ -42,8 +42,8 @@ export function dirtyValues<T extends Record<string, any>>(
   return Object.fromEntries(entries) as DeepPartial<T>;
 }
 export const formatDate = (isoDate?: string | undefined) => {
-  if(!isoDate) return null
-  new Date(isoDate).toLocaleDateString("en-IN", {
+  if (!isoDate) return null;
+  return new Date(isoDate).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
     year: "numeric",

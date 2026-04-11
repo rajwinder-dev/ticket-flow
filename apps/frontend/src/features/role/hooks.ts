@@ -12,12 +12,12 @@ function useRole() {
   // --- Queries ---
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryFn: roleApi.getAllRoles,
-    queryKey: ["role", orgId],
+    queryKey: ["role", { orgId }],
     retry: false,
   });
   const { data: getRoleDetails, isLoading: isLoadingRoleDetails } = useQuery({
     queryFn: () => roleApi.getDetails(roleId!),
-    queryKey: ["role", roleId],
+    queryKey: ["role", { roleId }],
     enabled: !!roleId,
   });
 
@@ -26,7 +26,7 @@ function useRole() {
     mutationFn: (data: CreateRoleInput) => roleApi.create(data),
     onSuccess: () => {
       toast.success("role created successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -37,7 +37,7 @@ function useRole() {
     mutationFn: ({ id, data }: { id: string; data: CreateRoleInput }) => roleApi.update(id, data),
     onSuccess: () => {
       toast.success("role updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -48,7 +48,7 @@ function useRole() {
     mutationFn: (roleId: string) => roleApi.delete(roleId),
     onSuccess: () => {
       toast.success("role deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);

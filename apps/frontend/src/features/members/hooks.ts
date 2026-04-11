@@ -9,15 +9,19 @@ const useMember = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: members, isLoading: isLoadingMembers } = useQuery({
-    queryKey: ["member", orgId],
+    queryKey: ["member", { orgId }],
     queryFn: memberApi.getMembers,
     enabled: !!orgId,
   });
-  const { data: inviteDetails, isLoading: isLoadingInviteDetails, error: InviteError } = useQuery({
-    queryKey: ["invite", token],
+  const {
+    data: inviteDetails,
+    isLoading: isLoadingInviteDetails,
+    error: InviteError,
+  } = useQuery({
+    queryKey: ["invite", { token }],
     queryFn: () => memberApi.getInviteDetails(token!),
     enabled: !!token,
-    retry: false
+    retry: false,
   });
   const { mutate: inviteUserMutate, isPending: isInvitingUser } = useMutation({
     mutationFn: (data: InviteUserOrganizationInput) => memberApi.inviteUser(data),
@@ -46,8 +50,8 @@ const useMember = () => {
       memberApi.assignQueue({ queueId, userId }),
     onSuccess: () => {
       toast.success("Queue assigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
-      queryClient.invalidateQueries({ queryKey: ["queue", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["member", { orgId }] });
+      queryClient.invalidateQueries({ queryKey: ["queue", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -58,8 +62,8 @@ const useMember = () => {
       memberApi.unassignQueue({ queueId, userId }),
     onSuccess: () => {
       toast.success("Queue unassigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
-      queryClient.invalidateQueries({ queryKey: ["queue", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["member", {orgId}] });
+      queryClient.invalidateQueries({ queryKey: ["queue", {orgId}] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -71,8 +75,8 @@ const useMember = () => {
       memberApi.updateRole({ roleId, userId }),
     onSuccess: () => {
       toast.success("Role updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["member", orgId] });
-      queryClient.invalidateQueries({ queryKey: ["role", orgId] });
+      queryClient.invalidateQueries({ queryKey: ["member", { orgId }] });
+      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);

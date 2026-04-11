@@ -8,7 +8,7 @@ export function useQueue(groupId?: string ) {
   const queryClient = useQueryClient();
   const { data: queues, isLoading: isLoadingQueues } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
-    queryKey: ["queue", groupId],
+    queryKey: ["queue", { groupId }],
     enabled: !!groupId,
   });
 
@@ -17,7 +17,7 @@ export function useQueue(groupId?: string ) {
       queueApi.create(groupId, data),
     onSuccess: () => {
       toast.success("queue created successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue"] });
+      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -28,7 +28,7 @@ export function useQueue(groupId?: string ) {
     mutationFn: ({ queueId, data }: { queueId: string; data: UpdateQueueInput }) => queueApi.update(queueId, data),
     onSuccess: () => {
       toast.success("queue updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue"] });
+      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -39,7 +39,7 @@ export function useQueue(groupId?: string ) {
     mutationFn: (queueId: string) => queueApi.delete(queueId),
     onSuccess: () => {
       toast.success("queue deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue"] });
+      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
     },
     onError: (error) => {
       toast.error(error.message);

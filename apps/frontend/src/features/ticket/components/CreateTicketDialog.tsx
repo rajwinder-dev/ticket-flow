@@ -65,7 +65,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
   const { createdTicket, isCreatingTicket } = useTicket();
 
   const onValid = handleSubmit(async (values) => {
-    console.log(values)
+    console.log(values);
     createdTicket(values, {
       onSuccess: () => {
         reset();
@@ -89,7 +89,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
       setValue("assignment", {});
     }
   };
- 
+
   return (
     <Dialog open={openForm} onOpenChange={setOpenForm}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
@@ -113,13 +113,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
 
           <div className="grid grid-cols-2 gap-3">
             <FieldWrapper label="Priority" error={errors.priority?.message}>
-              <Select
-                onValueChange={(val) =>
-                  setValue("priority", val as CreateTicketInput["priority"], {
-                    shouldValidate: true,
-                  })
-                }
-              >
+              <Select {...register("priority")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
@@ -160,9 +154,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
                   <LoadingSelect
                     isLoading={isLoadingGroups}
                     placeholder="Select group"
-                    onValueChange={(val) =>
-                      setValue("assignment.groupId", val, { shouldValidate: true })
-                    }
+                    {...register("assignment.groupId")}
                   >
                     {groupsData?.data.map((g) => (
                       <SelectItem key={g.id} value={g.id}>
@@ -176,9 +168,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
                   <LoadingSelect
                     isLoading={isLoadingQueues}
                     placeholder="Select queue"
-                    onValueChange={(val) =>
-                      setValue("assignment.queueId", val, { shouldValidate: true })
-                    }
+                   {...register("assignment.queueId")}
                   >
                     {queueData?.data.map((q) => (
                       <SelectItem key={q.id} value={q.id}>
@@ -192,9 +182,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
                   <LoadingSelect
                     isLoading={isLoadingAgents}
                     placeholder="Select agent"
-                    onValueChange={(val) =>
-                      setValue("assignment.agentId", val, { shouldValidate: true })
-                    }
+                    {...register("assignment.agentId")}
                   >
                     {agentsData?.data.map((a) => (
                       <SelectItem key={a.id} value={a.id}>
