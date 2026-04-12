@@ -117,8 +117,47 @@ export const ticketSummary = z.object({
   total: z.number(),
   open: z.number(),
   inProgress: z.number(),
-  resolved: z.number()
-})
+  resolved: z.number(),
+});
+
+export const ticketDetailsSchema = z.object({
+  id: z.uuid(),
+  code: z.string(),
+  subject: z.string(),
+  status: z.string(),
+  description: z.string(),
+  priority: z.string(),
+  category: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  assignedToUser: z
+    .object({
+      email: z.string().email(),
+      username: z.string(),
+    })
+    .nullable(),
+  customer: z
+    .object({
+      email: z.email(),
+      name: z.string().nullable(),
+    })
+    .nullable(),
+  queue: z
+    .object({
+      name: z.string(),
+      order: z.number(),
+    })
+    .nullable(),
+});
+export const commentSchemaResponse = z.object({
+  id: z.uuid(),
+  comment: z.string(), // keep as-is; includes possible "\n"
+  createdAt: z.date(),
+  author: z.object({
+    username: z.string(),
+    email: z.email(),
+  }),
+});
 // --- Inferred Types ---
 export type TicketPriority = (typeof ticketPriority)[number];
 export type TicketStatus = (typeof ticketStatus)[number];
@@ -132,5 +171,6 @@ export type CreateTicketCommentInput = z.infer<typeof createTicketCommentInput.b
 export type AssignTicketInput = z.infer<typeof assignTicketInput.bodySchema>;
 export type EscalateTicketInput = z.infer<typeof escalateTicketInput.bodySchema>;
 export type TicketEscalationOptions = z.infer<typeof ticketEscalationOptions>;
-export type TicketSummary = z.infer<typeof ticketSummary>
-
+export type TicketSummary = z.infer<typeof ticketSummary>;
+export type TicketDetailsSchema = z.infer<typeof ticketDetailsSchema>;
+export type CommentSchemaResponse = z.infer<typeof commentSchemaResponse>;

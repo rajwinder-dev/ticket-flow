@@ -70,7 +70,7 @@ const result = customers.map((c) => ({
     const customer = await prisma.customerIdentity.create({
       data: {
         email,
-        customers: {
+        customer: {
           create: {
             name,
             organizationId,

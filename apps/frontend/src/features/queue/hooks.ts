@@ -2,18 +2,29 @@ import type { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queueApi } from "./api";
-
-export function useQueue(groupId?: string ) {
-
+interface props {
+  groupId?: string;
+  queueId?: string;
+}
+export function useQueue({ groupId, queueId }: props = {}) {
   const queryClient = useQueryClient();
   const { data: queues, isLoading: isLoadingQueues } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
     queryKey: ["queue", { groupId }],
     enabled: !!groupId,
   });
-
+  const { data: queuesDetails, isLoading: isLoadingDetails } = useQuery({
+    queryFn: () => queueApi.getDetails(queueId!),
+    queryKey: ["queue", "details", { queueId }],
+    enabled: !!queueId,
+  });
+  const { data: queueSummary, isLoading: isLoadingQueueSummary } = useQuery({
+    queryFn: () => queueApi.getSummary(queueId!),
+    queryKey: ["queue", "summary", { queueId }],
+    enabled: !!queueId,
+  });
   const { mutate: createQueue, isPending: isCreatingQueue } = useMutation({
-    mutationFn: ({groupId, data}:{groupId: string,  data: CreateQueueInput }) =>
+    mutationFn: ({ groupId, data }: { groupId: string; data: CreateQueueInput }) =>
       queueApi.create(groupId, data),
     onSuccess: () => {
       toast.success("queue created successfully");
@@ -25,7 +36,8 @@ export function useQueue(groupId?: string ) {
   });
 
   const { mutate: updatedQueue, isPending: isUpdatingQueue } = useMutation({
-    mutationFn: ({ queueId, data }: { queueId: string; data: UpdateQueueInput }) => queueApi.update(queueId, data),
+    mutationFn: ({ queueId, data }: { queueId: string; data: UpdateQueueInput }) =>
+      queueApi.update(queueId, data),
     onSuccess: () => {
       toast.success("queue updated successfully");
       queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
@@ -55,5 +67,9 @@ export function useQueue(groupId?: string ) {
     isUpdatingQueue,
     deletedQueue,
     isDeletingQueue,
+    queuesDetails,
+    isLoadingDetails,
+    queueSummary,
+    isLoadingQueueSummary,
   };
 }

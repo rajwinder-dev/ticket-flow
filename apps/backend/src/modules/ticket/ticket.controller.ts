@@ -1,7 +1,9 @@
 import {
   AssignTicketInput,
+  commentSchemaResponse,
   CreateTicketCommentInput,
   EscalateTicketInput,
+  ticketDetailsSchema,
   ticketSchemaResponse,
   ticketSummary,
   UpdateTicketPriorityInput,
@@ -50,7 +52,10 @@ export class TicketController {
         organizationId: req.organization.id,
         ...filterOptions.where,
       },
-      include: { assignedToUser: { select: { id: true, username: true }, },queue: {select: {name: true}} },
+      include: {
+        assignedToUser: { select: { id: true, username: true } },
+        queue: { select: { name: true } },
+      },
       take: limit,
       skip: offset,
     });
@@ -60,30 +65,35 @@ export class TicketController {
     });
   });
   static getSummary = catchAsync(async (req, res, _next) => {
-  const organizationId = req.organization.id;
+    const organizationId = req.organization.id;
 
-  // fetch status counts
-  const [total, open, inProgress, resolved] = await Promise.all([
-    prisma.ticket.count({ where: { organizationId } }),
-    prisma.ticket.count({ where: { organizationId, status: "OPEN" } }),
-    prisma.ticket.count({ where: { organizationId, status: "IN_PROGRESS" } }),
-    prisma.ticket.count({ where: { organizationId, status: "RESOLVED" } }),
-  ]);
+    // fetch status counts
+    const [total, open, inProgress, resolved] = await Promise.all([
+      prisma.ticket.count({ where: { organizationId } }),
+      prisma.ticket.count({ where: { organizationId, status: "OPEN" } }),
+      prisma.ticket.count({ where: { organizationId, status: "IN_PROGRESS" } }),
+      prisma.ticket.count({ where: { organizationId, status: "RESOLVED" } }),
+    ]);
 
-  response(res, {
-    total,
-    open,
-    inProgress,
-    resolved,
-  }, 200, {schema: ticketSummary});
-  })
+    response(
+      res,
+      {
+        total,
+        open,
+        inProgress,
+        resolved,
+      },
+      200,
+      { schema: ticketSummary },
+    );
+  });
   static getTicketDetails = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const data = await TicketService.getTicketDetails({
       ticketId: id,
       organizationId: req.organization.id,
     });
-    response(res, data);
+    response(res, data, 200, { schema: ticketDetailsSchema });
   });
   static getAssignedTickets = catchAsync(async (req, res, _next) => {
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
@@ -158,6 +168,18 @@ export class TicketController {
       isInternal,
     });
     response(res, data, 200);
+  });
+  static getTicketComments = catchAsync(async (req, res, _next) => {
+    const ticketId = req.params.id as string;
+    const { comments, pagination } = await TicketService.getTicketComments({
+      organizationId: req.organization.id,
+      ticketId,
+      queryString: req.query,
+    });
+    response(res, comments, 200, {
+      otherFields: { ...pagination },
+      schema: z.array(commentSchemaResponse),
+    });
   });
   static escalate = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

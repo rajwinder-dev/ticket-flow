@@ -1,16 +1,19 @@
+import type { FilterOptions } from "@/types/genetic";
 import type { InviteUserOrganizationInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { memberApi } from "./api";
-
-const useMember = () => {
+interface props {
+  filterOptions?: FilterOptions;
+}
+const useMember = ({ filterOptions }: props = {}) => {
   const { orgId, token } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: members, isLoading: isLoadingMembers } = useQuery({
-    queryKey: ["member", { orgId }],
-    queryFn: memberApi.getMembers,
+    queryKey: ["member", { orgId }, { filterOptions }],
+    queryFn: () => memberApi.getMembers(filterOptions!),
     enabled: !!orgId,
   });
   const {
@@ -62,8 +65,8 @@ const useMember = () => {
       memberApi.unassignQueue({ queueId, userId }),
     onSuccess: () => {
       toast.success("Queue unassigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["member", {orgId}] });
-      queryClient.invalidateQueries({ queryKey: ["queue", {orgId}] });
+      queryClient.invalidateQueries({ queryKey: ["member", { orgId }] });
+      queryClient.invalidateQueries({ queryKey: ["queue", { orgId }] });
     },
     onError: (error) => {
       toast.error(error.message);

@@ -28,13 +28,13 @@ interface Props {
   userId: string;
 }
 
-const AssignQueueDialog = ({ open, onOpenChange, userId}: Props) => {
+const AssignQueueDialog = ({ open, onOpenChange, userId }: Props) => {
   const [groupId, setGroupId] = useState<string>();
   const [queueId, setQueueId] = useState<string>();
   const { queueGroups } = useQueueGroup();
-  const { queues } = useQueue(groupId!);
+  const { queues } = useQueue({ groupId });
 
-  const { assignQueueMutate, isAssigningQueue,  } = useMember();
+  const { assignQueueMutate, isAssigningQueue } = useMember();
   const canSubmit = Boolean(queueId);
 
   return (

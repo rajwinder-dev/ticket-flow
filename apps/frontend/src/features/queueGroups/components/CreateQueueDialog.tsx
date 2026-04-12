@@ -22,7 +22,7 @@ export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
   const { selectedId } = useQueueGroupStore();
   const { queueGroups } = useQueueGroup();
   const selectedGroup = queueGroups?.data.find((item) => item.id === selectedId);
-  const { createQueue, isCreatingQueue } = useQueue(selectedId!);
+  const { createQueue, isCreatingQueue } = useQueue({ groupId: selectedId! });
   const {
     register,
     handleSubmit,
@@ -35,7 +35,7 @@ export function CreateQueueDialog({ open, onClose }: CreateQueueDialogProps) {
   function handleFormSubmit(data: CreateQueueInput) {
     if (!selectedId) return console.error("groupId not found ");
     createQueue(
-      {groupId: selectedId, data},
+      { groupId: selectedId, data },
       {
         onSuccess: () => {
           reset();

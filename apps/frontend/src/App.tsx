@@ -15,7 +15,7 @@ function App() {
             <RouterProvider router={router} />
             <Toaster />
           </GlobalProvider>
-          <ReactQueryDevtools position="left"/>
+          <ReactQueryDevtools />
         </TooltipProvider>
       </QueryClientProvider>
     </>

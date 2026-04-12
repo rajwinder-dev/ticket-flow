@@ -1,3 +1,4 @@
+import type { FilterOptions } from "@/types/genetic";
 import type {
   AssignTicketInput,
   CreateTicketCommentInput,
@@ -11,13 +12,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import { ticketApi } from "./api";
-
-export function useTicket() {
+interface props {
+  filterOptions?: FilterOptions;
+}
+export function useTicket({ filterOptions }: props = {}) {
   const { orgId, ticketId } = useParams();
   const queryClient = useQueryClient();
   const { data: ticketData, isLoading: isLoadingTicketData } = useQuery({
-    queryFn: ticketApi.getAll,
-    queryKey: ["ticket", { orgId }],
+    queryFn: () => ticketApi.getAll(filterOptions),
+    queryKey: ["ticket", { orgId }, filterOptions],
     enabled: !!orgId,
   });
   const { data: ticketSummary, isLoading: isLoadingTicketSummary } = useQuery({
@@ -32,7 +35,12 @@ export function useTicket() {
   });
   const { data: ticketDetails, isLoading: isLoadingTicketDetails } = useQuery({
     queryFn: () => ticketApi.getDetails(ticketId!),
-    queryKey: ["ticket", { ticketId }],
+    queryKey: ["ticket", "details", { ticketId }],
+    enabled: !!ticketId,
+  });
+  const { data: ticketComments, isLoading: isLoadingTicketComments } = useQuery({
+    queryFn: () => ticketApi.getComments(ticketId!),
+    queryKey: ["ticket", "comments", { ticketId }],
     enabled: !!ticketId,
   });
   const { mutate: createdTicket, isPending: isCreatingTicket } = useMutation({
@@ -134,5 +142,7 @@ export function useTicket() {
     isUpdatingTicket,
     ticketSummary,
     isLoadingTicketSummary,
+    ticketComments,
+    isLoadingTicketComments,
   };
 }

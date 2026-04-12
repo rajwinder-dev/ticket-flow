@@ -29,6 +29,16 @@ QueueRoutes.patch(
 // queues routes
 QueueRoutes.post("/:id", validationMiddleware(createQueueInput), QueueController.createQueue);
 QueueRoutes.get("/:id", QueueController.getQueues);
+QueueRoutes.get(
+  "/:id/details",
+  validationMiddleware(validUuidParams),
+  QueueController.getQueueDetails,
+);
+QueueRoutes.get(
+  "/:id/summary",
+  validationMiddleware(validUuidParams),
+  QueueController.getQueueSummary,
+);
 QueueRoutes.patch("/:id", validationMiddleware(updateQueueInput), QueueController.updateQueue);
 QueueRoutes.get(
   "/:id/agents",

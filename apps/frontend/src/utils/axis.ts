@@ -77,7 +77,7 @@ export async function getRequestMany<T>({
   return await catchError(async () => {
     let query = "";
     if (filterOptions) query = buildQuery(filterOptions);
-    const response = await api.get<PaginateResponse<T>>(`${path}${query}`, {
+    const response = await api.get<PaginateResponse<T>>(`${path}?${query}`, {
       headers: {
         "Content-Type": headers,
       },

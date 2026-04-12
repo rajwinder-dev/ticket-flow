@@ -24,6 +24,16 @@ export class QueueController {
     });
     response(res, queue, 201);
   });
+  static getQueueDetails = catchAsync(async (req, res, _next) => {
+    const queueId = req.params.id as string;
+    const data = await QueueService.getDetails({queueId, organizationId: req.organization.id})
+    response(res, data)
+  });
+  static getQueueSummary = catchAsync(async (req, res , _next) => {
+     const queueId = req.params.id as string;
+    const data = await QueueService.getQueueSummary({queueId, organizationId: req.organization.id})
+    response(res, data)
+  })
   static addAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
     const { agentIds } = req.body as AddAgentsToQueueInput;

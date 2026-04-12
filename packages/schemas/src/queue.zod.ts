@@ -72,7 +72,32 @@ export const queueSchemaResponse = z.object({
   ticketsCount: z.number(),
   createdAt: z.date(),
 });
+
+const queueGroupSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+const queueDetailsSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  organizationId: z.string(),
+  queueGroupId: z.string().nullable(),
+  order: z.number(),
+  active: z.boolean(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  queueGroup: queueGroupSchema.nullable(),
+});
+export const queueSummarySchema = z.object({
+  totalTickets: z.number(),
+  openTickets: z.number(),
+  highPriorityTickets: z.number(),
+  activeAgents: z.number(),
+});
 // --- Inferred Types ---
+export type QueueDetailsSchema = z.infer<typeof queueDetailsSchema>;
 export type QueueGroupSchemaResponse = z.infer<typeof queueGroupSchemaResponse>;
 export type QueueSchemaResponse = z.infer<typeof queueSchemaResponse>;
 export type CreateQueueGroupInput = z.infer<typeof createQueueGroupInput.bodySchema>;
@@ -80,3 +105,4 @@ export type CreateQueueInput = z.infer<typeof createQueueInput.bodySchema>;
 export type UpdateQueueInput = z.infer<typeof updateQueueInput.bodySchema>;
 export type AddAgentsToQueueInput = z.infer<typeof addAgentsToQueueInput.bodySchema>;
 export type RemoveAgentsFromQueueInput = z.infer<typeof removeAgentsFromQueueInput.bodySchema>;
+export type QueueSummarySchema = z.infer<typeof queueSummarySchema>;

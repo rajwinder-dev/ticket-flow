@@ -65,6 +65,7 @@ TicketRouter.post(
   validationMiddleware(createTicketCommentInput),
   TicketController.addComment,
 );
+TicketRouter.get("/:id/comment", TicketController.getTicketComments);
 TicketRouter.post(
   "/:id/escalate",
   validationMiddleware(escalateTicketInput),

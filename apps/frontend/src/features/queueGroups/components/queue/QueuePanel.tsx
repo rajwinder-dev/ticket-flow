@@ -34,7 +34,7 @@ function QueueEmptyState({ onAddQueue }: { onAddQueue: () => void }) {
 export function QueuePanel({ onAddQueue }: QueuePanelProps) {
   const { selectedId } = useQueueGroupStore();
   const { queueGroups } = useQueueGroup();
-  const { queues, isLoadingQueues } = useQueue(selectedId!);
+  const { queues, isLoadingQueues } = useQueue({groupId: selectedId!});
   const selectedGroup = queueGroups?.data.find((item) => item.id === selectedId);
 
   if (isLoadingQueues)

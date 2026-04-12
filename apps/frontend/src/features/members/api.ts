@@ -1,3 +1,4 @@
+import type { FilterOptions } from "@/types/genetic";
 import { deleteRequest, getRequest, getRequestMany, postRequest } from "@/utils/axis";
 import type {
   InviteMemberDetailsResponse,
@@ -6,9 +7,10 @@ import type {
 } from "@repo/schemas";
 
 export const memberApi = {
-  getMembers: async () => {
+  getMembers: async (filterOptions: FilterOptions) => {
     const data = await getRequestMany<MemberSchemaResponse>({
       path: `/member`,
+      filterOptions
     });
     return data;
   },

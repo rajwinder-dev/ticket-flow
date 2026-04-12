@@ -41,6 +41,75 @@ export class QueueService {
     });
     return queue;
   };
+  static getDetails = async ({
+    queueId,
+    organizationId,
+  }: {
+    queueId: string;
+    organizationId: string;
+  }) => {
+    const data = await prisma.queue.findUnique({
+      where: {
+        id: queueId,
+        organizationId,
+      },
+      include: {
+        queueGroup: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+      },
+    });
+    return data;
+  };
+  static getQueueSummary = async ({
+    queueId,
+    organizationId,
+  }: {
+    queueId: string;
+    organizationId: string;
+  }) => {
+    const [totalTickets, openTickets, highPriorityTickets, activeAgents] = await Promise.all([
+      prisma.ticket.count({
+        where: {
+          queueId,
+          organizationId,
+        },
+      }),
+      prisma.ticket.count({
+        where: {
+          queueId,
+          status: "OPEN",
+          organizationId,
+        },
+      }),
+      prisma.ticket.count({
+        where: {
+          queueId,
+          priority: {
+            in: ["HIGH", "URGENT"],
+          },
+          organizationId,
+        },
+      }),
+      prisma.queueAgent.count({
+        where: {
+          queueId,
+          active: true,
+          organizationId,
+        },
+      }),
+    ]);
+
+    return {
+      totalTickets,
+      openTickets,
+      highPriorityTickets,
+      activeAgents,
+    };
+  };
   static addAgents = async ({
     queueId,
     organizationId,

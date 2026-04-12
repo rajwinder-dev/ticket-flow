@@ -17,10 +17,10 @@ export interface ApiResponse<T> extends geneticApiResponse {
 }
 
 export type FilterOptions = {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
   sorting?: { sortby: string; sortOrder?: "asc" | "desc" };
-  filter?: Record<string, string | number>;
+  filter?: Record<string, string | number >;
   fields?: string[];
 };
 export interface ApiMessage {

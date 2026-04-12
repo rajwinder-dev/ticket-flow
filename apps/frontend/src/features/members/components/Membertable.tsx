@@ -12,6 +12,7 @@ import { useMembersStore } from "../store";
 import { Avatar } from "./MemberBandges";
 import { RowActionsMenu } from "./RowActionsMenu";
 import TableQueueCell from "./TableQueueCell";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   memberData: MemberSchemaResponse[];
@@ -80,13 +81,7 @@ export function MembersTable({ memberData }: Props) {
                 </TableCell>
 
                 <TableCell>
-                  <span
-                    className={cn(
-                      "bg-accent inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium capitalize",
-                    )}
-                  >
-                    {member.role}
-                  </span>
+                  <Badge>{member.role}</Badge>
                 </TableCell>
 
                 <TableCell>

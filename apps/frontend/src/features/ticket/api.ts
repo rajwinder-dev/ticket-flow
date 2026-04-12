@@ -1,15 +1,18 @@
+import type { FilterOptions } from "@/types/genetic";
 import { getRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import type {
-  AssignTicketInput,
-  CreateTicketCommentInput,
-  CreateTicketInput,
-  EscalateTicketInput,
-  TicketEscalationOptions,
-  TicketSchemaResponse,
-  TicketSummary,
-  UpdateTicketInput,
-  UpdateTicketPriorityInput,
-  UpdateTicketStatusInput,
+import {
+  type AssignTicketInput,
+  type CommentSchemaResponse,
+  type CreateTicketCommentInput,
+  type CreateTicketInput,
+  type EscalateTicketInput,
+  type TicketDetailsSchema,
+  type TicketEscalationOptions,
+  type TicketSchemaResponse,
+  type TicketSummary,
+  type UpdateTicketInput,
+  type UpdateTicketPriorityInput,
+  type UpdateTicketStatusInput,
 } from "@repo/schemas";
 
 export const ticketApi = {
@@ -20,9 +23,10 @@ export const ticketApi = {
     });
     return res;
   },
-  getAll: async () => {
+  getAll: async (filterOptions?: FilterOptions) => {
     const res = await getRequestMany<TicketSchemaResponse>({
       path: "/ticket",
+      filterOptions,
     });
     return res;
   },
@@ -39,7 +43,7 @@ export const ticketApi = {
     return res;
   },
   getDetails: async (ticketId: string) => {
-    const res = await getRequest({
+    const res = await getRequest<TicketDetailsSchema>({
       path: `/ticket/${ticketId}`,
     });
     return res;
@@ -76,6 +80,12 @@ export const ticketApi = {
     const res = await postRequest({
       path: `/ticket/${ticketId}/comment`,
       data,
+    });
+    return res;
+  },
+  getComments: async (ticketId: string) => {
+    const res = await getRequestMany<CommentSchemaResponse>({
+      path: `/ticket/${ticketId}/comment`,
     });
     return res;
   },

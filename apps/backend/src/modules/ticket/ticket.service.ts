@@ -1,6 +1,8 @@
 import { allowedTransitions } from "@repo/constants";
 import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/schemas";
+import { ParsedQs } from "qs";
 import { priority, Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
+import { APIFeatures } from "../../core/utils/apiFeatures";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
 import { readableId } from "../../core/utils/utils";
@@ -153,27 +155,37 @@ export class TicketService {
         organizationId,
         id: ticketId,
       },
-      include: {
-        comments: {
-          select: {
-            comment: true,
-            createdAt: true,
-            updatedAt: true,
-            author: {
-              select: {
-                email: true,
-                username: true,
-              },
-            },
-          },
-        },
-        transitions: true,
+      select: {
+        id: true,
+        code: true,
+        subject: true,
+        description: true,
+        status: true,
+        priority: true,
+        category: true,
+        createdAt: true,
+        updatedAt: true,
         assignedToUser: {
           select: {
             email: true,
             username: true,
           },
         },
+        customer: {
+          select: {
+            identity: {
+              select: {
+                email: true,
+                customer: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+
         queue: {
           select: {
             name: true,
@@ -182,8 +194,19 @@ export class TicketService {
         },
       },
     });
+    if (!data) throw new appError("Ticket not found ", 404, "NOT_FOUND");
 
-    return data;
+    const normalized = {
+      ...data,
+      customer: data?.customer?.identity
+        ? {
+            email: data.customer.identity.email,
+            name: data.customer.identity.customer?.[0]?.name ?? null,
+          }
+        : null,
+    };
+
+    return normalized;
   };
   static resolveQueueAssignment = async ({
     organizationId,
@@ -205,11 +228,19 @@ export class TicketService {
     queueId: string;
     organizationId: string;
   }) => {
-    // todo: later add strategies  round-rebin, ,load balance and availability
-    const queueAgents = await QueueService.getQueueAgents({ queueId, organizationId });
+    // * load balance strategy
+    const agent = await prisma.queueAgent.findFirst({
+      where: {
+        queueId,
+        organizationId,
+        active: true,
+      },
 
-    const agent = queueAgents[0];
-    return agent?.id;
+      orderBy: {
+        ticketCount: "asc",
+      },
+    });
+    return agent?.agentId;
   };
   static updateStatus = async ({
     ticketId,
@@ -341,6 +372,45 @@ export class TicketService {
     });
     return data;
   };
+  static getTicketComments = async ({
+    ticketId,
+    organizationId,
+    queryString,
+  }: {
+    ticketId: string;
+    organizationId: string;
+    queryString: ParsedQs;
+  }) => {
+    const { offset, limit } = new APIFeatures(queryString).pagination();
+    const comments = await prisma.ticketComment.findMany({
+      where: {
+        ticketId,
+        organizationId,
+      },
+      select: {
+        comment: true,
+        createdAt: true,
+        id: true,
+        author: { select: { username: true, email: true } },
+      },
+      orderBy: { createdAt: "asc" },
+      take: limit,
+      skip: offset,
+    });
+    const total = await prisma.ticketComment.count({
+      where: {
+        ticketId,
+        organizationId,
+      },
+    });
+    const pagination = {
+      offset,
+      limit,
+      total,
+    };
+    return { comments, pagination };
+  };
+
   static assignTicket = async ({
     ticketId,
     organizationId,
@@ -518,6 +588,7 @@ export class TicketService {
       //  todo: if queue id not in ticket then find
       // decrement previous agent (only if different)
       if (currentTicket?.assignedTo && currentTicket.assignedTo !== nextAgentId) {
+        console.log(organizationId, currentTicket.assignedTo, currentTicket.queueId);
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {
