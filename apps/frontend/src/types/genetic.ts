@@ -9,6 +9,7 @@ export type PaginateResponse<T> = {
 export type geneticApiResponse = {
   status: string;
   message?: string;
+  code?: string;
   timestamp: string;
 };
 export interface ApiResponse<T> extends geneticApiResponse {

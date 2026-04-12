@@ -1,4 +1,5 @@
-import { allowedTransitions, CreateTicketInput, UpdateTicketInput } from "@repo/schemas";
+import { allowedTransitions } from "@repo/constants";
+import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/schemas";
 import { priority, Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
 import { appError } from "../../core/utils/appError";
 import { prisma } from "../../core/utils/prismaClient";
@@ -110,7 +111,17 @@ export class TicketService {
 
     return ticket;
   };
-  static updateTicket = async ({input, ticketId, organizationId, userId}: {input: UpdateTicketInput, ticketId: string, organizationId: string, userId: string}) => {
+  static updateTicket = async ({
+    input,
+    ticketId,
+    organizationId,
+    userId,
+  }: {
+    input: UpdateTicketInput;
+    ticketId: string;
+    organizationId: string;
+    userId: string;
+  }) => {
     const updatedTicket = await prisma.ticket.update({
       where: { id: ticketId, organizationId },
       data: {
@@ -128,7 +139,7 @@ export class TicketService {
       oldData: input,
       newData: updatedTicket,
     });
-    return updatedTicket
+    return updatedTicket;
   };
   static getTicketDetails = async ({
     ticketId,
@@ -402,10 +413,17 @@ export class TicketService {
     ticketId,
     organizationId,
     userId,
+    input,
   }: {
+    input: {
+      priority: TicketPriority;
+      reason: string;
+      comment: string;
+      groupId?: string;
+    };
     ticketId: string;
     organizationId: string;
-    userId?: string;
+    userId: string;
   }) => {
     const currentTicket = await prisma.ticket.findUnique({
       where: { id: ticketId, organizationId },
@@ -417,16 +435,16 @@ export class TicketService {
         },
       },
     });
-    if (!currentTicket?.priority) throw new appError("Update priority before escalate", 400);
     if (!currentTicket?.queue) {
       throw new appError("Invalid Ticket Id", 404, "NOT_FOUND");
     }
     //  find next queue in same group
+    console.log(input.groupId);
     const nextQueues = await prisma.queue.findMany({
       where: {
-        queueGroupId: currentTicket.queue.queueGroupId,
+        queueGroupId: input.groupId || currentTicket.queue.queueGroupId,
         order: {
-          gt: currentTicket.queue.order,
+          gt: input.groupId ? 0 : currentTicket.queue.order,
         },
       },
       include: {
@@ -442,7 +460,7 @@ export class TicketService {
     });
     const nextQueue = nextQueues.find((q) => q._count.queueAgents > 0);
     if (!nextQueue)
-      throw new appError("No further queue. Please assign manually.", 409, "CONFLICT_ERROR");
+      throw new appError("No further queue. Please select another group.", 409, "CONFLICT_ERROR");
 
     // try to get agent
     const agentId = await this.resolveAgentAssignment({ queueId: nextQueue.id, organizationId });
@@ -454,6 +472,13 @@ export class TicketService {
       nextAgentId: agentId,
       organizationId,
       action: "ESCALATED",
+      reason: input.reason,
+    });
+    await TicketService.createTicketComment({
+      ticketId,
+      organizationId,
+      userId,
+      comment: input.comment,
     });
     await ActivityService.lagActivity({
       organizationId,
@@ -463,6 +488,7 @@ export class TicketService {
       event: "ticket.agent.escalated",
       entityId: ticketId,
       entityType: "TICKET",
+
       oldData: currentTicket,
       newData: updatedTicket,
     });
@@ -475,12 +501,14 @@ export class TicketService {
     nextQueueId,
     organizationId,
     action,
+    reason,
   }: {
     ticketId: string;
     nextAgentId: string;
     nextQueueId: string;
     organizationId: string;
     action: TicketAction;
+    reason?: string;
   }) => {
     const ticketData = await prisma.$transaction(async (tx) => {
       const currentTicket = await tx.ticket.findUnique({
@@ -521,6 +549,7 @@ export class TicketService {
           toQueueId: updatedTicket.queueId,
           fromAgentId: currentTicket?.assignedTo,
           toAgentId: updatedTicket.assignedTo,
+          escalationReason: reason,
         },
       });
       // increment new agent
@@ -541,5 +570,57 @@ export class TicketService {
       return { currentTicket, updatedTicket };
     });
     return ticketData;
+  };
+  static escalationOptions = async ({
+    organizationId,
+    ticketId,
+  }: {
+    organizationId: string;
+    ticketId: string;
+  }) => {
+    let nextQueue: { id: string; name: string } | null = null;
+
+    const queueData = await prisma.ticket.findUnique({
+      where: {
+        id: ticketId,
+        organizationId,
+      },
+      select: {
+        queue: {
+          select: {
+            id: true,
+            name: true,
+            queueGroupId: true,
+            order: true,
+          },
+        },
+      },
+    });
+
+    if (!queueData?.queue) {
+      return { currentQueue: null, nextQueue: null };
+    }
+
+    if (queueData.queue.order !== null) {
+      nextQueue = await prisma.queue.findFirst({
+        where: {
+          organizationId,
+          queueGroupId: queueData.queue.queueGroupId,
+          order: queueData.queue.order + 1,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+    }
+
+    return {
+      currentQueue: {
+        id: queueData.queue.id,
+        name: queueData.queue.name,
+      },
+      nextQueue,
+    };
   };
 }

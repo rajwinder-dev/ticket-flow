@@ -79,12 +79,14 @@ const AssignedToUserSchema = z.object({
   id: z.string().uuid(),
   username: z.string().min(1),
 });
-const escalateTicket = {
+export const escalateTicketInput = {
   bodySchema: z.object({
     reason: z.enum(escalationReasonValues),
     priority: z.enum(ticketPriority),
     comment: z.string().min(1, "comment is required"),
+    groupId: z.uuid().optional()
   }),
+  ...validUuidParams,
 };
 // Main ticket schema
 export const ticketSchemaResponse = z.object({
@@ -105,6 +107,11 @@ export const ticketSchemaResponse = z.object({
   assignedBy: z.uuid().nullable(),
   assignedToUser: AssignedToUserSchema,
 });
+const QueueOptionSchema = z.object({ id: z.string(), name: z.string() })
+export const ticketEscalationOptions = z.object({
+  currentQueue: QueueOptionSchema.nullable(),
+  nextQueue: QueueOptionSchema.nullable(),
+});
 // --- Inferred Types ---
 export type TicketPriority = (typeof ticketPriority)[number];
 export type TicketStatus = (typeof ticketStatus)[number];
@@ -116,4 +123,5 @@ export type UpdateTicketStatusInput = z.infer<typeof updateTicketStatusInput.bod
 export type UpdateTicketPriorityInput = z.infer<typeof updateTicketPriorityInput.bodySchema>;
 export type CreateTicketCommentInput = z.infer<typeof createTicketCommentInput.bodySchema>;
 export type AssignTicketInput = z.infer<typeof assignTicketInput.bodySchema>;
-export type EscalateTicketInput = z.infer<typeof escalateTicket.bodySchema>;
+export type EscalateTicketInput = z.infer<typeof escalateTicketInput.bodySchema>;
+export type TicketEscalationOptions = z.infer<typeof ticketEscalationOptions> ;

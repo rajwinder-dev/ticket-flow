@@ -2,11 +2,11 @@ import {
   assignTicketInput,
   createTicketCommentInput,
   createTicketInput,
+  escalateTicketInput,
   updateTicketInput,
   updateTicketPriorityInput,
   updateTicketStatusInput,
 } from "@repo/schemas";
-import { validUuidParams } from "@repo/schemas/src/global.zod";
 import { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware";
 import { authMiddleware } from "../auth/auth.middleware";
@@ -62,7 +62,8 @@ TicketRouter.post(
 );
 TicketRouter.post(
   "/:id/escalate",
-  validationMiddleware(validUuidParams),
+  validationMiddleware(escalateTicketInput),
   TicketController.escalate,
 );
+TicketRouter.get("/:id/escalate-options", TicketController.getEscalateOptions)
 export default TicketRouter;

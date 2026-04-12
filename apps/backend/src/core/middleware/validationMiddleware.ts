@@ -1,4 +1,4 @@
-import z, { ZodError } from "zod";
+import z, { ZodError, ZodIssue } from "zod";
 import { appError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 
@@ -17,7 +17,7 @@ export function validationMiddleware({
       if (!result.success)
         return next(
           new appError(
-            "Body validation failed",
+            `BODY: ${formatZodErrorToMessage(result.error)}`,
             400,
             "VALIDATION_ERROR",
             formatZodErrors(result.error),
@@ -31,7 +31,7 @@ export function validationMiddleware({
       if (!result.success)
         return next(
           new appError(
-            "Params validation failed",
+            `PARAMS: ${formatZodErrorToMessage(result.error)}`,
             400,
             "VALIDATION_ERROR",
             formatZodErrors(result.error),
@@ -44,7 +44,7 @@ export function validationMiddleware({
       if (!result.success)
         return next(
           new appError(
-            "Query validation failed",
+            `QUERY: ${formatZodErrorToMessage(result.error)}`,
             400,
             "VALIDATION_ERROR",
             formatZodErrors(result.error),
@@ -61,4 +61,27 @@ function formatZodErrors(zodError: ZodError) {
     field: issue.path.join("."),
     message: issue.message,
   }));
+}
+export function formatZodErrorToMessage(
+  error: ZodError,
+  options?: {
+    separator?: string; // join multiple errors
+    includePath?: boolean; // include field path
+  },
+): string {
+  const separator = options?.separator ?? ", ";
+  const includePath = options?.includePath ?? true;
+
+  if (!error?.issues?.length) return "Validation error";
+
+  const messages = error.issues.map((issue: ZodIssue) => {
+    const path = issue.path.join(".");
+    const baseMessage = issue.message || "Invalid value";
+
+    if (!includePath || !path) return baseMessage;
+
+    return `${path}: ${baseMessage}`;
+  });
+
+  return messages.join(separator);
 }

@@ -18,15 +18,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useLookupHook } from "@/features/lookup/hooks";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { escalationReasons, ticketPriority } from "@repo/constants";
 import {
+  escalateTicketInput,
   type EscalateTicketInput,
   type TicketSchemaResponse,
 } from "@repo/schemas";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronUp } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import { ticketApi } from "../api";
+import { useTicket } from "../hooks";
 import { QueueFlow } from "./QueueFlow";
-import { escalationReasons, ticketPriority } from "@repo/constants";
 
 interface TicketEscalateDialogProps {
   open: boolean;
@@ -35,12 +41,20 @@ interface TicketEscalateDialogProps {
   onSubmit?: (ticketId: string, values: TicketSchemaResponse) => void;
 }
 export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDialogProps) {
+  const { groupsData } = useLookupHook();
+  const { data: escalateOptions } = useQuery({
+    queryFn: () => ticketApi.escalateOptions(ticket!.id),
+    queryKey: ["escalation-options", { ticketId: ticket?.id }],
+    enabled: !!ticket?.id,
+  });
+  const { escalateTicket, isEscalatingTicket } = useTicket();
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<EscalateTicketInput>({
+    resolver: zodResolver(escalateTicketInput.bodySchema),
     defaultValues: {
       comment: "",
       priority: ticket?.priority ?? "MEDIUM",
@@ -49,11 +63,17 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
 
   const watchedPriority = useWatch({ control, name: "priority" });
 
-  const handleFormSubmit = async (values: EscalateTicketInput) => {
+  const handleFormSubmit = async (data: EscalateTicketInput) => {
     if (!ticket) return;
-    console.log(values);
-    setOpen(false);
-    reset();
+    escalateTicket(
+      { ticketId: ticket.id, data },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          reset();
+        },
+      },
+    );
   };
 
   const handleClose = () => {
@@ -82,8 +102,44 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 pt-1">
           {/* Queue Flow */}
-          {ticket && <QueueFlow from={"sbc"} to={"xyx"} />}
-
+          {escalateOptions && (
+            <QueueFlow
+              from={escalateOptions.data.currentQueue?.name}
+              to={escalateOptions.data.nextQueue?.name}
+            />
+          )}
+          {!escalateOptions?.data.nextQueue && (
+            <div className="space-y-1.5">
+              <Label htmlFor="group" className="text-sm font-medium">
+                Select Group <span className="text-destructive">*</span>
+              </Label>
+              <Controller
+                name="groupId"
+                control={control}
+                rules={{ required: "Please select a group" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger
+                      id="group"
+                      className={cn(errors.groupId && "border-destructive")}
+                    >
+                      <SelectValue placeholder="Select next Group to escalate" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {groupsData?.data.map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.groupId && (
+                <p className="text-destructive text-xs">{errors.groupId.message}</p>
+              )}
+            </div>
+          )}
           {/* Reason */}
           <div className="space-y-1.5">
             <Label htmlFor="reason" className="text-sm font-medium">
@@ -164,7 +220,7 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-1.5">
+            <Button type="submit" disabled={isEscalatingTicket} className="gap-1.5">
               <ChevronUp className="h-3.5 w-3.5" />
               Escalate Ticket
             </Button>

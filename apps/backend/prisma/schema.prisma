@@ -91,6 +91,7 @@ model Membership {
   roleId         String        @db.Uuid
   createdAt      DateTime      @default(now())
   isSystem       Boolean       @default(false)
+
   @@unique([organizationId, userId])
 }
 
@@ -203,11 +204,11 @@ model EmailMessage {
 
 //  ============================ CUSTOMER ==============================
 model CustomerIdentity {
-  id            String     @id @default(uuid()) @db.Uuid
-  email         String     @unique @db.VarChar(255)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  customer     Customer[]
+  id        String     @id @default(uuid()) @db.Uuid
+  email     String     @unique @db.VarChar(255)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  customer  Customer[]
 }
 
 model Customer {
@@ -223,12 +224,11 @@ model Customer {
   isActive       Boolean          @default(true)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?        // soft delete
+  deletedAt      DateTime? // soft delete
 
-  tickets        Ticket[]
+  tickets Ticket[]
 
   @@unique([organizationId, identityId])
-
   // Recommended indexes
   @@index([identityId])
   @@index([organizationId])
@@ -384,28 +384,29 @@ enum TicketAction {
 model TicketTransition {
   id String @id @default(uuid()) @db.Uuid
 
-  ticketId     String        @db.Uuid
-  ticket       Ticket        @relation(fields: [ticketId], references: [id])
-  action       TicketAction
-  fromQueue    Queue?        @relation("TransitionFromQueue", fields: [fromQueueId], references: [id])
-  fromQueueId  String?       @db.Uuid
-  toQueue      Queue?        @relation("TransitionToQueue", fields: [toQueueId], references: [id])
-  toQueueId    String?       @db.Uuid
-  fromAgent    User?         @relation("TransitionFromAgent", fields: [fromAgentId], references: [id])
-  fromAgentId  String?       @db.Uuid
-  toAgent      User?         @relation("TransitionToAgent", fields: [toAgentId], references: [id])
-  toAgentId    String?       @db.Uuid
-  fromGroup    QueueGroup?   @relation("TransitionFromGroup", fields: [fromGroupId], references: [id])
-  fromGroupId  String?       @db.Uuid
-  toGroup      QueueGroup?   @relation("TransitionToGroup", fields: [toGroupId], references: [id])
-  toGroupId    String?       @db.Uuid
-  changedById  String?       @db.Uuid
-  changedBy    User?         @relation(fields: [changedById], references: [id])
-  fromPriority Priority?
-  toPriority   Priority?
-  fromStatus   TicketStatus?
-  toStatus     TicketStatus?
-  note         String?
+  ticketId         String        @db.Uuid
+  ticket           Ticket        @relation(fields: [ticketId], references: [id])
+  action           TicketAction
+  fromQueue        Queue?        @relation("TransitionFromQueue", fields: [fromQueueId], references: [id])
+  fromQueueId      String?       @db.Uuid
+  toQueue          Queue?        @relation("TransitionToQueue", fields: [toQueueId], references: [id])
+  toQueueId        String?       @db.Uuid
+  fromAgent        User?         @relation("TransitionFromAgent", fields: [fromAgentId], references: [id])
+  fromAgentId      String?       @db.Uuid
+  toAgent          User?         @relation("TransitionToAgent", fields: [toAgentId], references: [id])
+  toAgentId        String?       @db.Uuid
+  fromGroup        QueueGroup?   @relation("TransitionFromGroup", fields: [fromGroupId], references: [id])
+  fromGroupId      String?       @db.Uuid
+  toGroup          QueueGroup?   @relation("TransitionToGroup", fields: [toGroupId], references: [id])
+  toGroupId        String?       @db.Uuid
+  changedById      String?       @db.Uuid
+  changedBy        User?         @relation(fields: [changedById], references: [id])
+  fromPriority     Priority?
+  toPriority       Priority?
+  fromStatus       TicketStatus?
+  toStatus         TicketStatus?
+  escalationReason String?
+  note             String?
 }
 
 //  ============================ ACTIVITY / SESSIONS ==============================

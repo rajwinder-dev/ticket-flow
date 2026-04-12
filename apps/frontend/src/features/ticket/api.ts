@@ -1,12 +1,14 @@
 import { getRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
-import {
-  type TicketSchemaResponse,
-  type AssignTicketInput,
-  type CreateTicketCommentInput,
-  type CreateTicketInput,
-  type UpdateTicketPriorityInput,
-  type UpdateTicketStatusInput,
-  type UpdateTicketInput,
+import type {
+  AssignTicketInput,
+  CreateTicketCommentInput,
+  CreateTicketInput,
+  EscalateTicketInput,
+  TicketEscalationOptions,
+  TicketSchemaResponse,
+  UpdateTicketInput,
+  UpdateTicketPriorityInput,
+  UpdateTicketStatusInput,
 } from "@repo/schemas";
 
 export const ticketApi = {
@@ -70,11 +72,17 @@ export const ticketApi = {
     });
     return res;
   },
-  escalate: async (ticketId: string) => {
+  escalate: async (ticketId: string, data: EscalateTicketInput) => {
     const res = await postRequest({
       path: `/ticket/${ticketId}/escalate`,
+      data,
     });
     return res;
   },
-
+  escalateOptions: async (ticketId: string) => {
+    const res = await getRequest<TicketEscalationOptions>({
+      path: `/ticket/${ticketId}/escalate-options`,
+    });
+    return res;
+  },
 };

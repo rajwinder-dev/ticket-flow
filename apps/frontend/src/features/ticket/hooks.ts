@@ -2,6 +2,7 @@ import type {
   AssignTicketInput,
   CreateTicketCommentInput,
   CreateTicketInput,
+  EscalateTicketInput,
   UpdateTicketInput,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
@@ -94,10 +95,10 @@ export function useTicket() {
       toast.error(error.message);
     },
   });
-  const { mutate: escalateTicket, isPending: isAssigningEscalate } = useMutation({
-    mutationFn: (ticketId: string) => ticketApi.escalate(ticketId),
+  const { mutate: escalateTicket, isPending: isEscalatingTicket } = useMutation({
+    mutationFn: ({ticketId, data}: {ticketId: string, data: EscalateTicketInput}) => ticketApi.escalate(ticketId, data),
     onSuccess: () => {
-      toast.success("ticket assigned successfully");
+      toast.success("ticket escalated successfully");
       queryClient.invalidateQueries({ queryKey: ["ticket"] });
     },
     onError: (error) => {
@@ -122,7 +123,7 @@ export function useTicket() {
     commentTicket,
     isAssigningComment,
     escalateTicket,
-    isAssigningEscalate,
+    isEscalatingTicket,
     updateTicket,
     isUpdatingTicket
   };

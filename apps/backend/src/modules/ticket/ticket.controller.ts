@@ -1,6 +1,7 @@
 import {
   AssignTicketInput,
   CreateTicketCommentInput,
+  EscalateTicketInput,
   ticketSchemaResponse,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
@@ -141,8 +142,19 @@ export class TicketController {
   });
   static escalate = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
+    const input = req.body as EscalateTicketInput;
     const data = await TicketService.escalateTicket({
       ticketId: id,
+      organizationId: req.organization.id,
+      userId: req.user.id,
+      input,
+    });
+    response(res, data);
+  });
+  static getEscalateOptions = catchAsync(async (req, res, _next) => {
+    const ticketId = req.params.id as string;
+    const data = await TicketService.escalationOptions({
+      ticketId,
       organizationId: req.organization.id,
     });
     response(res, data);
