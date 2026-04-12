@@ -20,6 +20,11 @@ export function useTicket() {
     queryKey: ["ticket", { orgId }],
     enabled: !!orgId,
   });
+  const { data: ticketSummary, isLoading: isLoadingTicketSummary } = useQuery({
+    queryFn: ticketApi.getSummary,
+    queryKey: ["ticket", "summary", { orgId }],
+    enabled: !!orgId,
+  });
   const { data: assignedTicket, isLoading: isLoadingAssigned } = useQuery({
     queryFn: ticketApi.getAssigned,
     queryKey: ["ticket", "me", { orgId }],
@@ -40,7 +45,7 @@ export function useTicket() {
       toast.error(error.message);
     },
   });
-    const { mutate: updateTicket, isPending: isUpdatingTicket } = useMutation({
+  const { mutate: updateTicket, isPending: isUpdatingTicket } = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTicketInput }) =>
       ticketApi.update(id, data),
     onSuccess: () => {
@@ -96,7 +101,8 @@ export function useTicket() {
     },
   });
   const { mutate: escalateTicket, isPending: isEscalatingTicket } = useMutation({
-    mutationFn: ({ticketId, data}: {ticketId: string, data: EscalateTicketInput}) => ticketApi.escalate(ticketId, data),
+    mutationFn: ({ ticketId, data }: { ticketId: string; data: EscalateTicketInput }) =>
+      ticketApi.escalate(ticketId, data),
     onSuccess: () => {
       toast.success("ticket escalated successfully");
       queryClient.invalidateQueries({ queryKey: ["ticket"] });
@@ -125,6 +131,8 @@ export function useTicket() {
     escalateTicket,
     isEscalatingTicket,
     updateTicket,
-    isUpdatingTicket
+    isUpdatingTicket,
+    ticketSummary,
+    isLoadingTicketSummary,
   };
 }

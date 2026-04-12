@@ -6,6 +6,7 @@ import type {
   EscalateTicketInput,
   TicketEscalationOptions,
   TicketSchemaResponse,
+  TicketSummary,
   UpdateTicketInput,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
@@ -22,6 +23,12 @@ export const ticketApi = {
   getAll: async () => {
     const res = await getRequestMany<TicketSchemaResponse>({
       path: "/ticket",
+    });
+    return res;
+  },
+  getSummary: async () => {
+    const res = await getRequest<TicketSummary>({
+      path: `/ticket/summary`,
     });
     return res;
   },

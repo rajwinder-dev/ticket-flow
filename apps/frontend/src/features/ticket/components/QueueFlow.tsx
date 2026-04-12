@@ -12,7 +12,7 @@ export function QueueFlow({ from, to }: { from?: string; to?: string }) {
         className={cn(
           "rounded-md border px-2.5 py-1 text-sm font-medium",
           to
-            ? "bg-primary/10 text-primary border-primary/20"
+            ? "bg-secondary border-primary/20 text-foreground"
             : "bg-background text-muted-foreground border-dashed italic",
         )}
       >

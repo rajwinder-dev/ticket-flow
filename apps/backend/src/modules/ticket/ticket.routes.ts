@@ -32,6 +32,11 @@ TicketRouter.get(
   TicketController.getAllTickets,
 );
 TicketRouter.get(
+  "/summary",
+  authMiddleware.verifyPermission("ticket", "view_all"),
+  TicketController.getSummary,
+);
+TicketRouter.get(
   "/me",
   authMiddleware.verifyPermission("ticket", "view_own"),
   TicketController.getAssignedTickets,
@@ -65,5 +70,5 @@ TicketRouter.post(
   validationMiddleware(escalateTicketInput),
   TicketController.escalate,
 );
-TicketRouter.get("/:id/escalate-options", TicketController.getEscalateOptions)
+TicketRouter.get("/:id/escalate-options", TicketController.getEscalateOptions);
 export default TicketRouter;

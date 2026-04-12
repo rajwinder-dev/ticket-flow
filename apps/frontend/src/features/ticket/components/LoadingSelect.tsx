@@ -1,18 +1,21 @@
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import type {  ReactNode } from "react";
 type LoadingSelectProps = {
   isLoading: boolean;
   placeholder?: string;
+  defaultValue: string | undefined;
+  onValueChange: (value: string) => void
   children: ReactNode;
-} & ComponentProps<typeof Select>;
+} ;
 export const LoadingSelect = ({
   isLoading,
   placeholder,
+  onValueChange,
+  defaultValue,
   children,
-  ...props
 }: LoadingSelectProps) => (
-  <Select {...props}>
+  <Select onValueChange={onValueChange} defaultValue={defaultValue}>
     <SelectTrigger>
       {isLoading ? (
         <span className="text-muted-foreground flex items-center gap-2 text-sm">

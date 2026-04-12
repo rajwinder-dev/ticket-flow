@@ -148,7 +148,10 @@ const TicketTable = () => {
                 <TableCell>
                   <TicketPriorityCell ticket={ticket} />
                 </TableCell>
-                <TableCell>{ticket.assignedToUser?.username || "Unassigned"}</TableCell>
+                <TableCell>
+                  <p>{ticket.assignedToUser?.username || "Unassigned"}</p>
+                  <p className="text-muted-foreground">{ticket.queue?.name || "Unassigned"}</p>
+                </TableCell>
                 <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

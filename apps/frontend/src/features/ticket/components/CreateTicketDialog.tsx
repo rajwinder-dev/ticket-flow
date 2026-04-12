@@ -67,7 +67,6 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
   const { createdTicket, isCreatingTicket } = useTicket();
 
   const onValid = handleSubmit(async (values) => {
-    console.log(values);
     createdTicket(values, {
       onSuccess: () => {
         reset();
@@ -77,12 +76,14 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
   });
 
   useEffect(() => {
-    reset({ assignment: { agentId: undefined, queueId: undefined } });
-  }, [groupId, reset]);
+    // Clear dependent fields specifically
+    setValue("assignment.queueId", undefined);
+    setValue("assignment.agentId", undefined);
+  }, [groupId, setValue]);
 
   useEffect(() => {
-    reset({ assignment: { agentId: undefined } });
-  }, [queueId, reset]);
+    setValue("assignment.agentId", undefined);
+  }, [queueId, setValue]);
 
   // Clear assignment fields when switching to auto-assign
   const handleAutoAssignToggle = (checked: boolean) => {
@@ -94,7 +95,7 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
 
   return (
     <Dialog open={openForm} onOpenChange={setOpenForm}>
-      {openForm && <DevTool control={control} placement="top-left" />}
+      {<DevTool control={control} placement="top-left" />}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create ticket</DialogTitle>
@@ -177,46 +178,71 @@ export const CreateTicketDialog = ({ openForm, setOpenForm }: CreateTicketDialog
             {!autoAssign && (
               <>
                 <FieldWrapper label="Group" error={errors.assignment?.groupId?.message}>
-                  <LoadingSelect
-                    isLoading={isLoadingGroups}
-                    placeholder="Select group"
-                    {...register("assignment.groupId")}
-                  >
-                    {groupsData?.data.map((g) => (
-                      <SelectItem key={g.id} value={g.id}>
-                        {g.name}
-                      </SelectItem>
-                    ))}
-                  </LoadingSelect>
+                  <Controller
+                    control={control}
+                    name="assignment.groupId"
+                    render={({ field }) => (
+                      <LoadingSelect
+                        isLoading={isLoadingGroups}
+                        placeholder="Select group"
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        {groupsData?.data.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                      </LoadingSelect>
+                    )}
+                  />
                 </FieldWrapper>
 
-                <FieldWrapper label="Queue" error={errors.assignment?.queueId?.message}>
-                  <LoadingSelect
-                    isLoading={isLoadingQueues}
-                    placeholder="Select queue"
-                    {...register("assignment.queueId")}
-                  >
-                    {queueData?.data.map((q) => (
-                      <SelectItem key={q.id} value={q.id}>
-                        {q.name}
-                      </SelectItem>
-                    ))}
-                  </LoadingSelect>
-                </FieldWrapper>
+                {groupId && (
+                  <FieldWrapper label="Queue (optional)" error={errors.assignment?.queueId?.message}>
+                    <Controller
+                      control={control}
+                      name="assignment.queueId"
+                      render={({ field }) => (
+                        <LoadingSelect
+                          isLoading={isLoadingQueues}
+                          placeholder="Select queue"
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          {queueData?.data.map((q) => (
+                            <SelectItem key={q.id} value={q.id}>
+                              {q.name}
+                            </SelectItem>
+                          ))}
+                        </LoadingSelect>
+                      )}
+                    />
+                  </FieldWrapper>
+                )}
 
-                <FieldWrapper label="Agent" error={errors.assignment?.agentId?.message}>
-                  <LoadingSelect
-                    isLoading={isLoadingAgents}
-                    placeholder="Select agent"
-                    {...register("assignment.agentId")}
-                  >
-                    {agentsData?.data.map((a) => (
-                      <SelectItem key={a.id} value={a.id}>
-                        {a.name}
-                      </SelectItem>
-                    ))}
-                  </LoadingSelect>
-                </FieldWrapper>
+                {queueId && (
+                  <FieldWrapper label="Agent (optional)" error={errors.assignment?.agentId?.message}>
+                    <Controller
+                      control={control}
+                      name="assignment.agentId"
+                      render={({ field }) => (
+                        <LoadingSelect
+                          isLoading={isLoadingAgents}
+                          placeholder="Select agent"
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          {agentsData?.data.map((a) => (
+                            <SelectItem key={a.id} value={a.id}>
+                              {a.name}
+                            </SelectItem>
+                          ))}
+                        </LoadingSelect>
+                      )}
+                    />
+                  </FieldWrapper>
+                )}
               </>
             )}
           </div>
