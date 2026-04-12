@@ -274,6 +274,7 @@ export class TicketService {
           action: "STATUS_CHANGED",
           fromStatus: currentStatus,
           toStatus: updatedTicket.status,
+          organizationId,
         },
       });
       return updatedTicket;
@@ -322,6 +323,7 @@ export class TicketService {
           action: "PRIORITY_CHANGED",
           toPriority: updatedTicket.priority,
           fromPriority: currentTicket?.priority,
+          organizationId,
         },
       });
       return updatedTicket;
@@ -621,6 +623,7 @@ export class TicketService {
           fromAgentId: currentTicket?.assignedTo,
           toAgentId: updatedTicket.assignedTo,
           escalationReason: reason,
+          organizationId,
         },
       });
       // increment new agent
@@ -693,5 +696,74 @@ export class TicketService {
       },
       nextQueue,
     };
+  };
+  static getTicketTransitionHistory = async ({
+    ticketId,
+    organizationId,
+    queryString
+  }: {
+    ticketId: string;
+    organizationId: string;
+    queryString: ParsedQs;
+  }) => {
+    const { offset, limit } = new APIFeatures(queryString).pagination();
+     const total = await prisma.ticketTransition.count({
+      where: {
+        organizationId,
+        ticketId,
+      },
+    });
+    const data = await prisma.ticketTransition.findMany({
+      where: {
+        organizationId,
+        ticketId,
+      },
+      select: {
+        action: true,
+        fromPriority: true,
+        toPriority: true,
+        fromStatus: true,
+        toStatus: true,
+        escalationReason: true,
+        createdAt: true,
+        note: true,
+        fromQueue: {
+          select: {
+            name: true,
+          }
+        },
+        toQueue: {
+          select: {
+            name: true,
+          }
+        },
+        fromAgent: {
+          select: {
+            username: true,
+          }
+        },
+        toAgent: {
+          select: {
+            username: true,
+          }
+        },
+        fromGroup: {
+          select: {
+            name: true,
+          }
+        },
+        toGroup: {
+          select: {
+            name: true,
+          }
+        },
+      },
+    });
+    const pagination = {
+      offset,
+      limit,
+      total,
+    };
+    return {data, pagination};
   };
 }

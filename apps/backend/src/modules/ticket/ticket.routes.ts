@@ -73,3 +73,4 @@ TicketRouter.post(
 );
 TicketRouter.get("/:id/escalate-options", TicketController.getEscalateOptions);
 export default TicketRouter;
+TicketRouter.get("/:id/transition-history", TicketController.getTransitionHistory);

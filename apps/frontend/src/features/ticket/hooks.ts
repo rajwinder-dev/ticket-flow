@@ -40,7 +40,7 @@ export function useTicket({ filterOptions }: props = {}) {
   });
   const { data: ticketComments, isLoading: isLoadingTicketComments } = useQuery({
     queryFn: () => ticketApi.getComments(ticketId!),
-    queryKey: ["ticket", "comments", { ticketId }],
+    queryKey: ["ticket", "comment", { ticketId }],
     enabled: !!ticketId,
   });
   const { mutate: createdTicket, isPending: isCreatingTicket } = useMutation({

@@ -53,32 +53,33 @@ model User {
 }
 
 model Organization {
-  id            String          @id @default(uuid()) @db.Uuid
-  name          String
-  description   String?
-  teamSize      Int?
-  slug          String?         @unique
-  code          String          @unique
-  type          String?
-  active        Boolean         @default(true)
-  logo          String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  user          User?           @relation(fields: [createdBy], references: [id])
-  createdBy     String          @db.Uuid
-  tickets       Ticket[]
-  membership    Membership[]
-  role          Role[]
-  tokens        Token[]
-  email         EmailProvider[]
-  customer      Customer[]
-  emailMessages EmailMessage[]
-  queues        Queue[]
-  queueAgents   QueueAgent[]
-  queueGroups   QueueGroup[]
-  attachments   Attachment[]
-  auditLogs     ActivityLog[]
-  ticketComment TicketComment[]
+  id                String             @id @default(uuid()) @db.Uuid
+  name              String
+  description       String?
+  teamSize          Int?
+  slug              String?            @unique
+  code              String             @unique
+  type              String?
+  active            Boolean            @default(true)
+  logo              String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  user              User?              @relation(fields: [createdBy], references: [id])
+  createdBy         String             @db.Uuid
+  tickets           Ticket[]
+  membership        Membership[]
+  role              Role[]
+  tokens            Token[]
+  email             EmailProvider[]
+  customer          Customer[]
+  emailMessages     EmailMessage[]
+  queues            Queue[]
+  queueAgents       QueueAgent[]
+  queueGroups       QueueGroup[]
+  attachments       Attachment[]
+  auditLogs         ActivityLog[]
+  ticketComment     TicketComment[]
+  ticketTransitions TicketTransition[]
 }
 
 model Membership {
@@ -387,6 +388,16 @@ model TicketTransition {
   ticketId         String        @db.Uuid
   ticket           Ticket        @relation(fields: [ticketId], references: [id])
   action           TicketAction
+  fromPriority     Priority?
+  toPriority       Priority?
+  fromStatus       TicketStatus?
+  toStatus         TicketStatus?
+  escalationReason String?
+  note             String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  organizationId   String        @db.Uuid
+  organization     Organization  @relation(fields: [organizationId], references: [id])
   fromQueue        Queue?        @relation("TransitionFromQueue", fields: [fromQueueId], references: [id])
   fromQueueId      String?       @db.Uuid
   toQueue          Queue?        @relation("TransitionToQueue", fields: [toQueueId], references: [id])
@@ -401,12 +412,6 @@ model TicketTransition {
   toGroupId        String?       @db.Uuid
   changedById      String?       @db.Uuid
   changedBy        User?         @relation(fields: [changedById], references: [id])
-  fromPriority     Priority?
-  toPriority       Priority?
-  fromStatus       TicketStatus?
-  toStatus         TicketStatus?
-  escalationReason String?
-  note             String?
 }
 
 //  ============================ ACTIVITY / SESSIONS ==============================

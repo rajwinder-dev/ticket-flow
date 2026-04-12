@@ -200,4 +200,12 @@ export class TicketController {
     });
     response(res, data);
   });
-}
+  static getTransitionHistory = catchAsync(async (req, res, _next) => {
+    const ticketId = req.params.id as string;
+    const data = await TicketService.getTicketTransitionHistory({
+      ticketId,
+      organizationId: req.organization.id,
+      queryString: req.query,
+    });
+    response(res, data);
+});}

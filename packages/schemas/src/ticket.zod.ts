@@ -158,6 +158,49 @@ export const commentSchemaResponse = z.object({
     email: z.email(),
   }),
 });
+// Assuming these are your imported Prisma Enums
+export const ticketTranslationSchema = z.object({
+  createdAt: z.date(),
+  action: z.string(),
+  fromPriority: z.enum(ticketPriority).nullable(),
+  toPriority: z.enum(ticketPriority).nullable(),
+  fromStatus: z.enum(ticketStatus).nullable(),
+  toStatus: z.enum(ticketStatus).nullable(),
+  escalationReason: z.string().nullable(),
+  note: z.string().nullable(),
+  fromQueue: z
+    .object({
+      name: z.string(),
+    })
+    .nullable(),
+  toQueue: z
+    .object({
+      name: z.string(),
+    })
+    .nullable(),
+  fromAgent: z
+    .object({
+      username: z.string().nullable(),
+    })
+    .nullable(),
+  toAgent: z
+    .object({
+      username: z.string().nullable(),
+    })
+    .nullable(),
+  fromGroup: z
+    .object({
+      name: z.string(),
+    })
+    .nullable(),
+  toGroup: z
+    .object({
+      name: z.string(),
+    })
+    .nullable(),
+});
+
+// Infer the TypeScript type from the schema
 // --- Inferred Types ---
 export type TicketPriority = (typeof ticketPriority)[number];
 export type TicketStatus = (typeof ticketStatus)[number];
@@ -174,3 +217,4 @@ export type TicketEscalationOptions = z.infer<typeof ticketEscalationOptions>;
 export type TicketSummary = z.infer<typeof ticketSummary>;
 export type TicketDetailsSchema = z.infer<typeof ticketDetailsSchema>;
 export type CommentSchemaResponse = z.infer<typeof commentSchemaResponse>;
+export type TicketTransitionSchema = z.infer<typeof ticketTranslationSchema>;
