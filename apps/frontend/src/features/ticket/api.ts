@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@/types/genetic";
+import type { FilterOptions } from "@/types/axis.types";
 import { getRequest, getRequestMany, patchRequest, postRequest } from "@/utils/axis";
 import {
   type AssignTicketInput,
@@ -10,6 +10,7 @@ import {
   type TicketEscalationOptions,
   type TicketSchemaResponse,
   type TicketSummary,
+  type TicketTransitionSchema,
   type UpdateTicketInput,
   type UpdateTicketPriorityInput,
   type UpdateTicketStatusInput,
@@ -99,6 +100,12 @@ export const ticketApi = {
   escalateOptions: async (ticketId: string) => {
     const res = await getRequest<TicketEscalationOptions>({
       path: `/ticket/${ticketId}/escalate-options`,
+    });
+    return res;
+  },
+  getTransitionHistory: async (ticketId: string) => {
+    const res = await getRequestMany<TicketTransitionSchema>({
+      path: `/ticket/${ticketId}/transition-history`,
     });
     return res;
   },

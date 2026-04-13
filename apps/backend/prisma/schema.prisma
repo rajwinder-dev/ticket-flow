@@ -380,6 +380,7 @@ enum TicketAction {
   ESCALATED
   STATUS_CHANGED
   PRIORITY_CHANGED
+  NOTE_ADDED
 }
 
 model TicketTransition {

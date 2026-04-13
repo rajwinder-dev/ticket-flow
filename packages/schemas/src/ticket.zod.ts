@@ -1,5 +1,6 @@
 import {
   escalationReasonValues,
+  ticketActions,
   ticketCategory,
   ticketPriority,
   ticketStatus,
@@ -161,7 +162,7 @@ export const commentSchemaResponse = z.object({
 // Assuming these are your imported Prisma Enums
 export const ticketTranslationSchema = z.object({
   createdAt: z.date(),
-  action: z.string(),
+  action: z.enum(ticketActions),
   fromPriority: z.enum(ticketPriority).nullable(),
   toPriority: z.enum(ticketPriority).nullable(),
   fromStatus: z.enum(ticketStatus).nullable(),
@@ -205,6 +206,7 @@ export const ticketTranslationSchema = z.object({
 export type TicketPriority = (typeof ticketPriority)[number];
 export type TicketStatus = (typeof ticketStatus)[number];
 export type TicketCategory = (typeof ticketCategory)[number];
+export type ticketAction = (typeof ticketActions)[number];
 export type TicketSchemaResponse = z.infer<typeof ticketSchemaResponse>;
 export type CreateTicketInput = z.infer<typeof createTicketInput.bodySchema>;
 export type UpdateTicketInput = z.infer<typeof updateTicketInput.bodySchema>;

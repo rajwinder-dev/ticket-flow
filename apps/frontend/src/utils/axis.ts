@@ -1,23 +1,15 @@
 import { authApi } from "@/features/auth/api";
 import { tokenManager } from "@/lib/tokenManager";
-import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import { redirect } from "react-router";
 import { apiUrl } from "../config/apiconfig";
-import type { ApiResponse, geneticApiResponse, PaginateResponse } from "../types/genetic";
-
-type PostRequest = {
-  path: string;
-  data?: object;
-  headers?: string;
-  options?: AxiosRequestConfig;
-};
-type FilterOptions = {
-  limit?: number;
-  offset?: number;
-  sorting?: { sortby: string; sortOrder?: "asc" | "desc" };
-  filter?: Record<string, string | number>;
-  fields?: string[];
-};
+import type {
+  ApiResponse,
+  FilterOptions,
+  geneticApiResponse,
+  PaginateResponse,
+  PostRequest,
+} from "../types/axis.types";
 
 export const api = axios.create({
   baseURL: apiUrl,
@@ -127,6 +119,7 @@ export async function deleteRequest<T = geneticApiResponse>({
 }
 // axios helper
 export function buildQuery(input: Record<string, string | number | boolean | string[] | object>) {
+  console.log(input)
   const array: string[] = [];
   for (const [key, value] of Object.entries(input)) {
     if (Array.isArray(value)) {

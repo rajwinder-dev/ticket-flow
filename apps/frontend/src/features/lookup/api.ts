@@ -11,4 +11,7 @@ export const lookupApi = {
   getAgents: async (queueId: string) => {
     return await getRequestMany<LookupSchema>({ path: `/lookup/agents/${queueId}` });
   },
+  getRoles: async () => {
+    return await getRequestMany<LookupSchema>({ path: `/lookup/roles` });
+  },
 };

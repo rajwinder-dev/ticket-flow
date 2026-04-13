@@ -10,7 +10,7 @@ import { Search } from "lucide-react";
 
 export function MemberToolbar() {
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2">
+    <div className="flex flex-wrap items-center justify-end gap-2 p-2">
       {/* Search */}
       <div className="relative">
         <Search

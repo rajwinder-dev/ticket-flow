@@ -72,3 +72,10 @@ export const deepNormalize = (obj: any, excludeFields: string[] = []): any => {
     return acc;
   }, {});
 };
+
+export const normalize = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const v = value.trim();
+  if (!v || v === "undefined") return undefined;
+  return v;
+};

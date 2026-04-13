@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@/types/genetic";
+import type { FilterOptions } from "@/types/axis.types";
 import type {
   AssignTicketInput,
   CreateTicketCommentInput,
@@ -41,6 +41,11 @@ export function useTicket({ filterOptions }: props = {}) {
   const { data: ticketComments, isLoading: isLoadingTicketComments } = useQuery({
     queryFn: () => ticketApi.getComments(ticketId!),
     queryKey: ["ticket", "comment", { ticketId }],
+    enabled: !!ticketId,
+  });
+  const { data: ticketTransitions, isLoading: isLoadingTicketTransitions } = useQuery({
+    queryFn: () => ticketApi.getTransitionHistory(ticketId!),
+    queryKey: ["ticket", "transitions", { ticketId }],
     enabled: !!ticketId,
   });
   const { mutate: createdTicket, isPending: isCreatingTicket } = useMutation({
@@ -144,5 +149,7 @@ export function useTicket({ filterOptions }: props = {}) {
     isLoadingTicketSummary,
     ticketComments,
     isLoadingTicketComments,
+    ticketTransitions,
+    isLoadingTicketTransitions,
   };
 }

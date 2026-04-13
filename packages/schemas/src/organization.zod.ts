@@ -23,6 +23,7 @@ export const updateOrganizationInput = {
     .object({
       name: validString.optional(),
       description: validDescription.optional(),
+      logo: z.url().optional(),
       slug: z
         .string()
         .regex(
@@ -38,7 +39,7 @@ export const inviteUserOrganizationInput = {
   bodySchema: z
     .object({
       email: validEmail, // Automatically trims and lowercases
-      roleId: z.string().uuid("Invalid Role ID format"), // Keeps UUID validation
+      roleId: z.uuid("Invalid Role ID format"), // Keeps UUID validation
     })
     .strict(),
 };

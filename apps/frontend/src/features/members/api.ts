@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@/types/genetic";
+import type { FilterOptions } from "@/types/axis.types";
 import { deleteRequest, getRequest, getRequestMany, postRequest } from "@/utils/axis";
 import type {
   InviteMemberDetailsResponse,
@@ -10,7 +10,7 @@ export const memberApi = {
   getMembers: async (filterOptions: FilterOptions) => {
     const data = await getRequestMany<MemberSchemaResponse>({
       path: `/member`,
-      filterOptions
+      filterOptions,
     });
     return data;
   },

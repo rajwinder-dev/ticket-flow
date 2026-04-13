@@ -8,21 +8,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
 import { UserPlus } from "lucide-react";
-import useMember from "../hooks";
-import { useMembersStore } from "../store";
-import { BulkActionsBar } from "./BulkActionBar";
-import { MemberToolbar } from "./MemberToolbar";
-import { OrganizationInvite } from "./OrganizationInvite";
 import { MembersTable } from "./Membertable";
+import { OrganizationInvite } from "./OrganizationInvite";
 
 export default function MembersPage() {
-  const { members, isLoadingMembers } = useMember();
-  const { selected } = useMembersStore();
-  if (isLoadingMembers) return <Spinner />;
+  // const { selected } = useMembersStore();
   return (
-    <div className="">
+    <div className="flex flex-col flex-1">
       {/* Page header */}
       <PageHeader
         title="Members"
@@ -50,11 +43,8 @@ export default function MembersPage() {
       {/* Analytics strip */}
 
       {/* Table card */}
-      <div className="space-y-2">
-        <MemberToolbar />
-        {members?.data && <MembersTable memberData={members?.data} />}
-        {selected.size > 0 && <BulkActionsBar />}
-      </div>
+        {<MembersTable />}
+        {/* {selected.size > 0 && <BulkActionsBar />} */}
     </div>
   );
 }

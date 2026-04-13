@@ -1,3 +1,4 @@
+import type { FilterOptions } from "@/types/axis.types";
 import { getRequestMany, patchRequest, postRequest } from "@/utils/axis";
 import type {
   CreateCustomerInput,
@@ -6,9 +7,11 @@ import type {
 } from "@repo/schemas";
 
 export const customerApi = {
-  getAll: async () => {
+  getAll: async (filterOptions?: FilterOptions) => {
+  
     const res = await getRequestMany<CustomerSchemaResponse>({
       path: "/customer",
+      filterOptions,
     });
     return res;
   },

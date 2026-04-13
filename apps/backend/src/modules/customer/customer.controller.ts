@@ -1,22 +1,39 @@
 import { CreateCustomerInput, customerSchemaResponse, UpdateCustomerInput } from "@repo/schemas";
+import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
-import z from "zod";
+import { normalize } from "../../core/utils/utils";
 
 export class CustomerController {
   static getAllCustomers = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
-    const { filterOptions, limit, offset } = new APIFeatures(req.query)
+    const search = normalize(req.query.search);
+    const { filterOptions, limit, offset } = new APIFeatures(req.query, { ignore: ["search"] })
       .filter()
       .sort()
-      .limitFields()
       .pagination();
     const customers = await prisma.customer.findMany({
       where: {
         organizationId,
         ...filterOptions.where,
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            identity: {
+              email: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
       },
       select: {
         name: true,
@@ -53,16 +70,19 @@ export class CustomerController {
       },
     });
     // warn: not scalable yet
-const result = customers.map((c) => ({
-  id: c.id,
-  name: c.name,
-  phone: c.phone,
-  avatarUrl: c.avatarUrl,
-  email: c.identity.email,
-  totalTickets: c._count.tickets,
-  openTickets: c.tickets.length,
-}));
-    response(res, result, 200, { otherFields: { limit, offset, total }, schema: z.array(customerSchemaResponse) });
+    const result = customers.map((c) => ({
+      id: c.id,
+      name: c.name,
+      phone: c.phone,
+      avatarUrl: c.avatarUrl,
+      email: c.identity.email,
+      totalTickets: c._count.tickets,
+      openTickets: c.tickets.length,
+    }));
+    response(res, result, 200, {
+      otherFields: { limit, offset, total },
+      schema: z.array(customerSchemaResponse),
+    });
   });
   static createCustomer = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;

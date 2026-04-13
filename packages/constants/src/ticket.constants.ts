@@ -29,4 +29,11 @@ export const escalationReasons = [
   { value: "repeat-issue", label: "Repeat / Recurring Issue" },
   { value: "other", label: "Other" },
 ] as const;
-export const escalationReasonValues = escalationReasons.map(item => (item.value))
+export const ticketActions = [
+  "ASSIGNED",
+  "ESCALATED",
+  "STATUS_CHANGED",
+  "PRIORITY_CHANGED",
+  "NOTE_ADDED",
+] as const;
+export const escalationReasonValues = escalationReasons.map((item) => item.value);

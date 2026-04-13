@@ -1,4 +1,4 @@
-import type { ApiMessage } from "@/types/genetic";
+import type { ApiMessage } from "@/types/axis.types";
 import {
   tokenSchemaResponse,
   type AuthDetails,

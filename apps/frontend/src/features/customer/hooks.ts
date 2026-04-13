@@ -1,15 +1,18 @@
+import type { FilterOptions } from "@/types/axis.types";
 import type { CreateCustomerInput, UpdateCustomerInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import { customerApi } from "./api";
-
-function useCustomer() {
+interface props {
+  filterOptions?: FilterOptions;
+}
+function useCustomer({ filterOptions }: props = {}) {
   const { orgId } = useParams();
   const queryClient = useQueryClient();
   const { data: customers, isLoading: isLoadingCustomers } = useQuery({
-    queryFn: customerApi.getAll,
-    queryKey: ["customer", { orgId }],
+    queryFn: () => customerApi.getAll(filterOptions),
+    queryKey: ["customer", { orgId }, filterOptions],
   });
   // --- Mutations ---
   const { mutate: createCustomer, isPending: isCreatingCustomer } = useMutation({

@@ -1,3 +1,5 @@
+import type { AxiosRequestConfig } from "axios";
+//  axis types
 export type PaginateResponse<T> = {
   status: string;
   message?: string;
@@ -20,9 +22,16 @@ export type FilterOptions = {
   limit?: number;
   offset?: number;
   sorting?: { sortby: string; sortOrder?: "asc" | "desc" };
-  filter?: Record<string, string | number >;
+  filter?: Record<string, string | number | undefined >;
+  search?: { searchBy?: string | undefined; search?: string | undefined };
   fields?: string[];
 };
 export interface ApiMessage {
   message: string;
 }
+export type PostRequest = {
+  path: string;
+  data?: object;
+  headers?: string;
+  options?: AxiosRequestConfig;
+};

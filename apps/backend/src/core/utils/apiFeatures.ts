@@ -1,4 +1,5 @@
 import { ParsedQs } from "qs";
+import { normalize } from "./utils";
 
 type SortOrder = "asc" | "desc";
 
@@ -29,7 +30,15 @@ export class APIFeatures {
   }
   filter() {
     const queryObj = { ...this.queryString };
-    const excludeFields = ["fields", "sortby", "sortOrder", "limit", "offset"];
+    const excludeFields = [
+      "fields",
+      "sortby",
+      "sortOrder",
+      "limit",
+      "offset",
+      "search",
+      "searchBy",
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
     // handle filter logic
     const selectedFilters: Record<string, unknown> = {};
@@ -105,6 +114,24 @@ export class APIFeatures {
         active: true,
       },
     };
+    return this;
+  }
+  search() {
+    const data = this.queryString;
+    const searchBy = normalize(data.searchBy);
+    const search = normalize(data.search);
+    if (searchBy && search) {
+      this.filterOptions = {
+        ...this.filterOptions,
+        where: {
+          ...this.filterOptions.where,
+          [searchBy as string]: {
+            contains: String(search),
+            mode: "insensitive",
+          },
+        },
+      };
+    }
     return this;
   }
 }

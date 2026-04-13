@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@/types/genetic";
+import type { FilterOptions } from "@/types/axis.types";
 import type { InviteUserOrganizationInput } from "@repo/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";

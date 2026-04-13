@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/api/v1/ticket/:id"
+  url: "{{url}}/api/v1/ticket/:id/transition-history"
   params:
     - name: id
       value: "{{ticketId}}"

@@ -29,4 +29,17 @@ export class LookupController {
     const output = data.map((item) => ({ id: item.user?.id, name: item.user?.username }));
     response(res, output, 200, { schema: z.array(lookupSchema) });
   });
+  static getRoles = catchAsync(async (req, res, _next) => {
+    const data = await prisma.role.findMany({
+      where: {
+        organizationId: req.organization.id,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    const output = data.map((item) => ({ id: item.id, name: item.name }));
+    response(res, output, 200, { schema: z.array(lookupSchema) });
+  });
 }

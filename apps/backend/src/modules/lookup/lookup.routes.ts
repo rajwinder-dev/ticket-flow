@@ -9,5 +9,6 @@ lookupRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant)
 lookupRouter.get("/groups", LookupController.getGroups)
 lookupRouter.get("/queues/:groupId",validationMiddleware(lookupInputGroupId), LookupController.getQueues)
 lookupRouter.get("/agents/:queueId", LookupController.getAgents)
+lookupRouter.get("/roles", LookupController.getRoles)
 
 export default lookupRouter

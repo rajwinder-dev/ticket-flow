@@ -8,7 +8,10 @@ import response from "../../core/utils/response";
 export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {
     const queueId = req.query.queueId as string;
-    const { filterOptions, limit, offset } = new APIFeatures(req.query, { ignore: ["queueId"] })
+
+    const { filterOptions, limit, offset } = new APIFeatures(req.query, {
+      ignore: ["queueId"],
+    })
       .filter()
       .pagination();
     const membership = await prisma.membership.findMany({
@@ -19,8 +22,8 @@ export class MemberController {
         user: {
           queueAgents: {
             some: {
-              queueId
-            }
+              queueId,
+            },
           },
         },
       },
@@ -35,7 +38,6 @@ export class MemberController {
           },
         },
         user: {
-
           select: {
             email: true,
             username: true,

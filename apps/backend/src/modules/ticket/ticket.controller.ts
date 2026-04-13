@@ -6,6 +6,7 @@ import {
   ticketDetailsSchema,
   ticketSchemaResponse,
   ticketSummary,
+  ticketTranslationSchema,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
 } from "@repo/schemas";
@@ -40,7 +41,7 @@ export class TicketController {
     const { filterOptions, limit, offset } = new APIFeatures(req.query)
       .filter()
       .sort()
-      .pagination();
+      .pagination().search();
     const total = await prisma.ticket.count({
       where: {
         organizationId: req.organization.id,
@@ -202,10 +203,13 @@ export class TicketController {
   });
   static getTransitionHistory = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
-    const data = await TicketService.getTicketTransitionHistory({
+    const {data, pagination} = await TicketService.getTicketTransitionHistory({
       ticketId,
       organizationId: req.organization.id,
       queryString: req.query,
     });
-    response(res, data);
+    response(res, data, 200, {
+      otherFields: { ...pagination },
+      schema: z.array(ticketTranslationSchema),
+    });
 });}

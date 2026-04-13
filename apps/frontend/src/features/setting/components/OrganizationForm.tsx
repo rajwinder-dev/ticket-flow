@@ -73,7 +73,13 @@ const OrganizationForm = () => {
               <p className="text-destructive text-xs">{errors.description.message}</p>
             )}
           </div>
-
+          <div className="col-span-2 space-y-2">
+            <Label htmlFor="avatar">logo URL</Label>
+            <Input id="avatar" {...register("logo")} placeholder="https://..." />
+               {errors.logo && (
+              <p className="text-destructive text-xs">{errors.logo.message}</p>
+            )}
+          </div>
           {/* Read-only info from your JSON */}
           <div className="grid grid-cols-2 gap-4 border-t pt-4 text-sm">
             <div>

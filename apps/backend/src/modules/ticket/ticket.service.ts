@@ -700,14 +700,14 @@ export class TicketService {
   static getTicketTransitionHistory = async ({
     ticketId,
     organizationId,
-    queryString
+    queryString,
   }: {
     ticketId: string;
     organizationId: string;
     queryString: ParsedQs;
   }) => {
     const { offset, limit } = new APIFeatures(queryString).pagination();
-     const total = await prisma.ticketTransition.count({
+    const total = await prisma.ticketTransition.count({
       where: {
         organizationId,
         ticketId,
@@ -718,6 +718,7 @@ export class TicketService {
         organizationId,
         ticketId,
       },
+      orderBy: { createdAt: "desc" },
       select: {
         action: true,
         fromPriority: true,
@@ -730,32 +731,32 @@ export class TicketService {
         fromQueue: {
           select: {
             name: true,
-          }
+          },
         },
         toQueue: {
           select: {
             name: true,
-          }
+          },
         },
         fromAgent: {
           select: {
             username: true,
-          }
+          },
         },
         toAgent: {
           select: {
             username: true,
-          }
+          },
         },
         fromGroup: {
           select: {
             name: true,
-          }
+          },
         },
         toGroup: {
           select: {
             name: true,
-          }
+          },
         },
       },
     });
@@ -764,6 +765,6 @@ export class TicketService {
       limit,
       total,
     };
-    return {data, pagination};
+    return { data, pagination };
   };
 }

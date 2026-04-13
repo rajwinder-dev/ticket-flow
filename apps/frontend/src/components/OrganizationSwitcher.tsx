@@ -43,9 +43,12 @@ export function OrganizationSwitcher() {
             >
               {activeOrganization ? (
                 <>
-                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    {activeOrganization?.logo}
-                  </div>
+                  <Avatar className="size-8 rounded-lg">
+                    <AvatarImage src={activeOrganization?.logo} alt="org logo" />
+                    <AvatarFallback>
+                      {activeOrganization?.name?.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{activeOrganization?.name}</span>
                     <span className="truncate text-xs capitalize">
