@@ -1,22 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-export function useDebounceValue<T>(value: T, delay = 800) {
+export function useDebounceValue<T>(value: T, delay = 300) { // Lowered default to 300ms
   const [debounced, setDebounced] = useState(value);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
+    // Set the timeout
+    const handler = setTimeout(() => {
       setDebounced(value);
     }, delay);
 
+    // This cleanup function runs every time 'value' or 'delay' changes
+    // It cancels the previous timeout before starting a new one.
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearTimeout(handler);
     };
   }, [value, delay]);
 

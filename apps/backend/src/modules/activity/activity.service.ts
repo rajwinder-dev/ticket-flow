@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ParsedQs } from "qs";
+import { APIFeatures } from "../../core/utils/apiFeatures";
 import { prisma } from "../../core/utils/prismaClient";
 import { ActivityLogService } from "./activity.types";
 
@@ -40,12 +42,26 @@ export class ActivityService {
     }
   };
 
-  static getActivityLogs = async (organizationId: string) => {
-    return await prisma.activityLog.findMany({
+  static getActivityLogs = async (organizationId: string, queryStaring: ParsedQs) => {
+    const { limit, offset, filterOptions } = new APIFeatures(queryStaring).pagination().search();
+    const total = await prisma.activityLog.count({
       where: {
         organizationId,
+        ...filterOptions.where,
       },
     });
+    const data = await prisma.activityLog.findMany({
+      where: {
+        organizationId,
+        ...filterOptions.where,
+      },
+      skip: offset,
+      take: limit,
+    });
+    const pagination = {
+      total, offset, limit
+    }
+    return {data, pagination}
   };
   static getActivitySummary = async (organizationId: string) => {
     const data = await prisma.activityLog.groupBy({

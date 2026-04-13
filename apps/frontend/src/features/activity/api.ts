@@ -1,9 +1,10 @@
+import type { FilterOptions } from "@/types/axis.types";
 import { getRequest, getRequestMany } from "@/utils/axis";
 import type { ActivityLogSchema, ActivitySummaryResponse } from "@repo/schemas";
 
 export const activityApi = {
-  getAllActivity: async () => {
-    const data = await getRequestMany<ActivityLogSchema>({ path: "activity" });
+  getAllActivity: async (filterOptions?: FilterOptions) => {
+    const data = await getRequestMany<ActivityLogSchema>({ path: "activity" , filterOptions});
     return data;
   },
   getSummary: async () => {

@@ -1,4 +1,5 @@
 import PageHeader from "@/components/PageHeader";
+import { Pagination } from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,12 +13,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Filter, Search } from "lucide-react";
+import { useState } from "react";
 import useActivity from "../hooks";
 import ActivityMatrices from "./ActivityMatrices";
 import { ActivityRow } from "./ActivityRow";
+import { useDebounceValue } from "@/hooks/useDebounce";
 
 const ActivityPage = () => {
-  const { activity, isLoadingActivity } = useActivity();
+  const [pagination, setPagination] = useState({
+    limit: 10,
+    offset: 0,
+  });
+  const [search , setSearch] = useState<string| undefined>();
+  const searchItem = useDebounceValue(search)
+  const { activity, isLoadingActivity } = useActivity({ filterOptions: { ...pagination, search: {
+    searchBy: "event", search: searchItem
+  } } });
   return (
     <div className="">
       <PageHeader
@@ -35,7 +46,7 @@ const ActivityPage = () => {
           <div className="flex gap-2">
             <div className="relative">
               <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-              <Input placeholder="Search events…" className="h-9 w-56 pl-8 text-sm" />
+              <Input placeholder="Search events…" className="h-9 w-56 pl-8 text-sm" onChange={(e) => setSearch(e.target.value)}/>
             </div>
             <Button variant="outline" size="sm" className="h-9 gap-1.5">
               <Filter className="h-3.5 w-3.5" />
@@ -77,6 +88,14 @@ const ActivityPage = () => {
             </TableBody>
           </Table>
         </ScrollArea>
+        {activity && (
+          <Pagination
+            limit={activity?.limit}
+            offset={activity?.offset}
+            total={activity?.total}
+            onChange={setPagination}
+          />
+        )}
       </div>
     </div>
   );
