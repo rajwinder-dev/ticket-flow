@@ -19,7 +19,7 @@ export class TicketService {
   }: {
     input: CreateTicketInput;
     organizationId: string;
-    userId: string;
+    userId?: string;
   }) => {
     const { email, assignment, ...data } = input;
     let groupId = assignment?.groupId;
@@ -89,7 +89,7 @@ export class TicketService {
     customerId: string;
     assignedTo?: string;
     queueId?: string;
-    userId: string;
+    userId?: string;
   }) => {
     const ticket = await prisma.ticket.create({
       data: {

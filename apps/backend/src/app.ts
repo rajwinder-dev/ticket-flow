@@ -51,9 +51,8 @@ app.use(
   }),
 );
 app.set("view engine", "ejs");
-// app.use("/webhooks",express.raw({ type: "application/json" }), webhookRouter)
+app.use("/webhooks",express.raw({ type: "application/json" }), webhookRouter)
 app.use(express.json({ limit: "10kb" }));
-app.use("/webhooks", webhookRouter);
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 // custom middleware

@@ -17,7 +17,9 @@ type Code =
   | "MISSING_REQUIRED_FIELD"
   | "DB_CONNECTION_ERROR"
   | "DB_TIMEOUT"
-  | "EMAIL_FAILED";
+  | "EMAIL_FAILED"
+  | "INVALID_PAYLOAD"
+  | "INVALID_JSON";
 export class appError extends Error {
   statusCode: number;
   status: string;

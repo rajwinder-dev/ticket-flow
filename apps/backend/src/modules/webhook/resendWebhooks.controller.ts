@@ -1,43 +1,85 @@
+import { Resend } from "resend";
 import { log } from "../../core/helper/log";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
 import { ResendService } from "../email/providers/resend.service";
+import { TicketService } from "../ticket/ticket.service";
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
-    const rawBody = req.body.toString("utf8"); // Buffer → string
+    const rawBody = req.body.toString("utf8");
 
     const headers = {
       "svix-id": req.headers["svix-id"] as string,
       "svix-timestamp": req.headers["svix-timestamp"] as string,
       "svix-signature": req.headers["svix-signature"] as string,
     };
+    console.log(rawBody);
+    // ⚠️ Minimal unsafe parse ONLY for secret lookup
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let tempPayload: any;
+    try {
+      tempPayload = JSON.parse(rawBody);
+    } catch {
+      throw new appError("Invalid JSON payload", 400, "INVALID_JSON");
+    }
 
-    // temporary parse ONLY for lookup (risky but common pattern)
-    const tempPayload = JSON.parse(rawBody);
+    const email = tempPayload?.data;
 
-    const data = await prisma.emailProvider.findFirst({
+    if (!email?.to) {
+      throw new appError("Invalid payload structure", 400, "INVALID_PAYLOAD");
+    }
+
+    // Lookup webhook secret
+    const provider = await prisma.emailProvider.findFirst({
       where: {
-        from: { in: tempPayload.data.to },
+        fromEmail: { in: email.to },
         providerType: { not: "SMTP" },
       },
     });
 
-    if (!data?.webhookSecret) {
+    if (!provider?.webhookSecret) {
       throw new appError("webhookSecret not found", 404, "NOT_FOUND");
     }
 
     try {
-      await ResendService.verifyWebhook(rawBody, data.webhookSecret, headers);
+      await ResendService.verifyWebhook(rawBody, provider.webhookSecret, headers);
     } catch (error) {
       log.error(error);
       throw new appError("Invalid webhook signature", 400, "INVALID_WEBHOOK");
     }
-    const payload = tempPayload;
+    const payload = JSON.parse(rawBody);
+    const data = payload.data;
 
-    console.log(payload);
+    // -------------------------------
+    // Normalize email
+    // -------------------------------
+    const normalized = {
+      from: data.from,
+      to: data.to,
+      subject: data.subject,
+      createdAt: data.created_at,
+      messageId: data.message_id,
+      text: data.text || "",
+      html: data.html || "",
+      attachments: data.attachments || [],
+    };
+    // -------------------------------
+    // Create ticket
+    // -------------------------------
+
+    await TicketService.createAndAssign({
+      organizationId: provider.organizationId,
+      input: {
+        subject: normalized.subject || "No subject",
+        description: normalized.text || "",
+        email: normalized.from,
+        priority: "MEDIUM",
+        category: "GENERAL",
+      },
+    });
 
     response(res, null, 200);
   });
