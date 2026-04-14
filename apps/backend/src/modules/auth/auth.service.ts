@@ -1,5 +1,5 @@
 import { ChangePasswordInput, LoginInput, SignupInput } from "@repo/schemas";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { addMinutes } from "date-fns";
 import { env } from "../../config/env";
 import { appError } from "../../core/utils/appError";

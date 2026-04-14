@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { bcryptSalt } from "./auth.constants";
 
 export class BcryptService {

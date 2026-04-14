@@ -1,10 +1,12 @@
-import { Resend } from "resend";
+import { ResentEmailWebhookSchema } from "@repo/schemas";
+import sanitizeHtml from "sanitize-html";
 import { log } from "../../core/helper/log";
 import { appError } from "../../core/utils/appError";
 import { catchAsync } from "../../core/utils/catchAsync";
+import { decrypt, EncryptionType } from "../../core/utils/crypto";
 import { prisma } from "../../core/utils/prismaClient";
 import response from "../../core/utils/response";
-import { ResendService } from "../email/providers/resend.service";
+import { ResendConfig, ResendService } from "../email/providers/resend.service";
 import { TicketService } from "../ticket/ticket.service";
 
 export class resendWebhookController {
@@ -16,10 +18,8 @@ export class resendWebhookController {
       "svix-timestamp": req.headers["svix-timestamp"] as string,
       "svix-signature": req.headers["svix-signature"] as string,
     };
-    console.log(rawBody);
-    // ⚠️ Minimal unsafe parse ONLY for secret lookup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let tempPayload: any;
+
+    let tempPayload: ResentEmailWebhookSchema;
     try {
       tempPayload = JSON.parse(rawBody);
     } catch {
@@ -62,20 +62,23 @@ export class resendWebhookController {
       subject: data.subject,
       createdAt: data.created_at,
       messageId: data.message_id,
-      text: data.text || "",
-      html: data.html || "",
-      attachments: data.attachments || [],
     };
     // -------------------------------
-    // Create ticket
+    // Fetch email data
     // -------------------------------
+    const credentialString = decrypt(provider.credentials as EncryptionType);
+    const credentials = JSON.parse(credentialString) as ResendConfig;
+
+    const resend = new ResendService(credentials);
+    const emailData = await resend.getEmailDetails(data.email_id);
+    const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
 
     await TicketService.createAndAssign({
       organizationId: provider.organizationId,
       input: {
         subject: normalized.subject || "No subject",
-        description: normalized.text || "",
         email: normalized.from,
+        description: safeHtml || emailData.text || "",
         priority: "MEDIUM",
         category: "GENERAL",
       },

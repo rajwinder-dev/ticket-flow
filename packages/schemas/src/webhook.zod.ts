@@ -1,24 +1,29 @@
 import { z } from "zod";
-import { validEmail } from "./helper/zodHelper";
 
-export const incomingEmailSchema = {
-  bodySchema: z
-    .object({
-      // Normalizing to lowercase is vital for lookup in your DB
-      from: validEmail,
-      fromName: z.string().trim().optional(),
-      to: validEmail,
-      subject: z
-        .string()
-        .trim()
-        .default("(No Subject)")
-        .transform((val) => (val === "" ? "(No Subject)" : val)),
-      textBody: z.string().min(1, "Email body cannot be empty"),
-      messageId: z.string().min(1, "Message-ID is required for threading"),
-      inReplyTo: z.string().trim().optional(),
-    })
-    .strict(),
-};
+export const resendEmailAttachmentSchema = z.object({
+  id: z.string(),
+  filename: z.string(),
+  content_type: z.string(),
+  content_disposition: z.enum(["inline", "attachment"]),
+  content_id: z.string().optional(),
+});
 
+export const resendEmailDataSchema = z.object({
+  email_id: z.string(),
+  created_at: z.string(),
+  from: z.string(),
+  to: z.array(z.string()),
+  cc: z.array(z.string()),
+  bcc: z.array(z.string()),
+  message_id: z.string(),
+  subject: z.string(),
+  attachments: z.array(resendEmailAttachmentSchema),
+});
+
+export const resentEmailWebhookSchema = z.object({
+  type: z.literal("email.received"),
+  created_at: z.string(),
+  data: resendEmailDataSchema,
+});
 // --- Inferred Type ---
-export type IncomingEmail = z.infer<typeof incomingEmailSchema.bodySchema>;
+export type ResentEmailWebhookSchema = z.infer<typeof resentEmailWebhookSchema>;

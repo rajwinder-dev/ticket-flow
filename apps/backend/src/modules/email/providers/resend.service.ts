@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { Webhook } from 'svix';
+import { Webhook } from "svix";
 import { appError } from "../../../core/utils/appError";
 import { EmailService } from "../email.service";
 export type ResendConfig = {
@@ -54,5 +54,16 @@ export class ResendService implements EmailService {
   ) {
     const wh = new Webhook(secret);
     return wh.verify(payload, headers);
+  }
+  async getEmailDetails(messageId: string) {
+    const emailData = await this.resend.emails.receiving.get(messageId);
+    console.log(emailData)
+    const data = {
+      html: emailData.data?.html,
+      attachments: emailData.data?.attachments,
+      text: emailData.data?.text,
+      replyTo: emailData.data?.reply_to,
+    };
+    return data;
   }
 }
