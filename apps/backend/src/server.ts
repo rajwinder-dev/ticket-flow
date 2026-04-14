@@ -6,18 +6,15 @@ import { env } from "./config/env";
 import { log } from "./core/helper/log";
 import { connectUntilSuccess } from "./core/utils/dbConnect";
 import { prisma } from "./core/utils/prismaClient";
-import { socket } from "./core/utils/websocket";
 
 const port = Number(env.port);
 export const server = http.createServer(app);
-const wss = env.wss && socket(server);
 
 if (env.nodeEnv !== "test")
   server.listen(port, async () => {
     await connectUntilSuccess();
     const actualPort = (server.address() as AddressInfo).port;
     log.success(`Server running at http://localhost:${actualPort}`);
-    if (wss) log.success("Websocket is running");
 
     if (devMode) log.info("🪛  Development Mode");
   });
@@ -35,11 +32,7 @@ const shutdown = async (signal: string) => {
   server.close(() => {
     console.log("HTTP server closed.");
   });
-  if (wss) {
-    wss.close(() => {
-      console.log("WebSocket server closed.");
-    });
-  }
+
   try {
     await prisma.$disconnect();
     console.log("DB disconnected.");
@@ -52,5 +45,5 @@ const shutdown = async (signal: string) => {
 };
 
 // Listen for BOTH restart and termination signals
-process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGINT", () => shutdown("SIGINT"))
 process.on("SIGTERM", () => shutdown("SIGTERM"));
