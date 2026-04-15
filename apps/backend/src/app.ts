@@ -78,8 +78,7 @@ app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/member", memberRouter);
 app.use("/api/v1/activity", ActivityRouter)
 app.use("/api/v1/lookup", lookupRouter)
-// app.use("/api/v1/notify", notificationRouter);
-// app.use("/api/v1/chat", chatRouter);
+
 
 app.all(/(.*)/, (req, res, next) => {
   return next(new appError(`Can't find ${req.originalUrl} on this server!`, 404, "INVALID_ROUTE"));

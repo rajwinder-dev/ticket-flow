@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Link, useParams } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,39 +7,18 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 
 import PageHeader from "@/components/PageHeader";
-import { EMPLOYEES, useTicketStore } from "../ticket/ticketStore";
 import DashboardMatrices from "./DashbaordMatrices";
+import { useDashboard } from "./hooks";
 
 const DashboardPage = () => {
   const { orgId } = useParams();
-  const tickets = useTicketStore((state) => state.tickets);
-
-  const data = useMemo(() => {
-    const total = tickets.length;
-    const open = tickets.filter((ticket) => ticket.status === "open").length;
-    const inProgress = tickets.filter((ticket) => ticket.status === "in progress").length;
-    const resolved = tickets.filter((ticket) => ticket.status === "resolved").length;
-    const closed = tickets.filter((ticket) => ticket.status === "closed").length;
-    const critical = tickets.filter((ticket) => ticket.priority === "critical").length;
-
-    const recent = [...tickets]
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      .slice(0, 5);
-
-    return {
-      total,
-      open,
-      inProgress,
-      resolved,
-      closed,
-      critical,
-      recent,
-      resolvedRate: total > 0 ? Math.round(((resolved + closed) / total) * 100) : 0,
-    };
-  }, [tickets]);
-
-  const assigneeName = (assigneeId: string | null) =>
-    EMPLOYEES.find((employee) => employee.id === assigneeId)?.name ?? "Unassigned";
+  const { recentTickets, summary } = useDashboard();
+  const Remaining = summary
+    ? summary?.data.IN_PROGRESS + summary?.data.ON_HOLD + summary?.data.REOPENED
+    : 0;
+  const resolveRate = summary?.data.TOTAL
+    ? Math.round(((summary?.data.RESOLVED + summary?.data.RESOLVED) / summary.data.TOTAL) * 100)
+    : 0;
 
   return (
     <div className="">
@@ -60,20 +38,20 @@ const DashboardPage = () => {
             <CardDescription>Latest updated tickets</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {data.recent.length === 0 ? (
+            {recentTickets?.data.length === 0 ? (
               <p className="text-muted-foreground text-sm">No tickets available yet.</p>
             ) : (
-              data.recent.map((ticket) => (
+              recentTickets?.data.map((ticket) => (
                 <div key={ticket.id} className="space-y-2 rounded-md border p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-mono text-xs">{ticket.id}</p>
                     <Badge variant="outline">{ticket.priority}</Badge>
                   </div>
-                  <p className="text-sm font-medium">{ticket.title}</p>
+                  <p className="text-sm font-medium">{ticket.subject}</p>
                   <div className="text-muted-foreground flex items-center gap-2 text-xs">
                     <span>{ticket.status}</span>
                     <span>-</span>
-                    <span>{assigneeName(ticket.assigneeId)}</span>
+                    <span>{ticket.assignedToUser?.username}</span>
                   </div>
                 </div>
               ))
@@ -88,22 +66,22 @@ const DashboardPage = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="mb-2 text-sm font-medium">{data.resolvedRate}% completed</p>
-              <Progress value={data.resolvedRate} />
+              <p className="mb-2 text-sm font-medium">{resolveRate}% completed</p>
+              <Progress value={resolveRate} />
             </div>
             <Separator />
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Resolved</span>
-                <span>{data.resolved}</span>
+                <span>{summary?.data.RESOLVED}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Closed</span>
-                <span>{data.closed}</span>
+                <span>{summary?.data.CLOSED}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Remaining</span>
-                <span>{data.open + data.inProgress}</span>
+                <span>{Remaining}</span>
               </div>
             </div>
           </CardContent>

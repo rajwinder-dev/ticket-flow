@@ -1,6 +1,7 @@
 export * from "./activity.zod.js";
 export * from "./auth.zod.js";
 export * from "./customer.zod.js";
+export * from "./dashboard.zod.js";
 export * from "./email.zod.js";
 export * from "./global.zod.js";
 export * from "./lookup.zod.js";
@@ -14,4 +15,3 @@ export * from "./ticket.zod.js";
 export * from "./token.zod.js";
 export * from "./user.zod.js";
 export * from "./webhook.zod.js";
-

@@ -10,7 +10,8 @@
     "paths": {
       "@repo/types": ["packages/schemas/src/index.ts"],
       "@repo/types/*": ["packages/schemas/src/*"],
-      "@repo/constants": ["packages/constants"]
+      "@repo/constants": ["packages/constants/src"],
+      "@repo/constant/*s": ["packages/constants/src/*"]
     }
   }
 }

@@ -10,6 +10,11 @@ export class dashboardService {
       by: "status",
       _count: true
     });
+    const TOTAL = await prisma.ticket.count({
+      where: {
+        organizationId
+      }
+    })
     const formattedData = data.reduce((acc, item) => {
       acc[item.status] = item._count;
       return acc;
@@ -21,6 +26,6 @@ export class dashboardService {
         formattedData[status] = 0;
       }
     }
-   return formattedData
+   return {...formattedData, TOTAL}
   };
 }
