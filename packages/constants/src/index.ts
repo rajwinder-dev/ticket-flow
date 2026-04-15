@@ -1,2 +1,3 @@
-export * from "./ticket.constants";
-export * from "./auth.constants"
+export * from "./auth.constants.js";
+export * from "./ticket.constants.js";
+

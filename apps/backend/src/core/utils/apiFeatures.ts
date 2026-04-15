@@ -1,5 +1,5 @@
 import { ParsedQs } from "qs";
-import { normalize } from "./utils";
+import { normalize } from "./utils.js";
 
 type SortOrder = "asc" | "desc";
 

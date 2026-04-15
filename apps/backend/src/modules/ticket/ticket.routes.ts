@@ -8,9 +8,9 @@ import {
   updateTicketStatusInput,
 } from "@repo/schemas";
 import { Router } from "express";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { TicketController } from "./ticket.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { TicketController } from "./ticket.controller.js";
 
 const TicketRouter = Router();
 TicketRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);

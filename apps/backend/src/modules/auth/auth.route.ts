@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import { changePasswordInput, loginInput, resetPasswordInput, signupInput } from "@repo/schemas";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authController } from "./auth.controller";
-import { authMiddleware } from "./auth.middleware";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authController } from "./auth.controller.js";
+import { authMiddleware } from "./auth.middleware.js";
 const authRouter = Router();
 authRouter.route("/signUp").post(validationMiddleware(signupInput), authController.signup);
 authRouter.route("/login").post(validationMiddleware(loginInput), authController.login);

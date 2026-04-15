@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { bcryptSalt } from "./auth.constants";
+import { bcryptSalt } from "./auth.constants.js";
 
 export class BcryptService {
   static async hashPassword(password: string) {

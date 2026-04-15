@@ -1,8 +1,8 @@
 import { tokenSchemaResponse } from "@repo/schemas";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import response from "../../core/utils/response";
-import { TokenService } from "./token.service";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import response from "../../core/utils/response.js";
+import { TokenService } from "./token.service.js";
 
 export class TokenController {
   static getTokenDetails = catchAsync(async (req, res, next) => {

@@ -2,7 +2,7 @@
   "name": "ticket-system",
   "private": true,
   "scripts": {
-  "dev": "pnpm -r --parallel dev",
+    "dev": "pnpm -r --parallel dev",
     "dev:backend": "pnpm --filter backend dev",
     "debug:backend": "pnpm --filter backend debug",
     "dev:frontend": "pnpm --filter frontend dev",

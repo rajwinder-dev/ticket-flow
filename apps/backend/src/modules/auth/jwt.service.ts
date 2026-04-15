@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { env } from "../../config/env";
-import { accessTokenExpire, refreshTokenExpire } from "./auth.constants";
+import { env } from "../../config/env.js";
+import { accessTokenExpire, refreshTokenExpire } from "./auth.constants.js";
 export type TokenType = "access" | "refresh";
 
 export interface JwtPayload {

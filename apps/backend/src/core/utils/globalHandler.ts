@@ -1,6 +1,6 @@
 import { ErrorRequestHandler } from "express";
-import { appError } from "./appError";
-import { deleteUploadedFilesLocal } from "./utils";
+import { appError } from "./appError.js";
+import { deleteUploadedFilesLocal } from "./utils.js";
 export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
   const files = req.files as Express.Multer.File[];
   if (files) {

@@ -1,15 +1,15 @@
+import { Priority, priority, TicketAction, TicketStatus } from "@prisma/client";
 import { allowedTransitions } from "@repo/constants";
 import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/schemas";
 import { ParsedQs } from "qs";
-import { priority, Priority, TicketAction, TicketStatus } from "../../../generated/prisma";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
-import { readableId } from "../../core/utils/utils";
-import { ActivityService } from "../activity/activity.service";
-import { CustomerService } from "../customer/customer.service";
-import { QueueService } from "../queue/queue.service";
-import { QueueGroupService } from "../queueGroup/queueGroup.service";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { readableId } from "../../core/utils/utils.js";
+import { ActivityService } from "../activity/activity.service.js";
+import { CustomerService } from "../customer/customer.service.js";
+import { QueueService } from "../queue/queue.service.js";
+import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
 
 export class TicketService {
   static createAndAssign = async ({

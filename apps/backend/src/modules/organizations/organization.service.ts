@@ -1,12 +1,12 @@
 import { CreateOrganizationInput } from "@repo/schemas";
 import { addDays } from "date-fns";
-import { env } from "../../config/env";
-import { PERMISSIONS } from "../../config/permissions.config";
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
-import { readableId } from "../../core/utils/utils";
-import { ActivityService } from "../activity/activity.service";
-import { TokenService } from "../token/token.service";
+import { env } from "../../config/env.js";
+import { PERMISSIONS } from "../../config/permissions.config.js";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { readableId } from "../../core/utils/utils.js";
+import { ActivityService } from "../activity/activity.service.js";
+import { TokenService } from "../token/token.service.js";
 
 export class OrganizationService {
   static create = async (userId: string, input: CreateOrganizationInput) => {

@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { Webhook } from "svix";
-import { appError } from "../../../core/utils/appError";
-import { EmailService } from "../email.service";
+import { appError } from "../../../core/utils/appError.js";
+import { EmailService } from "../email.service.js";
 export type ResendConfig = {
   apiKey: string;
 };

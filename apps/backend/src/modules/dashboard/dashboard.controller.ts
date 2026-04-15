@@ -1,6 +1,6 @@
-import { catchAsync } from "../../core/utils/catchAsync";
-import response from "../../core/utils/response";
-import { dashboardService } from "./dashboard.service";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import response from "../../core/utils/response.js";
+import { dashboardService } from "./dashboard.service.js";
 
 export class dashboardController {
   static getSummary = catchAsync(async (req, res, _next) => {

@@ -1,12 +1,11 @@
-import { optional, z } from "zod";
+import { z } from "zod";
 import {
-  emptyToUndefined,
   optionalInput,
   validBigDescription,
   validPhoneNo,
   validString,
   validUrl,
-} from "./helper/zodHelper";
+} from "./helper/zodHelper.js";
 
 export const onboardUserInput = {
   bodySchema: z
@@ -28,8 +27,8 @@ export const onboardUserInput = {
 export const updateMyDetailsInput = {
   bodySchema: z
     .object({
-      phoneNo:optionalInput(validPhoneNo),
-      avatar:  optionalInput(validUrl),
+      phoneNo: optionalInput(validPhoneNo),
+      avatar: optionalInput(validUrl),
       location: optionalInput(validString),
     })
     .strict(),

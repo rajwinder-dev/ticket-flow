@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validEmail } from "./helper/zodHelper";
+import { validEmail } from "./helper/zodHelper.js";
 
 // --- Sub-Schemas for Credentials ---
 

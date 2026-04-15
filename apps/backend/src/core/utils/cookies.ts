@@ -1,6 +1,6 @@
 // not used yet in this project
 import { Response } from "express";
-import { env } from "../../config/env";
+import { env } from "../../config/env.js";
 const isTestMode = env.nodeEnv === "test" || false
 export function responseCookie(
   res: Response,

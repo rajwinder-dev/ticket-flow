@@ -8,10 +8,10 @@ import {
   removeAgentsFromQueueInput,
   updateQueueInput,
 } from "@repo/schemas";
-import { validUuidParams } from "@repo/schemas/src/global.zod";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { QueueController } from "./queue.controller";
+import { validUuidParams } from "@repo/schemas";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { QueueController } from "./queue.controller.js";
 
 QueueRoutes.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 

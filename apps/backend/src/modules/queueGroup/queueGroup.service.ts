@@ -1,9 +1,9 @@
 import { CreateQueueGroupInput } from "@repo/schemas";
 import { ParsedQs } from "qs";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
-import { ActivityService } from "../activity/activity.service";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { ActivityService } from "../activity/activity.service.js";
 
 export class QueueGroupService {
   static createQueueGroup = async ({

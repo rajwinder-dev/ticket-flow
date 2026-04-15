@@ -6,17 +6,17 @@ import {
   organizationSchemaResponse,
   UpdateOrganizationInput,
 } from "@repo/schemas";
-import { Prisma } from "../../../generated/prisma";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import HandleFactory from "../../core/utils/handlerFactory";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import InviteEmail from "../../templates/emails/InviteEmail";
-import { EmailService } from "../email/email.service";
-import { TokenService } from "../token/token.service";
-import { OrganizationService } from "./organization.service";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import HandleFactory from "../../core/utils/handlerFactory.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import InviteEmail from "../../templates/emails/InviteEmail.js";
+import { EmailService } from "../email/email.service.js";
+import { TokenService } from "../token/token.service.js";
+import { OrganizationService } from "./organization.service.js";
+import { Prisma } from "@prisma/client";
 export class OrganizationController {
   private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,

@@ -1,8 +1,8 @@
-import { log } from "../core/helper/log";
-import { prisma } from "../core/utils/prismaClient";
+import { log } from "../core/helper/log.js";
+import { prisma } from "../core/utils/prismaClient.js";
 
 export async function seedAgents() {
-      log.info(`seeding agents to unique queues.`);
+  log.info(`seeding agents to unique queues.`);
 
   // 1. Fetch organizations.
   const organizations = await prisma.organization.findMany({
@@ -11,18 +11,18 @@ export async function seedAgents() {
         some: {
           role: {
             name: {
-              not: "OWNER"
-            }
-          }
-        }
-      }
+              not: "OWNER",
+            },
+          },
+        },
+      },
     },
     include: {
       membership: {
         select: {
           id: true,
-          userId: true
-        }
+          userId: true,
+        },
       },
       queueGroups: {
         include: {
@@ -58,7 +58,9 @@ export async function seedAgents() {
       });
       log.success(`Successfully assigned ${result.count} agents to unique queues.`);
     } catch (error) {
-      console.error("Batch insert failed. Check if 'agentId' should be the User ID or Membership ID.");
+      console.error(
+        "Batch insert failed. Check if 'agentId' should be the User ID or Membership ID.",
+      );
       throw error;
     }
   }

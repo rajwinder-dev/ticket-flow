@@ -1,7 +1,7 @@
 import  fs  from 'fs';
 import multer, { FileFilterCallback } from "multer";
-import { catchAsync } from "../utils/catchAsync";
-import { appError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync.js";
+import { appError } from "../utils/appError.js";
 import path from "path";
 import sharp from "sharp";
 import { Request } from "express";

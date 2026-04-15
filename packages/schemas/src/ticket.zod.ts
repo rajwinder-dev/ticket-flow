@@ -6,8 +6,8 @@ import {
   ticketStatus,
 } from "@repo/constants";
 import { z } from "zod";
-import { validUuidParams } from "./global.zod";
-import { validBigDescription, validEmail, validString } from "./helper/zodHelper";
+import { validBigDescription, validEmail, validString } from "./helper/zodHelper.js";
+import { validUuidParams } from "./global.zod.js";
 
 // zod schemas
 export const createTicketInput = {

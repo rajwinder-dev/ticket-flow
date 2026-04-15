@@ -1,13 +1,13 @@
 import { ResentEmailWebhookSchema } from "@repo/schemas";
 import sanitizeHtml from "sanitize-html";
-import { log } from "../../core/helper/log";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { decrypt, EncryptionType } from "../../core/utils/crypto";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import { ResendConfig, ResendService } from "../email/providers/resend.service";
-import { TicketService } from "../ticket/ticket.service";
+import { log } from "../../core/helper/log.js";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { decrypt, EncryptionType } from "../../core/utils/crypto.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import { ResendConfig, ResendService } from "../email/providers/resend.service.js";
+import { TicketService } from "../ticket/ticket.service.js";
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
@@ -47,7 +47,9 @@ export class resendWebhookController {
     try {
       await ResendService.verifyWebhook(rawBody, provider.webhookSecret, headers);
     } catch (error) {
-      log.error(error);
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+
+      log.error(message);
       throw new appError("Invalid webhook signature", 400, "INVALID_WEBHOOK");
     }
     const payload = JSON.parse(rawBody);

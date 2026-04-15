@@ -6,11 +6,11 @@ import {
   UpdateQueueInput,
 } from "@repo/schemas";
 import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import { QueueService } from "./queue.service";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import { QueueService } from "./queue.service.js";
 
 export class QueueController {
   static createQueue = catchAsync(async (req, res, _next) => {
@@ -26,14 +26,17 @@ export class QueueController {
   });
   static getQueueDetails = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
-    const data = await QueueService.getDetails({queueId, organizationId: req.organization.id})
-    response(res, data)
+    const data = await QueueService.getDetails({ queueId, organizationId: req.organization.id });
+    response(res, data);
   });
-  static getQueueSummary = catchAsync(async (req, res , _next) => {
-     const queueId = req.params.id as string;
-    const data = await QueueService.getQueueSummary({queueId, organizationId: req.organization.id})
-    response(res, data)
-  })
+  static getQueueSummary = catchAsync(async (req, res, _next) => {
+    const queueId = req.params.id as string;
+    const data = await QueueService.getQueueSummary({
+      queueId,
+      organizationId: req.organization.id,
+    });
+    response(res, data);
+  });
   static addAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
     const { agentIds } = req.body as AddAgentsToQueueInput;

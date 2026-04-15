@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { env } from "../../config/env";
+import { env } from "../../config/env.js";
 export type EncryptionType =  {
   iv: string;
   content: string;

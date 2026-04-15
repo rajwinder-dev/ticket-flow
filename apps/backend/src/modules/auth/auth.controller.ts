@@ -7,14 +7,14 @@ import {
   ResetPasswordInput,
   SignupInput,
 } from "@repo/schemas";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { clearCookie, responseCookie } from "../../core/utils/cookies";
-import response from "../../core/utils/response";
-import ForgotPasswordEmail from "../../templates/emails/ForgotPasswordEmail";
-import ResetConfirmEmail from "../../templates/emails/ResetConfirmEmail";
-import { EmailService } from "../email/email.service";
-import AuthService from "./auth.service";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { clearCookie, responseCookie } from "../../core/utils/cookies.js";
+import response from "../../core/utils/response.js";
+import ForgotPasswordEmail from "../../templates/emails/ForgotPasswordEmail.js";
+import ResetConfirmEmail from "../../templates/emails/ResetConfirmEmail.js";
+import { EmailService } from "../email/email.service.js";
+import AuthService from "./auth.service.js";
 export class authController {
   static signup = catchAsync(async (req, res) => {
     const input = req.body as SignupInput;

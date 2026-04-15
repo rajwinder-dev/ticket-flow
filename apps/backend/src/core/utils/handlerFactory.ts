@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParsedQs } from "qs";
-import { APIFeatures } from "./apiFeatures";
+import { APIFeatures } from "./apiFeatures.js";
 interface QueryOptions<T> {
   select?: Partial<Record<keyof T, boolean>>;
   include?: Record<string, unknown>;

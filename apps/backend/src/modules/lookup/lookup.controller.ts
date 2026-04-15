@@ -1,8 +1,8 @@
 import { lookupSchema } from "@repo/schemas";
 import z from "zod";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
 
 export class LookupController {
   static getGroups = catchAsync(async (req, res, _next) => {

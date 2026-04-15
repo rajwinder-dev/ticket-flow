@@ -1,6 +1,6 @@
 import z, { ZodError, ZodIssue } from "zod";
-import { appError } from "../utils/appError";
-import { catchAsync } from "../utils/catchAsync";
+import { appError } from "../utils/appError.js";
+import { catchAsync } from "../utils/catchAsync.js";
 
 export function validationMiddleware({
   bodySchema,

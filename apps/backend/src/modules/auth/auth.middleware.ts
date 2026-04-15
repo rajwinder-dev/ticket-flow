@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { PermissionAction, PermissionModule } from "../../config/permissions.config";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { clearCookie } from "../../core/utils/cookies";
-import { prisma } from "../../core/utils/prismaClient";
-import { JwtService } from "./jwt.service";
+import { PermissionAction, PermissionModule } from "../../config/permissions.config.js";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { clearCookie } from "../../core/utils/cookies.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { JwtService } from "./jwt.service.js";
 
 export class authMiddleware {
   static protectedRoute = catchAsync(async (req, res, next) => {

@@ -6,28 +6,28 @@ import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
 import path from "path";
-import { devMode } from "./config/appConfig";
-import { env } from "./config/env";
+import { devMode } from "./config/appConfig.js";
+import { env } from "./config/env.js";
 
-import { appError } from "./core/utils/appError";
-import { globalHandler } from "./core/utils/globalHandler";
+import { appError } from "./core/utils/appError.js";
+import { globalHandler } from "./core/utils/globalHandler.js";
 
-import { DevMiddleware } from "./core/middleware/devMiddleware";
-import ActivityRouter from "./modules/activity/activity.routes";
-import authRouter from "./modules/auth/auth.route";
-import customerRoutes from "./modules/customer/customer.routes";
-import dashboardRouter from "./modules/dashboard/dashboard.route";
-import emailRouter from "./modules/email/email.routes";
-import memberRouter from "./modules/member/member.routes";
-import organizationRouter from "./modules/organizations/organization.routes";
-import QueueRoutes from "./modules/queue/queue.routes";
-import QueueGroupRoutes from "./modules/queueGroup/queueGroup.routes";
-import roleRouter from "./modules/role/role.route";
-import TicketRouter from "./modules/ticket/ticket.routes";
-import tokenRoute from "./modules/token/token.routes";
-import userRouter from "./modules/user/user.routes";
-import webhookRouter from "./modules/webhook/webhook.routes";
-import lookupRouter from "./modules/lookup/lookup.routes";
+import { DevMiddleware } from "./core/middleware/devMiddleware.js";
+import ActivityRouter from "./modules/activity/activity.routes.js";
+import authRouter from "./modules/auth/auth.route.js";
+import customerRoutes from "./modules/customer/customer.routes.js";
+import dashboardRouter from "./modules/dashboard/dashboard.route.js";
+import emailRouter from "./modules/email/email.routes.js";
+import memberRouter from "./modules/member/member.routes.js";
+import organizationRouter from "./modules/organizations/organization.routes.js";
+import QueueRoutes from "./modules/queue/queue.routes.js";
+import QueueGroupRoutes from "./modules/queueGroup/queueGroup.routes.js";
+import roleRouter from "./modules/role/role.route.js";
+import TicketRouter from "./modules/ticket/ticket.routes.js";
+import tokenRoute from "./modules/token/token.routes.js";
+import userRouter from "./modules/user/user.routes.js";
+import webhookRouter from "./modules/webhook/webhook.routes.js";
+import lookupRouter from "./modules/lookup/lookup.routes.js";
 
 export const app = express();
 
@@ -62,7 +62,7 @@ if (devMode) app.use(DevMiddleware.logRequests);
 app.get("/", (_req, res) => {
   res.status(200).json({ status: "success" });
 });
-
+const __dirname = import.meta.dirname;
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/token", tokenRoute);

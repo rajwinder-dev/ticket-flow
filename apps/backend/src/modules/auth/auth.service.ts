@@ -1,14 +1,14 @@
 import { ChangePasswordInput, LoginInput, SignupInput } from "@repo/schemas";
 import bcrypt from "bcryptjs";
 import { addMinutes } from "date-fns";
-import { env } from "../../config/env";
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
-import { readableId } from "../../core/utils/utils";
-import { ActivityService } from "../activity/activity.service";
-import { TokenService } from "../token/token.service";
-import { BcryptService } from "./bcrypt.service";
-import { JwtService } from "./jwt.service";
+import { env } from "../../config/env.js";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { readableId } from "../../core/utils/utils.js";
+import { ActivityService } from "../activity/activity.service.js";
+import { TokenService } from "../token/token.service.js";
+import { BcryptService } from "./bcrypt.service.js";
+import { JwtService } from "./jwt.service.js";
 export default class AuthService {
   static async signupUser({ password, email, username }: SignupInput) {
     const passwordHash = await BcryptService.hashPassword(password);

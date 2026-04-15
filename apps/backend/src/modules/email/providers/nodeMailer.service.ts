@@ -1,6 +1,6 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { appError } from "../../../core/utils/appError";
-import { EmailService } from "../email.service";
+import { appError } from "../../../core/utils/appError.js";
+import { EmailService } from "../email.service.js";
 export type NodemailerConfig = {
   host: string;
   port: number;
@@ -41,7 +41,8 @@ export class NodeMailerService implements EmailService {
     try {
       return await this.transporter.verify();
     } catch (error) {
-      throw new appError(error.message, 400, "VERIFICATION_FAILED");
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      throw new appError(message, 400, "VERIFICATION_FAILED"); // ✅ Safe
     }
   }
 }

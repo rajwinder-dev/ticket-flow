@@ -1,11 +1,11 @@
 import http from "http";
 import { AddressInfo } from "net";
-import { app } from "./app";
-import { devMode } from "./config/appConfig";
-import { env } from "./config/env";
-import { log } from "./core/helper/log";
-import { connectUntilSuccess } from "./core/utils/dbConnect";
-import { prisma } from "./core/utils/prismaClient";
+import { app } from "./app.js";
+import { devMode } from "./config/appConfig.js";
+import { env } from "./config/env.js";
+import { log } from "./core/helper/log.js";
+import { connectUntilSuccess } from "./core/utils/dbConnect.js";
+import { prisma } from "./core/utils/prismaClient.js";
 
 const port = Number(env.port);
 export const server = http.createServer(app);

@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 
+import PageHeader from "@/components/PageHeader";
 import { EMPLOYEES, useTicketStore } from "../ticket/ticketStore";
+import DashboardMatrices from "./DashbaordMatrices";
 
 const DashboardPage = () => {
   const { orgId } = useParams();
@@ -22,10 +24,7 @@ const DashboardPage = () => {
     const critical = tickets.filter((ticket) => ticket.priority === "critical").length;
 
     const recent = [...tickets]
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      )
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 5);
 
     return {
@@ -44,37 +43,17 @@ const DashboardPage = () => {
     EMPLOYEES.find((employee) => employee.id === assigneeId)?.name ?? "Unassigned";
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Ticket Dashboard</h1>
-          <p className="text-muted-foreground text-sm">
-            MVP overview of support workload, progress, and recent updates.
-          </p>
-        </div>
+    <div className="">
+      <PageHeader
+        title="Ticket Dashboard"
+        description="MVP overview of support workload, progress, and recent updates."
+      >
         <Button asChild>
           <Link to={`/org/${orgId}/ticket`}>View all tickets</Link>
         </Button>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {[
-          { label: "Total", value: data.total },
-          { label: "Open", value: data.open },
-          { label: "In Progress", value: data.inProgress },
-          { label: "Resolved", value: data.resolved },
-          { label: "Critical", value: data.critical },
-        ].map((item) => (
-          <Card key={item.label} size="sm">
-            <CardHeader>
-              <CardDescription>{item.label}</CardDescription>
-              <CardTitle className="text-2xl">{item.value}</CardTitle>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
+      </PageHeader>
+      <DashboardMatrices />
+      <div className="grid lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Ticket Activity</CardTitle>

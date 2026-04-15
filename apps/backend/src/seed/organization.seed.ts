@@ -1,14 +1,12 @@
-import { Organization, User } from "../../generated/prisma";
-import { PERMISSIONS } from "../config/permissions.config";
-import { log } from "../core/helper/log";
-import { prisma } from "../core/utils/prismaClient";
+import { Organization, User } from "@prisma/client";
+import { OrganizationSchemaResponse } from "@repo/schemas";
+import { PERMISSIONS } from "../config/permissions.config.js";
+import { log } from "../core/helper/log.js";
+import { prisma } from "../core/utils/prismaClient.js";
 
-/**
- * Seed random number of organizations (1-12) for each user
- */
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
   log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
-  const orgData: Organization[] = [];
+  const orgData: OrganizationSchemaResponse[] = [];
   for (const owner of owners) {
     const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
 

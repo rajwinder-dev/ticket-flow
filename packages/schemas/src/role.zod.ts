@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { optionalInput, validDescription, validString } from "./helper/zodHelper";
+import { optionalInput, validDescription, validString } from "./helper/zodHelper.js";
 
 // Permissions pattern: { "resource": ["action1", "action2"] }
 // Example: { "users": ["create", "read"], "billing": ["view"] }

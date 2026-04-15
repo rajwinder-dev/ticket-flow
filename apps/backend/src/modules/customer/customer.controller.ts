@@ -1,10 +1,10 @@
 import { CreateCustomerInput, customerSchemaResponse, UpdateCustomerInput } from "@repo/schemas";
 import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import { normalize } from "../../core/utils/utils";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import { normalize } from "../../core/utils/utils.js";
 
 export class CustomerController {
   static getAllCustomers = catchAsync(async (req, res, _next) => {

@@ -1,5 +1,5 @@
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
 
 export class EmailConfigService {
   static getEmailCredentials = async (organizationId: string) => {

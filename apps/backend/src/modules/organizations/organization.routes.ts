@@ -1,8 +1,8 @@
 import { createOrganizationInput, inviteUserOrganizationInput } from "@repo/schemas";
 import { Router } from "express";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { OrganizationController } from "./organization.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { OrganizationController } from "./organization.controller.js";
 
 const organizationRouter = Router();
 organizationRouter.get("/:token/invite/", OrganizationController.InviteDetails);

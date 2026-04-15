@@ -1,13 +1,13 @@
 import { render } from "@react-email/render";
 import { CreateEmailProviderInput } from "@repo/schemas";
-import { EmailProvider, ProviderType } from "../../../generated/prisma";
-import { env } from "../../config/env";
-import { appError } from "../../core/utils/appError";
-import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto";
-import { prisma } from "../../core/utils/prismaClient";
-import { EmailConfigService } from "./email-config.service";
-import { sendEmailService, sendSystemEmailService } from "./email.types";
-import { emailProviderFactory } from "./providers/provider.factory";
+import { env } from "../../config/env.js";
+import { appError } from "../../core/utils/appError.js";
+import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { EmailConfigService } from "./email-config.service.js";
+import { sendEmailService, sendSystemEmailService } from "./email.types.js";
+import { emailProviderFactory } from "./providers/provider.factory.js";
+import { EmailProvider, ProviderType } from "@prisma/client";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
     const html = await render(jsx);

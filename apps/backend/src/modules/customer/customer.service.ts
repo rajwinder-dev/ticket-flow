@@ -1,5 +1,5 @@
-import { prisma } from "../../core/utils/prismaClient";
-import { ActivityService } from "../activity/activity.service";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { ActivityService } from "../activity/activity.service.js";
 
 export class CustomerService {
   static createCustomerIdentity = async (email: string, organizationId: string, displayName?: string) => {

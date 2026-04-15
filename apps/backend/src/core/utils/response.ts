@@ -1,6 +1,6 @@
 import { Response } from "express";
 import z from "zod";
-import { log } from "../helper/log";
+import { log } from "../helper/log.js";
 
 /**
  * TYPES & INTERFACES

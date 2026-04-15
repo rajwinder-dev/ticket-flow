@@ -1,8 +1,8 @@
 import { CreateRoleInput, UpdateRoleInput } from "@repo/schemas";
-import { appError } from "../../core/utils/appError";
-import { prisma } from "../../core/utils/prismaClient";
-import { readableId } from "../../core/utils/utils";
-import { ActivityService } from "../activity/activity.service";
+import { appError } from "../../core/utils/appError.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { readableId } from "../../core/utils/utils.js";
+import { ActivityService } from "../activity/activity.service.js";
 
 export class RoleService {
   static create = async (userId: string, organizationId: string, input: CreateRoleInput) => {

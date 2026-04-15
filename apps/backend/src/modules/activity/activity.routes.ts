@@ -1,7 +1,7 @@
-import { authMiddleware } from "../auth/auth.middleware";
+import { authMiddleware } from "../auth/auth.middleware.js";
 
 import { Router } from "express";
-import { ActivityController } from "./activity.controller";
+import { ActivityController } from "./activity.controller.js";
 
 const ActivityRouter = Router();
 ActivityRouter.use(

@@ -1,7 +1,7 @@
 import crypto from "crypto";
-import { TokeStatus } from "../../../generated/prisma";
-import { prisma } from "../../core/utils/prismaClient";
-import { TokenDataInput } from "./token.types";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { TokenDataInput } from "./token.types.js";
+import { TokeStatus } from "@prisma/client";
 export class TokenService {
   static createToken = async ({ input, expiresAt }: { input: TokenDataInput; expiresAt: Date }) => {
     const resetToken = crypto.randomBytes(32).toString("hex");

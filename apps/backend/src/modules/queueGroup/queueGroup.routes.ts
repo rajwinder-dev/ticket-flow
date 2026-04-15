@@ -1,9 +1,9 @@
 
 import { createQueueGroupInput } from "@repo/schemas";
-import { validUuidParams } from "@repo/schemas/src/global.zod";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { QueueGroupController } from "./queueGroup.controller";
+import { validUuidParams } from "@repo/schemas";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { QueueGroupController } from "./queueGroup.controller.js";
 import { Router } from "express";
 
 const QueueGroupRoutes = Router();

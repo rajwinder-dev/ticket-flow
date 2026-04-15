@@ -16,7 +16,7 @@ interface Props {
 
 const CustomerTable = ({ data }: Props) => {
   return (
-    <div className="border-t flex-1">
+    <div className="flex-1 border-t">
       <Table>
         <TableHeader>
           <TableRow>

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validBigDescription, validDescription, validString } from "./helper/zodHelper";
+import { validBigDescription, validDescription, validString } from "./helper/zodHelper.js";
 
 // --- Queue Groups ---
 

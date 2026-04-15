@@ -1,5 +1,5 @@
-import { TicketStatus } from "../../../generated/prisma";
-import { prisma } from "../../core/utils/prismaClient";
+import { prisma } from "../../core/utils/prismaClient.js";
+import { TicketStatus } from "@prisma/client";
 
 export class dashboardService {
   static ticketSummary = async (organizationId: string) => {

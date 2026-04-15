@@ -1,8 +1,8 @@
 import { createCustomerInput, updateCustomerInput } from "@repo/schemas";
 import { Router } from "express";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { CustomerController } from "./customer.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { CustomerController } from "./customer.controller.js";
 
 const customerRoutes = Router();
 customerRoutes.use(authMiddleware.protectedRoute, authMiddleware.tenant);

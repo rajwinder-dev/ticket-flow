@@ -1,8 +1,8 @@
 import { CreateQueueGroupInput, queueGroupSchemaResponse } from "@repo/schemas";
 import z from "zod";
-import { catchAsync } from "../../core/utils/catchAsync";
-import response from "../../core/utils/response";
-import { QueueGroupService } from "../queueGroup/queueGroup.service";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import response from "../../core/utils/response.js";
+import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
 export class QueueGroupController {
   static createQueueGroup = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateQueueGroupInput;

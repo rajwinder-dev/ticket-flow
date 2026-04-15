@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validEmail, validPassword, validPermissions, validString } from "./helper/zodHelper";
+import { validEmail, validPassword, validString } from "./helper/zodHelper.js";
 
 // 2. A helper function for the common "Password Match" refinement
 const passwordMatchRefine = (data: any) => data.password === data.confirmPassword;

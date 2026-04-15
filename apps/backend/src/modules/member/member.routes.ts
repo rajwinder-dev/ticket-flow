@@ -1,8 +1,8 @@
 import { changeMemberQueueInput, changeMemberRoleInput } from "@repo/schemas";
 import { Router } from "express";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { MemberController } from "./member.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { MemberController } from "./member.controller.js";
 
 const memberRouter = Router();
 memberRouter.use(authMiddleware.protectedRoute);

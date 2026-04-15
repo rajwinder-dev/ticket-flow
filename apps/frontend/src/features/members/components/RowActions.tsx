@@ -6,14 +6,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { MemberSchemaResponse } from "@repo/schemas";
 import { ListPlus, MoreHorizontal, Pencil, PowerOff, Trash2 } from "lucide-react";
 
-interface RowActionsProps {
-  member: MemberSchemaResponse;
-}
-
-export function RowActions({ member }: RowActionsProps) {
+export function RowActions() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

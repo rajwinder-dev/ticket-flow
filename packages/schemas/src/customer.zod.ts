@@ -1,5 +1,5 @@
 import z from "zod";
-import { optionalInput, validEmail, validPhoneNo, validString, validUrl } from "./helper/zodHelper";
+import { optionalInput, validEmail, validPhoneNo, validString, validUrl } from "./helper/zodHelper.js";
 
 export const createCustomerInput = {
   bodySchema: z.object({

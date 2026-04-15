@@ -1,11 +1,11 @@
 import { CreateEmailProviderInput, CreateSmtpInput, emailProviderSchema } from "@repo/schemas";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import { WelcomeEmail } from "../../templates/emails/welcome";
-import { EmailService } from "./email.service";
-import { ResendService } from "./providers/resend.service";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import { WelcomeEmail } from "../../templates/emails/welcome.js";
+import { EmailService } from "./email.service.js";
+import { ResendService } from "./providers/resend.service.js";
 import z from "zod";
 
 export class EmailController {

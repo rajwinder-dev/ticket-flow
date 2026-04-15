@@ -1,9 +1,8 @@
-import { validUuidParams } from "@repo/schemas/src/global.zod";
-import { createRoleInput, updateRoleInput } from "@repo/schemas/src/role.zod";
+import { createRoleInput, updateRoleInput, validUuidParams } from "@repo/schemas";
 import express from "express";
-import { validationMiddleware } from "../../core/middleware/validationMiddleware";
-import { authMiddleware } from "../auth/auth.middleware";
-import { roleController } from "./role.controller";
+import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
+import { authMiddleware } from "../auth/auth.middleware.js";
+import { roleController } from "./role.controller.js";
 const roleRouter = express.Router();
 
 roleRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);

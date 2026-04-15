@@ -1,6 +1,6 @@
-import { User } from "../../generated/prisma";
-import { log } from "../core/helper/log";
-import { prisma } from "../core/utils/prismaClient";
+import { User } from "@prisma/client";
+import { log } from "../core/helper/log.js";
+import { prisma } from "../core/utils/prismaClient.js";
 
 export async function seedMembers(users: User[]) {
   log.info(`creating membership of ${users.length} users`);
@@ -29,8 +29,10 @@ export async function seedMembers(users: User[]) {
             roleId: randomRole.id,
           },
         });
-      } catch (err) {
-        console.error(`Error adding ${member.email} to org:`, err.message);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+
+        console.error(`Error adding ${member.email} to org:`, message);
       }
     }
   }

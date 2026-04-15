@@ -11,12 +11,12 @@ import {
   UpdateTicketStatusInput,
 } from "@repo/schemas";
 import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures";
-import { appError } from "../../core/utils/appError";
-import { catchAsync } from "../../core/utils/catchAsync";
-import { prisma } from "../../core/utils/prismaClient";
-import response from "../../core/utils/response";
-import { TicketService } from "./ticket.service";
+import { APIFeatures } from "../../core/utils/apiFeatures.js";
+import { appError } from "../../core/utils/appError.js";
+import { catchAsync } from "../../core/utils/catchAsync.js";
+import { prisma } from "../../core/utils/prismaClient.js";
+import response from "../../core/utils/response.js";
+import { TicketService } from "./ticket.service.js";
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {

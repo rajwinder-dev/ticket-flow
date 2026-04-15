@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validDescription, validEmail, validPhoneNo, validString } from "./helper/zodHelper";
+import { validDescription, validEmail, validPhoneNo, validString } from "./helper/zodHelper.js";
 
 export const createTeamMemberInput = {
   bodySchema: z
