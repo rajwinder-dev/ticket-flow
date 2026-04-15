@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PERMISSIONS, type PermissionModule } from "@repo/schemas";
-import { MODULE_META } from "../meta.constants";
+import { permissions } from "@repo/constants";
+import { type PermissionModule } from "@repo/schemas";
+import { Shield } from "lucide-react";
 import {
   isModuleFullyChecked,
   isModulePartiallyChecked,
@@ -10,37 +11,35 @@ import {
 } from "../utils";
 
 interface PermissionEditorProps {
-  permissions: Record<string, string[]>;
-  onChange: (permissions: Record<string, string[]>) => void;
+  permissionsData: Record<string, string[]>;
+  onChange: (permissionsData: Record<string, string[]>) => void;
 }
 
-export function PermissionEditor({ permissions, onChange }: PermissionEditorProps) {
+export function PermissionEditor({ permissionsData, onChange }: PermissionEditorProps) {
   return (
     <div className="space-y-3">
-      {(Object.entries(PERMISSIONS) as [PermissionModule, readonly string[]][]).map(
+      {(Object.entries(permissions) as [PermissionModule, readonly string[]][]).map(
         ([module, perms]) => {
-          const meta = MODULE_META[module];
-          const Icon = meta.icon;
-          const current = permissions[module] ?? [];
-          const allChecked = isModuleFullyChecked(permissions, module);
-          const someChecked = isModulePartiallyChecked(permissions, module);
+          const current = permissionsData[module] ?? [];
+          const allChecked = isModuleFullyChecked(permissionsData, module);
+          const someChecked = isModulePartiallyChecked(permissionsData, module);
 
           return (
             <div key={module} className="bg-card overflow-hidden rounded-lg border">
               {/* Module header — click to toggle all */}
               <div
                 className="bg-muted/40 hover:bg-muted/60 flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors select-none"
-                onClick={() => onChange(toggleModulePermissions(permissions, module))}
+                onClick={() => onChange(toggleModulePermissions(permissionsData, module))}
               >
                 <Checkbox
                   checked={allChecked}
                   data-state={someChecked ? "indeterminate" : allChecked ? "checked" : "unchecked"}
-                  onCheckedChange={() => onChange(toggleModulePermissions(permissions, module))}
+                  onCheckedChange={() => onChange(toggleModulePermissions(permissionsData, module))}
                   onClick={(e) => e.stopPropagation()}
                   className="shrink-0"
                 />
-                <Icon className={`h-4 w-4 shrink-0 ${meta.color}`} />
-                <span className="flex-1 text-sm font-semibold">{meta.label}</span>
+                <Shield className={`h-4 w-4 shrink-0`} />
+                <span className="flex-1 text-sm font-semibold capitalize">{module}</span>
                 <Badge variant="secondary" className="text-xs tabular-nums">
                   {current.length} / {perms.length}
                 </Badge>
@@ -52,7 +51,9 @@ export function PermissionEditor({ permissions, onChange }: PermissionEditorProp
                   <label key={perm} className="group flex cursor-pointer items-center gap-2">
                     <Checkbox
                       checked={current.includes(perm)}
-                      onCheckedChange={() => onChange(togglePermission(permissions, module, perm))}
+                      onCheckedChange={() =>
+                        onChange(togglePermission(permissionsData, module, perm))
+                      }
                     />
                     <span className="text-muted-foreground group-hover:text-foreground text-xs capitalize transition-colors">
                       {perm.replace(/_/g, " ")}

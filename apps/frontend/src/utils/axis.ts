@@ -119,7 +119,7 @@ export async function deleteRequest<T = geneticApiResponse>({
 }
 // axios helper
 export function buildQuery(input: Record<string, string | number | boolean | string[] | object>) {
-  console.log(input)
+  console.log(input);
   const array: string[] = [];
   for (const [key, value] of Object.entries(input)) {
     if (Array.isArray(value)) {
@@ -141,8 +141,11 @@ export async function catchError<T>(callback: () => Promise<T>): Promise<T> {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const apiMsg = error.response?.data?.message || error.message;
-      const customError = new Error(apiMsg);
-      throw customError;
+      throw {
+        message: apiMsg,
+        status: error.response?.status,
+        data: error.response?.data,
+      };
     }
     const unknownError = new Error("Unknown error occurred");
     throw unknownError;

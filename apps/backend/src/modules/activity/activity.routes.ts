@@ -9,6 +9,14 @@ ActivityRouter.use(
   authMiddleware.tenant,
   authMiddleware.restrictToOwner,
 );
-ActivityRouter.get("/", ActivityController.getActivityLogs);
-ActivityRouter.get("/summary", ActivityController.getActivitySummary);
+ActivityRouter.get(
+  "/",
+  authMiddleware.verifyPermission("activity", "view"),
+  ActivityController.getActivityLogs,
+);
+ActivityRouter.get(
+  "/summary",
+  authMiddleware.verifyPermission("activity", "view"),
+  ActivityController.getActivitySummary,
+);
 export default ActivityRouter;

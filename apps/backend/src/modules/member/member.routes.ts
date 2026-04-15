@@ -6,25 +6,30 @@ import { MemberController } from "./member.controller.js";
 
 const memberRouter = Router();
 memberRouter.use(authMiddleware.protectedRoute);
-memberRouter.use(authMiddleware.tenant, authMiddleware.restrictToOwner);
+memberRouter.use(authMiddleware.tenant);
 
-memberRouter.get("/", MemberController.getMembers);
+memberRouter.get(
+  "/",
+  authMiddleware.verifyPermission("member", "view_all"),
+  MemberController.getMembers,
+);
 memberRouter.post(
   "/:queueId/agents/:userId",
+  authMiddleware.verifyPermission("member", "assign_queue"),
   validationMiddleware(changeMemberQueueInput),
   MemberController.assignQueue,
 );
 memberRouter.post(
   "/:roleId/roles/:userId",
+  authMiddleware.verifyPermission("member", "change_role"),
   validationMiddleware(changeMemberRoleInput),
   MemberController.updateRole,
 );
 memberRouter.delete(
   "/:queueId/agents/:userId/unassign",
+  authMiddleware.verifyPermission("member", "unassign_queue"),
   validationMiddleware(changeMemberQueueInput),
   MemberController.unassignQueue,
 );
-
-
 
 export default memberRouter;

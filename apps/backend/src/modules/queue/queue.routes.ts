@@ -7,8 +7,8 @@ import {
   createQueueInput,
   removeAgentsFromQueueInput,
   updateQueueInput,
+  validUuidParams,
 } from "@repo/schemas";
-import { validUuidParams } from "@repo/schemas";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { QueueController } from "./queue.controller.js";
@@ -27,23 +27,45 @@ QueueRoutes.patch(
   QueueController.removeAgents,
 );
 // queues routes
-QueueRoutes.post("/:id", validationMiddleware(createQueueInput), QueueController.createQueue);
-QueueRoutes.get("/:id", QueueController.getQueues);
+QueueRoutes.post(
+  "/:id",
+  authMiddleware.verifyPermission("queue", "create"),
+  validationMiddleware(createQueueInput),
+  QueueController.createQueue,
+);
+QueueRoutes.get(
+  "/:id",
+  authMiddleware.verifyPermission("queue", "view_all"),
+  QueueController.getQueues,
+);
 QueueRoutes.get(
   "/:id/details",
+  authMiddleware.verifyPermission("queue", "view_details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueDetails,
 );
 QueueRoutes.get(
   "/:id/summary",
+  authMiddleware.verifyPermission("queue", "view_details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueSummary,
 );
-QueueRoutes.patch("/:id", validationMiddleware(updateQueueInput), QueueController.updateQueue);
+QueueRoutes.patch(
+  "/:id",
+  authMiddleware.verifyPermission("queue", "edit"),
+  validationMiddleware(updateQueueInput),
+  QueueController.updateQueue,
+);
 QueueRoutes.get(
   "/:id/agents",
+  authMiddleware.verifyPermission("queue", "view_details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueAgents,
 );
-QueueRoutes.delete("/:id", validationMiddleware(validUuidParams), QueueController.deleteQueue);
+QueueRoutes.delete(
+  "/:id",
+  authMiddleware.verifyPermission("queue", "delete"),
+  validationMiddleware(validUuidParams),
+  QueueController.deleteQueue,
+);
 export default QueueRoutes;

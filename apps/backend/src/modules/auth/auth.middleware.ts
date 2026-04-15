@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { PermissionAction, PermissionModule } from "../../config/permissions.config.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import { clearCookie } from "../../core/utils/cookies.js";
 import { prisma } from "../../core/utils/prismaClient.js";
 import { JwtService } from "./jwt.service.js";
+import { PermissionAction, PermissionModule } from "@repo/schemas";
 
 export class authMiddleware {
   static protectedRoute = catchAsync(async (req, res, next) => {
@@ -109,7 +109,7 @@ export class authMiddleware {
       next();
     });
   static restrictToOwner = catchAsync(async (req, res, next) => {
-    if (!req.organization.isOwner) return next(new appError("Restrict to owner", 403, "FORBIDDEN"));
+    if (!req.organization.isOwner) return next(new appError("Permission denied", 403, "FORBIDDEN"));
     next();
   });
 }

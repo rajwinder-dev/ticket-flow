@@ -5,16 +5,16 @@ import { authMiddleware } from "../auth/auth.middleware.js";
 import { roleController } from "./role.controller.js";
 const roleRouter = express.Router();
 
-roleRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
+roleRouter.use(
+  authMiddleware.protectedRoute,
+  authMiddleware.tenant,
+  authMiddleware.restrictToOwner,
+);
 
 roleRouter
   .route("/")
   .get(roleController.getAllRoles)
-  .post(
-    authMiddleware.restrictToOwner,
-    validationMiddleware(createRoleInput),
-    roleController.createRole,
-  );
+  .post(validationMiddleware(createRoleInput), roleController.createRole);
 roleRouter.route("/:id").get(validationMiddleware(validUuidParams), roleController.getRoleDetails);
 roleRouter
   .route("/:id")

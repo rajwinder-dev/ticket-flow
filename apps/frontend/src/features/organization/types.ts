@@ -3,6 +3,7 @@ export interface Organization {
   isOwner: boolean;
   logo?: string;
   id: string;
+  role: string;
 }
 export interface InviteDetails {
   organization: string;

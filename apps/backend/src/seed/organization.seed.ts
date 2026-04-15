@@ -1,8 +1,8 @@
 import { Organization, User } from "@prisma/client";
 import { OrganizationSchemaResponse } from "@repo/schemas";
-import { PERMISSIONS } from "../config/permissions.config.js";
 import { log } from "../core/helper/log.js";
 import { prisma } from "../core/utils/prismaClient.js";
+import { permissions } from "@repo/constants";
 
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
   log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
@@ -38,9 +38,9 @@ export async function seedOrganizations(owners: User[], maxOrganizationCount: nu
  */
 async function seedRolesAndMembership(org: Organization, userId: string) {
   const roleDefinitions = [
-    { name: "OWNER", permissions: PERMISSIONS }, // Full access
-    { name: "ADMIN", permissions: filterPermissions(PERMISSIONS, ["delete"]) }, // No delete
-    { name: "SUPPORT", permissions: filterPermissions(PERMISSIONS, ["delete", "edit", "create"]) }, // View only mostly
+    { name: "OWNER", permissions: permissions }, // Full access
+    { name: "ADMIN", permissions: filterPermissions(permissions, ["delete"]) }, // No delete
+    { name: "SUPPORT", permissions: filterPermissions(permissions, ["delete", "edit", "create"]) }, // View only mostly
   ];
 
   for (const roleDef of roleDefinitions) {
@@ -83,7 +83,7 @@ function generateCode(prefix: string) {
 /**
  * Utility: Simple permission filter to make roles look different
  */
-function filterPermissions(allPerms: typeof PERMISSIONS, restrictedActions: string[]) {
+function filterPermissions(allPerms: typeof permissions, restrictedActions: string[]) {
   const newPerms = JSON.parse(JSON.stringify(allPerms)); // Deep clone
   for (const category in newPerms) {
     newPerms[category] = newPerms[category].filter(

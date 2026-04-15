@@ -6,7 +6,11 @@ import { EmailController } from "./email.controller.js";
 
 const emailRouter = express.Router();
 emailRouter.post("/webhook/:orgId", EmailController.webHook);
-emailRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
+emailRouter.use(
+  authMiddleware.protectedRoute,
+  authMiddleware.tenant,
+  authMiddleware.restrictToOwner,
+);
 emailRouter.post(
   "/",
   authMiddleware.restrictToOwner,

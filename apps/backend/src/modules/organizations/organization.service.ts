@@ -1,7 +1,7 @@
+import { permissions } from "@repo/constants";
 import { CreateOrganizationInput } from "@repo/schemas";
 import { addDays } from "date-fns";
 import { env } from "../../config/env.js";
-import { PERMISSIONS } from "../../config/permissions.config.js";
 import { appError } from "../../core/utils/appError.js";
 import { prisma } from "../../core/utils/prismaClient.js";
 import { readableId } from "../../core/utils/utils.js";
@@ -30,7 +30,7 @@ export class OrganizationService {
           name: "OWNER",
           code: readableId("ROL"),
           organizationId: organization.id,
-          permissions: PERMISSIONS,
+          permissions: permissions,
           createdBy: userId,
           isSystem: true,
         },
@@ -41,7 +41,7 @@ export class OrganizationService {
           organizationId: role.organizationId,
           userId,
           roleId: role.id,
-          isSystem: true
+          isSystem: true,
         },
       });
       await ActivityService.lagActivity({

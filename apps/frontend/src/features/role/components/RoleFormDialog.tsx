@@ -140,7 +140,7 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
               name="permissions"
               control={control}
               render={({ field }) => (
-                <PermissionEditor permissions={field.value} onChange={field.onChange} />
+                <PermissionEditor permissionsData={field.value} onChange={field.onChange} />
               )}
             />
           </div>

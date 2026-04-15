@@ -13,9 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PermissionModule, RoleSchema } from "@repo/schemas";
-import { ChevronRight, Pencil, ShieldCheck, Trash2 } from "lucide-react";
+import { ChevronRight, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
 import useRole from "../hooks";
-import { MODULE_META } from "../meta.constants";
 import { useRoleStore } from "../store";
 import { totalPermCount } from "../utils";
 import { RoleFormDialog } from "./RoleFormDialog";
@@ -109,12 +108,10 @@ export function RoleCard({ role }: RoleCardProps) {
           {(Object.entries(role.permissions) as [PermissionModule, string[]][])
             .filter(([, v]) => v.length > 0)
             .map(([module]) => {
-              const meta = MODULE_META[module];
-              const Icon = meta.icon;
               return (
                 <Badge key={module} variant="secondary" className="gap-1 px-1.5 py-0.5 text-xs">
-                  <Icon className={`h-3 w-3 ${meta.color}`} />
-                  {meta.label}
+                  <Shield className={`h-3 w-3`} />
+                  {module}
                 </Badge>
               );
             })}

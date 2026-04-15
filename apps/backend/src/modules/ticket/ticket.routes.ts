@@ -50,6 +50,7 @@ TicketRouter.patch(
 );
 TicketRouter.patch(
   "/:id/priority",
+  authMiddleware.verifyPermission("ticket", "change_priority"),
   validationMiddleware(updateTicketPriorityInput),
   TicketController.updatePriority,
 );
@@ -61,16 +62,30 @@ TicketRouter.patch(
 );
 TicketRouter.post(
   "/:id/comment",
-  authMiddleware.verifyPermission("ticket", "add_comment"),
+  authMiddleware.verifyPermission("comment", "create"),
   validationMiddleware(createTicketCommentInput),
   TicketController.addComment,
 );
-TicketRouter.get("/:id/comment", TicketController.getTicketComments);
+TicketRouter.get(
+  "/:id/comment",
+  authMiddleware.verifyPermission("comment", "create"),
+  TicketController.getTicketComments,
+);
 TicketRouter.post(
   "/:id/escalate",
+  authMiddleware.verifyPermission("ticket", "escalate"),
+
   validationMiddleware(escalateTicketInput),
   TicketController.escalate,
 );
-TicketRouter.get("/:id/escalate-options", TicketController.getEscalateOptions);
+TicketRouter.get(
+  "/:id/escalate-options",
+  authMiddleware.verifyPermission("ticket", "escalate"),
+  TicketController.getEscalateOptions,
+);
 export default TicketRouter;
-TicketRouter.get("/:id/transition-history", TicketController.getTransitionHistory);
+TicketRouter.get(
+  "/:id/transition-history",
+  authMiddleware.verifyPermission("ticket", "transition_history"),
+  TicketController.getTransitionHistory,
+);

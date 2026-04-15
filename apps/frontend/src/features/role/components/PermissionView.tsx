@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { PERMISSIONS } from "@repo/schemas";
+import { permissions } from "@repo/constants";
 import { Shield, ShieldCheck } from "lucide-react";
 import useRole from "../hooks";
-import { MODULE_META } from "../meta.constants";
 import { useRoleStore } from "../store";
 
 export function PermissionReadView() {
@@ -31,16 +30,14 @@ export function PermissionReadView() {
       <Separator />
 
       <div className="space-y-3">
-        {Object.entries(PERMISSIONS).map(([module, allPerms]) => {
-          const meta = MODULE_META?.[module] || {};
-          const Icon = meta?.icon || <Shield />;
+        {Object.entries(permissions).map(([module, allPerms]) => {
           const granted = selectedRole.permissions[module] ?? [];
 
           return (
             <div key={module} className="overflow-hidden rounded-lg border">
               <div className="bg-muted/40 flex items-center gap-2.5 px-4 py-2.5">
-                <Icon className={`h-4 w-4 ${meta.color}`} />
-                <span className="text-sm font-semibold">{meta.label}</span>
+                <Shield className={`h-4 w-4 `} />
+                <span className="text-sm font-semibold capitalize">{module}</span>
                 <Badge variant="secondary" className="ml-auto text-xs tabular-nums">
                   {granted.length} / {allPerms.length}
                 </Badge>

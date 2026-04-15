@@ -17,7 +17,7 @@ function useOrganizations() {
   });
   const { data: currentOrganization, isLoading: isLoadingCurrent } = useQuery({
     queryFn: orgApi.getCurrent,
-    queryKey: ["organization"],
+    queryKey: ["organization", {orgId}],
     enabled: !!orgId,
   });
 
