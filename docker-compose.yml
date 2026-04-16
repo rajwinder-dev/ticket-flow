@@ -1,27 +1,39 @@
 services:
-  db:
-    image: postgres:16-alpine
+  postgres:
+    image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: ticket_system
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - prisma-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    command: postgres -c listen_addresses='*'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
   backend:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile
+      target: backend # Uses the slim production stage
     ports:
       - "8000:8000"
-    environment:
-      # Connect using the service name 'db'
-      DATABASE_URL: postgresql://user:password@db:5432/ticket_system
     depends_on:
-      - db
-
+      postgres:
+        condition: service_healthy
+    networks:
+      - prisma-network
+networks:
+  prisma-network:
 volumes:
   postgres_data:
