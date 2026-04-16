@@ -4,7 +4,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { LookupController } from "./lookup.controller.js";
 
-const lookupRouter = Router();
+const lookupRouter: Router = Router();
 lookupRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 lookupRouter.get("/groups", LookupController.getGroups);
 lookupRouter.get(

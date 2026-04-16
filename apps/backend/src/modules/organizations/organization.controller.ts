@@ -60,7 +60,7 @@ export class OrganizationController {
     const output = membership.map((m) => ({
       ...m.organization,
       isOwner: m.organization?.createdBy === req.user.id,
-      role: m.role.name
+      role: m.role?.name
     }));
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });

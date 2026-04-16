@@ -1,10 +1,10 @@
 import { createEmailProviderInput, createSmtpInput } from "@repo/schemas";
-import express from "express";
+import express, { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { EmailController } from "./email.controller.js";
 
-const emailRouter = express.Router();
+const emailRouter: Router = express.Router();
 emailRouter.post("/webhook/:orgId", EmailController.webHook);
 emailRouter.use(
   authMiddleware.protectedRoute,

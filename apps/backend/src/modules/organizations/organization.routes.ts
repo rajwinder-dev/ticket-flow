@@ -4,7 +4,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { OrganizationController } from "./organization.controller.js";
 
-const organizationRouter = Router();
+const organizationRouter: Router = Router();
 organizationRouter.get("/:token/invite/", OrganizationController.InviteDetails);
 organizationRouter.use(authMiddleware.protectedRoute);
 organizationRouter.get("/me",OrganizationController.getMyOrganizations);

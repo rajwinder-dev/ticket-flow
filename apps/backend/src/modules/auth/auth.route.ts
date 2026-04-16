@@ -4,7 +4,7 @@ import { changePasswordInput, loginInput, resetPasswordInput, signupInput } from
 import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
 import { authController } from "./auth.controller.js";
 import { authMiddleware } from "./auth.middleware.js";
-const authRouter = Router();
+const authRouter: Router = Router();
 authRouter.route("/signUp").post(validationMiddleware(signupInput), authController.signup);
 authRouter.route("/login").post(validationMiddleware(loginInput), authController.login);
 authRouter.route("/refresh-token").get(authController.refreshToken);

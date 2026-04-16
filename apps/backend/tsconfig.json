@@ -1,20 +1,12 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "module": "NodeNext",
-    "rootDir": "src",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "isolatedModules": true,
-    "esModuleInterop": true,
     "noEmit": false,
-    // "allowImportingTsExtensions": true,
     "outDir": "dist",
-    "jsx": "react-jsx",
-    "lib": ["esnext"],
-    "types": ["node"],
+    "rootDir": "src",
+    "jsx": "react-jsx"
   },
+  "references": [{ "path": "../../packages/schemas" }, { "path": "../../packages/constants" }],
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*"]
 }

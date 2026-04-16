@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-const QueueRoutes = Router();
+const QueueRoutes: Router = Router();
 
 import {
   addAgentsToQueueInput,

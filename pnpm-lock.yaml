@@ -9,12 +9,18 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
       prettier:
         specifier: ^3.8.1
         version: 3.8.2
       prettier-plugin-tailwindcss:
         specifier: ^0.7.2
         version: 0.7.2(prettier@3.8.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   apps/backend:
     dependencies:
@@ -403,6 +409,10 @@ importers:
         version: 6.0.2
 
   packages/schemas:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       typescript:
         specifier: ^6.0.2

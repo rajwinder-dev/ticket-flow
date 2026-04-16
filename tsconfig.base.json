@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "strict": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "ES2022",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@repo/types": ["packages/schemas/src/index.ts"],
-      "@repo/types/*": ["packages/schemas/src/*"],
-      "@repo/constants": ["packages/constants/src"],
-      "@repo/constant/*s": ["packages/constants/src/*"]
-    }
+    "skipLibCheck": true,            // Recommended to avoid type errors in node_modules
+    "composite": true,
   }
 }

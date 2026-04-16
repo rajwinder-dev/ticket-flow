@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, {Express} from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
@@ -29,7 +29,7 @@ import userRouter from "./modules/user/user.routes.js";
 import webhookRouter from "./modules/webhook/webhook.routes.js";
 import lookupRouter from "./modules/lookup/lookup.routes.js";
 
-export const app = express();
+export const app: Express  = express();
 
 // dev logs
 if (devMode) app.use(morgan("dev"));

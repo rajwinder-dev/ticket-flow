@@ -1,9 +1,9 @@
 import { createRoleInput, updateRoleInput, validUuidParams } from "@repo/schemas";
-import express from "express";
+import express, { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { roleController } from "./role.controller.js";
-const roleRouter = express.Router();
+const roleRouter :Router = express.Router();
 
 roleRouter.use(
   authMiddleware.protectedRoute,

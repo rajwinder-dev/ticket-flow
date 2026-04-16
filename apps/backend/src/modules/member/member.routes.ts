@@ -4,7 +4,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { MemberController } from "./member.controller.js";
 
-const memberRouter = Router();
+const memberRouter: Router = Router();
 memberRouter.use(authMiddleware.protectedRoute);
 memberRouter.use(authMiddleware.tenant);
 

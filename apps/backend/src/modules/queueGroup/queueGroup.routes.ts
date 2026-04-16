@@ -4,7 +4,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { QueueGroupController } from "./queueGroup.controller.js";
 
-const QueueGroupRoutes = Router();
+const QueueGroupRoutes: Router = Router();
 
 QueueGroupRoutes.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 // QueueGroups

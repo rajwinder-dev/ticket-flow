@@ -12,7 +12,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { TicketController } from "./ticket.controller.js";
 
-const TicketRouter = Router();
+const TicketRouter: Router = Router();
 TicketRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 TicketRouter.post(
   "/",

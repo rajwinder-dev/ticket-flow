@@ -4,7 +4,7 @@ import { validationMiddleware } from "../../core/middleware/validationMiddleware
 import { authMiddleware } from "../auth/auth.middleware.js";
 import { UserController } from "./user.controller.js";
 
-const userRouter = Router();
+const userRouter: Router = Router();
 userRouter.use(authMiddleware.protectedRoute);
 userRouter
   .route("/me")
