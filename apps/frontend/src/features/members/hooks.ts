@@ -11,7 +11,11 @@ const useMember = ({ filterOptions }: props = {}) => {
   const { orgId, token } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: members, isLoading: isLoadingMembers } = useQuery({
+  const {
+    data: members,
+    isLoading: isLoadingMembers,
+    error: membersError,
+  } = useQuery({
     queryKey: ["member", { orgId }, { filterOptions }],
     queryFn: () => memberApi.getMembers(filterOptions!),
     enabled: !!orgId,
@@ -101,6 +105,7 @@ const useMember = ({ filterOptions }: props = {}) => {
     InviteError,
     unassignQueueMutate,
     isUnAssigningQueue,
+    membersError,
   };
 };
 export default useMember;

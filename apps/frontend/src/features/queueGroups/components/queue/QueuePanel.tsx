@@ -1,3 +1,4 @@
+import QueryBoundary from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useQueue } from "@/features/queue/hooks";
@@ -34,7 +35,7 @@ function QueueEmptyState({ onAddQueue }: { onAddQueue: () => void }) {
 export function QueuePanel({ onAddQueue }: QueuePanelProps) {
   const { selectedId } = useQueueGroupStore();
   const { queueGroups } = useQueueGroup();
-  const { queues, isLoadingQueues } = useQueue({groupId: selectedId!});
+  const { queues, isLoadingQueues, queueError } = useQueue({ groupId: selectedId! });
   const selectedGroup = queueGroups?.data.find((item) => item.id === selectedId);
 
   if (isLoadingQueues)
@@ -69,13 +70,15 @@ export function QueuePanel({ onAddQueue }: QueuePanelProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto">
-        {queues?.data.length === 0 ? (
-          <QueueEmptyState onAddQueue={onAddQueue} />
-        ) : (
-          <QueueTable group={selectedGroup} queues={queues?.data} />
-        )}
-      </div>
+      <QueryBoundary error={queueError}>
+        <div className="flex-1 overflow-auto">
+          {queues?.data.length === 0 ? (
+            <QueueEmptyState onAddQueue={onAddQueue} />
+          ) : (
+            <QueueTable group={selectedGroup} queues={queues?.data} />
+          )}
+        </div>
+      </QueryBoundary>
     </div>
   );
 }

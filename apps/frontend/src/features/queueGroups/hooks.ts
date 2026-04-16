@@ -6,7 +6,7 @@ import queueGroupApi from "./api";
 export function useQueueGroup() {
   const { orgId } = useParams();
   const queryClient = useQueryClient();
-  const { data: queueGroups, isLoading: isLoadingQueueGroups } = useQuery({
+  const { data: queueGroups, isLoading: isLoadingQueueGroups, error: queueGroupError } = useQuery({
     queryFn: queueGroupApi.getAll,
     queryKey: ["group", { orgId }],
     retry: false,
@@ -66,6 +66,7 @@ export function useQueueGroup() {
     isDeletingGroup,
     changeDefaultGroup,
     isChangingDefaultGroup,
+    queueGroupError
   };
 }
 

@@ -33,7 +33,7 @@ TicketRouter.get(
 );
 TicketRouter.get(
   "/summary",
-  authMiddleware.verifyPermission("ticket", "view_all"),
+  authMiddleware.verifyPermission("ticket", "summary"),
   TicketController.getSummary,
 );
 TicketRouter.get(
@@ -41,7 +41,7 @@ TicketRouter.get(
   authMiddleware.verifyPermission("ticket", "view_own"),
   TicketController.getAssignedTickets,
 );
-TicketRouter.get("/:id", TicketController.getTicketDetails);
+TicketRouter.get("/:id",authMiddleware.verifyPermission("ticket", "details"), TicketController.getTicketDetails);
 TicketRouter.patch(
   "/:id/status",
   authMiddleware.verifyPermission("ticket", "change_status"),

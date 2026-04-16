@@ -12,10 +12,12 @@ export const permissions = {
     "transition_history",
     "close",
     "reopen",
+    "summary",
+    "details"
   ],
   comment: ["create", "edit_own", "delete_own", "delete_any"],
   group: ["create", "edit", "delete", "view_all", "set_default"],
-  queue: ["create", "edit", "delete", "view_all", "view_details"],
+  queue: ["create", "edit", "delete", "view_all", "details", "summary"],
   activity: ["view"],
   customer: ["create", "edit", "view_all"],
   member: ["view_all", "change_role", "assign_queue", "unassign_queue"],

@@ -8,17 +8,29 @@ interface props {
 }
 export function useQueue({ groupId, queueId }: props = {}) {
   const queryClient = useQueryClient();
-  const { data: queues, isLoading: isLoadingQueues } = useQuery({
+  const {
+    data: queues,
+    isLoading: isLoadingQueues,
+    error: queueError,
+  } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
     queryKey: ["queue", { groupId }],
     enabled: !!groupId,
   });
-  const { data: queuesDetails, isLoading: isLoadingDetails } = useQuery({
+  const {
+    data: queuesDetails,
+    isLoading: isLoadingDetails,
+    error: queueDetailsError,
+  } = useQuery({
     queryFn: () => queueApi.getDetails(queueId!),
     queryKey: ["queue", "details", { queueId }],
     enabled: !!queueId,
   });
-  const { data: queueSummary, isLoading: isLoadingQueueSummary } = useQuery({
+  const {
+    data: queueSummary,
+    isLoading: isLoadingQueueSummary,
+    error: queueSummaryError,
+  } = useQuery({
     queryFn: () => queueApi.getSummary(queueId!),
     queryKey: ["queue", "summary", { queueId }],
     enabled: !!queueId,
@@ -71,5 +83,8 @@ export function useQueue({ groupId, queueId }: props = {}) {
     isLoadingDetails,
     queueSummary,
     isLoadingQueueSummary,
+    queueError,
+    queueDetailsError,
+    queueSummaryError,
   };
 }

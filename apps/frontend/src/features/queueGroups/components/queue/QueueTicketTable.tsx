@@ -16,6 +16,7 @@ import {
 
 // Custom Hooks & Utils
 
+import QueryBoundary from "@/components/QueryError";
 import { useQueue } from "@/features/queue/hooks";
 import { useTicket } from "@/features/ticket/hooks";
 import { getAgeMetrics } from "@/lib/utils"; // Adjust this path to your helper file
@@ -25,7 +26,7 @@ export function QueueTicketTable() {
   const [ticketSearch, setTicketSearch] = useState("");
 
   // Data Fetching
-  const { ticketData } = useTicket({
+  const { ticketData, ticketDataError } = useTicket({
     filterOptions: {
       filter: {
         queueId: queueId!,
@@ -61,58 +62,60 @@ export function QueueTicketTable() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/40">
-              <TableHead className="w-20 pl-5 font-mono text-[11px] tracking-wider uppercase">
-                ID
-              </TableHead>
-              <TableHead className="font-mono text-[11px] tracking-wider uppercase">
-                Subject
-              </TableHead>
-              <TableHead className="font-mono text-[11px] tracking-wider uppercase">
-                Priority
-              </TableHead>
-              <TableHead className="font-mono text-[11px] tracking-wider uppercase">
-                Status
-              </TableHead>
-              <TableHead className="pr-5 font-mono text-[11px] tracking-wider uppercase">
-                Age
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {ticketData?.data.map((ticket) => (
-              <TableRow key={ticket.id} className="hover:bg-muted/50 cursor-pointer">
-                <TableCell className="text-muted-foreground pl-5 font-mono text-[11px]">
-                  {ticket.code}
-                </TableCell>
-                <TableCell>
-                  <p className="text-sm leading-tight font-medium">{ticket.subject}</p>
-                  <p className="text-muted-foreground font-mono text-[11px]">
-                    {ticket.description}
-                  </p>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">{ticket.priority}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge>{ticket.status}</Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground pr-5 font-mono text-[11px]">
-                  {getAgeMetrics(ticket.createdAt, true)}
-                </TableCell>
+        <QueryBoundary error={ticketDataError}>
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/40">
+                <TableHead className="w-20 pl-5 font-mono text-[11px] tracking-wider uppercase">
+                  ID
+                </TableHead>
+                <TableHead className="font-mono text-[11px] tracking-wider uppercase">
+                  Subject
+                </TableHead>
+                <TableHead className="font-mono text-[11px] tracking-wider uppercase">
+                  Priority
+                </TableHead>
+                <TableHead className="font-mono text-[11px] tracking-wider uppercase">
+                  Status
+                </TableHead>
+                <TableHead className="pr-5 font-mono text-[11px] tracking-wider uppercase">
+                  Age
+                </TableHead>
               </TableRow>
-            ))}
-            {ticketData?.data?.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
-                  No tickets found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {ticketData?.data.map((ticket) => (
+                <TableRow key={ticket.id} className="hover:bg-muted/50 cursor-pointer">
+                  <TableCell className="text-muted-foreground pl-5 font-mono text-[11px]">
+                    {ticket.code}
+                  </TableCell>
+                  <TableCell>
+                    <p className="text-sm leading-tight font-medium">{ticket.subject}</p>
+                    <p className="text-muted-foreground font-mono text-[11px]">
+                      {ticket.description}
+                    </p>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{ticket.priority}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge>{ticket.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground pr-5 font-mono text-[11px]">
+                    {getAgeMetrics(ticket.createdAt, true)}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {ticketData?.data?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
+                    No tickets found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </QueryBoundary>
       </div>
     </div>
   );

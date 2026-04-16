@@ -13,8 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import type { CreateRoleInput, RoleSchema } from "@repo/schemas";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import useRole from "../hooks";
 import { totalPermCount } from "../utils";
 import { PermissionEditor } from "./PermissionEditor";
@@ -35,8 +35,6 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
     register,
     handleSubmit,
     control,
-    reset,
-    watch,
     formState: { errors },
   } = useForm<CreateRoleInput>({
     defaultValues: {
@@ -46,18 +44,7 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
     },
   });
 
-  // Sync form values when dialog opens (handles edit re-open with fresh data)
-  useEffect(() => {
-    if (open) {
-      reset({
-        name: initialRole?.name,
-        description: initialRole?.description,
-        permissions: initialRole?.permissions ?? {},
-      });
-    }
-  }, [open, initialRole, reset]);
-
-  const permissions = watch("permissions");
+  const permissions = useWatch({ control, name: "permissions" });
 
   const onSubmit = (data: CreateRoleInput) => {
     const payload: CreateRoleInput = {

@@ -40,13 +40,13 @@ QueueRoutes.get(
 );
 QueueRoutes.get(
   "/:id/details",
-  authMiddleware.verifyPermission("queue", "view_details"),
+  authMiddleware.verifyPermission("queue", "details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueDetails,
 );
 QueueRoutes.get(
   "/:id/summary",
-  authMiddleware.verifyPermission("queue", "view_details"),
+  authMiddleware.verifyPermission("queue", "details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueSummary,
 );
@@ -58,7 +58,7 @@ QueueRoutes.patch(
 );
 QueueRoutes.get(
   "/:id/agents",
-  authMiddleware.verifyPermission("queue", "view_details"),
+  authMiddleware.verifyPermission("queue", "details"),
   validationMiddleware(validUuidParams),
   QueueController.getQueueAgents,
 );

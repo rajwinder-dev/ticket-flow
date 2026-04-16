@@ -1,3 +1,4 @@
+import QueryBoundary from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQueueGroup } from "../../hooks";
@@ -8,7 +9,7 @@ interface GroupSidebarProps {
 }
 
 export function GroupSidebar({ onCreateGroup }: GroupSidebarProps) {
-  const { queueGroups } = useQueueGroup();
+  const { queueGroups, queueGroupError } = useQueueGroup();
   return (
     <aside className="bg-background flex h-[calc(100vh-151px)] w-80 shrink-0 flex-col border-r">
       {/* Header */}
@@ -28,11 +29,13 @@ export function GroupSidebar({ onCreateGroup }: GroupSidebarProps) {
       </div>
 
       {/* Group list */}
-      <div className="flex-1 space-y-2 overflow-y-auto p-3">
-        {queueGroups?.data.map((group) => (
-          <GroupCard key={group.id} group={group} />
-        ))}
-      </div>
+      <QueryBoundary error={queueGroupError}>
+        <div className="flex-1 space-y-2 overflow-y-auto p-3">
+          {queueGroups?.data.map((group) => (
+            <GroupCard key={group.id} group={group} />
+          ))}
+        </div>
+      </QueryBoundary>
     </aside>
   );
 }

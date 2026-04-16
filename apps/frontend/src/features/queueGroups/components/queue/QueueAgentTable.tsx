@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 // Shadcn/UI & Components
+import QueryBoundary from "@/components/QueryError";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,12 +19,11 @@ import { useQueue } from "@/features/queue/hooks";
 
 // Mock/Helper components - replace with your actual imports
 
-
 export function QueueAgentTable() {
   const { queueId } = useParams();
   const [agentSearch, setAgentSearch] = useState("");
 
-  const { members } = useMember({
+  const { members, membersError } = useMember({
     filterOptions: { filter: { queueId: queueId || "" } },
   });
   const { queueSummary } = useQueue({ queueId });
@@ -59,43 +59,49 @@ export function QueueAgentTable() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/40">
-              <TableHead className="pl-5 font-mono text-[11px] tracking-wider uppercase">
-                Agent
-              </TableHead>
-              <TableHead className="font-mono text-[11px] tracking-wider uppercase">Role</TableHead>
-              <TableHead className="font-mono text-[11px] tracking-wider uppercase">Tickets</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {members?.data.map((member) => (
-              <TableRow key={member.id} className="hover:bg-muted/50 cursor-pointer">
-                <TableCell className="pl-5">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-7 w-7">
-                      <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
-                        {member.username && getInitials(member.username)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm leading-tight font-medium">{member.username}</p>
-                      <p className="text-muted-foreground text-[10px]">{member.email}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <span className="text-xs capitalize">{member.role?.toLowerCase()}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="font-mono text-sm">{member.totalTickets}</TableCell>
+        <QueryBoundary error={membersError}>
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/40">
+                <TableHead className="pl-5 font-mono text-[11px] tracking-wider uppercase">
+                  Agent
+                </TableHead>
+                <TableHead className="font-mono text-[11px] tracking-wider uppercase">
+                  Role
+                </TableHead>
+                <TableHead className="font-mono text-[11px] tracking-wider uppercase">
+                  Tickets
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {members?.data.map((member) => (
+                <TableRow key={member.id} className="hover:bg-muted/50 cursor-pointer">
+                  <TableCell className="pl-5">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-7 w-7">
+                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
+                          {member.username && getInitials(member.username)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm leading-tight font-medium">{member.username}</p>
+                        <p className="text-muted-foreground text-[10px]">{member.email}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <div className="h-2 w-2 rounded-full bg-green-500" />
+                      <span className="text-xs capitalize">{member.role?.toLowerCase()}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono text-sm">{member.totalTickets}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </QueryBoundary>
       </div>
     </div>
   );

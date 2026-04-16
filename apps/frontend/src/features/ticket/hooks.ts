@@ -18,32 +18,56 @@ interface props {
 export function useTicket({ filterOptions }: props = {}) {
   const { orgId, ticketId } = useParams();
   const queryClient = useQueryClient();
-  const { data: ticketData, isLoading: isLoadingTicketData } = useQuery({
+  const {
+    data: ticketData,
+    isLoading: isLoadingTicketData,
+    error: ticketDataError,
+  } = useQuery({
     queryFn: () => ticketApi.getAll(filterOptions),
     queryKey: ["ticket", { orgId }, filterOptions],
     enabled: !!orgId,
   });
-  const { data: ticketSummary, isLoading: isLoadingTicketSummary } = useQuery({
+  const {
+    data: ticketSummary,
+    isLoading: isLoadingTicketSummary,
+    error: ticketSummaryError,
+  } = useQuery({
     queryFn: ticketApi.getSummary,
     queryKey: ["ticket", "summary", { orgId }],
     enabled: !!orgId,
   });
-  const { data: assignedTicket, isLoading: isLoadingAssigned } = useQuery({
+  const {
+    data: assignedTicket,
+    isLoading: isLoadingAssigned,
+    error: assignedTicketDataError,
+  } = useQuery({
     queryFn: ticketApi.getAssigned,
     queryKey: ["ticket", "me", { orgId }],
     enabled: !!orgId,
   });
-  const { data: ticketDetails, isLoading: isLoadingTicketDetails } = useQuery({
+  const {
+    data: ticketDetails,
+    isLoading: isLoadingTicketDetails,
+    error: ticketDetailsError,
+  } = useQuery({
     queryFn: () => ticketApi.getDetails(ticketId!),
     queryKey: ["ticket", "details", { ticketId }],
     enabled: !!ticketId,
   });
-  const { data: ticketComments, isLoading: isLoadingTicketComments } = useQuery({
+  const {
+    data: ticketComments,
+    isLoading: isLoadingTicketComments,
+    error: ticketCommentsError,
+  } = useQuery({
     queryFn: () => ticketApi.getComments(ticketId!),
     queryKey: ["ticket", "comment", { ticketId }],
     enabled: !!ticketId,
   });
-  const { data: ticketTransitions, isLoading: isLoadingTicketTransitions } = useQuery({
+  const {
+    data: ticketTransitions,
+    isLoading: isLoadingTicketTransitions,
+    error: ticketTransitionsError,
+  } = useQuery({
     queryFn: () => ticketApi.getTransitionHistory(ticketId!),
     queryKey: ["ticket", "transitions", { ticketId }],
     enabled: !!ticketId,
@@ -151,5 +175,11 @@ export function useTicket({ filterOptions }: props = {}) {
     isLoadingTicketComments,
     ticketTransitions,
     isLoadingTicketTransitions,
+    ticketDetailsError,
+    ticketCommentsError,
+    ticketTransitionsError,
+    ticketDataError,
+    ticketSummaryError,
+    assignedTicketDataError,
   };
 }

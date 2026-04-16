@@ -7,17 +7,32 @@ interface props {
 }
 const useActivity = ({ filterOptions }: props = {}) => {
   const { orgId } = useParams();
-  const { data: activity, isLoading: isLoadingActivity } = useQuery({
+  const {
+    data: activity,
+    isLoading: isLoadingActivity,
+    error: activityError,
+  } = useQuery({
     queryFn: () => activityApi.getAllActivity(filterOptions),
     queryKey: ["activity", { orgId }, filterOptions],
     enabled: !!orgId,
   });
-  const { data: activitySummary, isLoading: isLoadingActivitySummary } = useQuery({
+  const {
+    data: activitySummary,
+    isLoading: isLoadingActivitySummary,
+    error: summaryError,
+  } = useQuery({
     queryFn: activityApi.getSummary,
     queryKey: ["activity", "summary", { orgId }],
     enabled: !!orgId,
   });
-  return { activity, isLoadingActivity, activitySummary, isLoadingActivitySummary };
+  return {
+    activity,
+    isLoadingActivity,
+    activitySummary,
+    isLoadingActivitySummary,
+    activityError,
+    summaryError,
+  };
 };
 
 export default useActivity;

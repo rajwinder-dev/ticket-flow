@@ -18,7 +18,6 @@ export async function seedUsers(count: number = 50) {
   while (users.length < count) {
     const email = faker.internet.email().toLocaleLowerCase();
     if (emails.has(email)) continue;
-    console.log(email);
     users.push({
       email,
       code: readableId("USR"),
@@ -45,4 +44,3 @@ export async function seedUsers(count: number = 50) {
   log.success(`Created ${createdUsers.length} users`);
   return createdUsers;
 }
-
