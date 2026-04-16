@@ -10,7 +10,7 @@ const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error) => {
-        console.log(error);
+        
         if ((error as AxiosError)?.status === 403) return false;
         return failureCount < 3;
       },

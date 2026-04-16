@@ -10,7 +10,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
-    "dev": "concurrently \"tsc --noEmit --watch\" \"tsx watch src/server.ts\"",
+    "dev": "concurrently \"tsc --noEmit --watch\" \"tsx watch  --inspect src/server.ts\"",
     "email:dev": "email dev --dir src/templates/emails",
     "build": "npx prisma generate && tsc ",
     "start": "npx prisma migrate deploy && NODE_ENV=production node dist/server.js",

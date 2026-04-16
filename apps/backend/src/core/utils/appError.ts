@@ -33,9 +33,7 @@ export class appError extends Error {
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.message = message;
     this.isOperational = code ? false : true;
-    if (data) {
-      this.data = data;
-    }
+    this.data = data;
     Error.captureStackTrace(this, this.constructor);
   }
 }

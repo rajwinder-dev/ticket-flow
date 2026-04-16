@@ -4,11 +4,7 @@ import { Router } from "express";
 import { ActivityController } from "./activity.controller.js";
 
 const ActivityRouter = Router();
-ActivityRouter.use(
-  authMiddleware.protectedRoute,
-  authMiddleware.tenant,
-  authMiddleware.restrictToOwner,
-);
+ActivityRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant);
 ActivityRouter.get(
   "/",
   authMiddleware.verifyPermission("activity", "view"),
