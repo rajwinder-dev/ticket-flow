@@ -10,10 +10,11 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "dev:backend": "pnpm --filter backend dev",
-    "debug:backend": "pnpm --filter backend debug",
     "dev:frontend": "pnpm --filter frontend dev",
     "shadcn": "pnpm --filter frontend shadcn:add",
-    "build": "pnpm -r build",
+    "build": "tsc -b",
+    "watch": "tsc -b -w",
+    "clean": "tsc -b --clean",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
     "push": "pnpm --filter backend db:push",

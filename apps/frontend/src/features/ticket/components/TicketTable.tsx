@@ -97,7 +97,7 @@ const TicketTable = () => {
           <div className="grid gap-2 md:w-auto md:grid-cols-3">
             <Input
               placeholder="Search tickets..."
-              className="md:w-64"
+              // className="md:w-64"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

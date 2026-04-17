@@ -11,7 +11,7 @@ services:
     networks:
       - prisma-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
       interval: 5s
       timeout: 2s
       retries: 20
@@ -25,11 +25,34 @@ services:
   backend:
     build:
       context: .
-      target: backend # Uses the slim production stage
+      target: backend
+    # command: tail -f /dev/null
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - PORT=8000
+    healthcheck:
+      test: ["CMD-SHELL", "node -e 'require(\"http\").get(\"http://localhost:8000\", (r) => process.exit(r.statusCode === 200 ? 0 : 1))'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "8000:8000"
     depends_on:
       postgres:
+        condition: service_healthy
+    networks:
+      - prisma-network
+  frontend:
+    build:
+      context: .
+      target: frontend
+    ports:
+      - "3000:80"
+
+    depends_on:
+      backend:
         condition: service_healthy
     networks:
       - prisma-network

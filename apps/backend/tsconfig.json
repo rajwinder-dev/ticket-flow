@@ -8,5 +8,5 @@
   },
   "references": [{ "path": "../../packages/schemas" }, { "path": "../../packages/constants" }],
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/generated/**/*.ts"]
 }

@@ -23,7 +23,7 @@ const OrganizationSection = () => {
 
   if (isLoadingOrganizations) return <Spinner />;
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
+    <div className="mx-auto max-w-7xl space-y-8 p-4">
       {/* Header */}
       <header className="flex items-center justify-between">
         <h1 className="text-foreground text-3xl font-semibold tracking-tight">
