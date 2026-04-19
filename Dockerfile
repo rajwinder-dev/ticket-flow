@@ -7,7 +7,7 @@ RUN corepack enable
 RUN apt-get update -y && apt-get install -y openssl
 # ---------- BUILD ----------
 FROM base AS build
-ARG VITE_API_URL=http://localhost:8000/api/v1
+ARG VITE_API_URL=/api/v1
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
