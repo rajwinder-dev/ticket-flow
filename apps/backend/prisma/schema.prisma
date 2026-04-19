@@ -31,19 +31,12 @@ model User {
   createdUsers      User[]             @relation("UserCreatedBy")
   activityLogs      ActivityLog[]
   sessions          Session[]
-  // assignedProjects  AssignedProject[]
-  // managedProjects   Project[]          @relation("ProjectManager")
   createdRoles      Role[]             @relation("RoleCreatedBy")
   ticketsAssigned   Ticket[]           @relation("TicketAssignedTo")
   ticketsCreated    Ticket[]           @relation("TicketAssignedBy")
   ticketComments    TicketComment[]
   fromTransitions   TicketTransition[] @relation("TransitionFromAgent")
   toTransitions     TicketTransition[] @relation("TransitionToAgent")
-  // notificationFrom  Notification[]     @relation("NotificationFrom")
-  // notificationTo    Notification[]     @relation("NotificationTo")
-  // chatRoomsCreated  ChatRoom[]         @relation("ChatCreatedBy")
-  // participants      Participant[]
-  // messages          Message[]
   organization      Organization[]
   membership        Membership[]
   token             Token[]
@@ -51,6 +44,10 @@ model User {
   queueAgents       QueueAgent[]
   queueGroups       QueueGroup[]
   ticketTransitions TicketTransition[]
+
+  @@index([createdBy])
+  @@index([active])
+  @@index([isOnboarded])
 }
 
 model Organization {
@@ -81,6 +78,9 @@ model Organization {
   auditLogs         ActivityLog[]
   ticketComment     TicketComment[]
   ticketTransitions TicketTransition[]
+
+  @@index([createdBy])
+  @@index([active])
 }
 
 model Membership {
@@ -95,6 +95,7 @@ model Membership {
   isSystem       Boolean       @default(false)
 
   @@unique([organizationId, userId])
+  @@index([roleId])
 }
 
 model Role {
@@ -114,6 +115,9 @@ model Role {
   // assignedProjects AssignedProject[]
   membership     Membership[]
   tokens         Token[]
+
+  @@index([organizationId])
+  @@index([active])
 }
 
 enum TokenType {
@@ -150,6 +154,10 @@ model Token {
   TokenCreatedBy User?         @relation("TokenCreatedBy", fields: [createdBy], references: [id])
   createdBy      String        @db.Uuid
   meteData       Json?
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([status])
 }
 
 enum ProviderType {
@@ -342,6 +350,9 @@ model Ticket {
   attachments    Attachment[]
 
   @@index([assignedTo, assignedBy, customerId, organizationId])
+  @@index([status])
+  @@index([priority])
+  @@index([queueId])
 }
 
 model Attachment {
@@ -414,6 +425,15 @@ model TicketTransition {
   toGroupId        String?       @db.Uuid
   changedById      String?       @db.Uuid
   changedBy        User?         @relation(fields: [changedById], references: [id])
+
+  @@index([ticketId])
+  @@index([fromAgentId])
+  @@index([toAgentId])
+  @@index([fromQueueId])
+  @@index([toQueueId])
+  @@index([fromGroupId])
+  @@index([toGroupId])
+  @@index([organizationId])
 }
 
 //  ============================ ACTIVITY / SESSIONS ==============================
@@ -470,4 +490,6 @@ model Session {
   createdAt DateTime @default(now())
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

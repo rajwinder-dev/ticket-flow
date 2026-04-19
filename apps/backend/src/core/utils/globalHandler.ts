@@ -39,6 +39,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
     message: error.message,
     code: error.code,
     data: error.data,
+    timeStamp: new Date()
   };
   console.log(finalResponse)
   res.status(error.statusCode || 500).json(finalResponse);
