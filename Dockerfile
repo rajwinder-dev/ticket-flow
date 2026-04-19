@@ -11,7 +11,7 @@ ARG VITE_API_URL=/api/v1
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-
+ENV DATABASE_URL=postgresql://postgres:postgres@postgres:5433/postgres
 RUN pnpm run -r build
 
 RUN pnpm deploy --filter=backend --prod /prod/backend
