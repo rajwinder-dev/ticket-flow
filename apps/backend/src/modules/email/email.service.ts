@@ -7,7 +7,8 @@ import { prisma } from "../../core/utils/prismaClient.js";
 import { EmailConfigService } from "./email-config.service.js";
 import { sendEmailService, sendSystemEmailService } from "./email.types.js";
 import { emailProviderFactory } from "./providers/provider.factory.js";
-import { EmailProvider, ProviderType } from "@prisma/client";
+import { ProviderType } from "../../generated/enums.js";
+import { EmailProvider } from "../../generated/client.js";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
     const html = await render(jsx);

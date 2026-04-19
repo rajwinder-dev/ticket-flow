@@ -1,6 +1,6 @@
-import { User } from "@prisma/client";
 import { log } from "../core/helper/log.js";
 import { prisma } from "../core/utils/prismaClient.js";
+import { User } from "../generated/client.js";
 
 export async function seedMembers(users: User[]) {
   log.info(`creating membership of ${users.length} users`);

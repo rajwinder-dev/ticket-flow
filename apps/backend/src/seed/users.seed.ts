@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
-import { Prisma } from "@prisma/client";
 import { log } from "../core/helper/log.js";
 import { prisma } from "../core/utils/prismaClient.js";
 import { readableId } from "../core/utils/utils.js";
 import { BcryptService } from "../modules/auth/bcrypt.service.js";
+import { Prisma } from "../generated/client.js";
 
 /**
  * Seed users

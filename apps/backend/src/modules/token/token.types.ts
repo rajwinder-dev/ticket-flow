@@ -1,4 +1,4 @@
-import { TokenType } from "@prisma/client";
+import { TokenType } from "../../generated/client.js";
 
 export interface TokenDataInput {
   email: string;

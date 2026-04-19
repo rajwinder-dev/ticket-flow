@@ -1,6 +1,6 @@
-import { Organization, QueueGroup } from "@prisma/client";
 import { log } from "../core/helper/log.js";
 import { prisma } from "../core/utils/prismaClient.js";
+import { Organization, QueueGroup } from "../generated/client.js";
 
 export async function seedQueueGroups(maxQueueGroups: number, maxQueueCount: number) {
   log.info(`seeding max ${maxQueueGroups} groups and max ${maxQueueCount} queues`);

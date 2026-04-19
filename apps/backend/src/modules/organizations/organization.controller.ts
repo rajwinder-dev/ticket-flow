@@ -1,10 +1,10 @@
 import {
-  CreateOrganizationInput,
-  createOrganizationResponse,
-  InviteUserOrganizationInput,
-  memberSchemaResponse,
-  organizationSchemaResponse,
-  UpdateOrganizationInput,
+    CreateOrganizationInput,
+    createOrganizationResponse,
+    InviteUserOrganizationInput,
+    memberSchemaResponse,
+    organizationSchemaResponse,
+    UpdateOrganizationInput,
 } from "@repo/schemas";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
@@ -16,7 +16,7 @@ import InviteEmail from "../../templates/emails/InviteEmail.js";
 import { EmailService } from "../email/email.service.js";
 import { TokenService } from "../token/token.service.js";
 import { OrganizationService } from "./organization.service.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client.js";
 export class OrganizationController {
   private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,

@@ -2,10 +2,16 @@
   "name": "@repo/constants",
   "type": "module",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
   }
 }

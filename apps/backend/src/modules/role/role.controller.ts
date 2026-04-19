@@ -4,7 +4,7 @@ import HandleFactory from "../../core/utils/handlerFactory.js";
 import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { RoleService } from "./role.service.js";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client.js";
 
 export class roleController {
   private static handler = new HandleFactory<Prisma.RoleUncheckedCreateInput>(prisma.role);

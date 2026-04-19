@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ActorType, EntryType, LogSeverity } from "@prisma/client";
+import { ActorType, EntryType, LogSeverity } from "../../generated/enums.js";
+
 
 export interface ActivityLogService {
   organizationId?: string;

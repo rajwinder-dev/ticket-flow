@@ -3,7 +3,13 @@
     "strict": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "baseUrl": ".",
+    "paths": {
+      "@repo/constants": ["packages/constants/src/index.ts"],
+      "@repo/schemas": ["packages/schemas/src/index.ts"]
+    },
     "target": "ES2022",
+    "ignoreDeprecations": "6.0",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -11,4 +17,5 @@
     "skipLibCheck": true,            // Recommended to avoid type errors in node_modules
     "composite": true,
   }
+  
 }

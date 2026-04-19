@@ -1,5 +1,5 @@
 import { appError } from "../../../core/utils/appError.js";
-import { ProviderType } from "@prisma/client";
+import { ProviderType } from "../../../generated/enums.js";
 import { NodemailerConfig, NodeMailerService } from "./nodeMailer.service.js";
 import { ResendConfig, ResendService } from "./resend.service.js";
 

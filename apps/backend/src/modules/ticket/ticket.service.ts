@@ -1,4 +1,3 @@
-import { Priority, priority, TicketAction, TicketStatus } from "@prisma/client";
 import { allowedTransitions } from "@repo/constants";
 import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/schemas";
 import { ParsedQs } from "qs";
@@ -8,6 +7,7 @@ import { prisma } from "../../core/utils/prismaClient.js";
 import { readableId } from "../../core/utils/utils.js";
 import { ActivityService } from "../activity/activity.service.js";
 import { CustomerService } from "../customer/customer.service.js";
+import { Priority, priority, TicketAction, TicketStatus } from "../../generated/client.js";
 import { QueueService } from "../queue/queue.service.js";
 import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
 
