@@ -12,7 +12,6 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-RUN pnpm --filter backend exec prisma generate
 RUN pnpm run -r build
 
 RUN pnpm deploy --filter=backend --prod /prod/backend

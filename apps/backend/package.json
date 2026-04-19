@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "concurrently \"tsc --noEmit --watch\" \"tsx watch  --inspect src/server.ts\"",
     "email:dev": "email dev --dir src/templates/emails",
-    "build": "tsc -b",
+    "build": "prisma generate && tsc -b",
     "generate": "prisma generate",
     "start": "prisma migrate deploy && NODE_ENV=production node dist/server.js",
     "migrate:deploy": "prisma migrate deploy",
