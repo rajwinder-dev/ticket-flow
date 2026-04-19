@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
    "compilerOptions": {
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
