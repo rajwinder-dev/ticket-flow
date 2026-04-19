@@ -21,7 +21,7 @@ WORKDIR /prod/backend
 FROM base AS backend
 COPY --from=build /prod/backend /prod/backend
 WORKDIR /prod/backend
-EXPOSE 4000
+EXPOSE 8000
 CMD ["pnpm", "start"]
 
 FROM nginx:stable-alpine AS frontend
