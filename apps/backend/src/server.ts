@@ -11,10 +11,11 @@ const port = Number(env.port);
 export const server = http.createServer(app);
 
 if (env.nodeEnv !== "test")
-  server.listen(port, async () => {
+  server.listen(port, '0.0.0.0', async () => {
     await connectUntilSuccess();
     const actualPort = (server.address() as AddressInfo).port;
-    log.success(`Server running at http://localhost:${actualPort}`);
+      log.success(`Server running on port ${actualPort}`);
+
 
     if (devMode) log.info("🪛  Development Mode");
   });
