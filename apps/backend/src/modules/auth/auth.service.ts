@@ -61,7 +61,7 @@ export default class AuthService {
   static async getRefreshToken(token: string) {
     const decoded = JwtService.verify(token, "refresh");
 
-    if (!decoded) throw new appError("Invalid or Expire token", 401, "INVALID_TOKEN");
+    if (!decoded) throw new appError("Invalid or Expire token", 401, "EXPIRED_TOKEN");
     const newAccessToken = JwtService.sign(
       { userId: decoded.userId, email: decoded.email },
       "access",

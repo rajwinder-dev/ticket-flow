@@ -1,11 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@repo/constants": ["../../packages/constants/src"],
+      "@repo/schemas": ["../../packages/schemas/src"]
+    }
   },
   "references": [{ "path": "../../packages/schemas" }, { "path": "../../packages/constants" }],
   "exclude": ["node_modules", "dist"],
