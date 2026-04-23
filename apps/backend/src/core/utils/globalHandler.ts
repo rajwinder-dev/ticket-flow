@@ -1,4 +1,5 @@
 import { ErrorRequestHandler } from "express";
+import { devMode } from "../../config/appConfig.js";
 import { appError } from "./appError.js";
 import { deleteUploadedFilesLocal } from "./utils.js";
 export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
@@ -7,7 +8,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
     const paths = files.map((file: Express.Multer.File) => file.path);
     deleteUploadedFilesLocal(paths);
   }
-  console.dir(error);
+  if (devMode) console.dir(error);
   if (error.name === "PrismaClientValidationError") {
     error = new appError("Invalid Input , please check your query", 400, "VALIDATION_ERROR");
   }
@@ -39,8 +40,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
     message: error.message,
     code: error.code,
     data: error.data,
-    timeStamp: new Date()
+    timeStamp: new Date(),
   };
-  console.log(finalResponse)
   res.status(error.statusCode || 500).json(finalResponse);
 };
