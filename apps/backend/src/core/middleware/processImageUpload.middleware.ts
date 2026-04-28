@@ -3,9 +3,7 @@ import multer, { FileFilterCallback } from "multer";
 import { catchAsync } from "../utils/catchAsync.js";
 import { appError } from "../utils/appError.js";
 import path from "path";
-import sharp from "sharp";
 import { Request } from "express";
-// import { uploadImageToSupabase } from "../supabase/bucket";
 
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 
@@ -40,17 +38,8 @@ export const processImagesMiddleware = catchAsync(async (req, res, next) => {
     const filename = `${Date.now()}-${file.originalname.split(".")[0]}.webp`;
     const outputPath = path.join("uploads", filename);
 
-    const processedBuffer = await sharp(file.buffer)
-      .resize({
-        width: 512,
-        height: 512,
-        fit: sharp.fit.cover,
-        position: sharp.strategy.entropy,
-      })
-      .webp({ quality: 80 })
-      .toBuffer();
-    // store in local storage
-    fs.writeFileSync(outputPath, processedBuffer);
+
+    fs.writeFileSync(outputPath, file.buffer);
     const url = `http://localhost:4000/uploads/${filename}`;
     // now it upload to supabase cloud
     // const url =  await uploadImageToSupabase(processedBuffer, filename)

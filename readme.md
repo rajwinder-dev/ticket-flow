@@ -66,7 +66,8 @@ Middleware-based role checks ensure secure access control across endpoints.
 - Did not add real time webhook notification
 - Limited caching to reduce system complexity
 - Focused on backend strength over UI polish
-
+* authentication is manual (auth + refresh token)
+* email servers is integrated inside app
 ---
 
 ## API Reference
@@ -83,4 +84,4 @@ See [database docs](./docs/database.md)
 
 ## Running Locally
 
-<your commands here>
+1. to run this locally use 

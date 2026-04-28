@@ -8,6 +8,11 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   clearScreen: false,
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
   resolve: {
     alias: {
       "@repo/constants": path.resolve(__dirname, "../../packages/constants/src"),

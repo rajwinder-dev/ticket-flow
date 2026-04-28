@@ -114,9 +114,6 @@ activity logs to track user history
 
 * Monolithic structure instead of microservices (simpler deployment)
 * Limited role granularity (no disabled/suspended states)
-* No caching layer to reduce system complexity
-* No real time notifications
-* authentication is manual (auth + refresh token)
 
 ---
 

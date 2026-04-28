@@ -11,18 +11,19 @@ ARG VITE_API_URL=/api/v1
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-# required for prisma generate 
+# required for prisma generate
 ENV DATABASE_URL=postgresql://postgres:postgres@postgres:5433/postgres
 RUN pnpm run -r build
 
 RUN pnpm deploy --filter=backend --prod /prod/backend
+
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
 WORKDIR /prod/backend
 
 FROM base AS backend
 COPY --from=build /prod/backend /prod/backend
 WORKDIR /prod/backend
-EXPOSE 8000
+EXPOSE 3000
 CMD ["pnpm", "start"]
 
 FROM nginx:stable-alpine AS frontend
