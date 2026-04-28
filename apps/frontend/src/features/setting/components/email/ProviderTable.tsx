@@ -25,7 +25,7 @@ export function ProviderTable({ onEdit, onDelete, onAddClick }: Props) {
   const providers = emailProviders?.data;
   if (isLoadingEmailProviders) return <div>Loading....</div>;
   return (
-    <div className="bg-card rounded-lg border">
+    <div className="bg-card rounded-lg border border-blue-300">
       <Table>
         <TableHeader>
           <TableRow>

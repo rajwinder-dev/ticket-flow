@@ -82,6 +82,49 @@ See [database docs](./docs/database.md)
 
 ---
 
+
 ## Running Locally
 
-1. to run this locally use 
+
+### 1. Rapid Deployment (Docker)
+Use this method to spin up the entire stack (Frontend, Backend, and Database) in a containerized environment.
+
+1.  **Configure Environment:**
+    ```bash
+    cp .env.example .env
+    ```
+2.  **Launch Containers:**
+    ```bash
+    docker compose up --build
+    ```
+    *Note: This command initializes three orchestrated containers. Once healthy, the application is accessible at `http://localhost` (Port 80).*
+
+---
+
+### 2. Local Development Mode
+Use this method if you want to make active code changes with Hot Module Replacement (HMR).
+
+#### **Backend Setup**
+1.  **Environment:** Create a `.env` file in the `/backend` directory using `.env.example` as a template.
+2.  **Dependencies:** Run `pnpm install` in the root or backend folder.
+3.  **Database:** Ensure you have a local **PostgreSQL** server running.
+4.  **Prisma Initialization:**
+    ```bash
+    pnpm run generate       # Generates Prisma Client
+    pnpm prisma migrate dev # Syncs database schema
+    ```
+
+#### **Execution**
+Run the following command from the **root directory**:
+```bash
+pnpm run dev
+```
+
+> [!IMPORTANT]  
+> **Default Port Mapping:**
+> * **Backend:** Runs on port `3000` (unless specified otherwise in `.env`).
+> * **Frontend:** Launches on port `5173` (or your configured Vite/Next.js port).
+> * **Database:** Default PostgreSQL connection usually occupies port `5432`.
+
+---
+
