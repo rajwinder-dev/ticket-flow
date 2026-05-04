@@ -5,11 +5,6 @@ import { prisma } from "../../src/core/utils/prismaClient";
 import { createRandomUser } from "../helper/testHelper";
 import { User } from "../../src/generated/client";
 
-vi.mock("./../../src/modules/email/email.service.ts", () => ({
-  EmailService: {
-    sendSystemEmail: vi.fn().mockResolvedValue(true),
-  },
-}));
 describe("testing auth routes", () => {
   let accessToken: string;
   let auth: { user: User; password: string };

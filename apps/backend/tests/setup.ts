@@ -1,9 +1,14 @@
 // tests/setup.ts
-import { beforeAll } from "vitest";
+import { beforeAll, vi } from "vitest";
 import dotenv from "dotenv";
 
 // Load environment variables immediately
 dotenv.config();
+vi.mock("./../../src/modules/email/email.service.ts", () => ({
+  EmailService: {
+    sendSystemEmail: vi.fn().mockResolvedValue(true),
+  },
+}));
 
 // Set NODE_ENV to test
 process.env.NODE_ENV = "test";
