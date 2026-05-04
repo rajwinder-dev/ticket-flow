@@ -32,7 +32,7 @@ export const loginInput = {
 export const changePasswordInput = {
   bodySchema: z
     .object({
-      currentPassword: validString,
+      currentPassword: z.string(),
       password: validPassword,
       confirmPassword: validPassword,
     })
@@ -63,18 +63,18 @@ export const resetPasswordInput = {
 // Response types
 export const authToken = z.object({
   accessToken: z.string(),
-})
+});
 export const authDetails = z.object({
   id: z.uuid(),
-  email: z.email()
-})
+  email: z.email(),
+});
 export const authPermissions = z.object({
   permissions: z.record(z.string(), z.array(z.string())),
-})
+});
 // Types
-export type AuthToken = z.infer<typeof authToken>
-export type AuthDetails = z.infer<typeof authDetails>
-export type AuthPermissions = z.infer<typeof authPermissions>
+export type AuthToken = z.infer<typeof authToken>;
+export type AuthDetails = z.infer<typeof authDetails>;
+export type AuthPermissions = z.infer<typeof authPermissions>;
 export type SignupInput = z.infer<typeof signupInput.bodySchema>;
 export type LoginInput = z.infer<typeof loginInput.bodySchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordInput.bodySchema>;

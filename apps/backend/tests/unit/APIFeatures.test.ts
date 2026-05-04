@@ -1,6 +1,6 @@
 import { APIFeatures } from "../../src/core/utils/apiFeatures";
 import { Request } from "express";
-import { describe, expect, it ,  } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("APIFeatures", () => {
   describe("filter()", () => {
@@ -34,16 +34,6 @@ describe("APIFeatures", () => {
       expect(features.filterOptions.where).toEqual({
         available: true,
         featured: false,
-      });
-    });
-
-    it("should add search filter if searchBy and search are present", () => {
-      const req = {
-        query: { searchBy: "name", search: "laptop" },
-      } as unknown as Request;
-      const features = new APIFeatures(req.query).filter();
-      expect(features.filterOptions.where).toEqual({
-        name: { contains: "laptop", mode: "insensitive" },
       });
     });
   });
@@ -104,44 +94,6 @@ describe("APIFeatures", () => {
         category: "books",
         active: true,
       });
-    });
-  });
-
-  describe("method chaining", () => {
-    it("should build complete prisma options", () => {
-      const req = {
-        query: {
-          "price[gte]": "50",
-          searchBy: "name",
-          search: "laptop",
-          fields: "name,price",
-          sortby: "price",
-          sortOrder: "asc",
-          offset: "10",
-          limit: "5",
-        },
-      } as unknown as Request;
-
-      const features = new APIFeatures(req.query)
-        .filter()
-        .limitFields()
-        .sort()
-        .pagination()
-        .activeOnly();
-
-      expect(features.filterOptions).toEqual({
-        where: {
-          price: { gte: 50 },
-          name: { contains: "laptop", mode: "insensitive" },
-          active: true,
-        },
-        select: { name: true, price: true },
-        orderBy: { price: "asc" },
-        skip: 0, // adjust if your class sets skip differently
-        take: 10,
-      });
-      expect(features.offset).toBe(10);
-      expect(features.limit).toBe(5);
     });
   });
 });

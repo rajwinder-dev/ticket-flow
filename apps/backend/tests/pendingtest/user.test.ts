@@ -1,10 +1,10 @@
 import { faker } from "@faker-js/faker";
 import { agent } from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { User } from "../../generated/prisma";
 import app from "../../src/app";
 import { prisma } from "../../src/core/utils/prismaClient";
 import { authenticateUser } from "../helper/auth";
+import { User } from "../../src/generated/client";
 
 describe("User Routers", async () => {
   const api = agent(app);

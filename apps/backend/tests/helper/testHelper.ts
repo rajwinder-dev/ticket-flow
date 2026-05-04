@@ -8,8 +8,8 @@ export async function createRandomUser() {
   const passwordHash = await BcryptService.hashPassword(password);
   const data = await prisma.user.create({
     data: {
-      username: faker.person.firstName(),
-      email: faker.internet.email(),
+      username: faker.person.firstName().toLowerCase(),
+      email: faker.internet.email().toLowerCase(),
       passwordHash,
       code: readableId("USER"),
     },

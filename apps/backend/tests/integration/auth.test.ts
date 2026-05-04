@@ -1,10 +1,15 @@
-import {agent} from "supertest";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { User } from "../../generated/prisma";
+import { agent } from "supertest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import app from "../../src/app";
 import { prisma } from "../../src/core/utils/prismaClient";
 import { createRandomUser } from "../helper/testHelper";
+import { User } from "../../src/generated/client";
 
+vi.mock("./../../src/modules/email/email.service.ts", () => ({
+  EmailService: {
+    sendSystemEmail: vi.fn().mockResolvedValue(true),
+  },
+}));
 describe("testing auth routes", () => {
   let accessToken: string;
   let auth: { user: User; password: string };
@@ -71,10 +76,11 @@ describe("testing auth routes", () => {
       .patch("/api/v1/auth/change-password")
       .send({
         currentPassword: auth.password,
-        password: "user",
-        confirmPassword: "user",
+        password: "abc1234@@@",
+        confirmPassword: "abc1234@@@",
       })
       .set("Authorization", `Bearer ${accessToken}`);
+    console.log(res.body);
     expect(res.statusCode).toBe(200);
   });
 
@@ -91,16 +97,14 @@ describe("testing auth routes", () => {
   it("should login again after logout", async () => {
     const res = await api.post("/api/v1/auth/login").send({
       email: auth.user?.email,
-      password: "user",
+      password: "abc1234@@@",
     });
     expect(res.statusCode).toBe(200);
     accessToken = res.body.data.accessToken;
   });
 
   it("should logout account", async () => {
-    const res = await api
-      .post("/api/v1/auth/logout")
-      .set("Authorization", `Bearer ${accessToken}`);
+    const res = await api.post("/api/v1/auth/logout").set("Authorization", `Bearer ${accessToken}`);
     expect(res.statusCode).toBe(200);
   });
 
@@ -128,6 +132,5 @@ describe("testing auth routes", () => {
         username: auth.user?.id,
       },
     });
-
   });
 });

@@ -19,7 +19,12 @@ export const validId = z
 // --- Text Validations ---
 
 // Added .trim() to ensure users don't just send spacesdsf
-export const validString = z.string().trim().min(1, "Must be at at least 2 characters").max(50, "Must be at most 50 characters").toLowerCase();
+export const validString = z
+  .string()
+  .trim()
+  .min(1, "Must be at at least 2 characters")
+  .max(50, "Must be at most 50 characters")
+  .toLowerCase();
 
 export const validDescription = z
   .string()
@@ -46,11 +51,8 @@ export const validPhoneNo = z
   });
 export const validUrl = z.url("Please provide a valid image URL");
 // Password validation - Strengthened to 8 chars + 1 special char recommendation
-export const validPassword = z
-  .string()
-  .trim()
-  .min(8, "Password must be at least 8 characters")
-  .max(50, "Password must be less the 50 characters");
+export const validPassword = z.string().trim().min(8, "Password must be at least 8 characters");
+// .max(50, "Password must be less the 50 characters");
 // .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
 // .regex(/[0-9]/, { message: "Password must contain at least one number" })
 // .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" });

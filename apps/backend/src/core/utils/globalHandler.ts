@@ -1,4 +1,6 @@
 import { ErrorRequestHandler } from "express";
+
+import { log } from "../../core/helper/log.js";
 import { devMode } from "../../config/appConfig.js";
 import { appError } from "./appError.js";
 import { deleteUploadedFilesLocal } from "./utils.js";
@@ -9,6 +11,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
     deleteUploadedFilesLocal(paths);
   }
   if (devMode) console.dir(error);
+  else log.error(error.message);
   if (error.name === "PrismaClientValidationError") {
     error = new appError("Invalid Input , please check your query", 400, "VALIDATION_ERROR");
   }

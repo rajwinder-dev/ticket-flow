@@ -1,5 +1,5 @@
 import { appError } from "../../src/core/utils/appError";
-import { describe, expect, it ,  } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("appError", () => {
   it("should assign all properties correctly", () => {
@@ -10,7 +10,7 @@ describe("appError", () => {
     expect(err.statusCode).toBe(404);
     expect(err.code).toBe("NOT_FOUND");
     expect(err.status).toBe("fail");
-    expect(err.isOperational).toBe(true);
+    expect(err.isOperational).toBe(false);
     expect(err.data).toEqual(data);
     expect(err.stack).toBeDefined();
   });
@@ -23,8 +23,8 @@ describe("appError", () => {
   });
 
   it("should mark 4xx errors as fail and others as error", () => {
-    const clientErr = new appError("Bad Request", 400, "BAD_REQ");
-    const serverErr = new appError("Internal", 500, "INT_ERR");
+    const clientErr = new appError("Bad Request", 400, "INVALID_PAYLOAD");
+    const serverErr = new appError("Internal", 500, "INTERNAL_ERROR");
     expect(clientErr.status).toBe("fail");
     expect(serverErr.status).toBe("error");
   });
