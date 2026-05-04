@@ -5,22 +5,25 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupInput, type SignupInput } from "@repo/schemas";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form"; import { Link } from "react-router-dom";
 import useAuth from "../hooks";
+import { useMembersStore } from "@/features/members/store";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
   const { signupUser, isSigningUp } = useAuth();
+  const { tokenEmail } = useMembersStore();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignupInput>({
     resolver: zodResolver(signupInput.bodySchema),
+    defaultValues: {
+      email: tokenEmail || undefined,
+    },
   });
 
   const onSubmit = (data: SignupInput) => {
-    console.log(data);
     signupUser(data);
   };
   return (

@@ -8,15 +8,20 @@ import { loginInput, type LoginInput } from "@repo/schemas"; // Assuming loginIn
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks";
 import { Link } from "react-router-dom";
+import { useMembersStore } from "@/features/members/store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const { loginUser, isLoggingIn } = useAuth();
+  const { tokenEmail } = useMembersStore();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginInput.bodySchema),
+    defaultValues: {
+      email: tokenEmail || undefined,
+    },
   });
 
   const onSubmit = (data: LoginInput) => {
@@ -47,7 +52,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Link to={"/forget-password"} className="ml-auto text-sm hover:underline">Forgot your password?</Link>
+                  <Link to={"/forget-password"} className="ml-auto text-sm hover:underline">
+                    Forgot your password?
+                  </Link>
                 </div>
 
                 <Input id="password" type="password" {...register("password")} />
@@ -61,7 +68,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
               {/* SUBMIT */}
               <Field>
-                <Button type="submit" disabled={isLoggingIn}>Login</Button>
+                <Button type="submit" disabled={isLoggingIn}>
+                  Login
+                </Button>
 
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to="/signup">Sign up</Link>

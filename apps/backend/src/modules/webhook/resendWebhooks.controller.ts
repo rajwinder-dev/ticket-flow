@@ -74,18 +74,19 @@ export class resendWebhookController {
     const resend = new ResendService(credentials);
     const emailData = await resend.getEmailDetails(data.email_id);
     const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
-
-    await TicketService.createAndAssign({
-      organizationId: provider.organizationId,
-      input: {
-        subject: normalized.subject || "No subject",
-        email: normalized.from,
-        description: safeHtml || emailData.text || "",
-        priority: "MEDIUM",
-        category: "GENERAL",
-      },
-    });
-
+    if (tempPayload?.type === "email.recieved") {
+      await TicketService.createAndAssign({
+        organizationId: provider.organizationId,
+        input: {
+          subject: normalized.subject || "No subject",
+          email: normalized.from,
+          description: safeHtml || emailData.text || "",
+          priority: "MEDIUM",
+          category: "GENERAL",
+        },
+      });
+      return response(res, "Ticket Created Success", 200);
+    }
     response(res, null, 200);
   });
 }

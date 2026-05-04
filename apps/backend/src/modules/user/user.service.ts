@@ -34,4 +34,23 @@ export class UserService {
     });
     return updatedUser;
   };
+  static checkExist = async ({email, username}: {email: string; username: string}) => {
+        const existingUsers = await prisma.user.findMany({
+      where: {
+        OR: [{ email }, { username }],
+      },
+      select: {
+        email: true,
+        username: true,
+      },
+    });
+
+    const conflicts: string[] = [];
+
+    for (const user of existingUsers) {
+      if (user.email === email) conflicts.push("email");
+      if (user.username === username) conflicts.push("username");
+    }
+      return conflicts;
+  }
 }

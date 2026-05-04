@@ -22,7 +22,7 @@ const OrganizationForm = () => {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
-  } = useForm<UpdateOrganizationInput>({
+  } = useForm({
     resolver: zodResolver(updateOrganizationInput.bodySchema),
     defaultValues: {
       name: currentOrganization?.data.name,
@@ -76,9 +76,7 @@ const OrganizationForm = () => {
           <div className="col-span-2 space-y-2">
             <Label htmlFor="avatar">logo URL</Label>
             <Input id="avatar" {...register("logo")} placeholder="https://..." />
-               {errors.logo && (
-              <p className="text-destructive text-xs">{errors.logo.message}</p>
-            )}
+            {errors.logo && <p className="text-destructive text-xs">{errors.logo.message}</p>}
           </div>
           {/* Read-only info from your JSON */}
           <div className="grid grid-cols-2 gap-4 border-t pt-4 text-sm">

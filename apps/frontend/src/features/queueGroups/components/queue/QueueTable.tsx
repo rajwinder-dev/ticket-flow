@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { QueueGroupSchemaResponse, QueueSchemaResponse } from "@repo/schemas";
-import { ChevronDown, ChevronUp, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQueueActions } from "../../useQueueActions";
 import { QueueActionsMenu } from "./QueueActionMenu";
@@ -21,8 +20,7 @@ interface QueueTableProps {
 }
 
 export function QueueTable({ queues }: QueueTableProps) {
-  const { editingQueue, isEditModalOpen, moveUp, moveDown, openEditModal, closeEditModal } =
-    useQueueActions();
+  const { editingQueue, isEditModalOpen, openEditModal, closeEditModal } = useQueueActions();
 
   return (
     <>
@@ -44,7 +42,7 @@ export function QueueTable({ queues }: QueueTableProps) {
         </TableHeader>
 
         <TableBody>
-          {queues?.map((queue, index) => (
+          {queues?.map((queue) => (
             <TableRow key={queue.id} className="group/row cursor-pointer">
               <TableCell className="py-3 pl-6">
                 <div className="flex items-center gap-2.5">
@@ -71,37 +69,37 @@ export function QueueTable({ queues }: QueueTableProps) {
               </TableCell>
               <TableCell className="py-3">
                 <div className="flex items-center justify-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    disabled={index === 0}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      moveUp(queue.id);
-                    }}
-                    aria-label="Move up"
-                  >
-                    <ChevronUp className="h-3.5 w-3.5" />
-                  </Button>
+                  {/* <Button */}
+                  {/*   variant="ghost" */}
+                  {/*   size="icon" */}
+                  {/*   className="h-6 w-6" */}
+                  {/*   disabled={index === 0} */}
+                  {/*   onClick={(e) => { */}
+                  {/*     e.stopPropagation(); */}
+                  {/*     moveUp(queue.id); */}
+                  {/*   }} */}
+                  {/*   aria-label="Move up" */}
+                  {/* > */}
+                  {/*   <ChevronUp className="h-3.5 w-3.5" /> */}
+                  {/* </Button> */}
 
                   <Badge variant="outline" className="min-w-[28px] justify-center tabular-nums">
                     {queue.order}
                   </Badge>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    disabled={index === queues.length - 1}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      moveDown(queue.id);
-                    }}
-                    aria-label="Move down"
-                  >
-                    <ChevronDown className="h-3.5 w-3.5" />
-                  </Button>
+                  {/* <Button */}
+                  {/*   variant="ghost" */}
+                  {/*   size="icon" */}
+                  {/*   className="h-6 w-6" */}
+                  {/*   disabled={index === queues.length - 1} */}
+                  {/*   onClick={(e) => { */}
+                  {/*     e.stopPropagation(); */}
+                  {/*     moveDown(queue.id); */}
+                  {/*   }} */}
+                  {/*   aria-label="Move down" */}
+                  {/* > */}
+                  {/*   <ChevronDown className="h-3.5 w-3.5" /> */}
+                  {/* </Button> */}
                 </div>
               </TableCell>
 

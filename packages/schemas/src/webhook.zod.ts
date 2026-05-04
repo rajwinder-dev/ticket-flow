@@ -21,7 +21,7 @@ export const resendEmailDataSchema = z.object({
 });
 
 export const resentEmailWebhookSchema = z.object({
-  type: z.literal("email.received"),
+  type: z.string(),
   created_at: z.string(),
   data: resendEmailDataSchema,
 });

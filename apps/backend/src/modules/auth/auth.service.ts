@@ -9,22 +9,18 @@ import { ActivityService } from "../activity/activity.service.js";
 import { TokenService } from "../token/token.service.js";
 import { BcryptService } from "./bcrypt.service.js";
 import { JwtService } from "./jwt.service.js";
+import { UserService } from "../user/user.service.js";
 export default class AuthService {
   static async signupUser({ password, email, username }: SignupInput) {
     const passwordHash = await BcryptService.hashPassword(password);
-    const exist = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-    if (exist) throw new appError("User already exist ", 409, "CONFLICT_ERROR");
+    // check if user exist in db or not
+    //
+    const conflicts = await UserService.checkExist({ email, username });
+    if (conflicts.length > 0)
+      throw new appError(`${conflicts.join(" & ")} alredy Exist`, 409, "CONFLICT_ERROR");
+
     const data = await prisma.user.create({
-      data: {
-        code: readableId("USR"),
-        email,
-        username,
-        passwordHash,
-      },
+      data: { code: readableId("USR"), email, username, passwordHash },
     });
     await ActivityService.lagActivity({
       actorId: data.id,
@@ -46,7 +42,7 @@ export default class AuthService {
     });
     if (!userData) throw new appError("User not found ", 404, "NOT_FOUND");
     const verify = await BcryptService.verifyPassword(password, userData.passwordHash);
-    if (!verify) throw new appError("Password or Username is invalid", 401, "INVALID_CREDENTIALS");
+    if (!verify) throw new appError("Password or email is invalid", 401, "INVALID_CREDENTIALS");
     const accessToken = JwtService.sign({ userId: userData.id, email }, "access");
     const refreshToken = JwtService.sign({ userId: userData.id, email }, "refresh");
     await ActivityService.lagActivity({
@@ -92,31 +88,31 @@ export default class AuthService {
     });
     return data;
   }
-  static async getAuthDetails(userId: string,) {
+  static async getAuthDetails(userId: string) {
     const userData = await prisma.user.findUnique({
       where: {
         id: userId,
       },
       select: {
-        id: true
+        id: true,
+        email: true,
       },
     });
-     ;
     return userData;
   }
-    static async getPermissions(userId: string, organizationId: string) {
-      const permissions = await prisma.membership.findUnique({
-        where: {
-          organizationId_userId: {
-            organizationId,
-            userId,
-          },
+  static async getPermissions(userId: string, organizationId: string) {
+    const permissions = await prisma.membership.findUnique({
+      where: {
+        organizationId_userId: {
+          organizationId,
+          userId,
         },
-        include: {
-          role: true,
-        },
-      });
-    return {permissions: permissions?.role?.permissions};
+      },
+      include: {
+        role: true,
+      },
+    });
+    return { permissions: permissions?.role?.permissions };
   }
   static async forgetPassword(email: string) {
     const user = await prisma.user.findUnique({

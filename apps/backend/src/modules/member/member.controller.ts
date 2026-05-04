@@ -9,6 +9,7 @@ export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {
     const queueId = req.query.queueId as string;
 
+    const queuefilter = queueId ? { user: { queueAgents: { some: { queueId } } } } : {};
     const { filterOptions, limit, offset } = new APIFeatures(req.query, {
       ignore: ["queueId"],
     })
@@ -19,13 +20,7 @@ export class MemberController {
         organizationId: req.organization.id,
         isSystem: false,
         ...filterOptions.where,
-        user: {
-          queueAgents: {
-            some: {
-              queueId,
-            },
-          },
-        },
+        ...queuefilter,
       },
       select: {
         organizationId: true,
@@ -63,6 +58,7 @@ export class MemberController {
       skip: offset,
       take: limit,
     });
+
     const data = membership.map((item) => {
       const user = item.user;
 

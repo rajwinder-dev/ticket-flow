@@ -1,6 +1,7 @@
 import { Spinner } from "@/components/ui/spinner";
 import { useGlobalContext } from "@/context/GlobalContext";
 import useOrganizations from "@/features/organization/hooks";
+import OrganizationPage from "@/features/organization/pages/OrganizationPage";
 import { useEffect } from "react";
 import { Outlet, useParams } from "react-router";
 
@@ -13,7 +14,7 @@ const OrgLayout = () => {
   const { organizations, isLoadingOrganizations } = useOrganizations();
   if (isLoadingOrganizations) return <Spinner />;
   const isExist = organizations?.data.find((org) => org.id === orgId);
-  if (!isExist) return <div>Organization not found</div>;
+  if (!isExist) return <OrganizationPage />;
   return <Outlet />;
 };
 

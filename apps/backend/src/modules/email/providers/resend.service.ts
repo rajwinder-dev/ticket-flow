@@ -42,7 +42,6 @@ export class ResendService implements EmailService {
       html: "OK",
     });
     if (error) {
-      console.log(error);
       throw new appError(error.message, 400, "VERIFICATION_FAILED");
     }
     return data;
@@ -57,7 +56,7 @@ export class ResendService implements EmailService {
   }
   async getEmailDetails(messageId: string) {
     const emailData = await this.resend.emails.receiving.get(messageId);
-    console.log(emailData)
+    console.log(emailData);
     const data = {
       html: emailData.data?.html,
       attachments: emailData.data?.attachments,

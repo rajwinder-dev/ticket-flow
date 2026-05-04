@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validDescription, validEmail, validString } from "./helper/zodHelper.js";
+import { optionalInput, validDescription, validEmail, validString } from "./helper/zodHelper.js";
 
 export const createOrganizationInput = {
   bodySchema: z
@@ -22,8 +22,8 @@ export const updateOrganizationInput = {
   bodySchema: z
     .object({
       name: validString.optional(),
-      description: validDescription.optional(),
-      logo: z.url().optional(),
+      description: optionalInput(validDescription),
+      logo: optionalInput(z.url()),
       slug: z
         .string()
         .regex(

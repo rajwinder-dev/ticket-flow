@@ -66,6 +66,7 @@ export const authToken = z.object({
 })
 export const authDetails = z.object({
   id: z.uuid(),
+  email: z.email()
 })
 export const authPermissions = z.object({
   permissions: z.record(z.string(), z.array(z.string())),

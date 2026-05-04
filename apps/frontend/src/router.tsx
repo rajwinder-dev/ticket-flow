@@ -26,17 +26,10 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/invite-user/:token",
-        element: <InviteMemberPage />
-      },
-      {
         path: "/",
         element: <DashboardLayout />,
         children: [
-          {
-            index: true,
-            element: <HomePage />,
-          },
+          { index: true, element: <HomePage /> },
           {
             path: "org",
             children: [
@@ -79,6 +72,10 @@ const router = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: <ResetPasswordPage />,
+  },
+  {
+    path: "/invite-user/:token",
+    element: <InviteMemberPage />,
   },
 ]);
 export default router;

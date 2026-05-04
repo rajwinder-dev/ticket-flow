@@ -1,10 +1,10 @@
 import {
-    CreateOrganizationInput,
-    createOrganizationResponse,
-    InviteUserOrganizationInput,
-    memberSchemaResponse,
-    organizationSchemaResponse,
-    UpdateOrganizationInput,
+  CreateOrganizationInput,
+  createOrganizationResponse,
+  InviteUserOrganizationInput,
+  memberSchemaResponse,
+  organizationSchemaResponse,
+  UpdateOrganizationInput,
 } from "@repo/schemas";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
@@ -50,9 +50,9 @@ export class OrganizationController {
         },
         role: {
           select: {
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       take: limit,
       skip: offset,
@@ -60,7 +60,7 @@ export class OrganizationController {
     const output = membership.map((m) => ({
       ...m.organization,
       isOwner: m.organization?.createdBy === req.user.id,
-      role: m.role?.name
+      role: m.role?.name,
     }));
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });
@@ -92,8 +92,8 @@ export class OrganizationController {
       email,
       roleId,
     });
-    await EmailService.sendEmail({
-      organizationId: req.organization.id,
+    await EmailService.sendSystemEmail({
+      // organizationId: req.organization.id,
       to: email,
       subject: "Invite Email to our organizations",
       jsx: InviteEmail({
@@ -218,6 +218,9 @@ export class OrganizationController {
         ...filterOptions.where,
       },
     });
-    response(res, data, 200, { otherFields: { limit, offset, total }, schema: memberSchemaResponse });
+    response(res, data, 200, {
+      otherFields: { limit, offset, total },
+      schema: memberSchemaResponse,
+    });
   });
 }

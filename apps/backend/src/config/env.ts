@@ -23,7 +23,6 @@ export const env = {
 };
 
 const required = ["encryptionKey", "databaseURL", "accessSecret", "refreshSecret"];
-
 for (const key of required) {
   if (!env[key as keyof typeof env]) {
     log.error(`Missing environment variable: ${key}`);

@@ -18,8 +18,10 @@ import { inviteUserOrganizationInput, type InviteUserOrganizationInput } from "@
 import useMember from "../hooks";
 
 // Define the schema
-
-export function OrganizationInvite() {
+interface props {
+  onclose: () => void;
+}
+export function OrganizationInvite({ onclose }: props) {
   const { inviteUserMutate, isInvitingUser } = useMember();
   const {
     register,
@@ -37,7 +39,10 @@ export function OrganizationInvite() {
   const { roles } = useRole();
   const onSubmit = async (data: InviteUserOrganizationInput) => {
     inviteUserMutate(data, {
-      onSuccess: () => reset(),
+      onSuccess: () => {
+        reset();
+        onclose();
+      },
     });
   };
 
@@ -82,10 +87,15 @@ export function OrganizationInvite() {
         />
         {errors.roleId && <p className="text-destructive text-xs">{errors.roleId.message}</p>}
       </div>
+      <div className="flex gap-4">
+        <Button type="button" variant={"secondary"} className="flex-1" onClick={onclose}>
+          Cancel
+        </Button>
 
-      <Button type="submit" className="w-full" disabled={isInvitingUser}>
-        {isInvitingUser ? "Sending Invite..." : "Send Invitation"}
-      </Button>
+        <Button type="submit" disabled={isInvitingUser} className="flex-1">
+          {isInvitingUser ? "Sending Invite..." : "Send Invitation"}
+        </Button>
+      </div>
     </form>
   );
 }

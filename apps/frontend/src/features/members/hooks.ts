@@ -43,7 +43,7 @@ const useMember = ({ filterOptions }: props = {}) => {
   const { mutate: acceptInviteMutate, isPending: isAcceptingInvite } = useMutation({
     mutationFn: (token: string) => memberApi.acceptInvite(token),
     onSuccess: () => {
-      toast.success("Joined organization successfully");
+      toast.success("organization joined  successfully");
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
       navigate("/org");
     },
