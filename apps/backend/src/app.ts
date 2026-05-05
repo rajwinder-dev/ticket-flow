@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, {Express} from "express";
+import express, { Express } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
@@ -29,13 +29,15 @@ import userRouter from "./modules/user/user.routes.js";
 import webhookRouter from "./modules/webhook/webhook.routes.js";
 import lookupRouter from "./modules/lookup/lookup.routes.js";
 
-export const app: Express  = express();
+export const app: Express = express();
 
 // dev logs
 if (devMode) app.use(morgan("dev"));
 // security
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(hpp());
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 100,
@@ -51,7 +53,7 @@ app.use(
   }),
 );
 app.set("view engine", "ejs");
-app.use("/webhooks",express.raw({ type: "application/json" }), webhookRouter)
+app.use("/webhooks", express.raw({ type: "application/json" }), webhookRouter);
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
@@ -76,9 +78,8 @@ app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/ticket", TicketRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/member", memberRouter);
-app.use("/api/v1/activity", ActivityRouter)
-app.use("/api/v1/lookup", lookupRouter)
-
+app.use("/api/v1/activity", ActivityRouter);
+app.use("/api/v1/lookup", lookupRouter);
 
 app.all(/(.*)/, (req, res, next) => {
   return next(new appError(`Can't find ${req.originalUrl} on this server!`, 404, "INVALID_ROUTE"));

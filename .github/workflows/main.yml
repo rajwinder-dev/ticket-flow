@@ -9,8 +9,13 @@ on:
 
 jobs:
   test:
-    environment: hrmsProject
+    strategy:
+      matrix:
+        node-version: [20]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/backend
 
     services:
       postgres:
@@ -21,36 +26,34 @@ jobs:
           POSTGRES_DB: testdb
 
         ports:
-          - 5432:5432
+          - 5488:5432
         options: >-
-          --health-cmd="pg_isready -U testuser"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd="pg_isready -U testuser" --health-interval=10s
+          --health-timeout=5s --health-retries=5
 
     env:
-      DATABASE_URL: postgres://testuser:testpass@localhost:5432/testdb
+      DATABASE_URL: postgres://testuser:testpass@localhost:5488/testdb
       NODE_ENV: test
-      ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
-      ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
-      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      ENCRYPTION_KEY: randome-key-1
+      ACCESS_SECRET: ramdom-key-2
+      REFRESH_SECRET: random-key-3
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+       - uses: actions/checkout@v4
+       - name: Install pnpm
+         uses: pnpm/action-setup@v4
+         with:
+          version: 10
+       - name: Use Node.js ${{ matrix.node-version }}
+         uses: actions/setup-node@v4
+         with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+       - name: Install dependencies
+         run: pnpm install
+       - name: Generate Prisma Client
+         run: pnpm --filter backend exec prisma generate
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Apply DB migrations
-        run: npx prisma migrate deploy
-
-      - name: Seed test data
-        run: npm run seed
-
-      - name: Run integration tests
-        run: npm test
+       - name: Run migrations
+         run: pnpm --filter backend exec prisma migrate deploy
+       - name: Run tests
+         run: pnpm --filter backend test
