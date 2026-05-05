@@ -72,8 +72,6 @@ export class resendWebhookController {
     const resend = new ResendService(credentials);
     const emailData = await resend.getEmailDetails(data.email_id);
     const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
-    console.log("==============================");
-    console.log(tempPayload);
     if (tempPayload?.type === "email.received") {
       await TicketService.createAndAssign({
         organizationId: provider.organizationId,
