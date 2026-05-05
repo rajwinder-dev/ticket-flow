@@ -20,7 +20,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   } = useForm<LoginInput>({
     resolver: zodResolver(loginInput.bodySchema),
     defaultValues: {
-      email: tokenEmail || undefined,
+      email: tokenEmail || "example@gmail.com",
+      password: tokenEmail ? "" : "123456",
     },
   });
 
