@@ -1,6 +1,5 @@
 import { ResentEmailWebhookSchema } from "@repo/schemas";
 import sanitizeHtml from "sanitize-html";
-import { log } from "../../core/helper/log.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import { decrypt, EncryptionType } from "../../core/utils/crypto.js";
@@ -49,8 +48,7 @@ export class resendWebhookController {
     } catch (error) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
 
-      log.error(message);
-      throw new appError("Invalid webhook signature", 400, "INVALID_WEBHOOK");
+      throw new appError(message, 400, "INVALID_WEBHOOK");
     }
     const payload = JSON.parse(rawBody);
     const data = payload.data;
@@ -74,7 +72,9 @@ export class resendWebhookController {
     const resend = new ResendService(credentials);
     const emailData = await resend.getEmailDetails(data.email_id);
     const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
-    if (tempPayload?.type === "email.recieved") {
+    console.log("==============================");
+    console.log(tempPayload);
+    if (tempPayload?.type === "email.received") {
       await TicketService.createAndAssign({
         organizationId: provider.organizationId,
         input: {
