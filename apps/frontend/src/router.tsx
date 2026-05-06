@@ -5,7 +5,6 @@ import LoginPage from "./features/auth/pages/LoginPage";
 import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage";
 import SignupPage from "./features/auth/pages/SignupPage";
 import DashboardPage from "./features/dashbaord/dashbaord";
-import HomePage from "./features/home/HomePage";
 import MembersPage from "./features/members/components/MemberPage";
 import CreateOrganizationPage from "./features/organization/pages/CreateOrganizationPage";
 import OrganizationPage from "./features/organization/pages/OrganizationPage";

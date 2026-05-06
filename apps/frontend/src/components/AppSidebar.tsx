@@ -7,12 +7,9 @@ import {
   Activity01Icon,
   CustomerSupportIcon,
   DashboardSquare01Icon,
-  HomeIcon,
-  Layers01Icon,
   SecurityLockIcon,
   Settings05Icon,
   Ticket01Icon,
-  UserAccountIcon,
   UserGroupIcon,
   WorkflowCircle01Icon,
 } from "@hugeicons/core-free-icons";
