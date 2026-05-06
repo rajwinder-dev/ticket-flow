@@ -37,3 +37,4 @@ coverage
 prisma/migrations/*
 !prisma/migrations/.keep
 generated
+.tsbuilderinfo

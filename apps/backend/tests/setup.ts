@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 // Load environment variables immediately
 dotenv.config();
-vi.mock("./../../src/modules/email/email.service.ts", () => ({
+vi.mock("../../backend/src/modules/email/email.service.ts", () => ({
   EmailService: {
     sendSystemEmail: vi.fn().mockResolvedValue(true),
   },

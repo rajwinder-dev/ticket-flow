@@ -10,7 +10,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
-    "dev": "concurrently \"tsc --noEmit --watch\" \"tsx watch  --inspect src/server.ts\"",
+    "dev": "tsx watch  --inspect src/server.ts",
     "email:dev": "email dev --dir src/templates/emails",
     "build": "prisma generate && tsc -b",
     "generate": "prisma generate",

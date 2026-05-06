@@ -1,18 +1,16 @@
 name: API Integration Tests
 
 on:
-  # push:
-  #   branches: [main]
-  # pull_request:
-  #   branches: [main]
   workflow_dispatch:
 
 jobs:
   test:
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: [20]
-    runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: apps/backend
@@ -20,6 +18,7 @@ jobs:
     services:
       postgres:
         image: postgres:16
+
         env:
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
@@ -27,33 +26,44 @@ jobs:
 
         ports:
           - 5488:5432
+
         options: >-
-          --health-cmd="pg_isready -U testuser" --health-interval=10s
-          --health-timeout=5s --health-retries=5
+          --health-cmd="pg_isready -U testuser -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     env:
       DATABASE_URL: postgres://testuser:testpass@localhost:5488/testdb
       NODE_ENV: test
-      ENCRYPTION_KEY: randome-key-1
-      ACCESS_SECRET: ramdom-key-2
-      REFRESH_SECRET: random-key-3
-    steps:
-       - uses: actions/checkout@v4
-       - name: Install pnpm
-         uses: pnpm/action-setup@v4
-         with:
-          version: 10
-       - name: Use Node.js ${{ matrix.node-version }}
-         uses: actions/setup-node@v4
-         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
-       - name: Install dependencies
-         run: pnpm install
-       - name: Generate Prisma Client
-         run: pnpm --filter backend exec prisma generate
 
-       - name: Run migrations
-         run: pnpm --filter backend exec prisma migrate deploy
-       - name: Run tests
-         run: pnpm --filter backend test
+      ENCRYPTION_KEY: random-key-1
+      ACCESS_SECRET: random-key-2
+      REFRESH_SECRET: random-key-3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
+      - name: Run migrations
+        run: pnpm prisma migrate deploy
+
+      - name: Run integration tests
+        run: pnpm test
