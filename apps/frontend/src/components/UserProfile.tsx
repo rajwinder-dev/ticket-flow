@@ -11,7 +11,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import useAuth from "@/features/auth/hooks";
 import useUser from "@/features/users/hooks";
-import { Gear, LogoutIcon, NotificationIcon } from "@hugeicons/core-free-icons";
+import { Gear, LogoutIcon,  } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate, useParams } from "react-router";
 
@@ -69,10 +69,10 @@ export function UserProfile() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={NotificationIcon} strokeWidth={2} />
-                Notifications
-              </DropdownMenuItem>
+              {/* <DropdownMenuItem> */}
+              {/* <HugeiconsIcon icon={NotificationIcon} strokeWidth={2} /> */}
+              {/* Notifications */}
+              {/* </DropdownMenuItem> */}
               <DropdownMenuItem onClick={() => navigate(`/org/${orgId}/setting`)}>
                 <HugeiconsIcon icon={Gear} strokeWidth={2} />
                 Settings
