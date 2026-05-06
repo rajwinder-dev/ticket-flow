@@ -4,11 +4,11 @@ import TicketTable from "./TicketTable";
 
 const TicketsPage = () => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex h-screen flex-col">
       <TicketHeader />
       <TicketMatrices />
-      <div className="border-border overflow-hidden border h-full">
-        <TicketTable />
+      <div className="border-border h-full overflow-hidden border">
+        <TicketTable />{" "}
       </div>
     </div>
   );

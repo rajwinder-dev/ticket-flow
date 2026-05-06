@@ -30,7 +30,7 @@ export function MembersTable() {
   const { rolesData } = useLookupHook();
   const [pagination, setPagination] = useState({
     offset: 0,
-    limit: 10,
+    limit: 20,
   });
   const [roleId, setRoleId] = useState<string | undefined>();
   // Use the data and loading state from your custom hook
@@ -87,7 +87,7 @@ export function MembersTable() {
               </TableRow>
             </TableHeader>
 
-            <TableBody >
+            <TableBody>
               {members?.data.length === 0 && (
                 <TableRow>
                   <TableCell
@@ -157,7 +157,6 @@ export function MembersTable() {
                 );
               })}
             </TableBody>
-
           </Table>
         </ScrollArea>
       </div>

@@ -39,7 +39,7 @@ export function OrganizationSwitcher() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground border-border border"
             >
               {activeOrganization ? (
                 <>
@@ -57,7 +57,7 @@ export function OrganizationSwitcher() {
                   </div>
                 </>
               ) : (
-                <div className="text-lg">Select Organization </div>
+                <div className="text-accent text-lg">Select Organization </div>
               )}
               <HugeiconsIcon icon={UnfoldMoreIcon} strokeWidth={2} className="ml-auto" />
             </SidebarMenuButton>

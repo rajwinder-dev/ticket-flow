@@ -4,12 +4,17 @@ import { NavMain } from "@/components/nav-main";
 import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import {
+  Activity01Icon,
+  CustomerSupportIcon,
+  DashboardSquare01Icon,
   HomeIcon,
   Layers01Icon,
+  SecurityLockIcon,
   Settings05Icon,
   Ticket01Icon,
   UserAccountIcon,
   UserGroupIcon,
+  WorkflowCircle01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import * as React from "react";
@@ -17,7 +22,7 @@ const navMainItems = [
   {
     title: "Dashboard",
     url: "/",
-    icon: <HugeiconsIcon icon={HomeIcon} strokeWidth={2} />,
+    icon: <HugeiconsIcon icon={DashboardSquare01Icon} strokeWidth={2} />,
   },
   {
     title: "Tickets",
@@ -31,22 +36,18 @@ const navMainItems = [
       },
       {
         title: "My Tickets",
-        url: "/ticket?filter=my",
+        url: "/ticket?assignedTo=mine",
       },
       {
         title: "Unassigned",
-        url: "/ticket?filter=unassigned",
-      },
-      {
-        title: "Closed",
-        url: "/ticket?status=closed",
+        url: "/ticket?assignedTo=none",
       },
     ],
   },
   {
     title: "Queues & Groups",
     url: "/queue",
-    icon: <HugeiconsIcon icon={Layers01Icon} strokeWidth={2} />,
+    icon: <HugeiconsIcon icon={WorkflowCircle01Icon} strokeWidth={2} />,
   },
   {
     title: "Members",
@@ -56,26 +57,22 @@ const navMainItems = [
   {
     title: "Customers",
     url: "/customer",
-    icon: <HugeiconsIcon icon={UserAccountIcon} strokeWidth={2} />,
+    icon: <HugeiconsIcon icon={CustomerSupportIcon} strokeWidth={2} />,
+  },
+  {
+    title: "Roles & Permissions",
+    url: "/rbac",
+    icon: <HugeiconsIcon icon={SecurityLockIcon} strokeWidth={2} />,
+  },
+  {
+    title: "Activity Logs",
+    url: "/activity",
+    icon: <HugeiconsIcon icon={Activity01Icon} strokeWidth={2} />,
   },
   {
     title: "Settings",
     url: "/setting",
     icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
-    items: [
-      {
-        title: "General",
-        url: "/setting",
-      },
-      {
-        title: "Roles & Permissions",
-        url: "/setting/rbac",
-      },
-      {
-        title: "Activity logs",
-        url: "/setting/activity",
-      },
-    ],
   },
 ];
 

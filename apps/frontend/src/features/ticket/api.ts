@@ -31,9 +31,10 @@ export const ticketApi = {
     });
     return res;
   },
-  getSummary: async () => {
+  getSummary: async (filterOptions?: FilterOptions) => {
     const res = await getRequest<TicketSummary>({
       path: `/ticket/summary`,
+      filterOptions,
     });
     return res;
   },

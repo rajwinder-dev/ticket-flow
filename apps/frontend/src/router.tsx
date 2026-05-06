@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <DashboardLayout />,
         children: [
-          { index: true, element: <HomePage /> },
+          { index: true, element: <OrganizationPage /> },
           {
             path: "org",
             children: [
@@ -45,8 +45,8 @@ const router = createBrowserRouter([
                   { path: "queue", element: <QueuePage /> },
                   { path: "queue/:queueId", element: <QueueDetailPage /> },
                   { path: "setting", element: <SettingsPage /> },
-                  { path: "setting/rbac", element: <RolePage /> },
-                  { path: "setting/activity", element: <ActivityPage /> },
+                  { path: "rbac", element: <RolePage /> },
+                  { path: "activity", element: <ActivityPage /> },
                   { path: "member", element: <MembersPage /> },
                   { path: "customer", element: <CustomerPage /> },
                 ],

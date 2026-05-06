@@ -7,12 +7,7 @@ type PaginationProps = {
   onChange: (params: { offset: number; limit: number }) => void;
 };
 
-export function Pagination({
-  offset,
-  limit,
-  total,
-  onChange,
-}: PaginationProps) {
+export function Pagination({ offset, limit, total, onChange }: PaginationProps) {
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit);
 
@@ -36,18 +31,13 @@ export function Pagination({
   };
 
   return (
-    <div className="bg-muted sticky bottom-0 flex items-center justify-between p-4 ">
-      <p className="text-sm text-muted-foreground">
+    <div className="bg-muted sticky bottom-0 flex items-center justify-between p-4">
+      <p className="text-muted-foreground text-sm">
         Page {currentPage} of {totalPages} • {total} items
       </p>
 
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handlePrev}
-          disabled={!canGoPrev}
-        >
+        <Button variant="outline" size="sm" onClick={handlePrev} disabled={!canGoPrev}>
           Previous
         </Button>
 
@@ -55,12 +45,7 @@ export function Pagination({
           {currentPage} / {totalPages}
         </span>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleNext}
-          disabled={!canGoNext}
-        >
+        <Button variant="outline" size="sm" onClick={handleNext} disabled={!canGoNext}>
           Next
         </Button>
       </div>

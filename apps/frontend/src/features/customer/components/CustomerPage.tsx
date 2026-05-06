@@ -21,7 +21,7 @@ import CustomerTable from "./CustomerTable";
 const CustomerPage = () => {
   const [search, setSearch] = useState<string | undefined>();
   const [pagination, setPagination] = useState({
-    limit: 10,
+    limit: 20,
     offset: 0,
   });
   const searchItem = useDebounceValue(search);
@@ -29,7 +29,7 @@ const CustomerPage = () => {
     filterOptions: { search: { search: searchItem }, ...pagination },
   });
   return (
-    <div className="flex flex-col flex-1">
+    <>
       <PageHeader
         title="Customer Management"
         description="MVP view focused on customer details, account health, and ticket
@@ -55,33 +55,30 @@ const CustomerPage = () => {
       </PageHeader>
       {/* <CustomerMatrices /> */}
 
-        <div className="lg:col-span-3 flex-1 flex flex-col ">
-          <div className="flex items-center justify-between gap-4 space-y-2 p-4">
-            <div>
-              <h2>Customer list</h2>
-              <CardDescription>Search by email.</CardDescription>
-            </div>
-            <Input
-              className="w-xs"
-              placeholder="Search customers by email."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-            />
+        <div className="flex items-center justify-between gap-4 space-y-2 p-4">
+          <div>
+            <h2>Customer list</h2>
+            <CardDescription>Search by email.</CardDescription>
           </div>
-          {customers?.data && <CustomerTable data={customers?.data} />}
-          {customers?.data && (
-            <Pagination
-              limit={customers.limit}
-              total={customers.total}
-              offset={customers.offset}
-              onChange={setPagination}
-            />
-          )}
+          <Input
+            className="w-xs"
+            placeholder="Search customers by email."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
         </div>
-
-    </div>
+        {customers?.data && <CustomerTable data={customers?.data} />}
+        {customers?.data && (
+          <Pagination
+            limit={customers.limit}
+            total={customers.total}
+            offset={customers.offset}
+            onChange={setPagination}
+          />
+        )}
+    </>
   );
 };
 

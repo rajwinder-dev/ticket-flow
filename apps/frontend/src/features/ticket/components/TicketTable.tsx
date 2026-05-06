@@ -39,8 +39,11 @@ import { ticketPriority, ticketStatus } from "@repo/constants";
 import { TicketEscalateDialog } from "./TicketEscalateDialog";
 import { TicketPriorityCell } from "./TicketPriorityCell";
 import { TicketStatusCell } from "./TicketStatusCell";
+import { useCustomParams } from "@/hooks/useCustomParams";
 
 const TicketTable = () => {
+  const { getParams } = useCustomParams();
+  const { assignedTo } = getParams("assignedTo");
   const [pagination, setPagination] = useState({
     offset: 0,
     limit: 10,
@@ -57,6 +60,7 @@ const TicketTable = () => {
       filter: {
         ...(status && status !== "ALL" && { status }),
         ...(priority && priority !== "ALL" && { priority }),
+        ...(assignedTo ? { assignedTo } : {}),
       },
       search: {
         searchBy: "subject",
@@ -89,7 +93,9 @@ const TicketTable = () => {
       <div className="h-full">
         <div className="flex items-center justify-between p-4">
           <div>
-            <h2 className="text-xl font-bold">Tickets</h2>
+            <h2 className="text-xl font-bold capitalize">
+              {assignedTo ? (assignedTo === "none" ? "unassigned" : "My") : ""} Tickets
+            </h2>
             <p className="text-muted-foreground text-sm">
               Search by ticket code, subject, or assignee.
             </p>

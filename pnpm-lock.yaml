@@ -38,10 +38,10 @@ importers:
         version: 2.0.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@repo/constants':
         specifier: workspace:*
-        version: file:packages/constants
+        version: link:../../packages/constants
       '@repo/schemas':
         specifier: workspace:*
-        version: file:packages/schemas
+        version: link:../../packages/schemas
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -325,6 +325,9 @@ importers:
       react-hook-form:
         specifier: ^7.72.0
         version: 7.72.1(react@19.2.5)
+      react-loading-skeleton:
+        specifier: ^3.5.0
+        version: 3.5.0(react@19.2.5)
       react-router:
         specifier: ^7.13.2
         version: 7.14.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2462,12 +2465,6 @@ packages:
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
-
-  '@repo/constants@file:packages/constants':
-    resolution: {directory: packages/constants, type: directory}
-
-  '@repo/schemas@file:packages/schemas':
-    resolution: {directory: packages/schemas, type: directory}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
     resolution: {integrity: sha512-YYe6aWruPZDtHNpwu7+qAHEMbQ/yRl6atqb/AhznLTnD3UY99Q1jE7ihLSahNWkF4EqRPVC4SiR4O0UkLK02tA==}
@@ -5421,6 +5418,11 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
+  react-loading-skeleton@3.5.0:
+    resolution: {integrity: sha512-gxxSyLbrEAdXTKgfbpBEFZCO/P153DnqSCQau2+o6lNy1jgMRr2MmRmOzMmyrwSaSYLRB8g7b0waYPmUjz7IhQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
     engines: {node: '>=10'}
@@ -8301,13 +8303,6 @@ snapshots:
   '@react-email/text@0.1.6(react@19.2.5)':
     dependencies:
       react: 19.2.5
-
-  '@repo/constants@file:packages/constants': {}
-
-  '@repo/schemas@file:packages/schemas':
-    dependencies:
-      '@repo/constants': file:packages/constants
-      zod: 4.3.6
 
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
     optional: true
@@ -11221,6 +11216,10 @@ snapshots:
   react-is@16.13.1: {}
 
   react-is@18.3.1: {}
+
+  react-loading-skeleton@3.5.0(react@19.2.5):
+    dependencies:
+      react: 19.2.5
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.5):
     dependencies:

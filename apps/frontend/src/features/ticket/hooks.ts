@@ -12,11 +12,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import { ticketApi } from "./api";
+import { useCustomParams } from "@/hooks/useCustomParams";
 interface props {
   filterOptions?: FilterOptions;
 }
 export function useTicket({ filterOptions }: props = {}) {
   const { orgId, ticketId } = useParams();
+  const { getParams } = useCustomParams();
+  const assignedTo = getParams("assignedTo");
   const queryClient = useQueryClient();
   const {
     data: ticketData,
@@ -32,8 +35,8 @@ export function useTicket({ filterOptions }: props = {}) {
     isLoading: isLoadingTicketSummary,
     error: ticketSummaryError,
   } = useQuery({
-    queryFn: ticketApi.getSummary,
-    queryKey: ["ticket", "summary", { orgId }],
+    queryFn: () => ticketApi.getSummary(assignedTo),
+    queryKey: ["ticket", "summary", { orgId, assignedTo }],
     enabled: !!orgId,
   });
   const {

@@ -38,19 +38,37 @@ export class TicketController {
     response(res, updatedTicket);
   });
   static getAllTickets = catchAsync(async (req, res, _next) => {
-    const { filterOptions, limit, offset } = new APIFeatures(req.query)
+    const assignedTo = req.query.assignedTo as string;
+    const { filterOptions, limit, offset } = new APIFeatures(req.query, { ignore: ["assignedTo"] })
       .filter()
       .sort()
-      .pagination().search();
+      .pagination()
+      .search();
+    // implement custom filter
+    let assignedToFilter;
+    if (assignedTo === "mine") {
+      assignedToFilter = {
+        assignedToUser: {
+          id: req.user.id,
+        },
+      };
+    } else if (assignedTo === "none") {
+      assignedToFilter = {
+        assignedToUser: null,
+      };
+    }
     const total = await prisma.ticket.count({
       where: {
         organizationId: req.organization.id,
+        ...(assignedTo ? assignedToFilter : {}),
         ...filterOptions.where,
       },
     });
     const data = await prisma.ticket.findMany({
       where: {
         organizationId: req.organization.id,
+
+        ...(assignedTo ? assignedToFilter : {}),
         ...filterOptions.where,
       },
       include: {
@@ -67,13 +85,32 @@ export class TicketController {
   });
   static getSummary = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
-
+    const assignedTo = req.query.assignedTo as string;
+    let assignedToFilter;
+    if (assignedTo === "mine") {
+      assignedToFilter = {
+        assignedToUser: {
+          id: req.user.id,
+        },
+      };
+    } else if (assignedTo === "none") {
+      assignedToFilter = {
+        assignedToUser: null,
+      };
+    }
+    console.log(assignedTo);
     // fetch status counts
     const [total, open, inProgress, resolved] = await Promise.all([
-      prisma.ticket.count({ where: { organizationId } }),
-      prisma.ticket.count({ where: { organizationId, status: "OPEN" } }),
-      prisma.ticket.count({ where: { organizationId, status: "IN_PROGRESS" } }),
-      prisma.ticket.count({ where: { organizationId, status: "RESOLVED" } }),
+      prisma.ticket.count({ where: { organizationId, ...(assignedToFilter || {}) } }),
+      prisma.ticket.count({
+        where: { organizationId, status: "OPEN", ...(assignedToFilter || {}) },
+      }),
+      prisma.ticket.count({
+        where: { organizationId, status: "IN_PROGRESS", ...(assignedToFilter || {}) },
+      }),
+      prisma.ticket.count({
+        where: { organizationId, status: "RESOLVED", ...(assignedToFilter || {}) },
+      }),
     ]);
 
     response(
@@ -203,7 +240,7 @@ export class TicketController {
   });
   static getTransitionHistory = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
-    const {data, pagination} = await TicketService.getTicketTransitionHistory({
+    const { data, pagination } = await TicketService.getTicketTransitionHistory({
       ticketId,
       organizationId: req.organization.id,
       queryString: req.query,
@@ -212,4 +249,5 @@ export class TicketController {
       otherFields: { ...pagination },
       schema: z.array(ticketTranslationSchema),
     });
-});}
+  });
+}

@@ -27,7 +27,7 @@ const OrganizationSection = () => {
       {/* Header */}
       <header className="flex items-center justify-between">
         <h1 className="text-foreground text-3xl font-semibold tracking-tight">
-          Your Organizations
+          Select Organization
         </h1>
       </header>
 
