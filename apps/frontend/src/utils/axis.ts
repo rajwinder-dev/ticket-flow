@@ -119,7 +119,6 @@ export async function deleteRequest<T = geneticApiResponse>({
 }
 // axios helper
 export function buildQuery(input: Record<string, string | number | boolean | string[] | object>) {
-  console.log(input);
   const array: string[] = [];
   for (const [key, value] of Object.entries(input)) {
     if (Array.isArray(value)) {

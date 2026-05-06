@@ -34,9 +34,11 @@ export function NavMain({
 
       <SidebarMenu>
         {items.map((item) => {
-          const isActive = pathname === item.url || item.items?.some((sub) => pathname === sub.url);
-
           // 👉 If no sub-items → simple link (no collapsible)
+          const currentPath = "/" + pathname.split("/").slice(3).join("/");
+
+          const isActive =
+            currentPath === item.url || item.items?.some((sub) => currentPath === sub.url);
           if (!item.items || item.items.length === 0) {
             return (
               <SidebarMenuItem key={item.title}>

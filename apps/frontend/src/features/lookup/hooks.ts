@@ -7,7 +7,6 @@ interface props {
 }
 export const useLookupHook = ({ queueId, groupId }: props = {}) => {
   const { orgId } = useParams();
-  console.log(queueId, groupId);
   const { data: groupsData, isLoading: isLoadingGroups } = useQuery({
     queryFn: lookupApi.getGroups,
     queryKey: ["lookup", "group", { orgId }],

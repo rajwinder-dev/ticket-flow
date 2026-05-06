@@ -8,6 +8,7 @@ const TicketsPage = () => {
       <TicketHeader />
       <TicketMatrices />
       <div className="border-border h-full overflow-hidden border">
+
         <TicketTable />{" "}
       </div>
     </div>
