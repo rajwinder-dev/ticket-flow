@@ -12,7 +12,7 @@
     "dev:backend": "pnpm --filter backend dev",
     "dev:frontend": "pnpm --filter frontend dev",
     "shadcn": "pnpm --filter frontend shadcn:add",
-    "build": "tsc -b",
+    "build": "pnpm run -r build",
     "watch": "tsc -b -w",
     "clean": "tsc -b --clean",
     "test": "pnpm -r test",
