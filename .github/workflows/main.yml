@@ -14,7 +14,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: apps/backend
+        working-directory: .
 
     services:
       postgres:
@@ -35,10 +35,9 @@ jobs:
     env:
       DATABASE_URL: postgres://testuser:testpass@localhost:5488/testdb
       NODE_ENV: test
-
-      ENCRYPTION_KEY: random-key-1
-      ACCESS_SECRET: random-key-2
-      REFRESH_SECRET: random-key-3
+      ENCRYPTION_KEY: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
+      ACCESS_SECRET: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
+      REFRESH_SECRET: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
 
     steps:
       - name: Checkout repository
@@ -59,13 +58,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm prisma generate
-        
+        run: pnpm --filter backend run generate
+
       - name: Build packages
-        run: pnpm --filter=./packages/* run build 
+        run: pnpm --filter=./packages/* run build
 
       - name: Run migrations
-        run: pnpm prisma migrate deploy
+        run: pnpm run migrate
 
       - name: Run integration tests
         run: pnpm test
