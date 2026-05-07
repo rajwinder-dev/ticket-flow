@@ -66,8 +66,10 @@ Middleware-based role checks ensure secure access control across endpoints.
 - Did not add real time webhook notification
 - Limited caching to reduce system complexity
 - Focused on backend strength over UI polish
-* authentication is manual (auth + refresh token)
-* email servers is integrated inside app
+
+- authentication is manual (auth + refresh token)
+- email servers is integrated inside app
+
 ---
 
 ## API Reference
@@ -80,53 +82,66 @@ See: [API docs](./docs/api.md)
 
 See [database docs](./docs/database.md)
 
----
+## Screen shorts
 
+Ticket management
+
+![Ticket system](docs/img/ticket.png)
+Queue and Groups
+
+![groups and Queue](docs/img/groups.png)
+RBAC system
+
+![rbac system](docs/img/rbac.png)
 
 ## Running Locally
 
-
 ### 1. Rapid Deployment (Docker)
+
 Use this method to spin up the entire stack (Frontend, Backend, and Database) in a containerized environment.
 
-1.  **Configure Environment:**
-    ```bash
-    cp .env.example .env
-    ```
-2.  **Launch Containers:**
-    ```bash
-    docker compose up --build
-    ```
-    *Note: This command initializes three orchestrated containers. Once healthy, the application is accessible at `http://localhost` (Port 80).*
+1. **Configure Environment:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. \*_Launch Containers:_ _Note: This command initializes three orchestrated containers. Once healthy, the application is accessible at `http://localhost` (Port 80)._
 
 ---
 
 ### 2. Local Development Mode
+
 Use this method if you want to make active code changes with Hot Module Replacement (HMR).
 
 #### **Backend Setup**
-1.  **Environment:** Create a `.env` file in the `/backend` directory using `.env.example` as a template.
-2.  **Dependencies:** Run `pnpm install` in the root or backend folder.
-3.  **Database:** Ensure you have a local **PostgreSQL** server running.
-4.  **Prisma Initialization:**
-    ```bash
-    pnpm run generate       # Generates Prisma Client
-    pnpm prisma migrate dev # Syncs database schema
-    ```
+
+1. **Environment:** Create a `.env` file in the `/backend` directory using `.env.example` as a template.
+2. **Dependencies:** Run `pnpm install` in the root or backend folder.
+3. **Database:** Ensure you have a local **PostgreSQL** server running.
+4. **Prisma Initialization:**
+
+   ```bash
+   pnpm run generate       # Generates Prisma Client
+   pnpm prisma migrate dev # Syncs database schema
+   ```
 
 #### **Execution**
+
 Run the following command from the **root directory**:
+
 ```bash
 pnpm run dev
 ```
 
-> [!IMPORTANT]  
 > **Default Port Mapping:**
-> * **Backend:** Runs on port `3000` (unless specified otherwise in `.env`).
-> * **Frontend:** Launches on port `5173` (or your configured Vite/Next.js port).
-> * **Database:** Default PostgreSQL connection usually occupies port `5432`.
+>
+> - **Backend:** Runs on port `3000` (unless specified otherwise in `.env`).
+> - **Frontend:** Launches on port `5173` (or your configured Vite/Next.js port).
+> - **Database:** Default PostgreSQL connection usually occupies port `5432`.
 
 ---
 
+### License
 
-
+This project is licensed under the MIT License.

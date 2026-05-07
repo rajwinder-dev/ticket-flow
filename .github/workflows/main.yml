@@ -3,7 +3,11 @@ name: CI Pipeline
 on:
   push:
     branches: [main]
-
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
 jobs:
   test:
     runs-on: ubuntu-latest
