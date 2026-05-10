@@ -32,14 +32,14 @@ services:
       - .env
     environment:
       - PORT=3000
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-
+      - DATABASE_URL=postgresql://dev_app_user:dev_password@postgres:5432/postgres
+      - DIRECT_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    command: pnpm run setup:db
     healthcheck:
-      test:
-        [
+      test: [
           "CMD-SHELL",
-          "node -e 'require(\"http\").get(\"http://localhost:3000\", (r) =>
-            process.exit(r.statusCode === 200 ? 0 : 1))'",
+          'node -e ''require("http").get("http://localhost:3000", (r) =>
+          process.exit(r.statusCode === 200 ? 0 : 1))''',
         ]
       interval: 10s
       timeout: 5s
