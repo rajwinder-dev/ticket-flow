@@ -34,7 +34,7 @@ services:
       - PORT=3000
       - DATABASE_URL=postgresql://dev_app_user:dev_password@postgres:5432/postgres
       - DIRECT_URL=postgresql://postgres:postgres@postgres:5432/postgres
-    command: pnpm run setup:db
+    command: sh -c "pnpm run setup:db && pnpm run start"
     healthcheck:
       test: [
           "CMD-SHELL",

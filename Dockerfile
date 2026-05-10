@@ -4,6 +4,8 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+RUN corepack prepare pnpm@10.30.3 --activate
+
 RUN apt-get update -y && apt-get install -y openssl
 # ---------- BUILD ----------
 FROM base AS build
@@ -12,7 +14,7 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 # required for prisma generate
-ENV DATABASE_URL=postgresql://postgres:postgres@postgres:5433/postgres
+ENV DIRECT_URL=postgresql://postgres:postgres@postgres:5433/postgres
 RUN pnpm run -r build
 
 RUN pnpm deploy --filter=backend --prod /prod/backend

@@ -37,7 +37,8 @@ jobs:
           --health-timeout=5s --health-retries=5
 
     env:
-      DATABASE_URL: postgres://testuser:testpass@localhost:5488/testdb
+      DIRECT_URL: postgres://testuser:testpass@localhost:5488/testdb
+      DATABASE_URL: postgres://dev_app_user:dev_password@localhost:5488/testdb
       NODE_ENV: test
       ENCRYPTION_KEY: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
       ACCESS_SECRET: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
@@ -66,6 +67,9 @@ jobs:
 
       - name: Build packages
         run: pnpm --filter=./packages/* run build
+
+      - name: setup dev role
+        run: pnpm --filter backend run setup:db
 
       - name: Run migrations
         run: pnpm run migrate
