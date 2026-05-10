@@ -3,7 +3,7 @@ import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/sche
 import { ParsedQs } from "qs";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
-import { prisma } from "../../core/utils/prismaClient.js";
+import { forTenant, prisma } from "../../core/utils/prismaClient.js";
 import { readableId } from "../../core/utils/utils.js";
 import { ActivityService } from "../activity/activity.service.js";
 import { CustomerService } from "../customer/customer.service.js";
@@ -91,7 +91,8 @@ export class TicketService {
     queueId?: string;
     userId?: string;
   }) => {
-    const ticket = await prisma.ticket.create({
+    const tenantDb = prisma.$extends(forTenant(organizationId));
+    const ticket = await tenantDb.ticket.create({
       data: {
         code: readableId("TKT"),
         ...data,
@@ -124,7 +125,8 @@ export class TicketService {
     organizationId: string;
     userId: string;
   }) => {
-    const updatedTicket = await prisma.ticket.update({
+    const tenantDb = prisma.$extends(forTenant(organizationId));
+    const updatedTicket = await tenantDb.ticket.update({
       where: { id: ticketId, organizationId },
       data: {
         ...input,
@@ -150,7 +152,8 @@ export class TicketService {
     ticketId: string;
     organizationId: string;
   }) => {
-    const data = await prisma.ticket.findUnique({
+    const tenantDb = prisma.$extends(forTenant(organizationId));
+    const data = await tenantDb.ticket.findUnique({
       where: {
         organizationId,
         id: ticketId,

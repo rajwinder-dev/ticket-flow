@@ -15,6 +15,7 @@
     "build": "prisma generate && tsc -b",
     "generate": "prisma generate",
     "start": "prisma migrate deploy && NODE_ENV=production node dist/server.js",
+    "setup:db": "tsx ./src/scripts/setup-db-roles.ts",
     "migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:push": "pnpm prisma generate && pnpm prisma db push",

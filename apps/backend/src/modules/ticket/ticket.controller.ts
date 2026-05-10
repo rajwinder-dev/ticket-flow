@@ -14,7 +14,7 @@ import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
+import { forTenant, prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { TicketService } from "./ticket.service.js";
 
@@ -57,17 +57,15 @@ export class TicketController {
         assignedToUser: null,
       };
     }
-    const total = await prisma.ticket.count({
+    const tenantDB = prisma.$extends(forTenant(req.organization.id));
+    const total = await tenantDB.ticket.count({
       where: {
-        organizationId: req.organization.id,
         ...(assignedTo ? assignedToFilter : {}),
         ...filterOptions.where,
       },
     });
-    const data = await prisma.ticket.findMany({
+    const data = await tenantDB.ticket.findMany({
       where: {
-        organizationId: req.organization.id,
-
         ...(assignedTo ? assignedToFilter : {}),
         ...filterOptions.where,
       },
@@ -98,18 +96,18 @@ export class TicketController {
         assignedToUser: null,
       };
     }
-    console.log(assignedTo);
     // fetch status counts
+    const tenantDB = prisma.$extends(forTenant(organizationId));
     const [total, open, inProgress, resolved] = await Promise.all([
-      prisma.ticket.count({ where: { organizationId, ...(assignedToFilter || {}) } }),
-      prisma.ticket.count({
-        where: { organizationId, status: "OPEN", ...(assignedToFilter || {}) },
+      tenantDB.ticket.count({ where: { ...(assignedToFilter || {}) } }),
+      tenantDB.ticket.count({
+        where: { status: "OPEN", ...(assignedToFilter || {}) },
       }),
-      prisma.ticket.count({
-        where: { organizationId, status: "IN_PROGRESS", ...(assignedToFilter || {}) },
+      tenantDB.ticket.count({
+        where: { status: "IN_PROGRESS", ...(assignedToFilter || {}) },
       }),
-      prisma.ticket.count({
-        where: { organizationId, status: "RESOLVED", ...(assignedToFilter || {}) },
+      tenantDB.ticket.count({
+        where: { status: "RESOLVED", ...(assignedToFilter || {}) },
       }),
     ]);
 
