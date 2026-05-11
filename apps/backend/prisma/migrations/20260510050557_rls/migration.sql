@@ -6,11 +6,15 @@ ON "Ticket"
 FOR ALL
 USING (
   "organizationId" =
-    current_setting('app.current_organization', true)::UUID
-)
+NULLIF(
+  current_setting('app.current_organization', true),
+  ''
+)::UUID)
 WITH CHECK (
   "organizationId" =
-    current_setting('app.current_organization', true)::UUID
-);
+NULLIF(
+  current_setting('app.current_organization', true),
+  ''
+)::UUID);
 
 ALTER TABLE "Ticket" FORCE ROW LEVEL SECURITY;

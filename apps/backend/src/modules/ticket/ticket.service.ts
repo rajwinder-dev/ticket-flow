@@ -3,7 +3,7 @@ import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/sche
 import { ParsedQs } from "qs";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
-import { forTenant, prisma } from "../../core/utils/prismaClient.js";
+import { forTenant, getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import { readableId } from "../../core/utils/utils.js";
 import { ActivityService } from "../activity/activity.service.js";
 import { CustomerService } from "../customer/customer.service.js";
@@ -130,6 +130,9 @@ export class TicketService {
       where: { id: ticketId, organizationId },
       data: {
         ...input,
+        version: {
+          increment: 1,
+        },
       },
     });
     await ActivityService.lagActivity({
@@ -250,33 +253,50 @@ export class TicketService {
     organizationId,
     currentStatus,
     nextStatus,
+    version,
     userId,
   }: {
     ticketId: string;
     organizationId: string;
     currentStatus: TicketStatus;
     nextStatus: TicketStatus;
+    version: number;
     userId: string;
   }) => {
     if (!allowedTransitions[currentStatus].includes(nextStatus)) {
       throw new appError("Invalid transition", 403);
     }
-    const ticket = await prisma.$transaction(async (tx) => {
-      const updatedTicket = await prisma.ticket.update({
+    const tanentDb = getTenantClient(organizationId);
+    const ticket = await tanentDb.$transaction(async (tx) => {
+      const updatedTicket = await tx.ticket.updateMany({
         where: {
           id: ticketId,
           organizationId,
+          version,
         },
         data: {
           status: nextStatus,
+          version: {
+            increment: 1,
+          },
         },
       });
+      if (updatedTicket.count === 0) {
+        const existTicket = await tanentDb.ticket.findUnique({
+          where: { id: ticketId },
+          select: { version: true },
+        });
+        if (existTicket)
+          throw new appError("Ticket already updated , refresh again", 409, "VERSION_MISSMATCH", {
+            currenVersion: existTicket.version,
+          });
+      }
       await tx.ticketTransition.create({
         data: {
           ticketId,
           action: "STATUS_CHANGED",
           fromStatus: currentStatus,
-          toStatus: updatedTicket.status,
+          toStatus: nextStatus,
           organizationId,
         },
       });
@@ -288,10 +308,10 @@ export class TicketService {
       actorType: "USER",
       message: "ticket status updated ",
       event: "ticket.update",
-      entityId: ticket.id,
+      entityId: ticketId,
       entityType: "TICKET",
       oldData: { status: currentStatus },
-      newData: { status: ticket.priority },
+      newData: { status: nextStatus },
     });
     return ticket;
   };
@@ -299,32 +319,49 @@ export class TicketService {
     ticketId,
     organizationId,
     priority,
+    version,
     userId,
   }: {
     ticketId: string;
     organizationId: string;
     priority: Priority;
+    version: number;
     userId: string;
   }) => {
-    const currentTicket = await prisma.ticket.findUnique({
+    const tanentDb = getTenantClient(organizationId);
+    const currentTicket = await tanentDb.ticket.findUnique({
       where: { id: ticketId },
       select: { priority: true },
     });
-    const ticket = await prisma.$transaction(async (tx) => {
-      const updatedTicket = await tx.ticket.update({
+    const ticket = await tanentDb.$transaction(async (tx) => {
+      const updatedTicket = await tx.ticket.updateMany({
         where: {
           id: ticketId,
           organizationId,
+          version,
         },
         data: {
           priority,
+          version: {
+            increment: 1,
+          },
         },
       });
+      if (updatedTicket.count === 0) {
+        const existTicket = await prisma.ticket.findUnique({
+          where: { id: ticketId },
+          select: { version: true },
+        });
+        if (existTicket)
+          throw new appError("Ticket already updated , refersh", 409, "VERSION_MISSMATCH", {
+            currenVersion: existTicket.version,
+          });
+      }
       await tx.ticketTransition.create({
         data: {
           ticketId,
           action: "PRIORITY_CHANGED",
-          toPriority: updatedTicket.priority,
+          toPriority: priority,
           fromPriority: currentTicket?.priority,
           organizationId,
         },
@@ -337,10 +374,10 @@ export class TicketService {
       actorType: "USER",
       message: "ticket priority changed ",
       event: "ticket.update",
-      entityId: ticket.id,
+      entityId: ticketId,
       entityType: "TICKET",
-      oldData: { status: currentTicket?.priority },
-      newData: { status: ticket.priority },
+      oldData: { priority: currentTicket?.priority },
+      newData: { priority: priority },
     });
     return ticket;
   };

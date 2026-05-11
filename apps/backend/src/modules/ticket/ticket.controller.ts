@@ -14,7 +14,7 @@ import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { forTenant, prisma } from "../../core/utils/prismaClient.js";
+import { forTenant, getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { TicketService } from "./ticket.service.js";
 
@@ -136,13 +136,14 @@ export class TicketController {
       .filter()
       .sort()
       .pagination();
-    const total = await prisma.ticket.count({
+    const tanentDb = getTenantClient(req.organization.id);
+    const total = await tanentDb.ticket.count({
       where: {
         organizationId: req.organization.id,
         ...filterOptions.where,
       },
     });
-    const data = await prisma.ticket.findMany({
+    const data = await tanentDb.ticket.findMany({
       where: {
         organizationId: req.organization.id,
         assignedTo: req.user.id,
@@ -155,7 +156,7 @@ export class TicketController {
   });
   static updateStatus = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
-    const { status } = req.body as UpdateTicketStatusInput;
+    const { status, version } = req.body as UpdateTicketStatusInput;
     const ticketData = await prisma.ticket.findUnique({
       where: { id: ticketId },
       select: { status: true },
@@ -167,17 +168,19 @@ export class TicketController {
       organizationId: req.organization.id,
       nextStatus: status,
       currentStatus: ticketData.status,
+      version,
     });
     response(res, data, 200);
   });
   static updatePriority = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
-    const { priority } = req.body as UpdateTicketPriorityInput;
+    const { priority, version } = req.body as UpdateTicketPriorityInput;
     const data = await TicketService.updatePriority({
       userId: req.user.id,
       ticketId,
       organizationId: req.organization.id,
       priority,
+      version,
     });
     response(res, data, 200);
   });

@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {  type TicketPriority, type TicketSchemaResponse } from "@repo/schemas";
+import { type TicketPriority, type TicketSchemaResponse } from "@repo/schemas";
 import { useTicket } from "../hooks";
 import { ticketPriority } from "@repo/constants";
 interface props {
@@ -16,15 +16,13 @@ export const TicketPriorityCell = ({ ticket }: props) => {
 
   return (
     <Select
-
       value={ticket.priority}
       onValueChange={(status: TicketPriority) =>
-        updateTicketPriority({ id: ticket.id, data: { priority: status } })
+        updateTicketPriority({ id: ticket.id, data: { priority: status, version: ticket.version } })
       }
       disabled={isUpdatingTicketPriority}
-
     >
-      <SelectTrigger className="w-[130px]" size="sm" >
+      <SelectTrigger className="w-[130px]" size="sm">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

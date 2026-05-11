@@ -40,7 +40,7 @@ export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
   }
   const finalResponse = {
     status: error.status || "error",
-    message: error.message,
+    message: "Internal Server error",
     code: error.code,
     data: error.data,
     timeStamp: new Date(),

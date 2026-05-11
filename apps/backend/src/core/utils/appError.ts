@@ -19,7 +19,9 @@ type Code =
   | "DB_TIMEOUT"
   | "EMAIL_FAILED"
   | "INVALID_PAYLOAD"
-  | "INVALID_JSON";
+  | "INVALID_JSON"
+  | "VERSION_MISSMATCH";
+
 export class appError extends Error {
   statusCode: number;
   status: string;

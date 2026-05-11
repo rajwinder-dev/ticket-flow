@@ -334,6 +334,7 @@ model Ticket {
   active         Boolean            @default(true)
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+  version        Int                @default(1)
   organization   Organization?      @relation(fields: [organizationId], references: [id])
   organizationId String?            @db.Uuid
   queue          Queue?             @relation(fields: [queueId], references: [id])

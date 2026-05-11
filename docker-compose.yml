@@ -57,7 +57,9 @@ services:
     ports:
       - "80:80"
 
-    depends_on:
+    de; gj'adrpo
+    |
+    0;.7'/ghpends_on:
       backend:
         condition: service_healthy
     networks:

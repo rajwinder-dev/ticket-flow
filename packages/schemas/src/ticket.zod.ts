@@ -42,6 +42,7 @@ export const updateTicketStatusInput = {
   bodySchema: z
     .object({
       status: z.enum(ticketStatus),
+      version: z.number(),
     })
     .strict(),
   ...validUuidParams,
@@ -51,6 +52,7 @@ export const updateTicketPriorityInput = {
   bodySchema: z
     .object({
       priority: z.enum(ticketPriority),
+      version: z.number(),
     })
     .strict(),
   ...validUuidParams,
@@ -108,6 +110,7 @@ export const ticketSchemaResponse = z.object({
   assignedBy: z.uuid().nullable(),
   assignedToUser: AssignedToUserSchema,
   queue: z.object({ name: z.string() }).nullable(),
+  version: z.number(),
 });
 const QueueOptionSchema = z.object({ id: z.string(), name: z.string() });
 export const ticketEscalationOptions = z.object({

@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {  type TicketSchemaResponse, type TicketStatus } from "@repo/schemas";
+import { type TicketSchemaResponse, type TicketStatus } from "@repo/schemas";
 import { useTicket } from "../hooks";
 import { allowedTransitions } from "@repo/constants";
 interface props {
@@ -18,7 +18,7 @@ export const TicketStatusCell = ({ ticket }: props) => {
     <Select
       value={ticket.status}
       onValueChange={(status: TicketStatus) =>
-        updateTicketStatus({ id: ticket.id, data: { status: status } })
+        updateTicketStatus({ id: ticket.id, data: { status: status, version: ticket.version } })
       }
       disabled={isUpdatingTicketStatus}
     >
