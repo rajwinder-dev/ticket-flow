@@ -6,12 +6,15 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginInput, type LoginInput } from "@repo/schemas"; // Assuming loginInputSchema is the Zod schema
 import { useForm } from "react-hook-form";
-import useAuth from "../hooks";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMembersStore } from "@/features/members/store";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { loginUser, isLoggingIn } = useAuth();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const navigate = useNavigate();
   const { tokenEmail } = useMembersStore();
   const {
     register,
@@ -21,12 +24,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     resolver: zodResolver(loginInput.bodySchema),
     defaultValues: {
       email: tokenEmail || "example@gmail.com",
-      password: tokenEmail ? "" : "123456",
+      password: tokenEmail ? "" : "",
     },
   });
 
-  const onSubmit = (data: LoginInput) => {
-    loginUser(data);
+  const onSubmit = async (input: LoginInput) => {
+    await authClient.signIn.email(
+      {
+        email: input.email,
+        password: input.password,
+      },
+      {
+        onRequest: () => setIsLoggingIn(true),
+        onSuccess: () => {
+          navigate("/");
+          setIsLoggingIn(false);
+        },
+        onError: (ctx) => {
+          setIsLoggingIn(false);
+          toast.error(ctx.error.message);
+        },
+      },
+    );
   };
 
   return (

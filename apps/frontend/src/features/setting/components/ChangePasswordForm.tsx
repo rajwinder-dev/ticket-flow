@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordInput, type ChangePasswordInput } from "@repo/schemas";
 import { useForm } from "react-hook-form";
-import useAuth from "../../auth/hooks";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const ChangePasswordForm = () => {
-  const { changePasswordMutate, isChangingPassword } = useAuth();
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -27,9 +29,24 @@ const ChangePasswordForm = () => {
 
   // 3. Handle submission
   const onSubmit = async (data: ChangePasswordInput) => {
-    changePasswordMutate(data, {
-      onSuccess: () => reset(),
-    });
+    await authClient.changePassword(
+      {
+        newPassword: data.password,
+        currentPassword: data.currentPassword,
+        revokeOtherSessions: true,
+      },
+      {
+        onRequest: () => setIsChangingPassword(true),
+        onSuccess: () => {
+          setIsChangingPassword(false);
+          reset();
+        },
+        onError: (csx) => {
+          setIsChangingPassword(false);
+          toast.error(csx.error.message);
+        },
+      },
+    );
   };
 
   return (

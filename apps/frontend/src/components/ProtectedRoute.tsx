@@ -1,20 +1,20 @@
-import useAuth from "@/features/auth/hooks";
 import { Navigate, Outlet } from "react-router";
 import { Spinner } from "./ui/spinner";
 import { useMembersStore } from "@/features/members/store";
+import { authClient } from "@/lib/auth-client";
 const ProtectedRoute = () => {
-  const { authDetails, isLoadingAuthDetails } = useAuth();
+  const { data: session, isPending } = authClient.useSession();
   const { tokenEmail, inviteToken } = useMembersStore();
-  if (isLoadingAuthDetails)
+  if (isPending)
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <Spinner className="size-8" />
       </div>
     );
-  if (!authDetails) return <Navigate to="/login" />;
+  if (!session) return <Navigate to="/login" />;
 
   // check if there is any invite pending
-  if (inviteToken && tokenEmail === authDetails.data.email)
+  if (inviteToken && tokenEmail === session?.user.email)
     return <Navigate to={`/invite-user/${inviteToken}`} />;
   return <Outlet />;
 };

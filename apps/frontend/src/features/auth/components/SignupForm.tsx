@@ -6,15 +6,16 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupInput, type SignupInput } from "@repo/schemas";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import useAuth from "../hooks";
+import { Link, useNavigate } from "react-router-dom";
 import { useMembersStore } from "@/features/members/store";
 import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { signupUser, isSigningUp } = useAuth();
+  const [isSigningUp, setIsSigningup] = useState(false);
   const { tokenEmail } = useMembersStore();
-
+  const naviage = useNavigate();
   const {
     register,
     handleSubmit,
@@ -26,16 +27,25 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     },
   });
 
-  const onSubmit = async (data: SignupInput) => {
-    const {} = await authClient.signUp.email({
-      email: data.email,
-      password: data.password,
-      name: data.username,
-      callbackURL: "/"
-    }, {
-        
-      })
-    signupUser(data);
+  const onSubmit = async (input: SignupInput) => {
+    await authClient.signUp.email(
+      {
+        email: input.email,
+        password: input.password,
+        name: input.username,
+      },
+      {
+        onRequest: () => setIsSigningup(true),
+        onSuccess: () => {
+          naviage("/");
+          setIsSigningup(false);
+        },
+        onError: (ctx) => {
+          setIsSigningup(false);
+          toast.error(ctx.error.message);
+        },
+      },
+    );
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

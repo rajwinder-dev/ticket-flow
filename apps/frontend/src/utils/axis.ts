@@ -164,28 +164,28 @@ api.interceptors.request.use(
   },
 );
 
-api.interceptors.response.use(
-  (response) => response,
-  async function (error) {
-    console.error(error.response.data);
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
-    if (error.response.data.code === "INVALID_TOKEN" && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const res = await authApi.refresh();
-        tokenManager.set(res.data.accessToken);
-        originalRequest.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
-        return api(originalRequest);
-      } catch (error) {
-        redirect("/login");
-        return Promise.reject(error);
-      }
-    }
-    return Promise.reject(error);
-  },
-);
+// api.interceptors.response.use(
+//   (response) => response,
+//   async function (error) {
+//     console.error(error.response.data);
+//     const originalRequest = error.config as InternalAxiosRequestConfig & {
+//       _retry?: boolean;
+//     };
+//     if (error.response.data.code === "INVALID_TOKEN" && !originalRequest._retry) {
+//       originalRequest._retry = true;
+//       try {
+//         const res = await authApi.refresh();
+//         tokenManager.set(res.data.accessToken);
+//         originalRequest.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
+//         return api(originalRequest);
+//       } catch (error) {
+//         redirect("/login");
+//         return Promise.reject(error);
+//       }
+//     }
+//     return Promise.reject(error);
+//   },
+// );
 // apiClient.ts
 export function getOrgIdFromUrl() {
   const match = window.location.pathname.match(/org\/([^/]+)/);
