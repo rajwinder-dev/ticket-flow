@@ -12,6 +12,7 @@ import { env } from "./config/env.js";
 import { appError } from "./core/utils/appError.js";
 import { globalHandler } from "./core/utils/globalHandler.js";
 
+import { toNodeHandler } from "better-auth/node";
 import { DevMiddleware } from "./core/middleware/devMiddleware.js";
 import ActivityRouter from "./modules/activity/activity.routes.js";
 import authRouter from "./modules/auth/auth.route.js";
@@ -28,6 +29,7 @@ import tokenRoute from "./modules/token/token.routes.js";
 import userRouter from "./modules/user/user.routes.js";
 import webhookRouter from "./modules/webhook/webhook.routes.js";
 import lookupRouter from "./modules/lookup/lookup.routes.js";
+import { auth } from "./lib/auth.js";
 
 export const app: Express = express();
 
@@ -54,6 +56,8 @@ app.use(
 );
 app.set("view engine", "ejs");
 app.use("/webhooks", express.raw({ type: "application/json" }), webhookRouter);
+app.use("/api/auth/{*any}", toNodeHandler(auth));
+
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());

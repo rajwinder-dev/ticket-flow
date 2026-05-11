@@ -25,6 +25,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.14.0",
+    "better-auth": "^1.6.10",
     "chart.js": "^4.5.1",
     "chartjs": "^0.3.24",
     "class-variance-authority": "^0.7.1",

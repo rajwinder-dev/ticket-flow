@@ -5,13 +5,16 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupInput, type SignupInput } from "@repo/schemas";
-import { useForm } from "react-hook-form"; import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import useAuth from "../hooks";
 import { useMembersStore } from "@/features/members/store";
+import { authClient } from "@/lib/auth-client";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
   const { signupUser, isSigningUp } = useAuth();
   const { tokenEmail } = useMembersStore();
+
   const {
     register,
     handleSubmit,
@@ -23,7 +26,15 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     },
   });
 
-  const onSubmit = (data: SignupInput) => {
+  const onSubmit = async (data: SignupInput) => {
+    const {} = await authClient.signUp.email({
+      email: data.email,
+      password: data.password,
+      name: data.username,
+      callbackURL: "/"
+    }, {
+        
+      })
     signupUser(data);
   };
   return (
