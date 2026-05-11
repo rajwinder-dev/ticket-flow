@@ -4,7 +4,7 @@ import { Prisma, PrismaClient } from "../../generated/client.js";
 import { env } from "../../config/env.js";
 import z from "zod";
 import { appError } from "./appError.js";
-const connectionString = env.databaseURL;
+const connectionString = process.env.DIRECT_URL;
 
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
@@ -22,7 +22,7 @@ function forTenant(organizationId: string) {
       query: {
         $allModels: {
           async $allOperations({ args, query }) {
-            console.log(args)
+            console.log(args);
             const [, result] = await prisma.$transaction([
               prisma.$executeRaw`
                 SELECT set_config(
