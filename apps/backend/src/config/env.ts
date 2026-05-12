@@ -7,6 +7,7 @@ export const env = {
   databaseURL: process.env.DATABASE_URL,
   wss: process.env.WSS,
   coreURL: process.env.CORE_URL || "http://localhost:5173",
+  betterAuthUrl: process.env.BETTER_AUTH_URL,
   accessSecret: process.env.ACCESS_SECRET,
   refreshSecret: process.env.REFRESH_SECRET,
   nodeEnv: process.env.NODE_ENV,

@@ -12,39 +12,54 @@ import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { authApi } from "../api";
 import useAuth from "../hooks";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
 
 export function ResetpasswordForm({ className, ...props }: React.ComponentProps<"div">) {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { error } = useQuery({
-    queryFn: () => authApi.tokenDetails(token!),
-    queryKey: ["tokenDetails"],
-    enabled: !!token,
-    retry: false,
-  });
-
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordInput.bodySchema),
   });
-  const { resetPasswordMutate, isResettingPassword } = useAuth();
-  const onSubmit = (data: ResetPasswordInput) => {
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const onSubmit = async (data: ResetPasswordInput) => {
     if (!token) return toast.error("token not found");
-    resetPasswordMutate({ token, input: data });
-  };
-  if (error) {
-    return (
-      <ErrorState
-        title="Link expired"
-        message="This password reset link is invalid or has expired."
-        buttonText="Request new link"
-        onAction={() => navigate("/forget-password")}
-      />
+    await authClient.resetPassword(
+      {
+        newPassword: data.password,
+        token,
+      },
+      {
+        onRequest: () => setIsResettingPassword(true),
+        onError: (ctx) => {
+          setIsResettingPassword(false);
+          toast.error(ctx.error.messsage);
+          reset();
+        },
+        onSuccess: () => {
+          setIsResettingPassword(false);
+          reset();
+          toast.success("Password updated successfully");
+          navigate("/login");
+        },
+      },
     );
-  }
+  };
+  // if (error) {
+  //   return (
+  //     <ErrorState
+  //       title="Link expired"
+  //       message="This password reset link is invalid or has expired."
+  //       buttonText="Request new link"
+  //       onAction={() => navigate("/forget-password")}
+  //     />
+  //   );
+  // }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
