@@ -1,17 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ErrorState from "@/components/ui/errorState";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordInput, type ResetPasswordInput } from "@repo/schemas";
-import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
-import { authApi } from "../api";
-import useAuth from "../hooks";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 
