@@ -1,5 +1,8 @@
 services:
   backend:
+    build:
+      context: .
+      target: backend
     image: rajwindersxxx/ticket-management:backend
     env_file:
       - .env
@@ -15,9 +18,13 @@ services:
     networks:
       - prisma-network
   frontend:
+    build:
+      context: .
+      target: frontend
     image: rajwindersxxx/ticket-management:frontend
     ports:
       - "80:80"
+
     depends_on:
       backend:
         condition: service_healthy

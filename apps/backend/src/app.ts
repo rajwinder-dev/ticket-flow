@@ -63,7 +63,8 @@ app.use(cookieParser());
 // custom middleware
 if (devMode) app.use(DevMiddleware.logRequests);
 
-//  Routes
+//  Routes:w
+//
 app.get("/", (_req, res) => {
   res.status(200).json({ status: "success" });
 });

@@ -16,6 +16,7 @@ export const auth = betterAuth({
       generateId: () => crypto.randomUUID(),
     },
   },
+  baseURL: env.betterAuthUrl,
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, token }) => {
