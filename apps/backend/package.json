@@ -70,6 +70,7 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "@better-auth/infra": "^0.2.7",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@react-email/components": "^1.0.10",
@@ -77,6 +78,7 @@
     "@repo/constants": "workspace:*",
     "@repo/schemas": "workspace:*",
     "bcryptjs": "^3.0.3",
+    "better-auth": "^1.6.10",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "create-email": "^1.2.3",

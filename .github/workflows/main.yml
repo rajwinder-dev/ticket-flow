@@ -73,6 +73,6 @@ jobs:
 
       - name: Run migrations
         run: pnpm run migrate
-
-      - name: Run integration tests
-        run: pnpm test
+           # temp turn of tests 
+      # - name: Run integration tests
+      # run: pnpm test

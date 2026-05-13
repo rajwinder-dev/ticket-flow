@@ -14,10 +14,10 @@ datasource db {
 
 model User {
   id                String             @id @default(uuid()) @db.Uuid
-  code              String             @unique
+  code              String?            @unique
   email             String             @unique
   phoneNo           String?            @unique
-  passwordHash      String
+  passwordHash      String?
   passwordChangeAt  DateTime?
   avatar            String?
   username          String?            @unique
@@ -45,9 +45,15 @@ model User {
   queueGroups       QueueGroup[]
   ticketTransitions TicketTransition[]
 
+  name          String
+  emailVerified Boolean   @default(false)
+  image         String?
+  accounts      Account[]
+
   @@index([createdBy])
   @@index([active])
   @@index([isOnboarded])
+  @@map("user")
 }
 
 model Organization {
@@ -167,6 +173,7 @@ enum ProviderType {
 }
 
 // ================================= EMAIL ===================================
+
 model EmailProvider {
   id             String        @id @default(uuid())
   organization   Organization? @relation(fields: [organizationId], references: [id])
@@ -213,6 +220,7 @@ model EmailMessage {
 }
 
 //  ============================ CUSTOMER ==============================
+
 model CustomerIdentity {
   id        String     @id @default(uuid()) @db.Uuid
   email     String     @unique @db.VarChar(255)
@@ -238,13 +246,14 @@ model Customer {
 
   tickets Ticket[]
 
-  @@unique([organizationId, identityId])
   // Recommended indexes
+  @@unique([organizationId, identityId])
   @@index([identityId])
   @@index([organizationId])
 }
 
 //  ============================ QUEUE / SLA ==============================
+
 model QueueGroup {
   id                  String             @id @default(uuid()) @db.Uuid
   name                String
@@ -306,6 +315,7 @@ model QueueAgent {
 }
 
 //  ============================ TICKET MANAGEMENT ==============================
+
 enum Priority {
   LOW
   MEDIUM
@@ -492,5 +502,44 @@ model Session {
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
 
+  token     String
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+
+  @@unique([token])
   @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String    @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

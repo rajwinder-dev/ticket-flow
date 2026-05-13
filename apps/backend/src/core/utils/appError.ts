@@ -20,8 +20,8 @@ type Code =
   | "EMAIL_FAILED"
   | "INVALID_PAYLOAD"
   | "INVALID_JSON"
-  | "VERSION_MISSMATCH";
-
+  | "VERSION_MISSMATCH"
+  | "INVALID_SESSION";
 export class appError extends Error {
   statusCode: number;
   status: string;

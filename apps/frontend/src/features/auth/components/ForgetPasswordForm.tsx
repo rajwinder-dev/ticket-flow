@@ -5,18 +5,35 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 import { useForm } from "react-hook-form";
-import useAuth from "../hooks";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function ForgetPasswordForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { forgetPasswordMutate, isForgettingPassword } = useAuth();
+  const [isForgettingPassword, setIsForgettingPassword] = useState(false);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<{ email: string }>();
 
   const onSubmit = async (data: { email: string }) => {
-    forgetPasswordMutate(data.email);
+    await authClient.requestPasswordReset(
+      {
+        email: data.email,
+      },
+      {
+        onRequest: () => setIsForgettingPassword(true),
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+        },
+        onSuccess: (ctx) => {
+          (setIsForgettingPassword(false), toast.success(ctx.data.message));
+          reset();
+        },
+      },
+    );
   };
 
   return (

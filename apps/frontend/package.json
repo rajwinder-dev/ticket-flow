@@ -11,6 +11,7 @@
     "shadcn:add": "pnpm dlx shadcn@latest add "
   },
   "dependencies": {
+    "@better-auth/infra": "^0.2.7",
     "@floating-ui/react": "^0.27.19",
     "@fontsource-variable/nunito-sans": "^5.2.7",
     "@fontsource-variable/playfair-display": "^5.2.8",
@@ -25,6 +26,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.14.0",
+    "better-auth": "^1.6.10",
     "chart.js": "^4.5.1",
     "chartjs": "^0.3.24",
     "class-variance-authority": "^0.7.1",

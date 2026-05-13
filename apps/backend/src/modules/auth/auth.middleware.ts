@@ -2,42 +2,28 @@ import { PermissionAction, PermissionModule } from "@repo/schemas";
 import { z } from "zod";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { clearCookie } from "../../core/utils/cookies.js";
 import { prisma } from "../../core/utils/prismaClient.js";
-import { JwtService } from "./jwt.service.js";
+import { auth } from "../../lib/auth.js";
+import { fromNodeHeaders } from "better-auth/node";
 
 export class authMiddleware {
-  static protectedRoute = catchAsync(async (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token?.trim())
-      return next(new appError("No token found, please Login to get access", 401, "INVALID_TOKEN"));
-    const decoded = JwtService.verify(token, "access");
-    if (!decoded) return next(new appError("Invalid or Expire token", 401, "INVALID_TOKEN"));
-
-    const userdata = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+  static protectedRoute = catchAsync(async (req, _res, next) => {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
     });
-    if (!userdata) return next(new appError("User not found", 401, "NOT_FOUND"));
-
-    if (userdata?.passwordChangeAt) {
-      const passwordChange = Math.floor(new Date(userdata?.passwordChangeAt).getTime() / 1000);
-      const issueDate = decoded.iat;
-
-      if (passwordChange > issueDate) {
-        clearCookie(res, "refreshToken");
-        return next(new appError("Password Changed , login again", 403, "EXPIRED_TOKEN"));
-      }
+    if (!session) {
+      return next(new appError("Unauthorized", 401, "INVALID_SESSION"));
     }
+
     req.user = {
-      ...req.user,
-      id: userdata?.id,
-      email: userdata.email,
+      id: session.user.id,
+      username: session.user.name,
+      email: session.user.email,
     };
 
     next();
   });
-  static tenant = catchAsync(async (req, res, next) => {
+  static tenant = catchAsync(async (req, _res, next) => {
     if (!req.user.id)
       return next(new appError("auth Middleware missing ", 400, "VALIDATION_ERROR"));
     const organizationId = req.header("x-organization-id");
