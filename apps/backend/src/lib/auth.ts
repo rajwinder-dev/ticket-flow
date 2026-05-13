@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 
+import { dash } from "@better-auth/infra";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "../core/utils/prismaClient.js";
 import { EmailService } from "../modules/email/email.service.js";
@@ -9,6 +10,7 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  plugins: [dash()],
   advanced: {
     database: {
       generateId: () => crypto.randomUUID(),

@@ -11,6 +11,7 @@
     "shadcn:add": "pnpm dlx shadcn@latest add "
   },
   "dependencies": {
+    "@better-auth/infra": "^0.2.7",
     "@floating-ui/react": "^0.27.19",
     "@fontsource-variable/nunito-sans": "^5.2.7",
     "@fontsource-variable/playfair-display": "^5.2.8",

@@ -1,0 +1,27 @@
+services:
+  backend:
+    image: rajwindersxxx/ticket-management:backend
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'node -e ''require("http").get("http://localhost:3000", (r) => process.exit(r.statusCode === 200 ? 0 : 1))''',
+        ]
+      retries: 5
+    networks:
+      - prisma-network
+  frontend:
+    image: rajwindersxxx/ticket-management:frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - prisma-network
+networks:
+  prisma-network:

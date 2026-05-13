@@ -12,8 +12,6 @@ services:
       - prisma-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
-      interval: 5s
-      timeout: 2s
       retries: 20
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -27,7 +25,6 @@ services:
       context: .
       target: backend
     image: rajwindersxxx/ticket-management:backend
-    # command: tail -f /dev/null
     env_file:
       - .env
     environment:
@@ -41,8 +38,6 @@ services:
           'node -e ''require("http").get("http://localhost:3000", (r) =>
           process.exit(r.statusCode === 200 ? 0 : 1))''',
         ]
-      interval: 10s
-      timeout: 5s
       retries: 5
     depends_on:
       postgres:
@@ -57,9 +52,7 @@ services:
     ports:
       - "80:80"
 
-    de; gj'adrpo
-    |
-    0;.7'/ghpends_on:
+    depends_on:
       backend:
         condition: service_healthy
     networks:

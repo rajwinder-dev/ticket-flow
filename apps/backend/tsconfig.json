@@ -7,11 +7,30 @@
     "rootDir": "src",
     "jsx": "react-jsx",
     "paths": {
-      "@repo/constants": ["../../packages/constants/src"],
-      "@repo/schemas": ["../../packages/schemas/src"]
+      "@repo/constants": [
+        "../../packages/constants/src"
+      ],
+      "@repo/schemas": [
+        "../../packages/schemas/src"
+      ]
     }
   },
-  "references": [{ "path": "../../packages/schemas" }, { "path": "../../packages/constants" }],
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*", "src/generated/**/*.ts"]
+  "references": [
+    {
+      "path": "../../packages/schemas"
+    },
+    {
+      "path": "../../packages/constants"
+    }
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "src/seed"
+  ],
+  "include": [
+    "src/**/*",
+    "src/generated/**/*.ts"
+  ]
 }

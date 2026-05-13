@@ -8,7 +8,7 @@ export const env = {
   wss: process.env.WSS,
   coreURL: process.env.CORE_URL || "http://localhost:5173",
   betterAuthUrl: process.env.BETTER_AUTH_URL,
-  accessSecret: process.env.ACCESS_SECRET,
+  betterAuthSecret: process.env.BETTER_AUTH_SECRET,
   refreshSecret: process.env.REFRESH_SECRET,
   nodeEnv: process.env.NODE_ENV,
   port: process.env.PORT || 4000,
@@ -23,7 +23,7 @@ export const env = {
   },
 };
 
-const required = ["encryptionKey", "databaseURL", "accessSecret", "refreshSecret"];
+const required = ["betterAuthSecret", "databaseURL", "betterAuthUrl", "encryptionKey"];
 for (const key of required) {
   if (!env[key as keyof typeof env]) {
     log.error(`Missing environment variable: ${key}`);
