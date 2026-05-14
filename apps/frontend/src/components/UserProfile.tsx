@@ -21,7 +21,6 @@ export function UserProfile() {
   const handlerLogout = async () =>
     await authClient.signOut({
       fetchOptions: {
-        onSuccess: () => navigate("/login"),
       },
     });
   return (
