@@ -1,6 +1,19 @@
-import { Mail, Terminal, ExternalLink } from "lucide-react";
+import {
+  Mail,
+  Terminal,
+  ExternalLink,
+  Zap,
+  ShieldCheck,
+  Layers,
+  Users,
+  BarChart3,
+  Scale,
+  Lock,
+  Building2,
+  Inbox,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -50,7 +63,6 @@ const DeveloperLandingPage = () => {
           </div>
         </div>
       </nav>
-
       {/* --- Hero Section --- */}
       <section className="container mx-auto flex flex-col items-center px-6 py-20 text-center lg:py-32">
         <Badge
@@ -86,7 +98,6 @@ const DeveloperLandingPage = () => {
           </a>
         </div>
       </section>
-
       {/* --- Developer Product Thinking --- */}
       <section id="logic" className="border-border container mx-auto border-t px-6 py-24">
         <div className="grid items-center gap-16 md:grid-cols-2">
@@ -174,7 +185,86 @@ const DeveloperLandingPage = () => {
           </div>
         </div>
       </section>
+      <section id="features" className="container mx-auto px-4 py-20">
+        <div className="mb-16 text-center">
+          <h2 className="font-heading mb-4 text-3xl font-bold md:text-4xl">Core Features</h2>
+        </div>
 
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Feature: Load Balancing */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Scale size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl">Load-Balanced Assignment</CardTitle>
+              <CardDescription>
+                Smart algorithms distribute tickets equally based on tickets load per agent
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Feature: Email Integration */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Mail size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl">Email-to-Ticket</CardTitle>
+              <CardDescription>
+                Seamlessly convert incoming emails into structured tickets
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Feature: RBAC */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Lock size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl"> RBAC System</CardTitle>
+              <CardDescription>
+                Define precise permissions for
+                customr roles.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Feature: Organizations */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Building2 size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl">B2B Organizations</CardTitle>
+              <CardDescription>Group users by organization</CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Feature: Queues & Groups */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Inbox size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl">Dynamic Queues</CardTitle>
+              <CardDescription>Categorize work with custom groups and queues.</CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Feature: Profiles */}
+          <Card className="bg-card border-border hover:border-primary/50 transition-all">
+            <CardHeader>
+              <div className="bg-primary/10 text-primary mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg">
+                <Users size={24} />
+              </div>
+              <CardTitle className="font-heading text-xl">Customer 360°</CardTitle>
+              <CardDescription>Basic profiles with interaction history,</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </section>{" "}
       {/* --- Open Source Section --- */}
       <section id="oss" className="bg-muted/30 border-border border-y py-24">
         <div className="container mx-auto max-w-4xl px-6 text-center">
@@ -196,7 +286,6 @@ const DeveloperLandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* --- Bottom CTA --- */}
       <section className="container mx-auto px-6 py-24 text-center">
         <div className="bg-primary text-primary-foreground shadow-3xl shadow-primary/30 rounded-[2.5rem] px-6 py-16">
@@ -218,7 +307,6 @@ const DeveloperLandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* --- Simple Footer --- */}
       <footer className="border-border container mx-auto flex flex-col items-center justify-between gap-6 border-t px-6 py-12 md:flex-row">
         <div className="text-muted-foreground text-sm font-medium">
