@@ -15,6 +15,7 @@ import { toast } from "sonner";
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
+  const { refetch, isRefetching } = authClient.useSession();
   const { tokenEmail } = useMembersStore();
   const {
     register,
@@ -23,8 +24,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   } = useForm<LoginInput>({
     resolver: zodResolver(loginInput.bodySchema),
     defaultValues: {
-      email: tokenEmail || "example@gmail.com",
-      password: tokenEmail ? "" : "",
+      email: tokenEmail || undefined,
     },
   });
 
@@ -36,8 +36,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       },
       {
         onRequest: () => setIsLoggingIn(true),
-        onSuccess: () => {
-          navigate("/");
+        onResponse: () => refetch(),
+        onSuccess: async () => {
+          navigate("/org");
           setIsLoggingIn(false);
         },
         onError: (ctx) => {
@@ -77,7 +78,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   </Link>
                 </div>
 
-                <Input id="password" type="password" {...register("password")} />
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  placeholder="********"
+                />
 
                 {errors.password && (
                   <FieldDescription className="text-red-500">

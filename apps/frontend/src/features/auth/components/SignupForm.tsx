@@ -15,6 +15,7 @@ import { toast } from "sonner";
 export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
   const [isSigningUp, setIsSigningup] = useState(false);
   const { tokenEmail } = useMembersStore();
+  const { refetch } = authClient.useSession();
   const naviage = useNavigate();
   const {
     register,
@@ -36,8 +37,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
       },
       {
         onRequest: () => setIsSigningup(true),
-        onSuccess: () => {
-          naviage("/");
+        onResponse: () => refetch(),
+        onSuccess: async () => {
+          await authClient.getSession();
+          naviage("/org");
           setIsSigningup(false);
         },
         onError: (ctx) => {
@@ -79,12 +82,22 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" {...register("password")} />
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="*****"
+                      {...register("password")}
+                    />
                   </Field>
 
                   <Field>
                     <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-                    <Input id="confirm-password" type="password" {...register("confirmPassword")} />
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      {...register("confirmPassword")}
+                      placeholder="*****"
+                    />
                     {errors.confirmPassword && (
                       <FieldDescription className="text-red-500">
                         {errors.confirmPassword.message}

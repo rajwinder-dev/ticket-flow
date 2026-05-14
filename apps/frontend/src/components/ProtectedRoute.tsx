@@ -5,8 +5,8 @@ import { authClient } from "@/lib/auth-client";
 import { useEffect } from "react";
 
 const ProtectedRoute = () => {
-  const { data: session, isPending } = authClient.useSession();
-
+  const { data: session, isPending} = authClient.useSession();
+  console.log(session, isPending, )
   const { tokenEmail, inviteToken } = useMembersStore();
 
   const navigate = useNavigate();
@@ -28,22 +28,12 @@ const ProtectedRoute = () => {
     }
 
     // invite redirect
-    if (
-      inviteToken &&
-      tokenEmail === session.user.email
-    ) {
+    if (inviteToken && tokenEmail === session.user.email) {
       navigate(`/invite-user/${inviteToken}`, {
         replace: true,
       });
     }
-  }, [
-    session,
-    isPending,
-    navigate,
-    location,
-    inviteToken,
-    tokenEmail,
-  ]);
+  }, [session, isPending, navigate, location, inviteToken, tokenEmail]);
 
   if (isPending || session === undefined) {
     return (

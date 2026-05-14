@@ -6,11 +6,11 @@ import { Toaster } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { GlobalProvider } from "./context/GlobalContext";
 import router from "./router";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error) => {
-        
         if ((error as AxiosError)?.status === 403) return false;
         return failureCount < 3;
       },
@@ -22,10 +22,13 @@ function App() {
     <>
       <QueryClientProvider client={queryclient}>
         <TooltipProvider>
-          <GlobalProvider>
-            <RouterProvider router={router} />
-            <Toaster />
-          </GlobalProvider>
+          <ErrorBoundary>
+            <GlobalProvider>
+              <RouterProvider router={router} />
+              <Toaster />
+            </GlobalProvider>
+          </ErrorBoundary>
+
           <ReactQueryDevtools />
         </TooltipProvider>
       </QueryClientProvider>

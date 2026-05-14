@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate } from "react-router";
+import { ProjectLogo } from "./ProjectLogo";
 
 const DeveloperLandingPage = () => {
   const navigate = useNavigate();
@@ -14,15 +15,7 @@ const DeveloperLandingPage = () => {
       {/* --- Navigation --- */}
       <nav className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary rounded-lg p-1.5">
-              <Zap size={20} className="text-primary-foreground fill-current" />
-            </div>
-            <span className="font-heading text-xl font-bold tracking-tight uppercase">
-              TicketFlow
-            </span>
-          </div>
-
+          <ProjectLogo />
           {/* <div className="text-muted-foreground hidden items-center gap-8 text-sm font-medium md:flex"> */}
           {/*   <a href="#logic" className="hover:text-primary transition-colors"> */}
           {/*     How it Works */}
@@ -231,9 +224,6 @@ const DeveloperLandingPage = () => {
             className="hover:text-primary transition-colors"
           >
             GitHub
-          </a>
-          <a href="#" className="hover:text-primary transition-colors">
-            Documentation
           </a>
           <a
             href="https://www.linkedin.com/in/rajwinder-web"
