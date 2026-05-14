@@ -15,7 +15,7 @@ import { toast } from "sonner";
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
-  const { refetch, isRefetching } = authClient.useSession();
+  const { refetch } = authClient.useSession();
   const { tokenEmail } = useMembersStore();
   const {
     register,
