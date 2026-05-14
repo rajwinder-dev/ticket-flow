@@ -22,13 +22,11 @@ import ActivityPage from "./features/activity/components/ActivityPage";
 import HomePage from "./features/home/HomePage";
 
 const router = createBrowserRouter([
-  // 1. PUBLIC LANDING PAGE
   {
     path: "/",
-    element: <HomePage />, // Replace with your actual Landing Page component
+    element: <HomePage />,
   },
 
-  // 2. AUTHENTICATION ROUTES
   {
     path: "/login",
     element: <LoginPage />,
@@ -50,38 +48,34 @@ const router = createBrowserRouter([
     element: <InviteMemberPage />,
   },
 
-  // 3. PROTECTED APPLICATION ROUTES
   {
-    // You can keep this at root level or change to path: "/app"
-    // if you want all app routes prefixed (e.g., /app/org)
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/org", // Changed from "/" to "/dashboard" or similar
+        path: "/org",
         element: <DashboardLayout />,
         children: [
           { index: true, element: <OrganizationPage /> },
+
+          { path: "new", element: <CreateOrganizationPage /> },
+
           {
-            path: "org",
+            path: ":orgId",
+            element: <OrgLayout />,
             children: [
-              { index: true, element: <OrganizationPage /> },
-              { path: "new", element: <CreateOrganizationPage /> },
-              {
-                path: ":orgId",
-                element: <OrgLayout />,
-                children: [
-                  { index: true, element: <DashboardPage /> },
-                  { path: "ticket", element: <TicketsPage /> },
-                  { path: "ticket/:ticketId", element: <TicketDetailPage /> },
-                  { path: "queue", element: <QueuePage /> },
-                  { path: "queue/:queueId", element: <QueueDetailPage /> },
-                  { path: "setting", element: <SettingsPage /> },
-                  { path: "rbac", element: <RolePage /> },
-                  { path: "activity", element: <ActivityPage /> },
-                  { path: "member", element: <MembersPage /> },
-                  { path: "customer", element: <CustomerPage /> },
-                ],
-              },
+              { index: true, element: <DashboardPage /> },
+
+              { path: "ticket", element: <TicketsPage /> },
+              { path: "ticket/:ticketId", element: <TicketDetailPage /> },
+
+              { path: "queue", element: <QueuePage /> },
+              { path: "queue/:queueId", element: <QueueDetailPage /> },
+
+              { path: "setting", element: <SettingsPage /> },
+              { path: "rbac", element: <RolePage /> },
+              { path: "activity", element: <ActivityPage /> },
+              { path: "member", element: <MembersPage /> },
+              { path: "customer", element: <CustomerPage /> },
             ],
           },
         ],
@@ -89,4 +83,5 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 export default router;

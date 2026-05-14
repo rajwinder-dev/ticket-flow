@@ -6,10 +6,12 @@ import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate } from "react-router";
 import { ProjectLogo } from "./ProjectLogo";
+import { authClient } from "@/lib/auth-client";
+import { UserProfile } from "@/components/UserProfile";
 
 const DeveloperLandingPage = () => {
   const navigate = useNavigate();
-
+  const { data: session } = authClient.useSession();
   return (
     <div className="bg-background text-foreground min-h-screen font-sans antialiased">
       {/* --- Navigation --- */}
@@ -34,13 +36,17 @@ const DeveloperLandingPage = () => {
             </a>
 
             {/* Main CTA in Header as requested */}
-            <Button
-              size="sm"
-              className="bg-primary text-primary-foreground shadow-primary/10 px-5 shadow-lg hover:opacity-90"
-              onClick={() => navigate("/org")}
-            >
-              Get Started <ExternalLink size={14} className="ml-1" />
-            </Button>
+            {session ? (
+              <UserProfile />
+            ) : (
+              <Button
+                size="sm"
+                className="bg-primary text-primary-foreground shadow-primary/10 px-5 shadow-lg hover:opacity-90"
+                onClick={() => navigate("/org")}
+              >
+                Get Started <ExternalLink size={14} className="ml-1" />
+              </Button>
+            )}
           </div>
         </div>
       </nav>

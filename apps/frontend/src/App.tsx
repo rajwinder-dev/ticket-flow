@@ -6,7 +6,8 @@ import { Toaster } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { GlobalProvider } from "./context/GlobalContext";
 import router from "./router";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+
+import { ErrorBoundary } from "react-error-boundary";
 const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -20,18 +21,18 @@ const queryclient = new QueryClient({
 function App() {
   return (
     <>
-      <QueryClientProvider client={queryclient}>
-        <TooltipProvider>
-          <ErrorBoundary>
+      <ErrorBoundary fallback={<div>error ErrorBoundary</div>}>
+        <QueryClientProvider client={queryclient}>
+          <TooltipProvider>
             <GlobalProvider>
               <RouterProvider router={router} />
               <Toaster />
             </GlobalProvider>
-          </ErrorBoundary>
 
-          <ReactQueryDevtools />
-        </TooltipProvider>
-      </QueryClientProvider>
+            <ReactQueryDevtools />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </>
   );
 }

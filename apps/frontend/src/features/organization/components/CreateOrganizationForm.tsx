@@ -16,8 +16,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type CreateOrganizationInput, createOrganizationInput } from "@repo/schemas";
 import useOrganizations from "../hooks";
+import { useNavigate } from "react-router";
 const CreateOrganizationForm = () => {
-  const {createOrg, isCreatingOrg} =  useOrganizations()
+  const navigate = useNavigate();
+  const { createOrg, isCreatingOrg } = useOrganizations();
   const {
     register,
     handleSubmit,
@@ -100,6 +102,9 @@ const CreateOrganizationForm = () => {
 
       {/* Footer Actions */}
       <div className="flex items-center justify-end gap-4">
+        <Button type="button" variant={"secondary"} onClick={() => navigate(-1)}>
+          Back
+        </Button>
         <Button type="submit" disabled={isCreatingOrg}>
           {isCreatingOrg && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create Organization
@@ -126,4 +131,3 @@ export default CreateOrganizationForm;
             Test Connection
           </Button> */
 }
-
