@@ -81,11 +81,11 @@ export function QueueAgentTable() {
                     <div className="flex items-center gap-2">
                       <Avatar className="h-7 w-7">
                         <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
-                          {member.username && getInitials(member.username)}
+                          {member.name && getInitials(member.name)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm leading-tight font-medium">{member.username}</p>
+                        <p className="text-sm leading-tight font-medium">{member.name}</p>
                         <p className="text-muted-foreground text-[10px]">{member.email}</p>
                       </div>
                     </div>

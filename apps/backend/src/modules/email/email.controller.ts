@@ -11,7 +11,7 @@ import z from "zod";
 export class EmailController {
   static createProvider = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateEmailProviderInput;
-    await EmailService.createEmailProvider(req.organization.id, req.user.email, {
+    await EmailService.createEmailProvider(req.organization.id, {
       ...input,
       priority: 1,
     });
@@ -19,7 +19,7 @@ export class EmailController {
   });
   static createSMTP = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateSmtpInput;
-    await EmailService.createEmailProvider(req.organization.id, req.user.email, {
+    await EmailService.createEmailProvider(req.organization.id, {
       ...input,
       providerType: "SMTP",
       priority: 2,
@@ -28,7 +28,7 @@ export class EmailController {
   });
   static getProviders = catchAsync(async (req, res, _next) => {
     const data = await EmailService.getEmailProviders(req.organization.id);
-    response(res, data, 200, {schema: z.array(emailProviderSchema)});
+    response(res, data, 200, { schema: z.array(emailProviderSchema) });
   });
   static updateCredentials = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

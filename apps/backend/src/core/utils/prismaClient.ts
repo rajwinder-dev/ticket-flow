@@ -4,8 +4,8 @@ import { Prisma, PrismaClient } from "../../generated/client.js";
 import { env } from "../../config/env.js";
 import z from "zod";
 import { appError } from "./appError.js";
-const connectionString = process.env.DIRECT_URL;
-
+const connectionString = env.databaseURL;
+console.log(connectionString);
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 function forTenant(organizationId: string) {

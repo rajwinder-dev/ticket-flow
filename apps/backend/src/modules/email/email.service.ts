@@ -1,5 +1,5 @@
 import { render } from "@react-email/render";
-import { CreateEmailProviderInput } from "@repo/schemas";
+import { CreateEmailProviderInput, UpdateEmailProviderInput } from "@repo/schemas";
 import { env } from "../../config/env.js";
 import { appError } from "../../core/utils/appError.js";
 import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto.js";
@@ -9,6 +9,7 @@ import { sendEmailService, sendSystemEmailService } from "./email.types.js";
 import { emailProviderFactory } from "./providers/provider.factory.js";
 import { ProviderType } from "../../generated/enums.js";
 import { EmailProvider } from "../../generated/client.js";
+import { UpdateEmailOptions } from "resend";
 export class EmailService {
   static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
     const html = await render(jsx);
@@ -49,7 +50,6 @@ export class EmailService {
   };
   static createEmailProvider = async (
     organizationId: string,
-    userEmail: string,
     {
       credentials,
       providerType,
@@ -89,19 +89,20 @@ export class EmailService {
     id: string,
     userEmail: string,
     organizationId: string,
-    { credentials, providerType, fromEmail }: CreateEmailProviderInput,
+    { credentials, providerType, fromEmail }: UpdateEmailProviderInput,
   ) => {
     const encryptCredentials = encrypt(JSON.stringify(credentials));
     await this.verifyProvider(userEmail, providerType, credentials);
+    console.log(id, organizationId);
     return await prisma.emailProvider.update({
       where: {
         id,
         organizationId,
-        providerType,
-        fromEmail,
-        domain: fromEmail.split("@")[1],
       },
       data: {
+        domain: fromEmail.split("@")[1],
+        fromEmail,
+        providerType,
         credentials: encryptCredentials,
       },
     });
