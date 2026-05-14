@@ -270,7 +270,7 @@ model QueueGroup {
   TransitionFromGroup TicketTransition[] @relation("TransitionFromGroup")
   TransitionToGroup   TicketTransition[] @relation("TransitionToGroup")
 
-  @@unique([organizationId, name, default])
+  @@unique([organizationId, name])
 }
 
 enum priority {

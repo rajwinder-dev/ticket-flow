@@ -82,7 +82,7 @@ export const memberSchemaResponse = z.object({
   id: z.uuid(),
   userId: z.uuid(),
   email: z.email().nullable(),
-  username: z.string().nullable(),
+  name: z.string().nullable(),
   avatar: z.string().nullable(),
   role: z.string().nullable(),
   roleId: z.string().nullable(),

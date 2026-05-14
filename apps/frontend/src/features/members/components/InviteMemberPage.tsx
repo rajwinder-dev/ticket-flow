@@ -15,11 +15,11 @@ import { useNavigate, useParams } from "react-router";
 import useMember from "../hooks";
 import { useEffect } from "react";
 import { useMembersStore } from "../store";
-import useAuth from "@/features/auth/hooks";
+import { authClient } from "@/lib/auth-client";
 
 const InviteMemberPage = () => {
   const { token } = useParams();
-  const { authDetails, isLoadingAuthDetails } = useAuth();
+  const { data: session, isPending } = authClient.useSession();
   const { setInviteToken, clearInvite } = useMembersStore();
 
   const { inviteDetails, isLoadingInviteDetails, acceptInviteMutate, InviteError } = useMember();
@@ -44,9 +44,9 @@ const InviteMemberPage = () => {
     clearInvite();
     navigate(`/`);
   };
-  if (isLoadingInviteDetails || isLoadingAuthDetails) return <Spinner />;
+  if (isLoadingInviteDetails || isPending) return <Spinner />;
   if (InviteError) return <ErrorState message={InviteError.message} onAction={handleDecline} />;
-  if (authDetails?.data.email !== inviteDetails?.data.invitedTo) navigate("/login");
+  if (session?.user.email !== inviteDetails?.data.invitedTo) navigate("/login");
   return (
     <div className="bg-muted/30 flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-xl">

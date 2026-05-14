@@ -32,7 +32,7 @@ const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
     defaultValues: {
       name: groupData.name,
       description: groupData.description ?? "",
-      isDefault: groupData.default,
+      isDefault: groupData.default || false,
     },
   });
 

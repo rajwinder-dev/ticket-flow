@@ -35,7 +35,7 @@ export class MemberController {
         user: {
           select: {
             email: true,
-            username: true,
+            name: true,
             avatar: true,
             id: true,
             queueAgents: {
@@ -68,7 +68,7 @@ export class MemberController {
         id: item.id,
         userId: item.user?.id,
         email: user?.email,
-        username: user?.username,
+        name: user?.name,
         avatar: user?.avatar,
         role: item.role?.name,
         roleId: item.role?.id,

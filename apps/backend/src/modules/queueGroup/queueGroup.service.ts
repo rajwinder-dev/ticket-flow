@@ -27,7 +27,7 @@ export class QueueGroupService {
         createdBy: userId,
         default: existingDefaultGroup ? false : true,
         name: input.name,
-        description: input.description
+        description: input.description,
       },
     });
     await ActivityService.lagActivity({
@@ -116,7 +116,7 @@ export class QueueGroupService {
       },
       data: {
         name: input.name,
-        description: input.description
+        description: input.description,
       },
     });
     await ActivityService.lagActivity({
@@ -184,14 +184,12 @@ export class QueueGroupService {
     const currentState = await prisma.queueGroup.findFirst({
       where: {
         organizationId,
-        id: groupId
+        id: groupId,
       },
       select: {
         default: true,
       },
     });
-    if (currentState?.default)
-      throw new appError("Queue group is already set to default ", 409, "CONFLICT_ERROR");
     await prisma.queueGroup.updateMany({
       where: {
         organizationId,
@@ -234,8 +232,8 @@ export class QueueGroupService {
         active: true,
       },
       select: {
-        id: true
-      }
+        id: true,
+      },
     });
     return defaultGroup?.id;
   };

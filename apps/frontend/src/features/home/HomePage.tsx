@@ -44,7 +44,7 @@ const DeveloperLandingPage = () => {
               </Button>
             </a>
 
-            {/* Main CTA in Header as requested */}
+            {/* Main CTA in Header as/   requested */}
             {session ? (
               <UserProfile />
             ) : (

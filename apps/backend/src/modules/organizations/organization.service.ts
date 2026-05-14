@@ -93,7 +93,7 @@ export class OrganizationService {
       },
       expiresAt: addDays(new Date(), 7),
     });
-    const url = `${env.coreURL}/invite-user/${token}`;
+    const url = `${env.betterAuthUrl}/invite-user/${token}`;
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,

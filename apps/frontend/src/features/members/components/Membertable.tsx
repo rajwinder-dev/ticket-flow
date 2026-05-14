@@ -117,10 +117,10 @@ export function MembersTable() {
                     </TableCell> */}
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Avatar name={member.username ?? "User"} index={i} />
+                        <Avatar name={member.name ?? "User"} index={i} />
                         <div>
                           <p className="text-sm leading-tight font-medium">
-                            {member.username ?? "Unknown User"}
+                            {member.name ?? "Unknown User"}
                           </p>
                           <p className="text-muted-foreground text-[11px]">{member.email}</p>
                         </div>
