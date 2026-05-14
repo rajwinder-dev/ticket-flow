@@ -19,13 +19,45 @@ import OrgLayout from "./layouts/OrgLayout";
 import CustomerPage from "./features/customer/components/CustomerPage";
 import InviteMemberPage from "./features/members/components/InviteMemberPage";
 import ActivityPage from "./features/activity/components/ActivityPage";
+import HomePage from "./features/home/HomePage";
 
 const router = createBrowserRouter([
+  // 1. PUBLIC LANDING PAGE
   {
+    path: "/",
+    element: <HomePage />, // Replace with your actual Landing Page component
+  },
+
+  // 2. AUTHENTICATION ROUTES
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />,
+  },
+  {
+    path: "/forget-password",
+    element: <ForgetPasswordPage />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: "/invite-user/:token",
+    element: <InviteMemberPage />,
+  },
+
+  // 3. PROTECTED APPLICATION ROUTES
+  {
+    // You can keep this at root level or change to path: "/app"
+    // if you want all app routes prefixed (e.g., /app/org)
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/",
+        path: "/org", // Changed from "/" to "/dashboard" or similar
         element: <DashboardLayout />,
         children: [
           { index: true, element: <OrganizationPage /> },
@@ -55,26 +87,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />,
-  },
-  {
-    path: "/forget-password",
-    element: <ForgetPasswordPage />,
-  },
-  {
-    path: "/reset-password/:token",
-    element: <ResetPasswordPage />,
-  },
-  {
-    path: "/invite-user/:token",
-    element: <InviteMemberPage />,
   },
 ]);
 export default router;
