@@ -68,9 +68,12 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
       },
     });
   };
-
+  const onclose = (state: boolean) => {
+    reset();
+    onOpenChange(state);
+  };
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onclose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit Email Provider" : "Add Email Provider"}</DialogTitle>

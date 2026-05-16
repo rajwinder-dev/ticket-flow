@@ -29,7 +29,7 @@ export default function EmailProviderTable() {
   function openEdit(provider: EmailProviderSchema) {
     setEditProvider(provider);
     setFormOpen(true);
-  }
+ }
 
   function openAdd() {
     setEditProvider(null);
