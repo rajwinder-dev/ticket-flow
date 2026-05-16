@@ -3,7 +3,7 @@ import { useDashboard } from "./hooks";
 const DashboardMatrices = () => {
   const { summary } = useDashboard();
   return (
-    <div className="grid md:grid-cols-2 xl:grid-cols-5">
+    <div className="grid border-t md:grid-cols-2 xl:grid-cols-5">
       {[
         { label: "Total", value: summary?.data.TOTAL },
         { label: "Open", value: summary?.data.OPEN },

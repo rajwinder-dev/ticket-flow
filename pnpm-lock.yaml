@@ -340,6 +340,9 @@ importers:
       react-hook-form:
         specifier: ^7.72.0
         version: 7.72.1(react@19.2.5)
+      react-joyride:
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router:
         specifier: ^7.13.2
         version: 7.14.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1149,6 +1152,9 @@ packages:
     resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
 
+  '@fastify/deepmerge@3.2.1':
+    resolution: {integrity: sha512-N5Oqvltoa2r9z1tbx4xjky0oRR60v+T47Ic4J1ukoVQcptLOrIdRnCSdTGmOmajZuHVKlTnfcmrjyqsGEW1ztA==}
+
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
 
@@ -1175,6 +1181,17 @@ packages:
 
   '@fontsource-variable/playfair-display@5.2.8':
     resolution: {integrity: sha512-ZzVIXPOrL85yyOvZYoBzUszIJM+xKkHqni4IYn2CVLaGQQdJR8sBeC8yFNgjxSJ7ludTwta8qpULeOFuk5X75A==}
+
+  '@gilbarbara/deep-equal@0.4.1':
+    resolution: {integrity: sha512-QF2BGeQjsa59T59XvFdR3is5jrl28Eg0J6giXAC5919bcqvR8XP4B+07tpbs6Y6/IQd4FBncaL2WVXIBgSxt4w==}
+
+  '@gilbarbara/hooks@0.11.0':
+    resolution: {integrity: sha512-CIVazdxqFRplUfm9wZL3/0X1TURJekhPMWGFdWzEmyJrGPiotX2yxA1KiB8N7VnhawIaMtb2Apnda4Y6DRwi2Q==}
+    peerDependencies:
+      react: 16.8 - 19
+
+  '@gilbarbara/types@0.2.2':
+    resolution: {integrity: sha512-QuQDBRRcm1Q8AbSac2W1YElurOhprj3Iko/o+P1fJxUWS4rOGKMVli98OXS7uo4z+cKAif6a+L9bcZFSyauQpQ==}
 
   '@hono/node-server@1.19.11':
     resolution: {integrity: sha512-dr8/3zEaB+p0D2n/IUrlPF1HZm586qgJNXK1a9fhg/PzdtkK7Ksd5l312tJX2yBuALqDYBlG20QEbayqPyxn+g==}
@@ -4637,6 +4654,9 @@ packages:
     resolution: {integrity: sha512-qP1vozQRI+BMOPcjFzrjXuQvdak2pHNUMZoeG2eRbiSqyvbEf/wQtEOTOX1guk6E3t36RkaqiSt8A/6YElNxLQ==}
     engines: {node: '>=12'}
 
+  is-lite@2.0.0:
+    resolution: {integrity: sha512-70f2BMIQlbSUXVKaZUd9a9fJH3IH1PDckV0m4BIIO4LjnNYvOh4Ng7vXIXEwpA0KDZknRq+7fHwGTu0jIdx28g==}
+
   is-node-process@1.2.0:
     resolution: {integrity: sha512-Vg4o6/fqPxIjtxgUH5QLJhwZ7gW5diGCVlXpuUfELC62CuxM1iHcRe51f2W1FDy04Ai4KJkagKjx3XaqyfRKXw==}
 
@@ -5680,11 +5700,23 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-innertext@1.1.5:
+    resolution: {integrity: sha512-PWAqdqhxhHIv80dT9znP2KvS+hfkbRovFp4zFYHFFlOoQLRiawIic81gKb3U1wEyJZgMwgs3JoLtwryASRWP3Q==}
+    peerDependencies:
+      '@types/react': '>=0.0.0 <=99'
+      react: '>=0.0.0 <=99'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
+  react-joyride@3.1.0:
+    resolution: {integrity: sha512-+UEDpNsYSHhhSW/OQcNl6+oODYx20EP6TykSD45if0MqAAZMYD+3DU64w9wP3fBjQswvq5BgK99w3rw6ing69g==}
+    peerDependencies:
+      react: 16.8 - 19
+      react-dom: 16.8 - 19
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -5858,6 +5890,12 @@ packages:
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
+
+  scroll@3.0.1:
+    resolution: {integrity: sha512-pz7y517OVls1maEzlirKO5nPYle9AXsFzTMNJrRGmT951mzpIBy7sNHOg5o/0MQd/NqliCiWnAi0kZneMPFLcg==}
+
+  scrollparent@2.1.0:
+    resolution: {integrity: sha512-bnnvJL28/Rtz/kz2+4wpBjHzWoEzXhVg/TE8BeVGJHUqE8THNIRnDxDWMktwM+qahvlRdvlLdsQfYe+cuqfZeA==}
 
   seek-bzip@2.0.0:
     resolution: {integrity: sha512-SMguiTnYrhpLdk3PwfzHeotrcwi8bNV4iemL9tx9poR/yeaMYwB9VzR1w7b57DuWpuqR8n6oZboi0hj3AxZxQg==}
@@ -7291,6 +7329,8 @@ snapshots:
 
   '@faker-js/faker@8.4.1': {}
 
+  '@fastify/deepmerge@3.2.1': {}
+
   '@floating-ui/core@1.7.5':
     dependencies:
       '@floating-ui/utils': 0.2.11
@@ -7319,6 +7359,17 @@ snapshots:
   '@fontsource-variable/nunito-sans@5.2.7': {}
 
   '@fontsource-variable/playfair-display@5.2.8': {}
+
+  '@gilbarbara/deep-equal@0.4.1': {}
+
+  '@gilbarbara/hooks@0.11.0(react@19.2.5)':
+    dependencies:
+      '@gilbarbara/deep-equal': 0.4.1
+      react: 19.2.5
+
+  '@gilbarbara/types@0.2.2':
+    dependencies:
+      type-fest: 4.41.0
 
   '@hono/node-server@1.19.11(hono@4.12.14)':
     dependencies:
@@ -10745,6 +10796,8 @@ snapshots:
 
   is-interactive@2.0.0: {}
 
+  is-lite@2.0.0: {}
+
   is-node-process@1.2.0: {}
 
   is-number@7.0.0: {}
@@ -11692,9 +11745,31 @@ snapshots:
     dependencies:
       react: 19.2.5
 
+  react-innertext@1.1.5(@types/react@19.2.14)(react@19.2.5):
+    dependencies:
+      '@types/react': 19.2.14
+      react: 19.2.5
+
   react-is@16.13.1: {}
 
   react-is@18.3.1: {}
+
+  react-joyride@3.1.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      '@fastify/deepmerge': 3.2.1
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@gilbarbara/deep-equal': 0.4.1
+      '@gilbarbara/hooks': 0.11.0(react@19.2.5)
+      '@gilbarbara/types': 0.2.2
+      is-lite: 2.0.0
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      react-innertext: 1.1.5(@types/react@19.2.14)(react@19.2.5)
+      scroll: 3.0.1
+      scrollparent: 2.1.0
+      use-sync-external-store: 1.6.0(react@19.2.5)
+    transitivePeerDependencies:
+      - '@types/react'
 
   react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.5):
     dependencies:
@@ -11888,6 +11963,10 @@ snapshots:
       postcss: 8.5.10
 
   scheduler@0.27.0: {}
+
+  scroll@3.0.1: {}
+
+  scrollparent@2.1.0: {}
 
   seek-bzip@2.0.0:
     dependencies:

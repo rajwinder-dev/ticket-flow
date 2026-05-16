@@ -2,6 +2,7 @@ import { deleteRequest, getRequest, getRequestMany, patchRequest, postRequest } 
 import type {
   CreateOrganizationInput,
   CreateOrganizationResponse,
+  OnboardingStatusResponse,
   OrganizationSchemaResponse,
   UpdateOrganizationInput,
 } from "@repo/schemas";
@@ -49,4 +50,10 @@ export const orgApi = {
     });
     return data;
   },
+  onboardStatus: async () => {
+    const data = await getRequest<OnboardingStatusResponse>({
+      path: `/org/onboardStatus`
+    })
+    return data
+  }
 };

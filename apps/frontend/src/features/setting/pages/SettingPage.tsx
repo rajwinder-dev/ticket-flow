@@ -44,7 +44,7 @@ export default function SettingsPage() {
               value="settings"
               className="data-[state=active]:bg-muted w-full justify-start gap-2 px-4 py-2"
             >
-              <Settings2 className="h-4 w-4" /> General
+              <Settings2 className="h-4 w-4" /> Email Service
             </TabsTrigger>
           </TabsList>
         </aside>

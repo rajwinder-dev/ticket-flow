@@ -41,7 +41,7 @@ const OrganizationSection = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Link to={"/org/new"}>
+        <Link to={"/org/new"} className="create-org">
           <Button>
             <Plus />
             New organization

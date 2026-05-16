@@ -10,7 +10,6 @@ import { DeleteProviderDialog } from "./DeleteProviderDialog";
 import { ProviderFormDialog } from "./ProviderFormDialog";
 import { ProviderTable } from "./ProviderTable";
 import SmtpFormDialog from "../SmtpFormDialog";
-
 export default function EmailProviderTable() {
   const { deleteProvider } = useEmail();
   const [formOpen, setFormOpen] = useState(false);
@@ -64,7 +63,7 @@ export default function EmailProviderTable() {
 
       {/* Table */}
       <ProviderTable onEdit={openEdit} onDelete={confirmDelete} onAddClick={openAdd} />
-
+      
       {/* Add / Edit Dialog */}
       <ProviderFormDialog
         open={formOpen}
@@ -79,11 +78,7 @@ export default function EmailProviderTable() {
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         onConfirm={handleDelete}
       />
-      <SmtpFormDialog
-        open={smtpFormOpen}
-        onOpenChange={setSmtpFormOpen}
-        isEditing={!!editSmtp}
-      />
+      <SmtpFormDialog open={smtpFormOpen} onOpenChange={setSmtpFormOpen} isEditing={!!editSmtp} />
     </Card>
   );
 }

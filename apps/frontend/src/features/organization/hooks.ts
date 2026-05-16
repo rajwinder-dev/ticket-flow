@@ -8,7 +8,12 @@ function useOrganizations() {
   const { orgId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: onboardSatus } = useQuery({
 
+    queryFn: orgApi.onboardStatus,
+    enabled: !!orgId,
+    queryKey: ["organization","onboarding-status",  { orgId }],
+  });
   // --- Queries ---
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery({
     queryFn: orgApi.getMine,
@@ -17,8 +22,9 @@ function useOrganizations() {
   });
   const { data: currentOrganization, isLoading: isLoadingCurrent } = useQuery({
     queryFn: orgApi.getCurrent,
-    queryKey: ["organization", {orgId}],
+    queryKey: ["organization", { orgId }],
     enabled: !!orgId,
+    retry: false,
   });
 
   // --- Mutations ---
@@ -65,7 +71,7 @@ function useOrganizations() {
     isUpdatingOrg,
     deleteOrg,
     isDeletingOrg,
-
+    onboardSatus,
     currentOrganization,
     isLoadingCurrent,
   };

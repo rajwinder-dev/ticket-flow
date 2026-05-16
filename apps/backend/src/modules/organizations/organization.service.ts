@@ -142,4 +142,23 @@ export class OrganizationService {
     });
     return { organizationId: data.organizationId };
   };
+  static onboardingStatus = async (organizationId: string) => {
+    const [roles, groups, queues, invites, providers] = await Promise.all([
+      prisma.role.count({ where: { organizationId, isSystem: false } }),
+      prisma.queueGroup.count({ where: { organizationId } }),
+      prisma.queue.count({ where: { organizationId } }),
+      prisma.token.count({ where: { type: "INVITE_USER", organizationId } }),
+      prisma.emailProvider.count({ where: { organizationId } }),
+    ]);
+    const data = await prisma.role.count({ where: { organizationId, isSystem: false } });
+    console.log(data);
+    return {
+      hasRoles: roles > 0,
+      hasGroups: groups > 0,
+      hasQueues: queues > 0,
+      hasInvites: invites > 0,
+      hasEmail: providers > 0,
+      currentStep: [roles, groups, queues, invites, providers].filter((c) => c > 0).length,
+    };
+  };
 }

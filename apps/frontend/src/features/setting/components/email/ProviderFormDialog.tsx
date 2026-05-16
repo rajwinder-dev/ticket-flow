@@ -41,7 +41,7 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
     formState: { errors },
   } = useForm<CreateEmailProviderInput>({
     defaultValues: {
-      providerType:  "RESEND",
+      providerType: "RESEND",
       fromEmail: providerData?.fromEmail,
       credentials: { apiKey: "" },
       webhookSecret: "",
@@ -55,16 +55,16 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
         { id: providerData?.id, data },
         {
           onSuccess: () => {
-            onOpenChange(false);
             reset();
+            onOpenChange(false);
           },
         },
       );
     }
     createEmailProvider(data, {
       onSuccess: () => {
-        onOpenChange(false);
         reset();
+        onOpenChange(false);
       },
     });
   };

@@ -4,10 +4,15 @@
     "outDir": "dist",
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "composite": true
+    "composite": true,
+    "noEmit": false
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "references": [
-    { "path": "../constants" }
+    {
+      "path": "../constants"
+    }
   ]
 }

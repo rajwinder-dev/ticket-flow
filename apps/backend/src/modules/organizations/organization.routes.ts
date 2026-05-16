@@ -7,7 +7,7 @@ import { OrganizationController } from "./organization.controller.js";
 const organizationRouter: Router = Router();
 organizationRouter.get("/:token/invite/", OrganizationController.InviteDetails);
 organizationRouter.use(authMiddleware.protectedRoute);
-organizationRouter.get("/me",OrganizationController.getMyOrganizations);
+organizationRouter.get("/me", OrganizationController.getMyOrganizations);
 organizationRouter.post("/:token/invite/", OrganizationController.acceptInvite);
 organizationRouter.post(
   "/",
@@ -27,9 +27,7 @@ organizationRouter.post(
   OrganizationController.sendInvite,
 );
 
-
-organizationRouter.get("/member", OrganizationController.getMembers)
-
-
+organizationRouter.get("/member", OrganizationController.getMembers);
+organizationRouter.get("/onboardStatus", OrganizationController.getOnBoardingStatus);
 
 export default organizationRouter;

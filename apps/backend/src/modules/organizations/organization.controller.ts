@@ -223,4 +223,8 @@ export class OrganizationController {
       schema: memberSchemaResponse,
     });
   });
+  static getOnBoardingStatus = catchAsync(async (req, res, _next) => {
+    const data = await OrganizationService.onboardingStatus(req.organization.id);
+    response(res, data, 200, { schema: organizationSchemaResponse });
+  });
 }

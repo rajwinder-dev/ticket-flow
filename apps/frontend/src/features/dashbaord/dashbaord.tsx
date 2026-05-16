@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import PageHeader from "@/components/PageHeader";
 import DashboardMatrices from "./DashbaordMatrices";
 import { useDashboard } from "./hooks";
+import OnboardingBanner from "@/components/OnboardingBanner";
 
 const DashboardPage = () => {
   const { orgId } = useParams();
@@ -23,13 +24,14 @@ const DashboardPage = () => {
   return (
     <div className="">
       <PageHeader
-        title="Ticket Dashboard"
+        title="Dashboard"
         description="MVP overview of support workload, progress, and recent updates."
       >
         <Button asChild>
           <Link to={`/org/${orgId}/ticket`}>View all tickets</Link>
         </Button>
       </PageHeader>
+      <OnboardingBanner />
       <DashboardMatrices />
       <div className="grid lg:grid-cols-3">
         <Card className="lg:col-span-2">

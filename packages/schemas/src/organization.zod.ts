@@ -98,11 +98,22 @@ export const inviteMemberDetailsResponse = z.object({
   invitedBy: z.string(),
   expiresAt: z.date(),
 });
+
+export const onboardingStatusSchema = z.object({
+  hasRoles: z.boolean(),
+  hasGroups: z.boolean(),
+  hasQueues: z.boolean(),
+  hasInvites: z.boolean(),
+  hasEmail: z.boolean(),
+  currentStep: z.number().min(0).max(5),
+});
+// Extract the TypeScript type from the schema
 //  --response --
 export type CreateOrganizationResponse = z.infer<typeof createOrganizationResponse>;
 export type OrganizationSchemaResponse = z.infer<typeof organizationSchemaResponse>;
 export type MemberSchemaResponse = z.infer<typeof memberSchemaResponse>;
 export type InviteMemberDetailsResponse = z.infer<typeof inviteMemberDetailsResponse>;
+export type OnboardingStatusResponse = z.infer<typeof onboardingStatusSchema>;
 // --- Inferred Types ---
 export type CreateOrganizationInput = z.infer<typeof createOrganizationInput.bodySchema>;
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationInput.bodySchema>;
