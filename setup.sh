@@ -18,4 +18,4 @@ create_env_file() {
 create_env_file "$ROOT_ENV_FILE"
 create_env_file "$BACKEND_ENV_FILE"
 
-docker compose up --build
+# docker compose up --build

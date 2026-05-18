@@ -10,22 +10,21 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -r --parallel dev",
-    "dev:backend": "pnpm --filter backend dev",
-    "dev:frontend": "pnpm --filter frontend dev",
-    "shadcn": "pnpm --filter frontend shadcn:add",
     "build": "pnpm run -r build",
-    "watch": "tsc -b -w",
-    "clean": "tsc -b --clean",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
-    "push": "pnpm --filter backend db:push",
-    "clear": "pnpm --filter backend db:clear",
-    "seed": "pnpm --filter backend db:seed",
-    "migrate": "pnpm --filter backend db:migrate"
+    "db:push": "pnpm --filter backend db:push",
+    "db:clear": "pnpm --filter backend db:clear",
+    "db:seed": "pnpm --filter backend db:seed",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "db:generate": "pnpm --filter backend db:generate",
+    "db:setup": "pnpm --filter backend db:setup"
   },
   "engines": {
-    "node": "=20"
+    "node": "=20",
+    "pnpm": "^9"
   },
+  "packageManager": "pnpm@9.15.9",
   "devDependencies": {
     "@types/node": "^25.6.0",
     "prettier": "^3.8.1",
