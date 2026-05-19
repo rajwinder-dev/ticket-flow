@@ -8,6 +8,7 @@ on:
       - "packages/**"
       - "package.json"
       - "package-lock.json"
+      - "github/**"
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -70,7 +71,8 @@ jobs:
         run: pnpm --filter backend run setup:db
 
       - name: Run migrations
-        run: pnpm run migrate
-      # temp turn of tests 
+        run:
+          pnpm run migrate
+          # temp turn of tests
       # - name: Run integration tests
       # run: pnpm test
