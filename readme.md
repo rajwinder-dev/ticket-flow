@@ -1,4 +1,4 @@
-# Ticket Management System
+# Ticket Flow
 
 ## Overview
 
@@ -15,12 +15,14 @@ This project focuses on scalable backend architecture, clean separation of conce
 - Comment system for ticket discussions
 - email provider integration
 - Structured API with validation and error handling
+- Multi-tenant Organization support
 
 ---
 
 ## Tech Stack
 
 - Backend: Express + TypeScript
+- Frontend: React , zustand, tailiwndcss
 - Database: PostgreSQL with Prisma
 - Architecture: modular stricture
 
@@ -123,7 +125,13 @@ Use this method if you want to make active code changes with Hot Module Replacem
 
    ```bash
    pnpm run generate       # Generates Prisma Client
-   pnpm prisma migrate dev # Syncs database schema
+   pnpm run migrate        # Syncs database schema
+   ```
+
+5. Create a dev role for runtime , it support row level security
+
+   ```bash
+   pnpm run db:setup
    ```
 
 #### **Execution**

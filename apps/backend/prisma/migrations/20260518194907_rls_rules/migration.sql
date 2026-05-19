@@ -1,0 +1,143 @@
+-- This is an empty migration.
+-- Drop old rule 
+DROP POLICY tenant_policy ON "Ticket";
+-- create a new policy for tenant tables 
+
+CREATE POLICY tenant_policy
+ ON "Ticket"
+ FOR ALL
+ USING (
+   "organizationId" = current_organization_id()
+ )
+ WITH CHECK (
+   "organizationId" = current_organization_id()
+ );
+
+-- CREATE POLICY tenant_policy
+--  ON "Membership"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "Role"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "Ticket"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "Token"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "EmailProvider"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "EmailMessage"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "Customer"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "QueueGroup"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "Queue"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+-- CREATE POLICY tenant_policy
+--  ON "Attachment"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+-- CREATE POLICY tenant_policy
+--  ON "TicketComment"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "TicketTransition"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+--
+-- CREATE POLICY tenant_policy
+--  ON "ActivityLog"
+--  FOR ALL
+--  USING (
+--    "organizationId" = current_organization_id()
+--  )
+--  WITH CHECK (
+--    "organizationId" = current_organization_id()
+--  );
+

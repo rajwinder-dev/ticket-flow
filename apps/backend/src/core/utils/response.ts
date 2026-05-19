@@ -28,7 +28,7 @@ export function sendResponse<T extends z.ZodTypeAny>(
 
     if (!result.success) {
       log.warn("RESPONSE VALIDATION WARNING");
-      log.data("Error", result.error)
+      // log.data("Error", result.error)
     } else {
       finalPayload = result.data;
     }
