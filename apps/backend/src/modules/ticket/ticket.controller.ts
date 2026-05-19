@@ -14,7 +14,7 @@ import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { forTenant, getTenantClient, prisma } from "../../core/utils/prismaClient.js";
+import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { TicketService } from "./ticket.service.js";
 
@@ -57,7 +57,7 @@ export class TicketController {
         assignedToUser: null,
       };
     }
-    const tenantDB = prisma.$extends(forTenant(req.organization.id));
+    const tenantDB = getTenantClient(req.organization.id);
     const total = await tenantDB.ticket.count({
       where: {
         ...(assignedTo ? assignedToFilter : {}),
@@ -97,7 +97,7 @@ export class TicketController {
       };
     }
     // fetch status counts
-    const tenantDB = prisma.$extends(forTenant(organizationId));
+    const tenantDB = getTenantClient(organizationId);
     const [total, open, inProgress, resolved] = await Promise.all([
       tenantDB.ticket.count({ where: { ...(assignedToFilter || {}) } }),
       tenantDB.ticket.count({
