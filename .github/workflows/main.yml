@@ -8,7 +8,7 @@ on:
       - "packages/**"
       - "package.json"
       - "package-lock.json"
-      - "github/**"
+      - ".github/**"
 jobs:
   test:
     runs-on: ubuntu-latest
