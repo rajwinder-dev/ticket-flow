@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import { useQueueActions } from "../../useQueueActions";
 import { QueueActionsMenu } from "./QueueActionMenu";
 import { QueueFormModal } from "./QueueFormModel";
-import { useQueue } from "@/features/queue/hooks";
 
 interface QueueTableProps {
   group: QueueGroupSchemaResponse;
