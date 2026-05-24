@@ -29,7 +29,7 @@ function useRole() {
       queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
     },
     onError: (error) => {
-      console.dir(error)
+      console.dir(error);
       toast.error(error.message);
     },
   });

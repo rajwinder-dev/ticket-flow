@@ -2,7 +2,7 @@ import { CreateCustomerInput, customerSchemaResponse, UpdateCustomerInput } from
 import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
+import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { normalize } from "../../core/utils/utils.js";
 
@@ -14,7 +14,8 @@ export class CustomerController {
       .filter()
       .sort()
       .pagination();
-    const customers = await prisma.customer.findMany({
+    const tenantdb = getTenantClient(req.organization.id);
+    const customers = await tenantdb.customer.findMany({
       where: {
         organizationId,
         ...filterOptions.where,
@@ -63,7 +64,7 @@ export class CustomerController {
       take: limit,
       orderBy: filterOptions.orderBy,
     });
-    const total = await prisma.customer.count({
+    const total = await tenantdb.customer.count({
       where: {
         organizationId,
         ...filterOptions.where,
