@@ -1,6 +1,6 @@
 import { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
-import { prisma } from "../../core/utils/prismaClient.js";
+import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import { ActivityService } from "../activity/activity.service.js";
 
 export class QueueService {
@@ -71,21 +71,22 @@ export class QueueService {
     queueId: string;
     organizationId: string;
   }) => {
+    const tenantdb = getTenantClient(organizationId);
     const [totalTickets, openTickets, highPriorityTickets, activeAgents] = await Promise.all([
-      prisma.ticket.count({
+      tenantdb.ticket.count({
         where: {
           queueId,
           organizationId,
         },
       }),
-      prisma.ticket.count({
+      tenantdb.ticket.count({
         where: {
           queueId,
           status: "OPEN",
           organizationId,
         },
       }),
-      prisma.ticket.count({
+      tenantdb.ticket.count({
         where: {
           queueId,
           priority: {

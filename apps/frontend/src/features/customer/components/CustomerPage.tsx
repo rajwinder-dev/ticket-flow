@@ -55,29 +55,29 @@ const CustomerPage = () => {
       </PageHeader>
       {/* <CustomerMatrices /> */}
 
-        <div className="flex items-center justify-between gap-4 space-y-2 p-4">
-          <div>
-            <h2>Customer list</h2>
-            <CardDescription>Search by email.</CardDescription>
-          </div>
-          <Input
-            className="w-xs"
-            placeholder="Search customers by email."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-          />
+      <div className="flex items-center justify-between gap-4 space-y-2 p-4">
+        <div>
+          <h2>Customer list</h2>
+          <CardDescription>Search by email.</CardDescription>
         </div>
-        {customers?.data && <CustomerTable data={customers?.data} />}
-        {customers?.data && (
-          <Pagination
-            limit={customers.limit}
-            total={customers.total}
-            offset={customers.offset}
-            onChange={setPagination}
-          />
-        )}
+        <Input
+          className="w-xs"
+          placeholder="Search customers by email."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+        />
+      </div>
+      <CustomerTable />
+      {customers?.data && (
+        <Pagination
+          limit={customers.limit}
+          total={customers.total}
+          offset={customers.offset}
+          onChange={setPagination}
+        />
+      )}
     </>
   );
 };

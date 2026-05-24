@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import type { TicketSchemaResponse } from "@repo/schemas";
 import { useState } from "react";
 import TicketEditDialog from "./TicketEditDialog";
@@ -31,7 +32,6 @@ import TicketEditDialog from "./TicketEditDialog";
 import { Link } from "react-router-dom";
 import { useTicket } from "../hooks";
 
-// Assuming EMPLOYEES still comes from your store for the assignment list
 import { Pagination } from "@/components/Pagination";
 import { formatDate } from "@/features/activity/utils";
 import { useDebounceValue } from "@/hooks/useDebounce";
@@ -51,8 +51,8 @@ const TicketTable = () => {
   const [search, setSearch] = useState<string | undefined>();
   const [status, setStatus] = useState<string | undefined>();
   const [priority, setPriority] = useState<string | undefined>();
-  // Use the data and loading state from your custom hook
   const searchItem = useDebounceValue(search);
+
   const { ticketData, isLoadingTicketData } = useTicket({
     filterOptions: {
       offset: pagination.offset,
@@ -68,9 +68,11 @@ const TicketTable = () => {
       },
     },
   });
+
   const [editTicketForm, setEditTicketForm] = useState(false);
   const [escalateTicketForm, setEscalateTicketForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<TicketSchemaResponse | null>(null);
+
   function handlePagination(data: { offset: number; limit: number }) {
     setPagination({ offset: data.offset, limit: data.limit });
   }
@@ -87,6 +89,7 @@ const TicketTable = () => {
     setEscalateTicketForm(true);
     setSelectedTicket(ticket);
   }
+
   return (
     <div className="flex h-full flex-col">
       {/* Headers & Filters */}
@@ -103,7 +106,6 @@ const TicketTable = () => {
           <div className="grid gap-2 md:w-auto md:grid-cols-3">
             <Input
               placeholder="Search tickets..."
-              // className="md:w-64"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -114,7 +116,7 @@ const TicketTable = () => {
               <SelectContent>
                 <SelectItem value="ALL">All statuses</SelectItem>
                 {ticketStatus.map((item) => (
-                  <SelectItem value={item} className="capitalize">
+                  <SelectItem key={item} value={item} className="capitalize">
                     {item.split("_").join(" ").toLocaleLowerCase()}
                   </SelectItem>
                 ))}
@@ -127,7 +129,7 @@ const TicketTable = () => {
               <SelectContent>
                 <SelectItem value="ALL">All priorities</SelectItem>
                 {ticketPriority.map((item) => (
-                  <SelectItem value={item} className="capitalize">
+                  <SelectItem key={item} value={item} className="capitalize">
                     {item.split("_").join(" ").toLocaleLowerCase()}
                   </SelectItem>
                 ))}
@@ -135,6 +137,7 @@ const TicketTable = () => {
             </Select>
           </div>
         </div>
+
         {/* Table */}
         <Table>
           <TableHeader>
@@ -151,26 +154,57 @@ const TicketTable = () => {
           </TableHeader>
           <TableBody>
             {isLoadingTicketData ? (
-              <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center">
-                  Loading tickets...
-                </TableCell>
-              </TableRow>
+              // Renders 5 placeholder rows that trace your actual columns perfectly
+              Array.from({ length: 3 }).map((_, rowIndex) => (
+                <TableRow key={rowIndex} className="hover:bg-transparent">
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell className="max-w-80">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-11/12" />
+                      <Skeleton className="h-3 w-3/4" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="ml-auto h-8 w-8 rounded-md" />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : ticketData?.data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-muted-foreground py-8 text-center">
+                <TableCell colSpan={8} className="text-muted-foreground py-8 text-center">
                   No tickets found for current filters.
                 </TableCell>
               </TableRow>
             ) : (
               ticketData?.data.map((ticket) => (
                 <TableRow key={ticket.id}>
-                  {/* Using 'code' for display as it's usually the human-readable ID */}
                   <TableCell className="font-mono text-xs font-medium">{ticket.code}</TableCell>
                   <TableCell className="max-w-80 truncate font-medium hover:underline">
                     <Link to={ticket.id}>
                       {ticket.subject}
-                      <p className="text-muted-foreground text-xs">{ticket.description}</p>
+                      <p className="text-muted-foreground text-xs font-normal">
+                        {ticket.description}
+                      </p>
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -186,7 +220,9 @@ const TicketTable = () => {
                   </TableCell>
                   <TableCell>
                     <p>{ticket.assignedToUser?.username || "Unassigned"}</p>
-                    <p className="text-muted-foreground">{ticket.queue?.name || "Unassigned"}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {ticket.queue?.name || "No Queue"}
+                    </p>
                   </TableCell>
                   <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
                   <TableCell className="text-right">
@@ -217,6 +253,7 @@ const TicketTable = () => {
           </TableBody>
         </Table>
       </div>
+
       {selectedTicket && (
         <TicketEditDialog
           open={editTicketForm}

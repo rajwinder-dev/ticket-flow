@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import { useTicket } from "../hooks";
 import { formatDateTime } from "../utils";
 
 const TicketMainDetails = () => {
-  const { ticketDetails } = useTicket();
+  const { ticketDetails, isLoadingTicketDetails } = useTicket();
+
   return (
     <Card className="p-4 lg:col-span-2">
       <CardHeader>
@@ -12,32 +14,75 @@ const TicketMainDetails = () => {
         <CardDescription>Primary ticket information</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm leading-6">
-          {ticketDetails?.data.description && (
-            <div dangerouslySetInnerHTML={{ __html: ticketDetails?.data.description }} />
-          )}
-        </p>
+        {isLoadingTicketDetails ? (
+          // Multi-line layout description text skeleton blocks
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-11/12" />
+            <Skeleton className="h-4 w-4/5" />
+          </div>
+        ) : (
+          // Fixed structural nesting error (changed from paragraph tag to container div)
+          <div className="text-sm leading-6">
+            {ticketDetails?.data.description ? (
+              <div dangerouslySetInnerHTML={{ __html: ticketDetails?.data.description }} />
+            ) : (
+              <span className="text-muted-foreground italic">No description provided.</span>
+            )}
+          </div>
+        )}
+
         <Separator />
+
         <div className="grid gap-3 text-sm md:grid-cols-2">
+          {/* Reported by Field */}
           <div>
             <p className="text-muted-foreground">Reported by</p>
-            <p className="font-medium">{ticketDetails?.data.customer?.name}</p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="mt-1 h-4 w-28" />
+            ) : (
+              <p className="font-medium">{ticketDetails?.data.customer?.name ?? "N/A"}</p>
+            )}
           </div>
+
+          {/* Assignee Field */}
           <div>
             <p className="text-muted-foreground">Assignee</p>
-            <p className="font-medium">{ticketDetails?.data.assignedToUser?.username}</p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="mt-1 h-4 w-24" />
+            ) : (
+              <p className="font-medium">
+                {ticketDetails?.data.assignedToUser?.username ?? "Unassigned"}
+              </p>
+            )}
           </div>
+
+          {/* Created Field */}
           <div>
             <p className="text-muted-foreground">Created</p>
-            <p className="font-medium">
-              {ticketDetails?.data.createdAt && formatDateTime(ticketDetails?.data.createdAt)}
-            </p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="mt-1 h-4 w-36" />
+            ) : (
+              <p className="font-medium">
+                {ticketDetails?.data.createdAt
+                  ? formatDateTime(ticketDetails?.data.createdAt)
+                  : "N/A"}
+              </p>
+            )}
           </div>
+
+          {/* Updated Field */}
           <div>
             <p className="text-muted-foreground">Updated</p>
-            <p className="font-medium">
-              {ticketDetails?.data.createdAt && formatDateTime(ticketDetails?.data.updatedAt)}
-            </p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="mt-1 h-4 w-36" />
+            ) : (
+              <p className="font-medium">
+                {ticketDetails?.data.updatedAt
+                  ? formatDateTime(ticketDetails?.data.updatedAt)
+                  : "N/A"}
+              </p>
+            )}
           </div>
         </div>
       </CardContent>

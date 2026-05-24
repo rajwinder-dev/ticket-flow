@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { roleApi } from "@/features/role/api";
 import { ticketApi } from "@/features/ticket/api";
 
 export function useOrgPrefetch() {
@@ -17,17 +16,11 @@ export function useOrgPrefetch() {
     const prefetchCoreData = async () => {
       try {
         queryClient.prefetchQuery({
-          queryKey: ["role", orgId],
-          queryFn: roleApi.getAllRoles,
-          staleTime: PREFETCH_STALE_TIME,
-        });
-        queryClient.prefetchQuery({
           queryKey: [
             "ticket",
             { orgId },
             { filter: {}, limit: 10, offset: 0, search: { searchBy: "subject" } },
           ],
-
           queryFn: () => ticketApi.getAll(),
           staleTime: PREFETCH_STALE_TIME,
         });

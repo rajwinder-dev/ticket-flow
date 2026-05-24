@@ -1,7 +1,6 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import {
   Table,
   TableBody,
@@ -23,7 +22,7 @@ type Props = {
 export function ProviderTable({ onEdit, onDelete, onAddClick }: Props) {
   const { emailProviders, isLoadingEmailProviders } = useEmail();
   const providers = emailProviders?.data;
-  if (isLoadingEmailProviders) return <div>Loading....</div>;
+
   return (
     <div className="bg-card rounded-lg border border-blue-300">
       <Table>
@@ -37,9 +36,28 @@ export function ProviderTable({ onEdit, onDelete, onAddClick }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {providers?.length === 0 ? (
+          {isLoadingEmailProviders ? (
+            // Proportional layout skeletons matching the 3 current visible columns
+            Array.from({ length: 3 }).map((_, index) => (
+              <TableRow key={index} className="hover:bg-transparent">
+                <TableCell>
+                  <Skeleton className="h-5 w-16 rounded-md" /> {/* Badge Placeholder */}
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-48" /> {/* From Email Placeholder */}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Skeleton className="h-8 w-8 rounded-md" /> {/* Edit button placeholder */}
+                    <Skeleton className="h-8 w-8 rounded-md" /> {/* Delete button placeholder */}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : providers?.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-muted-foreground h-32 text-center">
+              {/* Changed colSpan to 3 to accurately align across visible columns */}
+              <TableCell colSpan={3} className="text-muted-foreground h-32 text-center">
                 No providers configured.{" "}
                 <button
                   onClick={onAddClick}
