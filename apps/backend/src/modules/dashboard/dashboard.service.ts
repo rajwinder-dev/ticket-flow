@@ -1,4 +1,4 @@
-import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
+import { getTenantClient } from "../../core/utils/prismaClient.js";
 import { TicketStatus } from "../../generated/enums.js";
 
 export class dashboardService {

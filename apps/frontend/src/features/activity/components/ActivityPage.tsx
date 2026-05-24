@@ -4,6 +4,7 @@ import QueryBoundary from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import {
   Table,
   TableBody,
@@ -35,29 +36,31 @@ const ActivityPage = () => {
       },
     },
   });
+
   return (
     <>
       <PageHeader
         title="Activity Log"
         description=" Audit trail of all actions performed within your organization."
-      ></PageHeader>
+      />
 
       {/* Stats strip */}
       <ActivityMatrices />
 
-      {/* Table card */}
+      {/* Table card header */}
       <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-base">Events</h2>
+        <h2 className="text-base font-semibold">Events</h2>
         <div className="flex gap-2">
           <div className="relative">
-            <Search className="text-muted-foreground absolute top-2.5 left-2.5 w-4" />
+            <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
             <Input
               placeholder="Search events…"
               className="h-9 w-56 pl-8 text-sm"
               onChange={(e) => setSearch(e.target.value)}
+              disabled={isLoadingActivity} // Prevents interaction glitches during layout refreshes
             />
           </div>
-          <Button variant="outline" size="sm" className="h-9 gap-1.5">
+          <Button variant="outline" size="sm" className="h-9 gap-1.5" disabled={isLoadingActivity}>
             <Filter className="h-3.5 w-3.5" />
             Filter
           </Button>
@@ -79,11 +82,30 @@ const ActivityPage = () => {
             </TableHeader>
             <TableBody>
               {isLoadingActivity ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-muted-foreground py-16 text-center">
-                    Loading…
-                  </TableCell>
-                </TableRow>
+                // Renders proportional layout skeleton lines to mitigate frame layout shifts
+                Array.from({ length: 6 }).map((_, index) => (
+                  <TableRow key={index} className="hover:bg-transparent">
+                    <TableCell className="w-8">
+                      <Skeleton className="h-3.5 w-3.5 rounded" />{" "}
+                      {/* Chevron expander placeholder */}
+                    </TableCell>
+                    <TableCell className="w-40">
+                      <Skeleton className="h-4 w-32" /> {/* Timestamp field */}
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-44" /> {/* Event Name field */}
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-11/12" /> {/* Description message string */}
+                    </TableCell>
+                    <TableCell className="w-24">
+                      <Skeleton className="h-5 w-16 rounded-full" /> {/* Severity Pill Badge */}
+                    </TableCell>
+                    <TableCell className="w-32">
+                      <Skeleton className="ml-auto h-4 w-16" /> {/* Numeric/Hash ID token */}
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : activity?.data.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-muted-foreground py-16 text-center">
@@ -97,7 +119,8 @@ const ActivityPage = () => {
           </Table>
         </QueryBoundary>
       </ScrollArea>
-      {activity && (
+
+      {activity && !isLoadingActivity && (
         <Pagination
           limit={activity?.limit}
           offset={activity?.offset}
