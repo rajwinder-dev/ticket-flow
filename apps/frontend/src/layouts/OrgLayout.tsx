@@ -1,4 +1,3 @@
-import { Spinner } from "@/components/ui/spinner";
 import { useGlobalContext } from "@/context/GlobalContext";
 import useOrganizations from "@/features/organization/hooks";
 import OrganizationPage from "@/features/organization/pages/OrganizationPage";
@@ -11,8 +10,7 @@ const OrgLayout = () => {
   useEffect(() => {
     if (orgId) setOrgId(orgId);
   }, [orgId]);
-  const { organizations, isLoadingOrganizations } = useOrganizations();
-  if (isLoadingOrganizations) return <Spinner />;
+  const { organizations } = useOrganizations();
   const isExist = organizations?.data.find((org) => org.id === orgId);
   if (!isExist) return <OrganizationPage />;
   return <Outlet />;
