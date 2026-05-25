@@ -12,6 +12,9 @@
       ],
       "@repo/schemas": [
         "../../packages/schemas/src"
+      ],
+      "@repo/database": [
+        "../../packages/database/src"
       ]
     }
   },
@@ -21,6 +24,9 @@
     },
     {
       "path": "../../packages/constants"
+    },
+    {
+      "path": "../../packages/database"
     }
   ],
   "exclude": [

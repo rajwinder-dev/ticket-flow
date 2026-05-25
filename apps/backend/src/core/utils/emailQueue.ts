@@ -26,7 +26,7 @@ export async function disptachEmail(data: {
 
     return job.id;
   } catch (error) {
-    console.error(`Failed to push job to BullMQ: ${error?.message}`);
+    console.error(`Failed to push job to BullMQ: ${error}`);
     throw error;
   }
 }

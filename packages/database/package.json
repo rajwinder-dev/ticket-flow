@@ -1,0 +1,32 @@
+{
+  "name": "@repo/database",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -w",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:push": "pnpm prisma generate && pnpm prisma db push",
+    "db:clear": "ts-node prisma/seed.ts --clear",
+    "db:seedAdmin": "ts-node prisma/seed.ts --admin",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "@repo/constants": "workspace:*",
+    "dotenv": "^17.3.1",
+    "prisma": "^7.4.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}
