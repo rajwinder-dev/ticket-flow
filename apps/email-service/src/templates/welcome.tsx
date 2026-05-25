@@ -14,11 +14,8 @@ import {
 import * as React from "react";
 
 void React;
-interface WelcomeEmailProps {
-  userFirstName: string;
-}
 
-export const WelcomeEmail = ({ userFirstName = "there" }: WelcomeEmailProps) => {
+export const WelcomeEmail = ({ userFirstName = "there" }: any) => {
   return (
     <Html>
       <Head />

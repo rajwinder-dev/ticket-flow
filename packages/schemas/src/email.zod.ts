@@ -57,7 +57,7 @@ export const emailJobSchema = z.object({
   to: z.email(),
   subject: z.string().min(1),
   data: z.unknown(),
-  template: z.enum(["invite", "forget-password", "welcome"]),
+  template: z.enum(["invite", "forgetPassword", "resetPassword", "welcome"]),
   organizationId: z.string().optional(),
   isSystemEmail: z.boolean(),
 });

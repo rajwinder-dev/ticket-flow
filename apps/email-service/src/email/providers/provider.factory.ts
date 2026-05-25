@@ -1,7 +1,10 @@
 import { NodemailerConfig, NodeMailerService } from "./nodeMailer.service.js";
 import { ResendConfig, ResendService } from "./resend.service.js";
 
-export function emailProviderFactory(providerType: "RESEND" | "SMTP", credentials: unknown) {
+export function emailProviderFactory(
+  providerType: "RESEND" | "SMTP" | "MAILTRAP",
+  credentials: unknown,
+) {
   switch (providerType) {
     case "SMTP":
       return new NodeMailerService(credentials as NodemailerConfig);

@@ -1,5 +1,6 @@
 import { JSX } from "react";
-import { EncryptionType } from "../crypto";
+import { ProviderType } from "@repo/database";
+import { JsonValue } from "../../../../packages/database/src/generated/internal/prismaNamespace";
 
 export type sendEmailService = {
   to: string;
@@ -9,8 +10,8 @@ export type sendEmailService = {
 };
 
 export type providerData = {
-  credentials: EncryptionType;
-  providerType: "SMTP" | "RESEND";
+  credentials: JsonValue;
+  providerType: ProviderType;
   fromEmail: string;
 };
 

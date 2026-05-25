@@ -12,17 +12,12 @@ import {
 
 import * as React from "react";
 void React;
-interface InviteEmailProps {
-  invitedByUsername: string;
-  organization: string;
-  inviteLink: string;
-}
 
 export const InviteEmail = ({
   invitedByUsername = "Jane Doe",
   organization = "Marketing",
   inviteLink = "https://example.com/join",
-}: InviteEmailProps) => (
+}: any) => (
   <Html>
     <Head />
     <Preview>Join {organization} </Preview>

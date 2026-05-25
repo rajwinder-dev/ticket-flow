@@ -12,13 +12,6 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 void React;
-interface NewMemberNotificationProps {
-  ownerName: string;
-  newMemberName: string;
-  newMemberEmail: string;
-  organizationName: string;
-  manageMembersUrl: string;
-}
 
 export const NewMemberNotificationEmail = ({
   ownerName = "Admin",
@@ -26,7 +19,7 @@ export const NewMemberNotificationEmail = ({
   newMemberEmail = "john@example.com",
   organizationName = "Marketing",
   manageMembersUrl = "https://example.com/dashboard/members",
-}: NewMemberNotificationProps) => (
+}: any) => (
   <Html>
     <Head />
     <Preview>

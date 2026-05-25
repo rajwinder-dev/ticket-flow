@@ -1,7 +1,8 @@
 import { render } from "@react-email/render";
-import { decrypt, EncryptionType } from "./../crypto.js";
+import { decrypt } from "./../crypto.js";
 import { providerData, sendEmailService, sendSystemEmailService } from "./email.types.js";
 import { emailProviderFactory } from "./providers/provider.factory.js";
+import { cryptoType } from "@repo/schemas";
 export class EmailService {
   static sendEmail = async ({ to, subject, jsx, providers }: sendEmailService) => {
     const html = await render(jsx);
@@ -20,7 +21,6 @@ export class EmailService {
     const credentials = process.env.EMAIL;
     const provider = emailProviderFactory(process.env.PROVIDER_TYPE as "SMTP", credentials);
     const html = await render(jsx);
-    // render template
 
     return await provider.sendMail({ to, from: process.env.EMAIL, subject, html });
   };
@@ -37,9 +37,11 @@ export class EmailService {
     emailProvider: providerData,
     { to, subject, html }: { to: string; subject: string; html: string },
   ) => {
-    const credentials = JSON.parse(decrypt(emailProvider?.credentials as EncryptionType));
+    const verifiedCredentials = cryptoType.safeParse(emailProvider.credentials);
+    if (!verifiedCredentials.success) throw new Error("Invalid credentials");
+    const credentials = JSON.parse(decrypt(verifiedCredentials.data));
     const provider = emailProviderFactory(emailProvider.providerType, credentials);
-    // render template
+
     return await provider.sendMail({ to, from: emailProvider.fromEmail, subject, html });
   };
 }
