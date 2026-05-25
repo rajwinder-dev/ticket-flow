@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "tsx watch  --inspect src/server.ts",
     "email:dev": "email dev --dir src/templates/emails",
-    "build": "prisma generate && tsc -b",
+    "build": "tsc -b",
     "start": "prisma migrate deploy && NODE_ENV=production node dist/server.js",
     "migrate:deploy": "prisma migrate deploy",
     "lint": "eslint './src/**/*.{js,ts}'",

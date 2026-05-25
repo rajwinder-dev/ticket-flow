@@ -9,7 +9,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "prisma generate && tsc -b",
     "dev": "tsc -w",
     "db:setup": "tsx ./src/setup-rls-role.ts",
     "db:seed": "tsx prisma/seed.ts",

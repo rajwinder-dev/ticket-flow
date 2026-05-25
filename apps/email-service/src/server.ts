@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Worker, QueueEvents } from "bullmq";
 import IORedis from "ioredis";
 import { EmailQueueInput } from "@repo/schemas";
+import { log } from "@repo/utils";
 const connection = new IORedis({
   host: process.env.REDIS_HOST || "localhost",
   port: Number(process.env.PORT) || 6379,
@@ -10,26 +11,26 @@ const connection = new IORedis({
 
 // Redis connection logs
 connection.on("connect", () => {
-  console.log("Redis connected");
+  log.success("Redis connected");
 });
 
 connection.on("ready", () => {
-  console.log("Redis ready");
+  log.success("Redis ready");
 });
 
-connection.on("error", (err: { message?: string }) => {
-  console.error("Redis error:", err?.message);
+connection.on("error", (err: { message: string }) => {
+  log.error(err?.message);
 });
 
 // Worker
 const worker = new Worker(
   "email-queue",
   async (job) => {
-    console.log(`Processing email job: ${job.id}`);
+    log.info(`Processing email job: ${job.id}`);
 
     const data = job.data as EmailQueueInput;
-    console.log(data);
-    console.log("Sending email...");
+    log.data("QUEUE_INPUT", data);
+    log.info("Sending email...");
     // bsic logic
     // if (isSystem) {
     //   await EmailService.sendSystemEmail({
@@ -68,21 +69,20 @@ const worker = new Worker(
 
 // Worker lifecycle logs
 worker.on("ready", () => {
-  console.log("email service is ready");
+  log.success("email service is ready");
 });
 
 worker.on("active", (job) => {
-  console.log(`Job ${job.id} is active`);
+  log.success(`Job ${job.id} is active`);
 });
 
 worker.on("completed", (job, result) => {
-  console.log(`Job ${job.id} completed`);
-  console.log("Result:", result);
+  log.success(`Job ${job.id} completed`);
 });
 
 worker.on("failed", (job, err) => {
-  console.error(`Job ${job?.id} failed`);
-  console.error(err.message);
+  log.error(`Job ${job?.id} failed`);
+  log.error(err.message);
 });
 
 worker.on("stalled", (jobId) => {
@@ -90,15 +90,15 @@ worker.on("stalled", (jobId) => {
 });
 
 worker.on("error", (err) => {
-  console.error("Worker error:", err);
+  log.error(err.message);
 });
 
 worker.on("closing", () => {
-  console.log("Worker is closing");
+  log.info("Worker is closing");
 });
 
 worker.on("closed", () => {
-  console.log("Worker closed");
+  log.info("Worker closed");
 });
 
 // Queue event listeners
@@ -107,21 +107,21 @@ const queueEvents = new QueueEvents("EmailQueue", {
 });
 
 queueEvents.on("waiting", ({ jobId }) => {
-  console.log(`Job ${jobId} waiting in queue`);
+  log.info(`Job ${jobId} waiting in queue`);
 });
 
 queueEvents.on("completed", ({ jobId }) => {
-  console.log(`Queue event: Job ${jobId} completed`);
+  log.info(`Queue event: Job ${jobId} completed`);
 });
 
 queueEvents.on("failed", ({ jobId, failedReason }) => {
-  console.log(`Queue event: Job ${jobId} failed`);
-  console.log(failedReason);
+  log.info(`Queue event: Job ${jobId} failed`);
+  log.info(failedReason);
 });
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-  console.log("Shutting down worker...");
+  log.info("Shutting down worker...");
 
   await worker.close();
   await queueEvents.close();

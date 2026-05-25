@@ -1,7 +1,6 @@
 import { EmailQueueInput, UpdateEmailProviderInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
-import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto.js";
-import { emailProviderFactory } from "./providers/provider.factory.js";
+import { encrypt } from "../../core/utils/crypto.js";
 import { prisma, ProviderType } from "@repo/database";
 import { emailQueuePush } from "../../core/utils/emailQueue.js";
 export class EmailService {
@@ -83,7 +82,6 @@ export class EmailService {
     { credentials, providerType, fromEmail }: UpdateEmailProviderInput,
   ) => {
     const encryptCredentials = encrypt(JSON.stringify(credentials));
-    await this.verifyProvider(userEmail, providerType, credentials);
     console.log(id, organizationId);
     return await prisma.emailProvider.update({
       where: {
@@ -105,22 +103,5 @@ export class EmailService {
         organizationId,
       },
     });
-  };
-  static verifyProvider = async (
-    email: string,
-    providerType: ProviderType,
-    credentials: unknown,
-  ) => {
-    const provider = emailProviderFactory(providerType, credentials);
-    return await provider.verify(email);
-  };
-  static sendEmailLogic = async (
-    emailProvider: EmailProvider,
-    { to, subject, html }: { to: string; subject: string; html: string },
-  ) => {
-    const credentials = JSON.parse(decrypt(emailProvider?.credentials as EncryptionType));
-    const provider = emailProviderFactory(emailProvider.providerType, credentials);
-    // render template
-    return await provider.sendMail({ to, from: emailProvider.fromEmail, subject, html });
   };
 }
