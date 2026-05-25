@@ -1,9 +1,8 @@
-import { JSX } from "react";
-
 export type sendEmailService = {
   organizationId: string;
   to: string;
   subject: string;
-  jsx: JSX.Element;
+  template: string;
+  data: unknown;
 };
 export type sendSystemEmailService = Omit<sendEmailService, "organizationId">;

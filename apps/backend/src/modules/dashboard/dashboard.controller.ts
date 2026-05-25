@@ -1,10 +1,10 @@
 import { recentTicketSchema, statusCountsSchema } from "@repo/schemas";
 import { startOfWeek } from "date-fns";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { dashboardService } from "./dashboard.service.js";
 import z from "zod";
+import { getTenantClient } from "@repo/database";
 
 export class dashboardController {
   static getSummary = catchAsync(async (req, res, _next) => {

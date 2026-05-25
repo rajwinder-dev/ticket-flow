@@ -3,10 +3,10 @@ import { CreateOrganizationInput } from "@repo/schemas";
 import { addDays } from "date-fns";
 import { env } from "../../config/env.js";
 import { appError } from "../../core/utils/appError.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import { readableId } from "../../core/utils/utils.js";
 import { ActivityService } from "../activity/activity.service.js";
 import { TokenService } from "../token/token.service.js";
+import { prisma } from "@repo/database";
 
 export class OrganizationService {
   static create = async (userId: string, input: CreateOrganizationInput) => {

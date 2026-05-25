@@ -8,9 +8,9 @@ import {
 import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { QueueService } from "./queue.service.js";
+import { prisma } from "@repo/database";
 
 export class QueueController {
   static createQueue = catchAsync(async (req, res, _next) => {

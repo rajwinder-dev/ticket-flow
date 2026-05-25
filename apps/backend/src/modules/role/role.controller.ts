@@ -1,10 +1,9 @@
 import { CreateRoleInput, UpdateRoleInput } from "@repo/schemas";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import HandleFactory from "../../core/utils/handlerFactory.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { RoleService } from "./role.service.js";
-import { Prisma } from "../../generated/client.js";
+import { prisma, Prisma } from "@repo/database";
 
 export class roleController {
   private static handler = new HandleFactory<Prisma.RoleUncheckedCreateInput>(prisma.role);

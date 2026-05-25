@@ -1,12 +1,12 @@
 import { CreateEmailProviderInput, CreateSmtpInput, emailProviderSchema } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { EmailService } from "./email.service.js";
 import { ResendService } from "./providers/resend.service.js";
 import z from "zod";
-import { disptachEmail } from "../../core/utils/emailQueue.js";
+import { emailQueuePush } from "../../core/utils/emailQueue.js";
+import { prisma } from "@repo/database";
 
 export class EmailController {
   static createProvider = catchAsync(async (req, res, _next) => {
@@ -64,22 +64,13 @@ export class EmailController {
     response(res, null, 200);
   });
   static testEmail = catchAsync(async (req, res, _next) => {
-    await disptachEmail({
-      jobType: "email",
+    await EmailService.queueEmail({
       to: "test@gmail.com",
       subject: "this is test email",
-      organizationId: "test-id",
       template: "welcome",
-      data: {
-        userFirstName: "test",
-      },
+      data: { userFirstName: "rajwinder" },
+      isSystemEmail: true,
     });
-    // await EmailService.sendEmail({
-    //   organizationId: req.organization.id,
-    //   to: req.user.email,
-    //   subject: "this is test email",
-    //   jsx: WelcomeEmail({ userFirstName: "rajwinder" }),
-    // });
 
     response(res, { data: "email sent success" }, 200);
   });

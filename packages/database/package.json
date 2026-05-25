@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -w",
+    "db:setup": "tsx ./src/setup-rls-role.ts",
     "db:seed": "tsx prisma/seed.ts",
     "db:push": "pnpm prisma generate && pnpm prisma db push",
     "db:clear": "ts-node prisma/seed.ts --clear",

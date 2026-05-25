@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParsedQs } from "qs";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { prisma } from "../../core/utils/prismaClient.js";
+import { prisma } from "@repo/database";
 import { ActivityLogService } from "./activity.types.js";
 
 export class ActivityService {

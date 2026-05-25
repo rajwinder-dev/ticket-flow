@@ -52,6 +52,17 @@ export const emailProviderSchema = z.object({
   priority: z.number(),
 });
 
+export const emailJobSchema = z.object({
+  jobType: z.literal("email"),
+  to: z.email(),
+  subject: z.string().min(1),
+  data: z.unknown(),
+  template: z.enum(["invite", "forget-password", "welcome"]),
+  organizationId: z.string().optional(),
+  isSystemEmail: z.boolean(),
+});
+
+export type EmailQueueInput = z.infer<typeof emailJobSchema>;
 export type EmailProviderSchema = z.infer<typeof emailProviderSchema>;
 // --- Inferred Types ---
 export type CreateEmailProviderInput = z.infer<typeof createEmailProviderInput.bodySchema>;

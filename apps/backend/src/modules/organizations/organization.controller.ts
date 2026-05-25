@@ -15,8 +15,7 @@ import InviteEmail from "../../templates/emails/InviteEmail.js";
 import { EmailService } from "../email/email.service.js";
 import { TokenService } from "../token/token.service.js";
 import { OrganizationService } from "./organization.service.js";
-import { Prisma } from "../../generated/client.js";
-import { prisma } from "@repo/database";
+import { prisma, Prisma } from "@repo/database";
 export class OrganizationController {
   private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,
@@ -92,15 +91,16 @@ export class OrganizationController {
       email,
       roleId,
     });
-    await EmailService.sendSystemEmail({
-      // organizationId: req.organization.id,
+    await EmailService.queueEmail({
       to: email,
       subject: "Invite Email to our organizations",
-      jsx: InviteEmail({
+      template: "invite",
+      data: {
         invitedByUsername: req.user.username,
         organization: req.organization.name,
         inviteLink: url,
-      }),
+      },
+      isSystemEmail: false,
     });
     response(res, { message: "Invite Sent successfully" });
   });

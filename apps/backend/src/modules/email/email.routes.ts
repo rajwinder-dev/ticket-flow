@@ -7,7 +7,6 @@ import { EmailController } from "./email.controller.js";
 const emailRouter: Router = express.Router();
 
 emailRouter.get("/test", EmailController.testEmail);
-emailRouter.post("/webhook/:orgId", EmailController.webHook);
 emailRouter.use(
   authMiddleware.protectedRoute,
   authMiddleware.tenant,

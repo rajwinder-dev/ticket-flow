@@ -1,38 +1,29 @@
-import { render } from "@react-email/render";
-import { CreateEmailProviderInput, UpdateEmailProviderInput } from "@repo/schemas";
-import { env } from "../../config/env.js";
+import { EmailQueueInput, UpdateEmailProviderInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
 import { decrypt, encrypt, EncryptionType } from "../../core/utils/crypto.js";
-import { prisma } from "../../core/utils/prismaClient.js";
-import { EmailConfigService } from "./email-config.service.js";
-import { sendEmailService, sendSystemEmailService } from "./email.types.js";
 import { emailProviderFactory } from "./providers/provider.factory.js";
-import { ProviderType } from "../../generated/enums.js";
-import { EmailProvider } from "../../generated/client.js";
-import { UpdateEmailOptions } from "resend";
+import { prisma, ProviderType } from "@repo/database";
+import { emailQueuePush } from "../../core/utils/emailQueue.js";
 export class EmailService {
-  static sendEmail = async ({ organizationId, to, subject, jsx }: sendEmailService) => {
-    const html = await render(jsx);
-    const providers = await EmailConfigService.getEmailCredentials(organizationId);
-    for (const provider of providers) {
-      try {
-        return await this.sendEmailLogic(provider, { to, subject, html });
-      } catch (err) {
-        console.error(`Provider ${provider.providerType} failed:`, err);
-      }
-    }
-    throw new appError("All email providers failed", 500, "EMAIL_FAILED");
+  static queueEmail = async ({
+    organizationId,
+    to,
+    subject,
+    template,
+    data,
+    isSystemEmail,
+  }: Omit<EmailQueueInput, "jobType">) => {
+    return await emailQueuePush({
+      organizationId,
+      to,
+      subject,
+      template,
+      data,
+      jobType: "email",
+      isSystemEmail,
+    });
   };
-  static sendSystemEmail = async ({ to, subject, jsx }: sendSystemEmailService) => {
-    if (!env.email.providerType || !env.email.from)
-      throw new appError("email credentials not defined in env", 404, "NOT_FOUND");
-    const credentials = env.email;
-    const provider = emailProviderFactory(env.email.providerType as ProviderType, credentials);
-    const html = await render(jsx);
-    // render template
 
-    return await provider.sendMail({ to, from: env.email.from, subject, html });
-  };
   static getEmailProviders = async (organizationId: string) => {
     const providers = await prisma.emailProvider.findMany({
       where: {

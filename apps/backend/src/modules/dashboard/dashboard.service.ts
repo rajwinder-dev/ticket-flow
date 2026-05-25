@@ -1,5 +1,4 @@
-import { getTenantClient } from "../../core/utils/prismaClient.js";
-import { TicketStatus } from "../../generated/enums.js";
+import { getTenantClient, TicketStatus } from "@repo/database";
 
 export class dashboardService {
   static ticketSummary = async (organizationId: string) => {

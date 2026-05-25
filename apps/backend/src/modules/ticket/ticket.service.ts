@@ -3,11 +3,17 @@ import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@repo/sche
 import { ParsedQs } from "qs";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
-import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
+import {
+  getTenantClient,
+  prisma,
+  Priority,
+  priority,
+  TicketAction,
+  TicketStatus,
+} from "@repo/database";
 import { readableId } from "../../core/utils/utils.js";
 import { ActivityService } from "../activity/activity.service.js";
 import { CustomerService } from "../customer/customer.service.js";
-import { Priority, priority, TicketAction, TicketStatus } from "../../generated/client.js";
 import { QueueService } from "../queue/queue.service.js";
 import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
 

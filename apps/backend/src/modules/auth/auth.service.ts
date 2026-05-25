@@ -1,4 +1,5 @@
-import { prisma } from "../../core/utils/prismaClient.js";
+import { prisma } from "@repo/database";
+
 export default class AuthService {
   static async getPermissions(userId: string, organizationId: string) {
     const permissions = await prisma.membership.findUnique({

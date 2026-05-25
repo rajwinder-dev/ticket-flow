@@ -3,10 +3,10 @@ import sanitizeHtml from "sanitize-html";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import { decrypt, EncryptionType } from "../../core/utils/crypto.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
 import { ResendConfig, ResendService } from "../email/providers/resend.service.js";
 import { TicketService } from "../ticket/ticket.service.js";
+import { prisma } from "@repo/database";
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {

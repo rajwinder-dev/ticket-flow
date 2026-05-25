@@ -1,8 +1,12 @@
-import { prisma } from "../../core/utils/prismaClient.js";
+import { prisma } from "@repo/database";
 import { ActivityService } from "../activity/activity.service.js";
 
 export class CustomerService {
-  static createCustomerIdentity = async (email: string, organizationId: string, displayName?: string) => {
+  static createCustomerIdentity = async (
+    email: string,
+    organizationId: string,
+    displayName?: string,
+  ) => {
     const customerName = displayName || email.split("@")[0];
     const customerData = await prisma.customer.upsert({
       where: {

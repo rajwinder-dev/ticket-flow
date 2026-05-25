@@ -1,8 +1,7 @@
 import "dotenv/config";
-import { prisma } from "@repo/database";
 import { Worker, QueueEvents } from "bullmq";
 import IORedis from "ioredis";
-import { providerData } from "./email/email.types";
+import { EmailQueueInput } from "@repo/schemas";
 const connection = new IORedis({
   host: process.env.REDIS_HOST || "localhost",
   port: Number(process.env.PORT) || 6379,
@@ -28,24 +27,9 @@ const worker = new Worker(
   async (job) => {
     console.log(`Processing email job: ${job.id}`);
 
-    const data = job.data as {
-      orgId: string;
-      to: string;
-      subject: string;
-      data: unknown;
-      template: string;
-      providertype: "SMTP" | "RESEND";
-      providers: providerData[];
-      isSystem?: boolean;
-    };
+    const data = job.data as EmailQueueInput;
     console.log(data);
     console.log("Sending email...");
-    const userData = prisma.emailProvider.findMany({
-      where: {
-        organizationId: data.orgId,
-      },
-    });
-    console.log(userData);
     // bsic logic
     // if (isSystem) {
     //   await EmailService.sendSystemEmail({

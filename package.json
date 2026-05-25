@@ -13,12 +13,12 @@
     "build": "pnpm run -r build",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
-    "db:push": "pnpm --filter backend db:push",
-    "db:clear": "pnpm --filter backend db:clear",
-    "db:seed": "pnpm --filter backend db:seed",
-    "db:migrate": "pnpm --filter backend db:migrate",
-    "db:generate": "pnpm --filter backend db:generate",
-    "db:setup": "pnpm --filter backend db:setup"
+    "db:push": "pnpm --filter database db:push",
+    "db:clear": "pnpm --filter database db:clear",
+    "db:seed": "pnpm --filter database db:seed",
+    "db:migrate": "pnpm --filter database db:migrate",
+    "db:generate": "pnpm --filter database db:generate",
+    "db:setup": "pnpm --filter database db:setup"
   },
   "engines": {
     "node": "=20",

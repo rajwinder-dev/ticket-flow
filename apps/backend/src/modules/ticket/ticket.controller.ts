@@ -14,7 +14,7 @@ import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { getTenantClient, prisma } from "../../core/utils/prismaClient.js";
+import { getTenantClient, prisma } from "@repo/database";
 import response from "../../core/utils/response.js";
 import { TicketService } from "./ticket.service.js";
 

@@ -1,7 +1,7 @@
 import { UpdateMyDetailsInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import { ActivityService } from "../activity/activity.service.js";
+import { prisma } from "@repo/database";
 
 export class UserService {
   static getDetails = async (userId: string) => {
@@ -34,8 +34,8 @@ export class UserService {
     });
     return updatedUser;
   };
-  static checkExist = async ({email, username}: {email: string; username: string}) => {
-        const existingUsers = await prisma.user.findMany({
+  static checkExist = async ({ email, username }: { email: string; username: string }) => {
+    const existingUsers = await prisma.user.findMany({
       where: {
         OR: [{ email }, { username }],
       },
@@ -51,6 +51,6 @@ export class UserService {
       if (user.email === email) conflicts.push("email");
       if (user.username === username) conflicts.push("username");
     }
-      return conflicts;
-  }
+    return conflicts;
+  };
 }

@@ -1,4 +1,5 @@
 import { Queue } from "bullmq";
+import { EmailQueueInput } from "@repo/schemas";
 
 const emailQueue = new Queue("email-queue", {
   connection: {
@@ -7,14 +8,7 @@ const emailQueue = new Queue("email-queue", {
   },
 });
 
-export async function disptachEmail(data: {
-  jobType: "email";
-  to: string;
-  subject: string;
-  data: unknown;
-  template: string;
-  organizationId: string;
-}) {
+export async function emailQueuePush(data: EmailQueueInput) {
   try {
     const job = await emailQueue.add(data.jobType, data, {
       attempts: 3,

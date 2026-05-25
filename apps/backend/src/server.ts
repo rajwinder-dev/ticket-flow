@@ -5,7 +5,7 @@ import { devMode } from "./config/appConfig.js";
 import { env } from "./config/env.js";
 import { log } from "./core/helper/log.js";
 import { connectUntilSuccess } from "./core/utils/dbConnect.js";
-import { prisma } from "./core/utils/prismaClient.js";
+import { prisma } from "@repo/database";
 
 const port = Number(env.port);
 export const server = http.createServer(app);

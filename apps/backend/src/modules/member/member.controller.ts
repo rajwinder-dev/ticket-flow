@@ -2,8 +2,8 @@ import { ChangeMemberQueueInput, ChangeMemberRoleInput, memberSchemaResponse } f
 import z from "zod";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
+import { prisma } from "@repo/database";
 
 export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {

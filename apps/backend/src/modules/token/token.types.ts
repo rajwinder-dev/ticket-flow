@@ -1,8 +1,8 @@
-import { TokenType } from "../../generated/client.js";
+import { TokenType } from "@repo/database";
 
 export interface TokenDataInput {
   email: string;
-  createdBy: string
+  createdBy: string;
   type: TokenType;
   userId?: string;
   roleId?: string;

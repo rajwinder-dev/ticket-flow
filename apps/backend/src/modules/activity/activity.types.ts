@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { ActorType, EntryType, LogSeverity } from "../../generated/enums.js";
-
+import { ActorType, EntryType, LogSeverity } from "@repo/database";
 
 export interface ActivityLogService {
   organizationId?: string;

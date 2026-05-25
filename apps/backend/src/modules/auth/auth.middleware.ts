@@ -2,9 +2,9 @@ import { PermissionAction, PermissionModule } from "@repo/schemas";
 import { z } from "zod";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { prisma } from "../../core/utils/prismaClient.js";
 import { auth } from "../../lib/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
+import { prisma } from "@repo/database";
 
 export class authMiddleware {
   static protectedRoute = catchAsync(async (req, _res, next) => {
