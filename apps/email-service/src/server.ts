@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { prisma } from "@repo/database";
 import { Worker, QueueEvents } from "bullmq";
 import IORedis from "ioredis";
 import { providerData } from "./email/email.types";
@@ -27,7 +28,8 @@ const worker = new Worker(
   async (job) => {
     console.log(`Processing email job: ${job.id}`);
 
-    const   data = job.data as {
+    const data = job.data as {
+      orgId: string;
       to: string;
       subject: string;
       data: unknown;
@@ -36,9 +38,14 @@ const worker = new Worker(
       providers: providerData[];
       isSystem?: boolean;
     };
-    console.log(data)
+    console.log(data);
     console.log("Sending email...");
-    
+    const userData = prisma.emailProvider.findMany({
+      where: {
+        organizationId: data.orgId,
+      },
+    });
+    console.log(userData);
     // bsic logic
     // if (isSystem) {
     //   await EmailService.sendSystemEmail({
@@ -54,7 +61,7 @@ const worker = new Worker(
     //     providers,
     //   });
     // }
-      
+
     // Simulate email sending
     await new Promise((resolve) => setTimeout(resolve, 1000));
 

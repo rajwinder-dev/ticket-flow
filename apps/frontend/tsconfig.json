@@ -1,14 +1,33 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
   "compilerOptions": {
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     // "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@repo/constants": ["../../packages/constants/src"],
-      "@repo/schemas": ["../../packages/schemas/src"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@repo/constants": [
+        "../../packages/constants/src"
+      ],
+      "@repo/schemas": [
+        "../../packages/schemas/src"
+      ],
+      "@repo/database": [
+        "../../packages/database/src"
+      ],
+      "@repo/utils": [
+        "../../packages/utils/src"
+      ]
     }
   }
 }

@@ -9,6 +9,12 @@
       "path": "packages/schemas"
     },
     {
+      "path": "packages/utils"
+    },
+    {
+      "path": "packages/database"
+    },
+    {
       "path": "apps/frontend"
     },
     {

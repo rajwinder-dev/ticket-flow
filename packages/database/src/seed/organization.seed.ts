@@ -1,7 +1,7 @@
 import { permissions } from "@repo/constants";
 import { OrganizationSchemaResponse } from "@repo/schemas";
-import { log } from "../core/helper/log.js";
-import { prisma } from "../core/utils/prismaClient.js";
+import { log } from "@repo/utils";
+import { prisma } from "../prismaClient.js";
 import { Organization, User } from "../generated/client.js";
 
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {

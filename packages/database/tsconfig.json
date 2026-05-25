@@ -5,7 +5,21 @@
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "composite": true,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "@repo/constants": [
+        "../../packages/constants/src"
+      ],
+      "@repo/schemas": [
+        "../../packages/schemas/src"
+      ],
+      "@repo/database": [
+        "../../packages/database/src"
+      ],
+      "@repo/utils": [
+        "../../packages/utils/src"
+      ]
+    },
   },
   "include": [
     "src/**/*"

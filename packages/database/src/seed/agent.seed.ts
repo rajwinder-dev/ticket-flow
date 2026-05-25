@@ -1,5 +1,5 @@
-import { log } from "../core/helper/log.js";
-import { prisma } from "../core/utils/prismaClient.js";
+import { log } from "@repo/utils";
+import { prisma } from "@repo/database";
 
 export async function seedAgents() {
   log.info(`seeding agents to unique queues.`);

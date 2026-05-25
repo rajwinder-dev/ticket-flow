@@ -13,8 +13,11 @@
       "@repo/schemas": [
         "../../packages/schemas/src"
       ],
-      "@prisma/client": [
-        "../backend/src/generated/index.d.ts"
+      "@repo/database": [
+        "../../packages/database/src"
+      ],
+      "@repo/utils": [
+        "../../packages/utils/src"
       ]
     }
   },
@@ -24,6 +27,12 @@
     },
     {
       "path": "../../packages/constants"
+    },
+    {
+      "path": "../../packages/database"
+    },
+    {
+      "path": "../../packages/utils"
     }
   ],
   "exclude": [

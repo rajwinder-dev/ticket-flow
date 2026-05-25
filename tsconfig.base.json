@@ -3,20 +3,26 @@
     "strict": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    // "baseUrl": ".",
-    // "paths": {
-    //   "@repo/constants": ["packages/constants/src/index.ts"],
-    //   "@repo/schemas": ["packages/schemas/src/index.ts"]
-    // },
-
+    "paths": {
+      "@repo/constants": [
+        "./packages/constants/src"
+      ],
+      "@repo/schemas": [
+        "./packages/schemas/src"
+      ],
+      "@repo/database": [
+        "./packages/database/src"
+      ],
+      "@repo/utils": [
+        "./packages/utils/src"
+      ],
+    },
     "target": "ES2022",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,            // Recommended to avoid type errors in node_modules
+    "skipLibCheck": true, // Recommended to avoid type errors in node_modules
     "composite": true,
-    
   }
-
 }

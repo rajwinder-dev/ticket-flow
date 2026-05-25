@@ -19,9 +19,12 @@
     "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@repo/constants": "workspace:*",
+    "@repo/schemas": "workspace:*",
+    "@repo/utils": "workspace:*",
     "dotenv": "^17.3.1",
     "prisma": "^7.4.2",
     "zod": "^4.3.6"

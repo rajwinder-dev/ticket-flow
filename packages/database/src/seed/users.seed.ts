@@ -1,8 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { log } from "../core/helper/log.js";
-import { prisma } from "../core/utils/prismaClient.js";
-import { readableId } from "../core/utils/utils.js";
-import { BcryptService } from "../modules/auth/bcrypt.service.js";
+import { log } from "@repo/utils";
+import { prisma } from "../prismaClient.js";
 import { Prisma } from "../generated/client.js";
 
 /**
@@ -18,22 +16,21 @@ export async function seedUsers(count: number = 50) {
   while (users.length < count) {
     const email = faker.internet.email().toLocaleLowerCase();
     if (emails.has(email)) continue;
-    users.push({
-      email,
-      code: readableId("USR"),
-      phoneNo: faker.phone.number(),
-      username: faker.internet.userName(),
-      passwordHash: "", // temp placeholder
-    });
+    // users.push({
+    //   email,
+    //   code: "test",
+    //   phoneNo: faker.phone.number(),
+    //   username: faker.internet.userName(),
+    //   passwordHash: "", // temp placeholder
+    // });
   }
 
   const hashedUsers = await Promise.all(
     users.map(async (user) => {
-      const passwordHash = await BcryptService.hashPassword("123456");
-      console.log(passwordHash);
+      console.log();
       return {
         ...user,
-        passwordHash,
+        passwordHash: "password",
       };
     }),
   );

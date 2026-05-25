@@ -15,6 +15,9 @@
       ],
       "@repo/database": [
         "../../packages/database/src"
+      ],
+      "@repo/utils": [
+        "../../packages/utils/src"
       ]
     }
   },
