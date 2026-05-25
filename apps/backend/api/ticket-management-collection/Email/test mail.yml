@@ -8,6 +8,11 @@ http:
   url: "{{url}}/api/v1/email/test"
   auth: inherit
 
+runtime:
+  variables:
+    - name: url
+      value: http://localhost:3000
+
 settings:
   encodeUrl: true
   timeout: 0

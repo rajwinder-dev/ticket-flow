@@ -3,10 +3,10 @@ import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import { prisma } from "../../core/utils/prismaClient.js";
 import response from "../../core/utils/response.js";
-import { WelcomeEmail } from "../../templates/emails/welcome.js";
 import { EmailService } from "./email.service.js";
 import { ResendService } from "./providers/resend.service.js";
 import z from "zod";
+import { disptachEmail } from "../../core/utils/emailQueue.js";
 
 export class EmailController {
   static createProvider = catchAsync(async (req, res, _next) => {
@@ -64,12 +64,23 @@ export class EmailController {
     response(res, null, 200);
   });
   static testEmail = catchAsync(async (req, res, _next) => {
-    await EmailService.sendEmail({
-      organizationId: req.organization.id,
-      to: req.user.email,
+    await disptachEmail({
+      jobType: "email",
+      to: "test@gmail.com",
       subject: "this is test email",
-      jsx: WelcomeEmail({ userFirstName: "rajwinder" }),
+      organizationId: "test-id",
+      template: "welcome",
+      data: {
+        userFirstName: "test",
+      },
     });
-    response(res, { data: "email send success" });
+    // await EmailService.sendEmail({
+    //   organizationId: req.organization.id,
+    //   to: req.user.email,
+    //   subject: "this is test email",
+    //   jsx: WelcomeEmail({ userFirstName: "rajwinder" }),
+    // });
+
+    response(res, { data: "email sent success" }, 200);
   });
 }

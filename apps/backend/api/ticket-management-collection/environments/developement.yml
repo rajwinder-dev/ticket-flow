@@ -1,7 +1,7 @@
 name: developement
 variables:
   - name: url
-    value: http://localhost:4000
+    value: http://localhost:3000
   - secret: true
     name: accessToken
   - name: organizationId
