@@ -9,8 +9,8 @@
   ],
   "private": true,
   "scripts": {
-    "dev": "pnpm -r --parallel dev",
-    "build": "pnpm run -r build",
+    "dev": "turbo dev",
+    "build": "turbo build",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
     "db:push": "pnpm --filter database db:push",
@@ -29,6 +29,7 @@
     "@types/node": "^25.6.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "turbo": "^2.9.14",
     "typescript": "^6.0.2"
   }
 }

@@ -13,15 +13,11 @@ import {
 import * as React from "react";
 
 void React;
-interface ForgotPasswordEmailProps {
-  userName: string;
-  resetLink: string;
-}
 
 export const ForgotPasswordEmail = ({
   userName = "User",
   resetLink = "https://example.com/reset-password",
-}: ForgotPasswordEmailProps) => (
+}: any) => (
   <Html>
     <Head />
     <Preview>Reset your password</Preview>

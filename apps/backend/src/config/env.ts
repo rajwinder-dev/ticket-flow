@@ -10,16 +10,7 @@ export const env = {
   betterAuthSecret: process.env.BETTER_AUTH_SECRET,
   refreshSecret: process.env.REFRESH_SECRET,
   nodeEnv: process.env.NODE_ENV,
-  port: process.env.PORT,
-  email: {
-    providerType: process.env.SYSTEM_EMAIL_PROVIDER,
-    apiKey: process.env.PROVIDER_API_KEY,
-    from: process.env.SMTP_EMAIL,
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+  port: process.env.BACKEND_PORT || 3000,
 };
 
 const required = ["betterAuthSecret", "betterAuthUrl", "encryptionKey"];

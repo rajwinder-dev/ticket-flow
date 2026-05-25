@@ -24,7 +24,7 @@ export const auth = betterAuth({
       await EmailService.queueEmail({
         to: user.email,
         subject: "Reset your password",
-        template: "forget-password",
+        template: "forgetPassword",
         isSystemEmail: true,
         data: {
           userName: user.name!,

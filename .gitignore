@@ -38,3 +38,4 @@ prisma/migrations/*
 !prisma/migrations/.keep
 generated
 .tsbuilderinfo
+.turbo
