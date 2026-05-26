@@ -3,8 +3,9 @@ import { EmailQueueInput } from "@repo/schemas";
 
 const emailQueue = new Queue("email-queue", {
   connection: {
-    host: "localhost",
-    port: 6379,
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+    ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
   },
 });
 
@@ -17,7 +18,6 @@ export async function emailQueuePush(data: EmailQueueInput) {
         delay: 2000,
       },
     });
-
     return job.id;
   } catch (error) {
     console.error(`Failed to push job to BullMQ: ${error}`);

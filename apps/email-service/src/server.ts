@@ -7,8 +7,9 @@ import { prisma } from "@repo/database";
 import { EmailService } from "./email/email.service";
 import { selectTemplate } from "./template.map";
 const connection = new IORedis({
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number(process.env.PORT) || 6379,
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
+  ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
   maxRetriesPerRequest: null,
 });
 
@@ -17,9 +18,6 @@ connection.on("connect", () => {
   log.success("Redis connected");
 });
 
-connection.on("ready", () => {
-  log.success("Redis ready");
-});
 
 connection.on("error", (err: { message: string }) => {
   log.error(err?.message);

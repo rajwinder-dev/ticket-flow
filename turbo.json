@@ -1,6 +1,14 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "globalDependencies": [".env", ".env.local", ".env.production", ".env.development"],
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "REDIS_PORT",
+    "REDIS_HOST",
+    "REDIS_PASSWORD",
+    "ENCRYPTION_KEY",
+    "DATABASE_URL"
+  ],
   "tasks": {
     "build": {
       "outputs": ["dist/**"]
