@@ -1,0 +1,24 @@
+{
+  "name": "@repo/email-providers",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -w"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@types/nodemailer": "^7.0.11",
+    "nodemailer": "^8.0.3",
+    "resend": "^6.9.4",
+    "svix": "^1.89.0"
+  }
+}

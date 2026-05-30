@@ -18,6 +18,9 @@
       ],
       "@repo/utils": [
         "../../packages/utils/src"
+      ],
+      "@repo/email-providers": [
+        "../../packages/email-providers/src"
       ]
     }
   },
@@ -33,6 +36,9 @@
     },
     {
       "path": "../../packages/utils"
+    },
+    {
+      "path": "../../packages/email-providers"
     }
   ],
   "exclude": [

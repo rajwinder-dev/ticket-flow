@@ -1,10 +1,10 @@
 import { Resend } from "resend";
 import { Webhook } from "svix";
-import { EmailService } from "../email.service.js";
+import { EmailQueueService } from "../email-queue.service.js";
 export type ResendConfig = {
   apiKey: string;
 };
-export class ResendService implements EmailService {
+export class ResendService implements EmailQueueService {
   private resend;
   constructor(private config: ResendConfig) {
     this.resend = new Resend(this.config.apiKey);

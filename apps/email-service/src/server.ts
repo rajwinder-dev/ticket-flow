@@ -4,7 +4,7 @@ import IORedis from "ioredis";
 import { EmailQueueInput } from "@repo/schemas";
 import { log } from "@repo/utils";
 import { prisma } from "@repo/database";
-import { EmailService } from "./email/email.service";
+import { EmailQueueService } from "./email/email-queue.service";
 import { selectTemplate } from "./template.map";
 const connection = new IORedis({
   host: process.env.REDIS_HOST,
@@ -17,7 +17,6 @@ const connection = new IORedis({
 connection.on("connect", () => {
   log.success("Redis connected");
 });
-
 
 connection.on("error", (err: { message: string }) => {
   log.error(err?.message);
@@ -32,7 +31,7 @@ const worker = new Worker(
     const jsx = selectTemplate("welcome", data);
 
     if (isSystemEmail) {
-      await EmailService.sendSystemEmail({
+      await EmailQueueService.sendSystemEmail({
         to,
         subject,
         jsx,
@@ -47,7 +46,7 @@ const worker = new Worker(
         },
       });
 
-      await EmailService.sendEmail({
+      await EmailQueueService.sendEmail({
         to,
         subject,
         jsx,

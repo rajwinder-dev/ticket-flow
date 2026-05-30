@@ -3,7 +3,6 @@ import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import response from "../../core/utils/response.js";
 import { EmailService } from "./email.service.js";
-import { ResendService } from "./providers/resend.service.js";
 import z from "zod";
 import { emailQueuePush } from "../../core/utils/emailQueue.js";
 import { prisma } from "@repo/database";

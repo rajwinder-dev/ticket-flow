@@ -1,9 +1,9 @@
 import { render } from "@react-email/render";
-import { decrypt } from "./../crypto.js";
-import { providerData, sendEmailService, sendSystemEmailService } from "./email.types.js";
-import { emailProviderFactory } from "./providers/provider.factory.js";
+import { decrypt } from "../crypto.js";
+import { providerData, sendEmailService, sendSystemEmailService } from "./email-queue.types.js";
+import { emailProviderFactory } from "./email-providers/provider.factory.js";
 import { cryptoType } from "@repo/schemas";
-export class EmailService {
+export class EmailQueueService {
   static sendEmail = async ({ to, subject, jsx, providers }: sendEmailService) => {
     const html = await render(jsx);
     for (const provider of providers) {
@@ -25,14 +25,6 @@ export class EmailService {
     return await provider.sendMail({ to, from: process.env.EMAIL, subject, html });
   };
 
-  static verifyProvider = async (
-    email: string,
-    providerType: "SMTP" | "RESEND",
-    credentials: unknown,
-  ) => {
-    const provider = emailProviderFactory(providerType, credentials);
-    return await provider.verify(email);
-  };
   static sendEmailLogic = async (
     emailProvider: providerData,
     { to, subject, html }: { to: string; subject: string; html: string },

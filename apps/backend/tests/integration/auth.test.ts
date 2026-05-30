@@ -15,10 +15,13 @@ describe("testing auth routes", () => {
   });
 
   it("should fail to login with wrong password", async () => {
-    const res = await api.post("/api/v1/auth/login").send({
-      email: auth.user?.email,
-      password: "wrong_password",
-    });
+    const res = await api
+      .post("/api/v1/auth/login")
+      .send({
+        email: auth.user?.email,
+        password: "wrong_password",
+      })
+      .key("test")
     expect(res.statusCode).toBe(401);
   });
 

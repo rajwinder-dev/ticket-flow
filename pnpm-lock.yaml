@@ -517,6 +517,25 @@ importers:
         specifier: ^6.0.2
         version: 6.0.3
 
+  packages/email-providers:
+    dependencies:
+      '@types/nodemailer':
+        specifier: ^7.0.11
+        version: 7.0.11
+      nodemailer:
+        specifier: ^8.0.3
+        version: 8.0.7
+      resend:
+        specifier: ^6.9.4
+        version: 6.12.3(@react-email/render@2.0.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
+      svix:
+        specifier: ^1.89.0
+        version: 1.94.0
+    devDependencies:
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.3
+
   packages/schemas:
     dependencies:
       '@repo/constants':
