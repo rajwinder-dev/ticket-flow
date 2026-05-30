@@ -4,9 +4,8 @@ import { catchAsync } from "../../core/utils/catchAsync.js";
 import response from "../../core/utils/response.js";
 import { EmailService } from "./email.service.js";
 import z from "zod";
-import { emailQueuePush } from "../../core/utils/emailQueue.js";
 import { prisma } from "@repo/database";
-
+import { ResendService } from "@repo/email-providers";
 export class EmailController {
   static createProvider = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateEmailProviderInput;

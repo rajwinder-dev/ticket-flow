@@ -71,6 +71,8 @@
     "@repo/constants": "workspace:*",
     "@repo/schemas": "workspace:*",
     "@repo/database": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "@repo/email-providers": "workspace:*",
     "bcryptjs": "^3.0.3",
     "better-auth": "^1.6.10",
     "bullmq": "^5.77.1",

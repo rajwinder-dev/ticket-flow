@@ -1,8 +1,8 @@
 import { render } from "@react-email/render";
 import { decrypt } from "../crypto.js";
 import { providerData, sendEmailService, sendSystemEmailService } from "./email-queue.types.js";
-import { emailProviderFactory } from "./email-providers/provider.factory.js";
 import { cryptoType } from "@repo/schemas";
+import { emailProviderFactory } from "@repo/email-providers";
 export class EmailQueueService {
   static sendEmail = async ({ to, subject, jsx, providers }: sendEmailService) => {
     const html = await render(jsx);

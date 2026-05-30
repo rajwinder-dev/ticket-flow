@@ -6,6 +6,7 @@ import { log } from "@repo/utils";
 import { prisma } from "@repo/database";
 import { EmailQueueService } from "./email/email-queue.service";
 import { selectTemplate } from "./template.map";
+import { providerData } from "./email/email-queue.types";
 const connection = new IORedis({
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
@@ -44,8 +45,9 @@ const worker = new Worker(
           credentials: true,
           fromEmail: true,
         },
-      });
-
+      }) as providerData[];
+      if (!providers.length) throw new Error("No email providers found");
+    
       await EmailQueueService.sendEmail({
         to,
         subject,
@@ -55,7 +57,6 @@ const worker = new Worker(
     }
 
     // Simulate email sending
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return {
       success: true,

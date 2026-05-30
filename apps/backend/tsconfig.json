@@ -18,6 +18,9 @@
       ],
       "@repo/utils": [
         "../../packages/utils/src"
+      ],
+      "@repo/email-providers": [
+        "../../packages/email-providers/src/index.ts"
       ]
     }
   },
@@ -30,6 +33,12 @@
     },
     {
       "path": "../../packages/database"
+    },
+    {
+      "path": "../../packages/utils"
+    },
+    {
+      "path": "../../packages/email-providers"
     }
   ],
   "exclude": [
