@@ -3,10 +3,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "./generated/client.js";
 const connectionString = process.env.DATABASE_URL;
 const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
 
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const prisma =  globalForPrisma.prisma || new PrismaClient({ adapter });
 const clientCache = new Map<string, ReturnType<typeof createTenantClient>>();
 
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 function createTenantClient(organizationId: string) {
   return prisma.$extends({
     query: {
@@ -24,7 +26,6 @@ function createTenantClient(organizationId: string) {
 }
 const getTenantClient = (organizationId: string) => {
   if (!clientCache.has(organizationId)) {
-    // Validate UUID here if needed before caching
     clientCache.set(organizationId, createTenantClient(organizationId));
   }
   return clientCache.get(organizationId)!;

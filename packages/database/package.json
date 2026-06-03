@@ -13,10 +13,11 @@
     "dev": "tsc -w",
     "db:setup": "tsx ./src/setup-rls-role.ts",
     "db:seed": "tsx prisma/seed.ts",
-    "db:push": "pnpm prisma generate && pnpm prisma db push",
+    "db:push": " prisma generate && prisma db push",
     "db:clear": "ts-node prisma/seed.ts --clear",
     "db:seedAdmin": "ts-node prisma/seed.ts --admin",
-    "db:migrate": "pnpm prisma migrate dev",
+    "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
+    "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
     "db:generate": "prisma generate"
   },
   "dependencies": {
@@ -27,10 +28,10 @@
     "@repo/schemas": "workspace:*",
     "@repo/utils": "workspace:*",
     "dotenv": "^17.3.1",
-    "prisma": "^7.4.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "prisma": "^7.4.2",
     "typescript": "^6.0.2"
   }
 }

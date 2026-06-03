@@ -11,13 +11,15 @@
   "scripts": {
     "dev": "dotenv -e .env -- turbo dev",
     "build": "dotenv -e .env -- turbo build",
+    "start": "pnpm -r start",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
     "db:push": "pnpm --filter database db:push",
     "db:clear": "pnpm --filter database db:clear",
     "db:seed": "pnpm --filter database db:seed",
-    "db:migrate": "pnpm --filter database db:migrate",
+    "db:deploy": "pnpm --filter database db:deploy",
     "db:generate": "pnpm --filter database db:generate",
+    "db:migrate": "pnpm --filter database db:migrate",
     "db:setup": "pnpm --filter database db:setup"
   },
   "engines": {
@@ -26,11 +28,11 @@
   },
   "packageManager": "pnpm@9.15.9",
   "devDependencies": {
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "dotenv-cli": "^11.0.0",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "^2.9.14",
-    "typescript": "^6.0.2"
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.4",
+    "turbo": "^2.9.16",
+    "typescript": "^6.0.3"
   }
 }

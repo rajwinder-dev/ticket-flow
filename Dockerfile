@@ -14,11 +14,17 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 # required for prisma generate
 ENV DIRECT_URL=postgresql://postgres:postgres@postgres:5433/postgres
-RUN pnpm run -r build
+
+RUN pnpm run db:generate
+RUN pnpm run build 
 
 RUN pnpm deploy --filter=backend --prod /prod/backend
 
 RUN pnpm deploy --filter=frontend --prod /prod/frontend
+
+RUN mkdir -p /prod/backend/prisma \
+  && cp -r packages/database/prisma/* /prod/backend/prisma/
+
 WORKDIR /prod/backend
 
 FROM base AS backend
