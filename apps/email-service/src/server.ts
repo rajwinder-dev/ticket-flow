@@ -7,6 +7,7 @@ import { prisma } from "@repo/database";
 import { EmailQueueService } from "./email/email-queue.service";
 import { selectTemplate } from "./template.map";
 import { providerData } from "./email/email-queue.types";
+
 const connection = new IORedis({
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
@@ -57,14 +58,14 @@ const worker = new Worker(
     }
 
     // Simulate email sending
-
     return {
       success: true,
       email: to,
     };
   },
   {
-    connection,
+    // FIX: Forced Type Cast to bypass the 5.11.0 vs 5.10.1 type mismatch
+    connection: connection as any,
 
     limiter: {
       max: 100,
@@ -111,7 +112,8 @@ worker.on("closed", () => {
 
 // Queue event listeners
 const queueEvents = new QueueEvents("EmailQueue", {
-  connection,
+  // FIX: Forced Type Cast here as well to prevent the compiler from failing downstream
+  connection: connection as any,
 });
 
 queueEvents.on("waiting", ({ jobId }) => {

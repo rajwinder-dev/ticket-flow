@@ -1,6 +1,8 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "globalDependencies": [".env", ".env.local", ".env.production", ".env.development"],
+  "ui": "tui",
+  "globalEnv": ["DIRECT_URL"],
   "globalPassThroughEnv": [
     "NODE_ENV",
     "REDIS_PORT",
@@ -11,13 +13,31 @@
   ],
   "tasks": {
     "build": {
-      "outputs": ["dist/**"]
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
     "dev": {
-      "persistent": true,
+      "dependsOn": ["^db:generate"],
+      "cache": false,
+      "persistent": true
+    },
+
+    "db:generate": {
+      "cache": false
+    },
+
+    "db:migrate": {
+      "cache": false
+    },
+
+    "db:deploy": {
       "cache": false
     }
   }

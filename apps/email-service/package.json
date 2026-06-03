@@ -1,5 +1,5 @@
 {
-  "name": "@repo/email",
+  "name": "@repo/email-service",
   "version": "1.0.0",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -25,7 +25,7 @@
     "dotenv": "^17.3.1",
     "@repo/email-providers": "workspace:*",
     "env": "^0.0.2",
-    "ioredis": "^5.10.1",
+    "ioredis": "^5.11.0",
     "nodemailer": "^8.0.3",
     "react": "^19.2.6",
     "resend": "^6.9.4",

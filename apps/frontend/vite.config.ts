@@ -7,6 +7,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths()],
+  
   clearScreen: false,
   server: {
     proxy: {
@@ -19,4 +20,12 @@ export default defineConfig({
       "@repo/schemas": path.resolve(__dirname, "../../packages/schemas/src"),
     },
   },
+  build: {
+    rolldownOptions: {
+      checks: {
+        invalidAnnotation: false
+      }
+    }
+  }
+  
 });

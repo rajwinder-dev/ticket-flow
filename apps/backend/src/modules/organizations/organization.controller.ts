@@ -11,11 +11,10 @@ import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
 import HandleFactory from "../../core/utils/handlerFactory.js";
 import response from "../../core/utils/response.js";
-import InviteEmail from "../../templates/emails/InviteEmail.js";
-import { EmailService } from "../email/email.service.js";
 import { TokenService } from "../token/token.service.js";
 import { OrganizationService } from "./organization.service.js";
 import { prisma, Prisma } from "@repo/database";
+import { EmailService } from "../email/email.service.js";
 export class OrganizationController {
   private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
     prisma.organization,

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { EmailQueueInput, UpdateEmailProviderInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
 import { encrypt } from "../../core/utils/crypto.js";
