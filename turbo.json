@@ -1,6 +1,5 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "ui": "tui",
   "globalEnv": ["DIRECT_URL"],
   "globalPassThroughEnv": [
     "NODE_ENV",

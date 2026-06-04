@@ -1,18 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "composite": true,
-    "noEmit": false
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": [
     "src/**/*"
-  ],
-  "references": [
-    {
-      "path": "../constants"
-    },
   ]
 }

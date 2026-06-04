@@ -18,7 +18,7 @@
     "db:clear": "pnpm --filter database db:clear",
     "db:seed": "pnpm --filter database db:seed",
     "db:deploy": "pnpm --filter database db:deploy",
-    "db:generate": "pnpm --filter database db:generate",
+    "db:generate": "turbo run  db:generate",
     "db:migrate": "pnpm --filter database db:migrate",
     "db:setup": "pnpm --filter database db:setup"
   },

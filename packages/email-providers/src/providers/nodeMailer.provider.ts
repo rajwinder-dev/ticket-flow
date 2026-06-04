@@ -1,13 +1,8 @@
 import nodemailer, { Transporter } from "nodemailer";
-export type NodemailerConfig = {
-  host: string;
-  port: number;
-  user: string;
-  pass: string;
-};
+import {SmtpSchema} from "@repo/schemas"
 export class NodeMailerService {
   private transporter: Transporter;
-  constructor(private config: NodemailerConfig) {
+  constructor(private config: SmtpSchema) {
     this.transporter = nodemailer.createTransport({
       host: this.config.host,
       port: this.config.port,

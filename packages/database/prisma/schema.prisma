@@ -169,7 +169,6 @@ model Token {
 enum ProviderType {
   SMTP
   RESEND
-  MAILTRAP
 }
 
 // ================================= EMAIL ===================================

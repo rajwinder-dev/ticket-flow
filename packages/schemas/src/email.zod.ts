@@ -2,17 +2,16 @@ import { z } from "zod";
 import { validEmail } from "./helper/zodHelper.js";
 
 // --- Sub-Schemas for Credentials ---
-
+export const smtpSchema = z.object({
+  host: z.string().trim().min(1, "Host is required"),
+  port: z.number().int().positive().max(65535),
+  user: z.string().trim().min(1, "Username is required"),
+  pass: z.string().min(1, "Password is required"),
+});
 export const createSmtpInput = {
   bodySchema: z.object({
     fromEmail: validEmail,
-    credentials: z.object({
-      host: z.string().trim().min(1, "Host is required"),
-      port: z.number().int().positive().max(65535),
-      user: z.string().trim().min(1, "Username is required"),
-      pass: z.string().min(1, "Password is required"),
-    }),
-  }),
+    credentials: smtpSchema  }),
 };
 
 const resendSchema = z.object({
@@ -72,3 +71,4 @@ export type UpdateEmailProviderInput = z.infer<typeof updateEmailProviderInput.b
 export type CreateSmtpInput = z.infer<typeof createSmtpInput.bodySchema>;
 export type ResendSchema = z.infer<typeof resendSchema>;
 export type MailtrapSchema = z.infer<typeof mailtrapSchema>;
+export type SmtpSchema  = z.infer<typeof smtpSchema>;

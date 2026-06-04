@@ -19,6 +19,7 @@ export default defineConfig({
       "@repo/constants": path.resolve(__dirname, "../../packages/constants/src"),
       "@repo/schemas": path.resolve(__dirname, "../../packages/schemas/src"),
     },
+    tsconfigPaths: true
   },
   build: {
     rolldownOptions: {
