@@ -8,16 +8,16 @@
     "jsx": "react-jsx",
     "paths": {
       "@repo/constants": [
-        "../../packages/constants/src"
+        "../../packages/constants/src/index.ts"
       ],
       "@repo/schemas": [
-        "../../packages/schemas/src"
+        "../../packages/schemas/src/index.ts"
       ],
       "@repo/database": [
-        "../../packages/database/src"
+        "../../packages/database/src/index.ts"
       ],
       "@repo/utils": [
-        "../../packages/utils/src"
+        "../../packages/utils/src/index.ts"
       ],
       "@repo/email-providers": [
         "../../packages/email-providers/src/index.ts"

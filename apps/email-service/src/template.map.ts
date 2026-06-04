@@ -1,7 +1,7 @@
 import { JSX } from "react";
-import WelcomeEmail from "./emailTemplates/welcome";
-import InviteEmail from "./emailTemplates/InviteEmail";
-import ForgotPasswordEmail from "./emailTemplates/ForgotPasswordEmail";
+import WelcomeEmail from "./emailTemplates/welcome.js";
+import InviteEmail from "./emailTemplates/InviteEmail.js";
+import ForgotPasswordEmail from "./emailTemplates/ForgotPasswordEmail.js";
 
 const templates = {
   welcome: WelcomeEmail,

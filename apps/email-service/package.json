@@ -2,6 +2,7 @@
   "name": "@repo/email-service",
   "version": "1.0.0",
   "types": "./dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,7 +12,8 @@
   "description": "",
   "scripts": {
     "build": "tsc -b",
-    "dev": "tsx watch  --inspect src/server.ts"
+    "dev": "tsx watch  --inspect src/server.ts",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -24,13 +26,16 @@
     "bullmq": "^5.77.1",
     "dotenv": "^17.3.1",
     "@repo/email-providers": "workspace:*",
+    "@repo/utils": "workspace:*",
     "env": "^0.0.2",
     "ioredis": "^5.11.0",
     "nodemailer": "^8.0.3",
     "react": "^19.2.6",
     "resend": "^6.9.4",
     "svix": "^1.89.0",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "@repo/database": "workspace:*",
+    "@repo/schemas": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^6.0.2"

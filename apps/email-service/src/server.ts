@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { Worker, QueueEvents } from "bullmq";
-import IORedis from "ioredis";
+import  {Redis} from "ioredis";
 import { EmailQueueInput } from "@repo/schemas";
 import { log } from "@repo/utils";
 import { prisma } from "@repo/database";
-import { EmailQueueService } from "./email/email-queue.service";
-import { selectTemplate } from "./template.map";
-import { providerData } from "./email/email-queue.types";
+import { EmailQueueService } from "./email/email-queue.service.js";
+import { selectTemplate } from "./template.map.js";
+import { providerData } from "./email/email-queue.types.js";
 
-const connection = new IORedis({
+const connection = new Redis({
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
   ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
