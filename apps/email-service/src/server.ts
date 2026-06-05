@@ -5,7 +5,7 @@ import { EmailQueueInput } from "@repo/schemas";
 import { log } from "@repo/utils";
 import { prisma } from "@repo/database";
 import { EmailQueueService } from "./email/email-queue.service.js";
-import { selectTemplate } from "./template.map.js";
+import { selectTemplate, templateNames } from "./template.map.js";
 import { providerData } from "./email/email-queue.types.js";
 
 const connection = new Redis({
@@ -29,8 +29,9 @@ const worker = new Worker(
   "email-queue",
   async (job) => {
     log.info(`Processing email job: ${job.id}`);
-    const { isSystemEmail, to, subject, organizationId, data } = job.data as EmailQueueInput;
-    const jsx = selectTemplate("welcome", data);
+    const { isSystemEmail, to, subject, organizationId, data, template } = job.data as EmailQueueInput;
+
+    const jsx = selectTemplate(template, data);
 
     if (isSystemEmail) {
       await EmailQueueService.sendSystemEmail({
@@ -64,7 +65,6 @@ const worker = new Worker(
     };
   },
   {
-    // FIX: Forced Type Cast to bypass the 5.11.0 vs 5.10.1 type mismatch
     connection: connection as any,
 
     limiter: {
