@@ -5,12 +5,29 @@ on:
     workflows: ['CI Pipeline']
 
 jobs:
+  run-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run migrations
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: pnpm run db:deploy
+
   build-and-push:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [frontend, backend]
+        service: [frontend, backend, email-service]
 
     steps:
       - name: Checkout Code

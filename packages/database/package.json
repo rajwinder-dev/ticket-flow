@@ -16,8 +16,8 @@
     "db:push": " prisma generate && prisma db push",
     "db:clear": "ts-node prisma/seed.ts --clear",
     "db:seedAdmin": "ts-node prisma/seed.ts --admin",
-    "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
-    "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate"
   },
   "dependencies": {

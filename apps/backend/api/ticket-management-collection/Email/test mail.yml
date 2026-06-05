@@ -11,7 +11,7 @@ http:
 runtime:
   variables:
     - name: url
-      value: http://localhost:3000
+      value: http://localhost
 
 settings:
   encodeUrl: true
