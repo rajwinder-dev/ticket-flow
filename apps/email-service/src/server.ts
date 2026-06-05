@@ -5,7 +5,7 @@ import { EmailQueueInput } from "@repo/schemas";
 import { log } from "@repo/utils";
 import { prisma } from "@repo/database";
 import { EmailQueueService } from "./email/email-queue.service.js";
-import { selectTemplate, templateNames } from "./template.map.js";
+import { selectTemplate } from "./template.map.js";
 import { providerData } from "./email/email-queue.types.js";
 
 const connection = new Redis({
