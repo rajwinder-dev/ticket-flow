@@ -15,7 +15,7 @@ export const allowedTransitions = {
   IN_PROGRESS: ["RESOLVED", "ON_HOLD"],
   ON_HOLD: ["IN_PROGRESS"],
   RESOLVED: ["CLOSED", "REOPENED"],
-  REOPENED: ["IN_PROGRESS"],
+  REOPENED: ["IN_PROGRESS", "CLOSED"],
   CLOSED: ["REOPENED"],
 };
 

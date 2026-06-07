@@ -39,9 +39,9 @@ export function EventBody({ event }: { event: TicketTransitionSchema }) {
         )}
         {(event.fromAgent || event.toAgent) && (
           <div className="flex flex-wrap items-center gap-1.5">
-            {event.fromAgent?.username && <AgentChip username={event.fromAgent.username} />}
+            {event.fromAgent?.name && <AgentChip username={event.fromAgent.name} />}
             <ArrowRight size="14" />
-            {event.toAgent?.username && <AgentChip username={event.toAgent.username} />}
+            {event.toAgent?.name && <AgentChip username={event.toAgent.name} />}
           </div>
         )}
       </div>

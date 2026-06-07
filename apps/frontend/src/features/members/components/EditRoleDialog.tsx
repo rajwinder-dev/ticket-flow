@@ -33,7 +33,6 @@ const EditRoleDialog = ({ open, onOpenChange, userId, currentRole }: Props) => {
   const { roles } = useRole();
   const { updateRoleMutate, isUpdatingRole } = useMember();
   const [roleId, setRoleId] = useState<string>(currentRole ?? "");
-
   const canSubmit = Boolean(roleId) && !isUpdatingRole;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

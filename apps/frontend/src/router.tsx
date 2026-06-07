@@ -20,6 +20,11 @@ import CustomerPage from "./features/customer/components/CustomerPage";
 import InviteMemberPage from "./features/members/components/InviteMemberPage";
 import ActivityPage from "./features/activity/components/ActivityPage";
 import HomePage from "./features/home/HomePage";
+import SettingsLayout from "./features/setting/pages/SettingLayout";
+import ProfileTab from "./features/setting/components/ProfileTab";
+import OrganizationTab from "./features/setting/components/tabs/OrganizationTab";
+import SecurityTab from "./features/setting/components/tabs/SecurityTab";
+import EmailTab from "./features/setting/components/tabs/GeneralTab";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +81,16 @@ const router = createBrowserRouter([
               { path: "activity", element: <ActivityPage /> },
               { path: "member", element: <MembersPage /> },
               { path: "customer", element: <CustomerPage /> },
+              {
+                path: "setting",
+                element: <SettingsLayout />,
+                children: [
+                  { index: true, element: <ProfileTab /> },
+                  { path: "security", element: <SecurityTab /> },
+                  { path: "organization", element: <OrganizationTab /> },
+                  { path: "email", element: <EmailTab /> },
+                ],
+              },
             ],
           },
         ],

@@ -80,7 +80,7 @@ export const assignTicketInput = {
 };
 const AssignedToUserSchema = z.object({
   id: z.uuid(),
-  username: z.string().min(1),
+  name: z.string().min(1),
 });
 export const escalateTicketInput = {
   bodySchema: z.object({
@@ -158,7 +158,7 @@ export const commentSchemaResponse = z.object({
   comment: z.string(), // keep as-is; includes possible "\n"
   createdAt: z.date(),
   author: z.object({
-    username: z.string(),
+    name: z.string(),
     email: z.email(),
   }),
 });
@@ -184,12 +184,12 @@ export const ticketTranslationSchema = z.object({
     .nullable(),
   fromAgent: z
     .object({
-      username: z.string().nullable(),
+      name: z.string().nullable(),
     })
     .nullable(),
   toAgent: z
     .object({
-      username: z.string().nullable(),
+      name: z.string().nullable(),
     })
     .nullable(),
   fromGroup: z

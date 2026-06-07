@@ -327,7 +327,7 @@ export class QueueService {
       actorId: userId,
       actorType: "USER",
       message: "queue deleted successfully ",
-      event: "queue.update",
+      event: "queue.delete",
       entityId: queueId,
       oldData: exitingQueue,
       newData: deletedQueue,

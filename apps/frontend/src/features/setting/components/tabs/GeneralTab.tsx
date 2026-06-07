@@ -1,7 +1,7 @@
 import { Alert } from "@/components/ui/alert";
 import EmailProviderTable from "../email/EmailProviderTable";
 
-const GeneralTab = () => {
+const EmailTab = () => {
   return (
     <div className="flex flex-col gap-4">
       <EmailProviderTable />
@@ -25,4 +25,4 @@ const GeneralTab = () => {
   );
 };
 
-export default GeneralTab;
+export default EmailTab;

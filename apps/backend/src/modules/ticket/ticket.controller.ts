@@ -159,18 +159,11 @@ export class TicketController {
   static updateStatus = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { status, version } = req.body as UpdateTicketStatusInput;
-    const tenantDB = getTenantClient(req.organization.id)
-    const ticketData = await tenantDB.ticket.findUnique({
-      where: { id: ticketId },
-      select: { status: true },
-    });
-    if (!ticketData) throw new appError("Ticket not found ", 404);
     const data = await TicketService.updateStatus({
       ticketId,
       userId: req.user.id,
       organizationId: req.organization.id,
       nextStatus: status,
-      currentStatus: ticketData.status,
       version,
     });
     response(res, data, 200);

@@ -35,7 +35,7 @@ const TicketComments = () => {
           ticketComments?.data.map((comment) => (
             <div key={comment.id} className="space-y-1 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium">{comment.author.username}</p>
+                <p className="text-sm font-medium">{comment.author.name}</p>
                 <p className="text-muted-foreground text-xs">{formatDateTime(comment.createdAt)}</p>
               </div>
               <p className="text-foreground text-sm">{comment.comment}</p>

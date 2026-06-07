@@ -5,6 +5,7 @@ import { catchAsync } from "../../core/utils/catchAsync.js";
 import response from "../../core/utils/response.js";
 import { normalize } from "../../core/utils/utils.js";
 import { getTenantClient, prisma } from "@repo/database";
+import { CustomerService } from "./customer.service.js";
 
 export class CustomerController {
   static getAllCustomers = catchAsync(async (req, res, _next) => {
@@ -87,18 +88,8 @@ export class CustomerController {
   });
   static createCustomer = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
-    const { name, email } = req.body as CreateCustomerInput;
-    const customer = await prisma.customerIdentity.create({
-      data: {
-        email,
-        customer: {
-          create: {
-            name,
-            organizationId,
-          },
-        },
-      },
-    });
+    const data = req.body as CreateCustomerInput;
+    const customer = await CustomerService.createCustomer({data, organizationId}) 
     response(res, customer, 201);
   });
   static updateCustomer = catchAsync(async (req, res, _next) => {

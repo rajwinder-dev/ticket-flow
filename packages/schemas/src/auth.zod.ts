@@ -11,7 +11,7 @@ const passwordMatchError = {
 export const signupInput = {
   bodySchema: z
     .object({
-      username: z.string().min(2, "Username is too short"),
+      name: z.string().min(2, "name is too short"),
       email: validEmail,
       password: validPassword,
       confirmPassword: z.string(),

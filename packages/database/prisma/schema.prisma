@@ -20,7 +20,6 @@ model User {
   passwordHash      String?
   passwordChangeAt  DateTime?
   avatar            String?
-  username          String?            @unique
   location          String?
   active            Boolean            @default(true)
   isOnboarded       Boolean            @default(false)
@@ -44,11 +43,10 @@ model User {
   queueAgents       QueueAgent[]
   queueGroups       QueueGroup[]
   ticketTransitions TicketTransition[]
-
-  name          String
-  emailVerified Boolean   @default(false)
-  image         String?
-  accounts      Account[]
+  name              String
+  emailVerified     Boolean            @default(false)
+  image             String?
+  accounts          Account[]
 
   @@index([createdBy])
   @@index([active])

@@ -19,6 +19,8 @@ import CreateCustomerFrom from "./CreateCustomerFrom";
 import CustomerTable from "./CustomerTable";
 
 const CustomerPage = () => {
+
+  const [openCustomerForm, setOpenCustomerForm] = useState(false)
   const [search, setSearch] = useState<string | undefined>();
   const [pagination, setPagination] = useState({
     limit: 20,
@@ -35,20 +37,18 @@ const CustomerPage = () => {
         description="MVP view focused on customer details, account health, and ticket
             context."
       >
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" className="ml-auto h-8 gap-1.5 text-xs">
+        <Dialog open={openCustomerForm} onOpenChange={setOpenCustomerForm}>
+            <Button size="sm" className="ml-auto h-8 gap-1.5 text-xs" onClick={() => setOpenCustomerForm(true)}>
               <UserPlus size={13} />
               Create Customer
             </Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create a customer </DialogTitle>
               <DialogDescription>
                 Invite new members to your organization by entering their email address.
               </DialogDescription>
-              <CreateCustomerFrom />
+              <CreateCustomerFrom  setOpen={setOpenCustomerForm}/>
             </DialogHeader>
           </DialogContent>
         </Dialog>

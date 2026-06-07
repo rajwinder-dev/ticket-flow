@@ -55,6 +55,9 @@ export class ActivityService {
         organizationId,
         ...filterOptions.where,
       },
+      orderBy: {
+        createdAt: "desc"
+      },
       skip: offset,
       take: limit,
     });

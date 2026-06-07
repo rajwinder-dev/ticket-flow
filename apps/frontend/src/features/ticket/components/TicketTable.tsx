@@ -219,7 +219,7 @@ const TicketTable = () => {
                     <TicketPriorityCell ticket={ticket} />
                   </TableCell>
                   <TableCell>
-                    <p>{ticket.assignedToUser?.username || "Unassigned"}</p>
+                    <p>{ticket.assignedToUser?.name || "Unassigned"}</p>
                     <p className="text-muted-foreground text-xs">
                       {ticket.queue?.name || "No Queue"}
                     </p>

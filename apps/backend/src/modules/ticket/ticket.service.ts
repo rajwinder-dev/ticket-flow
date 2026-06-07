@@ -16,6 +16,7 @@ import { ActivityService } from "../activity/activity.service.js";
 import { CustomerService } from "../customer/customer.service.js";
 import { QueueService } from "../queue/queue.service.js";
 import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
+import { log } from "@repo/utils";
 
 export class TicketService {
   static createAndAssign = async ({
@@ -180,7 +181,7 @@ export class TicketService {
         assignedToUser: {
           select: {
             email: true,
-            username: true,
+            name: true,
           },
         },
         customer: {
@@ -257,24 +258,36 @@ export class TicketService {
   static updateStatus = async ({
     ticketId,
     organizationId,
-    currentStatus,
     nextStatus,
     version,
     userId,
   }: {
     ticketId: string;
     organizationId: string;
-    currentStatus: TicketStatus;
     nextStatus: TicketStatus;
     version: number;
     userId: string;
   }) => {
-    if (!allowedTransitions[currentStatus].includes(nextStatus)) {
+    const tanentDb = getTenantClient(organizationId);
+
+    const currentData = await tanentDb.ticket.findUnique({
+      where: { id: ticketId },
+      select: {
+        status: true,
+        queueId: true,
+        assignedTo: true,
+      },
+    });
+    if (!currentData) throw new appError("Ticket not found", 404);
+
+    // validate allowed status
+    if (!allowedTransitions[currentData.status].includes(nextStatus)) {
       throw new appError("Invalid transition", 403);
     }
-    const tanentDb = getTenantClient(organizationId);
+
     const ticket = await tanentDb.$transaction(async (tx) => {
-      const updatedTicket = await tx.ticket.updateMany({
+      // update ticket status
+      const updatedTicket = await tx.ticket.updateManyAndReturn({
         where: {
           id: ticketId,
           organizationId,
@@ -287,8 +300,9 @@ export class TicketService {
           },
         },
       });
-      if (updatedTicket.count === 0) {
-        const existTicket = await tanentDb.ticket.findUnique({
+
+      if (updatedTicket.length === 0) {
+        const existTicket = await tx.ticket.findUnique({
           where: { id: ticketId },
           select: { version: true },
         });
@@ -297,11 +311,46 @@ export class TicketService {
             currenVersion: existTicket.version,
           });
       }
+
+      const { queueId, assignedTo } = currentData;
+
+      if (nextStatus === "CLOSED" && queueId && assignedTo) {
+        await tx.queueAgent.update({
+          where: {
+            queueId_agentId_organizationId: {
+              organizationId,
+              agentId: assignedTo,
+              queueId,
+            },
+          },
+          data: {
+            ticketCount: {
+              decrement: 1,
+            },
+          },
+        });
+      }
+      if (nextStatus === "REOPENED" && queueId && assignedTo) {
+        await tx.queueAgent.update({
+          where: {
+            queueId_agentId_organizationId: {
+              organizationId,
+              agentId: assignedTo,
+              queueId,
+            },
+          },
+          data: {
+            ticketCount: {
+              increment: 1,
+            },
+          },
+        });
+      }
       await tx.ticketTransition.create({
         data: {
           ticketId,
           action: "STATUS_CHANGED",
-          fromStatus: currentStatus,
+          fromStatus: currentData?.status,
           toStatus: nextStatus,
           organizationId,
         },
@@ -316,7 +365,7 @@ export class TicketService {
       event: "ticket.update",
       entityId: ticketId,
       entityType: "TICKET",
-      oldData: { status: currentStatus },
+      oldData: { status: currentData.status },
       newData: { status: nextStatus },
     });
     return ticket;
@@ -439,7 +488,7 @@ export class TicketService {
         comment: true,
         createdAt: true,
         id: true,
-        author: { select: { username: true, email: true } },
+        author: { select: { name: true, email: true } },
       },
       orderBy: { createdAt: "asc" },
       take: limit,
@@ -543,7 +592,7 @@ export class TicketService {
     organizationId: string;
     userId: string;
   }) => {
-    const tenantDb = getTenantClient(organizationId)
+    const tenantDb = getTenantClient(organizationId);
     const currentTicket = await tenantDb.ticket.findUnique({
       where: { id: ticketId },
       include: {
@@ -628,7 +677,7 @@ export class TicketService {
     action: TicketAction;
     reason?: string;
   }) => {
-    const tenantDb = getTenantClient(organizationId)
+    const tenantDb = getTenantClient(organizationId);
     const ticketData = await tenantDb.$transaction(async (tx) => {
       const currentTicket = await tx.ticket.findUnique({
         where: { id: ticketId },
@@ -700,7 +749,7 @@ export class TicketService {
     ticketId: string;
   }) => {
     let nextQueue: { id: string; name: string } | null = null;
-    const tenantDb = getTenantClient(organizationId)
+    const tenantDb = getTenantClient(organizationId);
     const queueData = await tenantDb.ticket.findUnique({
       where: {
         id: ticketId,
@@ -787,12 +836,12 @@ export class TicketService {
         },
         fromAgent: {
           select: {
-            username: true,
+            name: true,
           },
         },
         toAgent: {
           select: {
-            username: true,
+            name: true,
           },
         },
         fromGroup: {

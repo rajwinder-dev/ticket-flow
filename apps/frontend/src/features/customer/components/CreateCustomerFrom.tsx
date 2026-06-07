@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -9,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createCustomerInput, type CreateCustomerInput } from "@repo/schemas";
 import useCustomer from "../hooks";
-
-const CreateCustomerFrom = () => {
+interface props {
+  setOpen: (val: boolean) => void
+}
+const CreateCustomerFrom = ({setOpen}: props) => {
   const { createCustomer, isCreatingCustomer } = useCustomer();
   const {
     register,
@@ -22,7 +22,10 @@ const CreateCustomerFrom = () => {
   });
 
   const onSubmit = (data: CreateCustomerInput) => {
-    createCustomer(data, { onSuccess: () => reset() });
+    createCustomer(data, { onSuccess: () => {
+      reset()
+      setOpen(false)
+    } });
   };
 
   return (

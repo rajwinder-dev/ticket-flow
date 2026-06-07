@@ -45,7 +45,7 @@ const ONBOARDING_STEPS = [
   {
     title: "Email Provider",
     description: "Connect your support email to start receiving tickets automatically.",
-    path: "setting",
+    path: "setting/email",
     icon: Mail,
     flag: "hasEmail",
   },

@@ -33,7 +33,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
       {
         email: input.email,
         password: input.password,
-        name: input.username,
+        name: input.name,
       },
       {
         onRequest: () => setIsSigningup(true),
@@ -61,11 +61,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" type="text" placeholder="John Doe" {...register("username")} />
-                {errors.username && (
+                <FieldLabel htmlFor="name">Name</FieldLabel>
+                <Input id="name" type="text" placeholder="John Doe" {...register("name")} />
+                {errors.name && (
                   <FieldDescription className="text-red-500">
-                    {errors.username.message}
+                    {errors.name.message}
                   </FieldDescription>
                 )}
               </Field>

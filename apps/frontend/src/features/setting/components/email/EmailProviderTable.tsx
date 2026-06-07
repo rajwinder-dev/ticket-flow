@@ -49,10 +49,10 @@ export default function EmailProviderTable() {
           </p>
         </div>
         <div className="flex gap-4">
-          <Button onClick={openAddSmtp} size="sm" className="gap-2" variant={"secondary"}>
-            <Plus className="h-4 w-4" />
-            Add smtp
-          </Button>
+          {/* <Button onClick={openAddSmtp} size="sm" className="gap-2" variant={"secondary"}> */}
+          {/*   <Plus className="h-4 w-4" /> */}
+          {/*   Add smtp */}
+          {/* </Button> */}
           <Button onClick={openAdd} size="sm" className="gap-2">
             <Plus className="h-4 w-4" />
             Add Provider

@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { CreateQueueGroupInput, QueueGroupSchemaResponse } from "@repo/schemas";
 import { Controller, useForm } from "react-hook-form";
 import { useQueueGroup } from "../../hooks";
+import { useEffect } from "react";
 
 interface Props {
   editOpen: boolean;
@@ -27,15 +28,18 @@ const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { isDirty },
   } = useForm<CreateQueueGroupInput>({
-    defaultValues: {
-      name: groupData.name,
-      description: groupData.description ?? "",
-      isDefault: groupData.default || false,
-    },
   });
 
+  useEffect(() => {
+    reset({
+      name: groupData.name,
+      isDefault: groupData.default,
+      description: groupData.description ?? "",
+    })
+  }, [groupData])
   const onSubmit = async (data: CreateQueueGroupInput) => {
     updateGroup(
       { id: groupData.id, data },
