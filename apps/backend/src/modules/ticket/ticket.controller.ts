@@ -17,6 +17,8 @@ import { catchAsync } from "../../core/utils/catchAsync.js";
 import { getTenantClient, prisma } from "@repo/database";
 import response from "../../core/utils/response.js";
 import { TicketService } from "./ticket.service.js";
+import { getPrismaClient } from "@prisma/client/runtime/client";
+import { organization } from "better-auth/plugins";
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
@@ -70,7 +72,7 @@ export class TicketController {
         ...filterOptions.where,
       },
       include: {
-        assignedToUser: { select: { id: true, username: true } },
+        assignedToUser: { select: { id: true, name: true } },
         queue: { select: { name: true } },
       },
       take: limit,
@@ -157,7 +159,8 @@ export class TicketController {
   static updateStatus = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { status, version } = req.body as UpdateTicketStatusInput;
-    const ticketData = await prisma.ticket.findUnique({
+    const tenantDB = getTenantClient(req.organization.id)
+    const ticketData = await tenantDB.ticket.findUnique({
       where: { id: ticketId },
       select: { status: true },
     });

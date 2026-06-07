@@ -19,7 +19,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, token }) => {
-      console.log(token);
       const frontendURL = `${env.betterAuthUrl}/reset-password/${token}`;
       await EmailService.queueEmail({
         to: user.email,

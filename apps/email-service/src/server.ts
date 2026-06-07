@@ -110,9 +110,7 @@ worker.on("closed", () => {
   log.info("Worker closed");
 });
 
-// Queue event listeners
 const queueEvents = new QueueEvents("EmailQueue", {
-  // FIX: Forced Type Cast here as well to prevent the compiler from failing downstream
   connection: connection as any,
 });
 

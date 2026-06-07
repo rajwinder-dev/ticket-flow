@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { log } from "@repo/utils";
-import { prisma } from "../prismaClient.js";
-import { Prisma } from "../generated/client.js";
+import { auth } from "../lib/auth.js";
+import { prisma, Prisma } from "@repo/database";
 
 /**
  * Seed users
@@ -18,24 +18,24 @@ export async function seedUsers(count: number = 50) {
     if (emails.has(email)) continue;
     users.push({
       email,
-      code: "test",
-      phoneNo: faker.phone.number(),
       name: faker.internet.userName(),
     });
   }
 
-  const hashedUsers = await Promise.all(
-    users.map(async (user) => {
-      return {
-        ...user,
-        passwordHash: "password",
-      };
-    }),
+   await Promise.all(
+    users.map((user) =>
+      auth.api.signUpEmail({
+        body: {
+          email: user.email,
+          name: user.name, 
+          password: "123456789",
+          
+        },
+      }),
+    ),
   );
-
-  const createdUsers = await prisma.user.createManyAndReturn({
-    data: hashedUsers,
-  });
-  log.success(`Created ${createdUsers.length} users`);
-  return createdUsers;
+  const userData = await prisma.user.findMany()
+  log.success(`Created ${userData.length} users`);
+  return userData;
 }
+

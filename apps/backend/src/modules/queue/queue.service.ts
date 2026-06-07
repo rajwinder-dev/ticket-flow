@@ -279,14 +279,15 @@ export class QueueService {
     organizationId: string;
     userId: string;
   }) => {
-    const exitingQueue = await prisma.queue.findUnique({
+    const tenantdb = getTenantClient(organizationId)
+    const exitingQueue = await tenantdb.queue.findUnique({
       where: { id: queueId },
       select: { active: true },
     });
     if (!exitingQueue) throw new appError("Queue not found", 404, "NOT_FOUND");
     if (!exitingQueue?.active)
       throw new appError("Queue is already deleted", 409, "CONFLICT_ERROR");
-    const activeTickets = await prisma.ticket.count({
+    const activeTickets = await tenantdb.ticket.count({
       where: {
         queueId,
         organizationId,

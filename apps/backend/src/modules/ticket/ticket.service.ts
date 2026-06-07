@@ -354,7 +354,7 @@ export class TicketService {
         },
       });
       if (updatedTicket.count === 0) {
-        const existTicket = await prisma.ticket.findUnique({
+        const existTicket = await tanentDb.ticket.findUnique({
           where: { id: ticketId },
           select: { version: true },
         });
@@ -543,8 +543,9 @@ export class TicketService {
     organizationId: string;
     userId: string;
   }) => {
-    const currentTicket = await prisma.ticket.findUnique({
-      where: { id: ticketId, organizationId },
+    const tenantDb = getTenantClient(organizationId)
+    const currentTicket = await tenantDb.ticket.findUnique({
+      where: { id: ticketId },
       include: {
         queue: {
           include: {
@@ -557,7 +558,6 @@ export class TicketService {
       throw new appError("Invalid Ticket Id", 404, "NOT_FOUND");
     }
     //  find next queue in same group
-    console.log(input.groupId);
     const nextQueues = await prisma.queue.findMany({
       where: {
         queueGroupId: input.groupId || currentTicket.queue.queueGroupId,
@@ -628,7 +628,8 @@ export class TicketService {
     action: TicketAction;
     reason?: string;
   }) => {
-    const ticketData = await prisma.$transaction(async (tx) => {
+    const tenantDb = getTenantClient(organizationId)
+    const ticketData = await tenantDb.$transaction(async (tx) => {
       const currentTicket = await tx.ticket.findUnique({
         where: { id: ticketId },
       });
@@ -699,8 +700,8 @@ export class TicketService {
     ticketId: string;
   }) => {
     let nextQueue: { id: string; name: string } | null = null;
-
-    const queueData = await prisma.ticket.findUnique({
+    const tenantDb = getTenantClient(organizationId)
+    const queueData = await tenantDb.ticket.findUnique({
       where: {
         id: ticketId,
         organizationId,
