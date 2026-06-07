@@ -18,7 +18,9 @@
     "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
     "test": "vitest",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage", 
+    "db:seed": "tsx ./src/seed/seed.ts", 
+    "db:clear": "ts-node ./src/seed/seed.ts --clear"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
