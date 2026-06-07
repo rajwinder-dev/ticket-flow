@@ -45,7 +45,6 @@
     "node_modules",
     "dist",
     "tests",
-    "src/seed"
   ],
   "include": [
     "src/**/*",
