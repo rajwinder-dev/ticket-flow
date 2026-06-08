@@ -80,7 +80,7 @@ const DashboardPage = () => {
                   <div className="text-muted-foreground flex items-center gap-2 text-xs">
                     <span>{ticket.status}</span>
                     <span>-</span>
-                    <span>{ticket.assignedToUser?.username || "Unassigned"}</span>
+                    <span>{ticket.assignedToUser?.name || "Unassigned"}</span>
                   </div>
                 </div>
               ))

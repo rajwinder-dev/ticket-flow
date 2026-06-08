@@ -30,7 +30,7 @@ export class dashboardController {
         status: true,
         assignedToUser: {
           select: {
-            username: true,
+            name: true,
           },
         },
       },

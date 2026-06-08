@@ -9,7 +9,7 @@ export const recentTicketSchema = z.object({
   priority: z.enum(ticketPriority),
   assignedToUser: z
     .object({
-      username: z.string().nullable(),
+      name: z.string().nullable(),
     })
     .optional(),
 });

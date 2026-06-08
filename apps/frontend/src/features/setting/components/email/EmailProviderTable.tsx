@@ -8,15 +8,14 @@ import useEmail from "../../hooks";
 import { DeleteProviderDialog } from "./DeleteProviderDialog";
 import { ProviderFormDialog } from "./ProviderFormDialog";
 import { ProviderTable } from "./ProviderTable";
-import SmtpFormDialog from "../SmtpFormDialog";
 export default function EmailProviderTable() {
   const { deleteProvider } = useEmail();
   const [formOpen, setFormOpen] = useState(false);
-  const [smtpFormOpen, setSmtpFormOpen] = useState(false);
+  // const [smtpFormOpen, setSmtpFormOpen] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [editProvider, setEditProvider] = useState<EmailProviderSchema | null>(null);
-  const [editSmtp, setEditSmtp] = useState<EmailProviderSchema | null>(null);
+  // const [editSmtp, setEditSmtp] = useState<EmailProviderSchema | null>(null);
   function confirmDelete(id: string) {
     setDeleteTarget(id);
   }
@@ -34,10 +33,10 @@ export default function EmailProviderTable() {
     setEditProvider(null);
     setFormOpen(true);
   }
-  function openAddSmtp() {
-    setEditSmtp(null);
-    setSmtpFormOpen(true);
-  }
+  // function openAddSmtp() {
+  //   setEditSmtp(null);
+  //   setSmtpFormOpen(true);
+  // }
   return (
     <Card className="space-y-4 p-6">
       {/* Header */}
@@ -77,7 +76,7 @@ export default function EmailProviderTable() {
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         onConfirm={handleDelete}
       />
-      <SmtpFormDialog open={smtpFormOpen} onOpenChange={setSmtpFormOpen} isEditing={!!editSmtp} />
+      {/* <SmtpFormDialog open={smtpFormOpen} onOpenChange={setSmtpFormOpen} isEditing={!!editSmtp} /> */}
     </Card>
   );
 }

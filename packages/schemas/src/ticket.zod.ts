@@ -137,7 +137,7 @@ export const ticketDetailsSchema = z.object({
   assignedToUser: z
     .object({
       email: z.string().email(),
-      username: z.string(),
+      name: z.string(),
     })
     .nullable(),
   customer: z

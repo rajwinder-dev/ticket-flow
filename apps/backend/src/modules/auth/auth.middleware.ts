@@ -52,7 +52,7 @@ export class authMiddleware {
         },
         user: {
           select: {
-            username: true,
+            name: true,
           },
         },
         role: {
@@ -76,7 +76,7 @@ export class authMiddleware {
     req.user = {
       ...req.user,
       role: member.role.name,
-      username: member.user?.username as string,
+      username: member.user?.name as string,
       permissions: member.role.permissions as Record<string, string[]>,
     };
     next();

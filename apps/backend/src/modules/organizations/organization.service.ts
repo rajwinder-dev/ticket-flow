@@ -77,7 +77,7 @@ export class OrganizationService {
         },
         user: {
           select: {
-            username: true,
+            name: true,
           },
         },
       },
