@@ -1,6 +1,6 @@
-import { APIFeatures } from "../../src/core/utils/apiFeatures";
 import { Request } from "express";
 import { describe, expect, it } from "vitest";
+import { APIFeatures } from "../../src/core/utils/apiFeatures.js";
 
 describe("APIFeatures", () => {
   describe("filter()", () => {

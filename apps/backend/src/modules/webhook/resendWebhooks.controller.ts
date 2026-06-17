@@ -2,11 +2,12 @@ import { ResentEmailWebhookSchema } from "@repo/schemas";
 import sanitizeHtml from "sanitize-html";
 import { appError } from "../../core/utils/appError.js";
 import { catchAsync } from "../../core/utils/catchAsync.js";
-import { decrypt, EncryptionType } from "../../core/utils/crypto.js";
 import response from "../../core/utils/response.js";
 import { ResendConfig, ResendService } from "@repo/email-providers";
 import { TicketService } from "../ticket/ticket.service.js";
 import { prisma } from "@repo/database";
+import { crypto } from "../../core/utils/crypto.js";
+import { EncryptionType } from "@repo/utils";
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
@@ -66,7 +67,7 @@ export class resendWebhookController {
     // -------------------------------
     // Fetch email data
     // -------------------------------
-    const credentialString = decrypt(provider.credentials as EncryptionType);
+    const credentialString = crypto .decrypt(provider.credentials as EncryptionType);
     const credentials = JSON.parse(credentialString) as ResendConfig;
 
     const resend = new ResendService(credentials);

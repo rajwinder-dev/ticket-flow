@@ -1,15 +1,9 @@
 import { ErrorRequestHandler } from "express";
 
-import { log } from "../../core/helper/log.js";
+import { log } from "@repo/utils";
 import { devMode } from "../../config/appConfig.js";
 import { appError } from "./appError.js";
-import { deleteUploadedFilesLocal } from "./utils.js";
 export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
-  const files = req.files as Express.Multer.File[];
-  if (files) {
-    const paths = files.map((file: Express.Multer.File) => file.path);
-    deleteUploadedFilesLocal(paths);
-  }
   if (devMode) console.dir(error);
   else log.error(error.message);
   if (error.name === "PrismaClientValidationError") {

@@ -1,9 +1,9 @@
 import "dotenv/config";
 import { EmailQueueInput, UpdateEmailProviderInput } from "@repo/schemas";
 import { appError } from "../../core/utils/appError.js";
-import { encrypt } from "../../core/utils/crypto.js";
 import { prisma, ProviderType } from "@repo/database";
 import { emailQueuePush } from "../../core/utils/emailQueue.js";
+import { crypto } from "../../core/utils/crypto.js";
 export class EmailService {
   static queueEmail = async ({
     organizationId,
@@ -62,8 +62,7 @@ export class EmailService {
     });
     if (existingProviderCount === 2)
       throw new appError("Max 2 provider per organization is allowed", 400, "CONFLICT_ERROR");
-    const encryptCredentials = encrypt(JSON.stringify(credentials));
-    // await this.verifyProvider(userEmail, providerType, credentials);
+    const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
     return await prisma.emailProvider.create({
       data: {
         organizationId,
@@ -82,7 +81,7 @@ export class EmailService {
     organizationId: string,
     { credentials, providerType, fromEmail }: UpdateEmailProviderInput,
   ) => {
-    const encryptCredentials = encrypt(JSON.stringify(credentials));
+    const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
     console.log(id, organizationId);
     return await prisma.emailProvider.update({
       where: {

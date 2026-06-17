@@ -1,0 +1,15 @@
+import request from "supertest";
+import app from "../../src/app";
+export const endpoint = "/api/v1";
+export let accessToken;
+export async function loginAndToken({ username, password }) {
+    if (accessToken)
+        return accessToken;
+    const res = await request(app).post("/api/v1/auth/login").send({
+        username,
+        password,
+    });
+    accessToken = res.body.accessToken;
+    return accessToken;
+}
+//# sourceMappingURL=utils.js.map

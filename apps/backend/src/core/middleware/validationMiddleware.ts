@@ -2,7 +2,8 @@ import z, { ZodError, ZodIssue } from "zod";
 import { appError } from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
-export function validationMiddleware({
+export function validationMiddleware
+({
   bodySchema,
   paramsSchema,
   querySchema,
@@ -11,7 +12,7 @@ export function validationMiddleware({
   paramsSchema?: z.Schema;
   querySchema?: z.Schema;
 }) {
-  return catchAsync(async (req, res, next) => {
+  return catchAsync(async (req, _res, next) => {
     if (bodySchema) {
       const result = bodySchema.safeParse(req.body);
       if (!result.success)
@@ -37,6 +38,7 @@ export function validationMiddleware({
             formatZodErrors(result.error),
           ),
         );
+      req.params = result.data as Record<string, string>;
     }
 
     if (querySchema) {
@@ -50,6 +52,7 @@ export function validationMiddleware({
             formatZodErrors(result.error),
           ),
         );
+      req.query = result.data as Record<string, string>;
     }
 
     next();

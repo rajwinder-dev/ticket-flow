@@ -1,8 +1,8 @@
 import { render } from "@react-email/render";
-import { decrypt } from "../crypto.js";
 import { providerData, sendEmailService, sendSystemEmailService } from "./email-queue.types.js";
 import { cryptoType, SmtpSchema } from "@repo/schemas";
 import { emailProviderFactory } from "@repo/email-providers";
+import { CryptoUtils } from "@repo/utils";
 export class EmailQueueService {
   static sendSystemEmail = async ({ to, subject, jsx }: sendSystemEmailService) => {
     if (!process.env.PROVIDER_TYPE || !process.env.SMTP_EMAIL)
@@ -37,9 +37,10 @@ export class EmailQueueService {
     emailProvider: providerData,
     { to, subject, html }: { to: string; subject: string; html: string },
   ) => {
+    const crypto = new CryptoUtils(process.env.encryptionKey!);
     const verifiedCredentials = cryptoType.safeParse(emailProvider.credentials);
     if (!verifiedCredentials.success) throw new Error("Invalid credentials");
-    const credentials = JSON.parse(decrypt(verifiedCredentials.data));
+    const credentials = JSON.parse(crypto.decrypt(verifiedCredentials.data));
     const provider = emailProviderFactory(emailProvider.providerType, credentials);
 
     return await provider.sendMail({ to, from: emailProvider.fromEmail, subject, html });

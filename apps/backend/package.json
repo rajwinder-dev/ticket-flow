@@ -12,14 +12,14 @@
   "scripts": {
     "dev": "tsx watch  --inspect src/server.ts",
     "email:dev": "email dev --dir src/templates/emails",
-    "build": "tsc -b",
+    "build": "tsc -b tsconfig.build.json",
     "start": "NODE_ENV=production node dist/server.js",
     "lint": "eslint './src/**/*.{js,ts}'",
     "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
     "test": "vitest",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage", 
-    "db:seed": "tsx ./src/seed/seed.ts", 
+    "test:coverage": "vitest run --coverage",
+    "db:seed": "tsx ./src/seed/seed.ts",
     "db:clear": "ts-node ./src/seed/seed.ts --clear"
   },
   "devDependencies": {
@@ -83,10 +83,11 @@
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
     "nanoid": "^5.1.6",
+    "node-mocks-http": "^1.17.2",
     "pg": "^8.20.0",
     "prisma": "^7.4.2",
     "sanitize-html": "^2.17.1",
     "ws": "^8.19.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   }
 }
