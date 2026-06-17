@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "../../src/app";
+import app from "../../src/app.js";
 
 export const endpoint = "/api/v1";
 export let accessToken: string;

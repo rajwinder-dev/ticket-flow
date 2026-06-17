@@ -3,7 +3,7 @@ import { AddressInfo } from "net";
 import { app } from "./app.js";
 import { devMode } from "./config/appConfig.js";
 import { env } from "./config/env.js";
-import { log } from "./core/helper/log.js";
+import { log } from "@repo/utils";
 import { connectUntilSuccess } from "./core/utils/dbConnect.js";
 import { prisma } from "@repo/database";
 

@@ -1,4 +1,4 @@
-import { appError } from "../../src/core/utils/appError";
+import { appError } from "../../src/core/utils/appError.js";
 import { describe, expect, it } from "vitest";
 
 describe("appError", () => {

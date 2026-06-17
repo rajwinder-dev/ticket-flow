@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { log } from "../helper/log.js";
+import { log } from "@repo/utils";
 export class DevMiddleware {
   static logRequests = (req: Request, res: Response, next: NextFunction) => {
     const isBodyExist =

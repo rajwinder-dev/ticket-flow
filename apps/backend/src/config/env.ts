@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { log } from "../core/helper/log.js";
+import { log } from "@repo/utils";
 dotenv.config();
 
 export const env = {

@@ -39,7 +39,6 @@ export class resendWebhookController {
         providerType: { not: "SMTP" },
       },
     });
-    console.log(provider);
     if (!provider?.webhookSecret) {
       throw new appError("webhookSecret not found", 404, "NOT_FOUND");
     }

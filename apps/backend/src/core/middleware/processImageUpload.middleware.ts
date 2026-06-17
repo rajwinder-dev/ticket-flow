@@ -9,7 +9,7 @@ const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 
 const multerStorage = multer.memoryStorage();
 const fileFilter = (
-  req: Request,
+  _req: Request,
   file: Express.Multer.File,
   cb: FileFilterCallback
 ) => {

@@ -1,5 +1,5 @@
 import { prisma } from "@repo/database";
-import { log } from "../helper/log.js";
+import { log } from "@repo/utils";
 
 export async function connectUntilSuccess(
   delayMs = 5000,
