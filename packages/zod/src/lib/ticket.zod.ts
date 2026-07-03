@@ -4,7 +4,7 @@ import {
   ticketCategory,
   ticketPriority,
   ticketStatus,
-} from "@repo/constants";
+} from "@org/constants";
 import { z } from "zod";
 import { validBigDescription, validEmail, validString } from "./helper/zodHelper.js";
 import { validUuidParams } from "./global.zod.js";

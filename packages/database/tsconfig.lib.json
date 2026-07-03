@@ -9,5 +9,15 @@
     "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "references": []
+  "references": [
+    {
+      "path": "../zod/tsconfig.lib.json"
+    },
+    {
+      "path": "../constants/tsconfig.lib.json"
+    },
+    {
+      "path": "../utils/tsconfig.lib.json"
+    }
+  ]
 }

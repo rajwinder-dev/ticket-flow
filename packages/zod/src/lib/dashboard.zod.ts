@@ -1,4 +1,4 @@
-import { ticketPriority, ticketStatus } from "@repo/constants";
+import { ticketPriority, ticketStatus } from "@org/constants";
 import { z } from "zod";
 
 export const recentTicketSchema = z.object({

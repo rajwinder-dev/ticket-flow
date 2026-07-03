@@ -20,6 +20,18 @@
     },
     {
       "path": "./packages/core"
+    },
+    {
+      "path": "./app/api-e2e"
+    },
+    {
+      "path": "./app/api"
+    },
+    {
+      "path": "./app/web-e2e"
+    },
+    {
+      "path": "./app/web"
     }
   ]
 }
