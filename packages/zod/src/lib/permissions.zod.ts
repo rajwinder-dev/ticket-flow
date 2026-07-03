@@ -1,4 +1,4 @@
-import { permissions } from "@repo/constants"
+import { permissions } from "@org/constants"
 
 export type Permissions = Partial<typeof permissions>
 export  type PermissionModule = keyof typeof permissions

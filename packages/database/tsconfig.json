@@ -5,6 +5,15 @@
   "references": [
     {
       "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../constants"
+    },
+    {
+      "path": "../zod"
     }
   ]
 }
