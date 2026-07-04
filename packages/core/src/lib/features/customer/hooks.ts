@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
 import type { CreateCustomerInput, UpdateCustomerInput } from "@org/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";

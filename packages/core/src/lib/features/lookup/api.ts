@@ -1,4 +1,4 @@
-import { getRequestMany } from "@org/utils";
+import { getRequestMany } from "@org/web-utils";
 import type { LookupSchema } from "@org/zod";
 
 export const lookupApi = {

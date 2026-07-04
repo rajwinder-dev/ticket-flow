@@ -1,7 +1,7 @@
-import { CreateQueueInput, UpdateQueueInput } from "@repo/schemas";
+import { CreateQueueInput, UpdateQueueInput } from "@org/zod";
 import { appError } from "../../core/utils/appError.js";
 import { ActivityService } from "../activity/activity.service.js";
-import { getTenantClient, prisma } from "@repo/database";
+import { getTenantClient, prisma } from "@org/database";
 
 export class QueueService {
   static create = async ({

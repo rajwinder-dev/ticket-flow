@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
 import type { InviteUserOrganizationInput } from "@org/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";

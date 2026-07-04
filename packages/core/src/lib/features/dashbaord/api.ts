@@ -1,4 +1,4 @@
-import { getRequest, getRequestMany } from "@org/utils";
+import { getRequest, getRequestMany } from "@org/web-utils";
 import { type RecentTicketSchema, type StatusCountsSchema } from "@org/zod";
 
 export const dashboardApi = {

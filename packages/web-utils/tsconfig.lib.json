@@ -7,6 +7,7 @@
     "emitDeclarationOnly": false,
     "forceConsistentCasingInFileNames": true,
     "types": ["node"],
+    "lib": ["DOM"]
   },
   "include": ["src/**/*.ts"],
   "references": []

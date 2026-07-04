@@ -1,5 +1,5 @@
-import type { FilterOptions } from "@org/utils";
-import { deleteRequest, getRequest, getRequestMany, postRequest } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
+import { deleteRequest, getRequest, getRequestMany, postRequest } from "@org/web-utils";
 import type {
   InviteMemberDetailsResponse,
   InviteUserOrganizationInput,

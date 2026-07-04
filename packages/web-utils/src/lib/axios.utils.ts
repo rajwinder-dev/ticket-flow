@@ -9,6 +9,7 @@ import type {
   PaginateResponse,
   PostRequest,
 } from "./axios.types.js";
+import { getOrgIdFromUrl } from "./browser.utils.js";
 
 export const api = axios.create({
   baseURL: apiUrl,
@@ -161,9 +162,6 @@ api.interceptors.request.use(
   },
 );
 
-export function getOrgIdFromUrl() {
-  const match = window.location.pathname.match(/org\/([^/]+)/);
-  return match?.[1];
-}
+
 
 export * from "./axios.types.js"

@@ -1,4 +1,4 @@
-import { getRequest, patchRequest } from "@org/utils";
+import { getRequest, patchRequest } from "@org/web-utils";
 import type { UpdateMyDetailsInput, UserSchema } from "@org/zod";
 
 export const userApi = {

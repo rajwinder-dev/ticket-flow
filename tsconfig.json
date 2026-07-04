@@ -32,6 +32,12 @@
     },
     {
       "path": "./app/web"
+    },
+    {
+      "path": "./app/email-worker"
+    },
+    {
+      "path": "./packages/web-utils"
     }
   ]
 }

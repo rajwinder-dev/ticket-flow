@@ -11,10 +11,10 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../zod/tsconfig.lib.json"
+      "path": "../web-utils/tsconfig.lib.json"
     },
     {
-      "path": "../utils/tsconfig.lib.json"
+      "path": "../zod/tsconfig.lib.json"
     },
     {
       "path": "../constants/tsconfig.lib.json"

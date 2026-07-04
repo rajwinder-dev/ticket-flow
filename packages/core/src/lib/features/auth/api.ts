@@ -1,4 +1,4 @@
-import type { ApiMessage } from "@org/utils";
+import type { ApiMessage } from "@org/web-utils";
 import {
   tokenSchemaResponse,
   type AuthDetails,
@@ -8,7 +8,7 @@ import {
   type ResetPasswordInput,
   type SignupInput,
 } from "@org/zod";
-import { getRequest, patchRequest, postRequest } from "@org/utils";
+import { getRequest, patchRequest, postRequest } from "@org/web-utils";
 
 export const authApi = {
   signUp: async (input: SignupInput) => {

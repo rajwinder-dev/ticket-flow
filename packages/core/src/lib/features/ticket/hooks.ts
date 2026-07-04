@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
 import type {
   AssignTicketInput,
   CreateTicketCommentInput,
@@ -12,7 +12,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import { ticketApi } from "./api.js";
-import { useCustomParams } from "@/hooks/useCustomParams";
+import { useCustomParams } from "../useCustomParams.js";
 interface props {
   filterOptions?: FilterOptions;
 }

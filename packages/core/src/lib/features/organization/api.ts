@@ -1,4 +1,4 @@
-import { deleteRequest, getRequest, getRequestMany, patchRequest, postRequest } from "@org/utils";
+import { deleteRequest, getRequest, getRequestMany, patchRequest, postRequest } from "@org/web-utils";
 import type {
   CreateOrganizationInput,
   CreateOrganizationResponse,

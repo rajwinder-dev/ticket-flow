@@ -1,4 +1,4 @@
-import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@org/utils";
+import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@org/web-utils";
 import type {
   CreateEmailProviderInput,
   CreateSmtpInput,

@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { activityApi } from "./api.js";

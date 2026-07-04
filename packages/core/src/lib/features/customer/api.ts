@@ -1,5 +1,5 @@
-import type { FilterOptions } from "@org/utils";
-import { getRequestMany, patchRequest, postRequest } from "@org/utils";
+import type { FilterOptions } from "@org/web-utils";
+import { getRequestMany, patchRequest, postRequest } from "@org/web-utils";
 import type {
   CreateCustomerInput,
   CustomerSchemaResponse,

@@ -72,7 +72,7 @@ export function useQueueGroup() {
 
 import { useState } from "react";
 import { useParams } from "react-router";
-import { GROUP_COLORS, INITIAL_GROUPS, type Group, type Queue } from "./groups";
+import { GROUP_COLORS, INITIAL_GROUPS, type Group, type Queue } from "./groups.js";
 
 export function useGroups() {
   const [groups, setGroups] = useState<Group[]>(INITIAL_GROUPS);
