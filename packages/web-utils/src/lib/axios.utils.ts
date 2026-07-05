@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
-
 import type {
   ApiResponse,
   FilterOptions,
@@ -8,20 +7,20 @@ import type {
   PaginateResponse,
   PostRequest,
 } from './axios.types.js';
-
+export type RequestContext = {
+  getOrgId?: () => string | undefined;
+};
 export class AxiosApi {
   apiUrl: string;
   api: AxiosInstance;
-  getOrgId?: () => string | undefined;
+  private context: RequestContext = {};
   constructor({
     apiUrl = '/api/v1',
-    getOrgId,
   }: {
     apiUrl?: string;
-    getOrgId?: () => string | undefined;
   } = {}) {
+    this.context = {};
     this.apiUrl = apiUrl;
-    this.getOrgId = getOrgId;
 
     this.api = axios.create({
       baseURL: this.apiUrl,
@@ -29,7 +28,7 @@ export class AxiosApi {
     });
     this.api.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
-        const organizationId = this.getOrgId?.();
+        const organizationId = this.context.getOrgId?.();
         if (organizationId)
           config.headers['x-organization-id'] = organizationId;
         return config;
@@ -38,6 +37,9 @@ export class AxiosApi {
         return Promise.reject(error);
       },
     );
+  }
+  setContext(context: RequestContext) {
+    this.context = context;
   }
   async post<T = geneticApiResponse>({
     path,

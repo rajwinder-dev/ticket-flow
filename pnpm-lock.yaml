@@ -326,6 +326,9 @@ importers:
       '@org/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@org/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@org/zod':
         specifier: workspace:*
         version: link:../../packages/zod

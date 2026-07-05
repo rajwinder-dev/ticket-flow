@@ -40,6 +40,9 @@
     },
     {
       "path": "../../packages/constants/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/core/tsconfig.lib.json"
     }
   ]
 }
