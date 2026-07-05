@@ -2,9 +2,9 @@ import QueryBoundary from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import { Plus } from "lucide-react";
-import { useQueueGroup } from "../../hooks";
 import { GroupCard } from "./GroupCard";
 import { Card } from "@/components/ui/card";
+import { useQueueGroup } from "@org/core";
 
 interface GroupSidebarProps {
   onCreateGroup: () => void;

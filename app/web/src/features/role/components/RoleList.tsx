@@ -1,8 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import useRole from "../hooks";
 import { RoleCard } from "./RoleCard";
 import { Card } from "@/components/ui/card";
+import { useRole } from "@org/core";
 
 export function RoleList() {
   const { roles, isLoadingRoles } = useRole();

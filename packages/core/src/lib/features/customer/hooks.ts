@@ -7,7 +7,7 @@ import { customerApi } from "./api.js";
 interface props {
   filterOptions?: FilterOptions;
 }
-function useCustomer({ filterOptions }: props = {}) {
+export const  useCustomer = ({ filterOptions }: props = {}) => {
   const { orgId } = useParams();
   const queryClient = useQueryClient();
   const { data: customers, isLoading: isLoadingCustomers } = useQuery({

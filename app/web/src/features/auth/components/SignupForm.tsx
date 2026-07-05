@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupInput, type SignupInput } from "@org/zod";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useMembersStore } from "@/features/members/store";
+import { useMembersStore } from "@org/core";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";

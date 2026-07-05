@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea"; // Added for description
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useOrganizations } from "@org/core";
 import { updateOrganizationInput, type UpdateOrganizationInput } from "@org/zod";
 import { useForm } from "react-hook-form";
-import useOrganizations from "../../organization/hooks";
 
 const OrganizationForm = () => {
   const { currentOrganization, isLoadingCurrent, updateOrg, isUpdatingOrg } = useOrganizations();

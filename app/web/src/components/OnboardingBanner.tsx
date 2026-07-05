@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router";
-import useOrganizations from "@/features/organization/hooks";
+import { useOrganizations } from "@org/core";
 
 const ONBOARDING_STEPS = [
   {

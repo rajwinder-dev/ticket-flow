@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useTicket } from "../hooks";
+import { useTicket } from "@org/core";
 import { TimelineItem } from "./TicketTimelineItem";
 
 interface TransitionHistoryProps {

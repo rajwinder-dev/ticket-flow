@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input";
 import { useDebounceValue } from "@/hooks/useDebounce";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
-import useCustomer from "../hooks";
 import CreateCustomerFrom from "./CreateCustomerFrom";
 import CustomerTable from "./CustomerTable";
+import { useCustomer } from "@org/core";
 
 const CustomerPage = () => {
 

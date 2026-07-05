@@ -17,11 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useLookupHook } from "@/features/lookup/hooks";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import useMember from "../hooks";
-import { useMembersStore } from "../store";
+
+import { useMember , useMembersStore, useLookupHook} from "@org/core";
 import { Avatar } from "./MemberBandges";
 import { RowActionsMenu } from "./RowActionsMenu";
 import TableQueueCell from "./TableQueueCell";

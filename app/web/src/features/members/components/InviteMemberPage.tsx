@@ -12,9 +12,9 @@ import ErrorState from "@/components/ui/errorState";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import { useNavigate, useParams } from "react-router";
-import useMember from "../hooks";
+
+import { useMember , useMembersStore} from "@org/core";
 import { useEffect } from "react";
-import { useMembersStore } from "../store";
 import { authClient } from "@/lib/auth-client";
 
 const InviteMemberPage = () => {

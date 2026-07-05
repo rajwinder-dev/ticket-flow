@@ -1,12 +1,10 @@
 import QueryBoundary from "@/components/QueryError";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useQueue } from "@/features/queue/hooks";
 import { Inbox, Layers, Plus } from "lucide-react";
-import { useQueueGroup } from "../../hooks";
-import { useQueueGroupStore } from "../../store";
 import { NoGroupSelected } from "../groups/NoGroupSelected";
 import { QueueTable } from "./QueueTable";
+import { useQueue, useQueueGroup, useQueueGroupStore } from "@org/core";
 
 interface QueuePanelProps {
   onAddQueue: () => void;

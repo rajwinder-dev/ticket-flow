@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CustomerActionsMenu } from "./CustomerActions";
-import useCustomer from "../hooks";
+import { useCustomer } from "@org/core";
 
 const CustomerTable = () => {
   const { customers, isLoadingCustomers } = useCustomer();

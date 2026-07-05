@@ -14,8 +14,8 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import OrganizationList from "@/features/organization/components/OrganizationList";
-import useOrganizations from "@/features/organization/hooks";
 import { Link } from "react-router-dom";
+import { useOrganizations } from "@org/core";
 
 const OrganizationSection = () => {
   const [searchTerm, setSearchTerm] = useState("");

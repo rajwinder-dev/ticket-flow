@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQueue } from "@/features/queue/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueue } from "@org/core";
 import { updateQueueInput, type QueueSchemaResponse, type UpdateQueueInput } from "@org/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";

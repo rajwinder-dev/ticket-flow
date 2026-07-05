@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useQueue } from "@/features/queue/hooks";
+import { useQueue } from "@org/core";
 import { useParams } from "react-router";
 
 const QueueMatrices = () => {

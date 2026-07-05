@@ -6,12 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQueue } from "@/features/queue/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueue, useQueueGroup, useQueueGroupStore } from "@org/core";
 import { createQueueInput, type CreateQueueInput } from "@org/zod";
 import { useForm } from "react-hook-form";
-import { useQueueGroup } from "../hooks";
-import { useQueueGroupStore } from "../store";
 
 interface CreateQueueDialogProps {
   open: boolean;

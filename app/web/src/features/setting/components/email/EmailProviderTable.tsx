@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import type { EmailProviderSchema } from "@org/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import useEmail from "../../hooks";
 import { DeleteProviderDialog } from "./DeleteProviderDialog";
 import { ProviderFormDialog } from "./ProviderFormDialog";
 import { ProviderTable } from "./ProviderTable";
+import { useEmail } from "@org/core";
 export default function EmailProviderTable() {
   const { deleteProvider } = useEmail();
   const [formOpen, setFormOpen] = useState(false);

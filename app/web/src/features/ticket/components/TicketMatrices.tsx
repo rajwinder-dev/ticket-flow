@@ -1,4 +1,4 @@
-import { useTicket } from "../hooks";
+import { useTicket } from "@org/core";
 import { Skeleton } from "@/components/ui/skeleton"; // Adjust this import path based on your file structure
 
 const TicketMatrices = () => {

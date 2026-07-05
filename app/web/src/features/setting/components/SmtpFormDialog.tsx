@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useEmail } from "@org/core";
 import type { CreateSmtpInput } from "@org/zod";
 import { AlertCircle, Loader2, Mail, Server } from "lucide-react";
 import { useForm } from "react-hook-form";
-import useEmail from "../hooks";
 
 type SmtpFormDialogProps = {
   open: boolean;

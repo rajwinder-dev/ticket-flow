@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import type { EmailProviderSchema } from "@org/zod";
 import { Pencil, Trash2 } from "lucide-react";
-import useEmail from "../../hooks";
+import {useEmail} from "@org/core";
 
 type Props = {
   onEdit: (provider: EmailProviderSchema) => void;

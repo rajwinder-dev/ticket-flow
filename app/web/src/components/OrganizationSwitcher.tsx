@@ -15,11 +15,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import useOrganizations from "@/features/organization/hooks";
 import { PlusSignIcon, UnfoldMoreIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useOrganizations } from "@org/core";
 
 export function OrganizationSwitcher() {
   const { isMobile } = useSidebar();

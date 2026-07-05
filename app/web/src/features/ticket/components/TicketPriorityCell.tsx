@@ -6,8 +6,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { type TicketPriority, type TicketSchemaResponse } from "@org/zod";
-import { useTicket } from "../hooks";
-import { ticketPriority } from "@repo/constants";
+import { useTicket } from "@org/core";
+import { ticketPriority } from "@org/constants";
 interface props {
   ticket: TicketSchemaResponse;
 }

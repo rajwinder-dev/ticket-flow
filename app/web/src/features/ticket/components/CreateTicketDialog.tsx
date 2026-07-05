@@ -20,15 +20,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useLookupHook } from "@/features/lookup/hooks";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ticketCategory, ticketPriority } from "@repo/constants";
+import { ticketCategory, ticketPriority } from "@org/constants";
 import { createTicketInput, type CreateTicketInput } from "@org/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { useTicket } from "../hooks";
 import { LoadingSelect } from "./LoadingSelect";
+import { useLookupHook, useTicket } from "@org/core";
 
 // ── field wrapper ─────────────────────────────────────────────────────────────
 

@@ -30,12 +30,11 @@ import { useState } from "react";
 import TicketEditDialog from "./TicketEditDialog";
 
 import { Link } from "react-router-dom";
-import { useTicket } from "../hooks";
+import { useTicket ,formatDate} from "@org/core";
 
 import { Pagination } from "@/components/Pagination";
-import { formatDate } from "@/features/activity/utils";
 import { useDebounceValue } from "@/hooks/useDebounce";
-import { ticketPriority, ticketStatus } from "@repo/constants";
+import { ticketPriority, ticketStatus } from "@org/constants";
 import { TicketEscalateDialog } from "./TicketEscalateDialog";
 import { TicketPriorityCell } from "./TicketPriorityCell";
 import { TicketStatusCell } from "./TicketStatusCell";

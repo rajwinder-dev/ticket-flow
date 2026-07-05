@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useTicket } from "../hooks";
-import { formatDateTime } from "../utils";
+import { formatDateTime, useTicket } from "@org/core";
 
 const TicketComments = () => {
   const { ticketComments, isLoadingTicketComments } = useTicket();

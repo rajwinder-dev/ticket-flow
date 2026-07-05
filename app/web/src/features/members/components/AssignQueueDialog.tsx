@@ -17,10 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQueue } from "@/features/queue/hooks";
-import { useQueueGroup } from "@/features/queueGroups/hooks";
+import { useMember, useQueue, useQueueGroup } from "@org/core";
 import { useState } from "react";
-import useMember from "../hooks";
 
 interface Props {
   open: boolean;

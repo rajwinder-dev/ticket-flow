@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { Spinner } from "./ui/spinner";
-import { useMembersStore } from "@/features/members/store";
+import { useMembersStore } from "@org/core";
 import { authClient } from "@/lib/auth-client";
 import { useEffect } from "react";
 

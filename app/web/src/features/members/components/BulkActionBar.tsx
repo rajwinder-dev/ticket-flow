@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ListPlus, PowerOff, Trash2, UserCog, X } from "lucide-react";
-import { useMembersStore } from "../store";
+import { useMembersStore } from "@org/core";
 
 const ROLES = ["admin", "manager", "member", "viewer"];
 const QUEUES = ["Support", "Onboarding", "Engineering", "Design", "Growth", "Infra", "Marketing"];

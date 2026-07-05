@@ -14,10 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PermissionModule, RoleSchema } from "@org/zod";
 import { ChevronRight, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
-import useRole from "../hooks";
-import { useRoleStore } from "../store";
-import { totalPermCount } from "../utils";
 import { RoleFormDialog } from "./RoleFormDialog";
+import { totalPermCount, useRole, useRoleStore } from "@org/core";
 
 interface RoleCardProps {
   role: RoleSchema;

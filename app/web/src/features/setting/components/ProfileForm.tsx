@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -6,13 +6,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { dirtyValues } from "@/lib/utils";
-import type { UpdateMyDetailsInput } from "@org/zod";
-import { useForm } from "react-hook-form";
-import useUser from "../../users/hooks";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { dirtyValues } from '@/lib/utils';
+import { useUser } from '@org/core';
+import type { UpdateMyDetailsInput } from '@org/zod';
+import { useForm } from 'react-hook-form';
 
 // 1. Define the schema for editable fields only
 
@@ -47,27 +47,40 @@ const ProfileForm = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="phoneNo">Phone Number</Label>
-              <Input id="phoneNo" {...register("phoneNo")} />
-              {errors.phoneNo && <p className="text-xs text-red-500">{errors.phoneNo.message}</p>}
+              <Input id="phoneNo" {...register('phoneNo')} />
+              {errors.phoneNo && (
+                <p className="text-xs text-red-500">{errors.phoneNo.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input id="location" {...register("location")} placeholder="City, Country" />
+              <Input
+                id="location"
+                {...register('location')}
+                placeholder="City, Country"
+              />
             </div>
             <div className="col-span-2 space-y-2">
               <Label htmlFor="avatar">Avatar URL</Label>
-              <Input id="avatar" {...register("avatar")} placeholder="https://..." />
+              <Input
+                id="avatar"
+                {...register('avatar')}
+                placeholder="https://..."
+              />
             </div>
           </div>
         </CardContent>
 
         <CardFooter className="flex items-center justify-between gap-2">
           <p className="text-muted-foreground text-end text-[10px] italic">
-            Modified fields: {Object.keys(dirtyFields).join(", ") || "None"}
+            Modified fields: {Object.keys(dirtyFields).join(', ') || 'None'}
           </p>
-          <Button type="submit" disabled={Object.keys(dirtyFields).length === 0 || isUpdating}>
-            {isUpdating ? "Updating..." : "Update profile"}
+          <Button
+            type="submit"
+            disabled={Object.keys(dirtyFields).length === 0 || isUpdating}
+          >
+            {isUpdating ? 'Updating...' : 'Update profile'}
           </Button>
           {/* Debug info to see dirty fields in real-time */}
         </CardFooter>

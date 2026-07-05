@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { permissions } from "@repo/constants";
+import { permissions } from "@org/constants";
 import { type PermissionModule } from "@org/zod";
 import { Shield } from "lucide-react";
-import { toggleModulePermissions, togglePermission } from "../utils";
+import { toggleModulePermissions, togglePermission } from  "@org/core";
 import { memo } from "react";
 
 interface PermissionEditorProps {

@@ -13,8 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { CreateQueueGroupInput, QueueGroupSchemaResponse } from "@org/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useQueueGroup } from "../../hooks";
 import { useEffect } from "react";
+import { useQueueGroup } from "@org/core";
 
 interface Props {
   editOpen: boolean;

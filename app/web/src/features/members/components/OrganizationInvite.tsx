@@ -13,9 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useRole from "@/features/role/hooks";
 import { inviteUserOrganizationInput, type InviteUserOrganizationInput } from "@org/zod";
-import useMember from "../hooks";
+import { useMember, useRole } from "@org/core";
 
 // Define the schema
 interface props {

@@ -1,4 +1,3 @@
-"use client";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,10 +17,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useLookupHook } from "@/features/lookup/hooks";
+import { useLookupHook , ticketApi,useTicket } from "@org/core";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { escalationReasons, ticketPriority } from "@repo/constants";
+import { escalationReasons, ticketPriority } from "@org/constants";
 import {
   escalateTicketInput,
   type EscalateTicketInput,
@@ -30,8 +29,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { ChevronUp } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ticketApi } from "../api";
-import { useTicket } from "../hooks";
 import { QueueFlow } from "./QueueFlow";
 
 interface TicketEscalateDialogProps {

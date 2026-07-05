@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { ticketAction, TicketTransitionSchema } from "@org/zod";
 import { AlertTriangle, Clock, User } from "lucide-react";
-import { formatDateTime } from "../utils";
+import { formatDateTime } from "@org/core";
 import { EventBody } from "./EventBody";
 
 const actionMeta: Record<ticketAction, { icon: React.ReactNode; dotClass: string; label: string }> =

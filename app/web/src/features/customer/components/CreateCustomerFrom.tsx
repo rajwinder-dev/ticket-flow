@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createCustomerInput, type CreateCustomerInput } from "@org/zod";
-import useCustomer from "../hooks";
+import { useCustomer } from "@org/core";
 interface props {
   setOpen: (val: boolean) => void
 }

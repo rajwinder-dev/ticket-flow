@@ -15,8 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useMember from "@/features/members/hooks";
-import { useQueue } from "@/features/queue/hooks";
+import { useMember, useQueue } from "@org/core";
 
 type QueueAgentTableProps = {
   isLoading?: boolean; // Accept parent page cascade state parameter

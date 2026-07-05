@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { userApi } from "./api.js";
 
-const useUser = () => {
+export const useUser = () => {
   const queryClient = useQueryClient();
   const { data: userDetails, isLoading: isLoading } = useQuery({
     queryKey: ["user"],
@@ -24,4 +24,3 @@ const useUser = () => {
   return { userDetails, isLoading, updateMyDetails, isUpdating };
 };
 
-export default useUser;

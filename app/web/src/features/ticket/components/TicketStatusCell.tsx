@@ -6,8 +6,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { type TicketSchemaResponse, type TicketStatus } from "@org/zod";
-import { useTicket } from "../hooks";
-import { allowedTransitions } from "@repo/constants";
+import { useTicket } from "@org/core";
+import { allowedTransitions } from "@org/constants";
 interface props {
   ticket: TicketSchemaResponse;
 }

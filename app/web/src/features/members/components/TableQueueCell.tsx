@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { X } from "lucide-react";
 import { useState } from "react";
-import useMember from "../hooks";
+import { useMember } from "@org/core";
 interface props {
   queue: {
     name: string | null;

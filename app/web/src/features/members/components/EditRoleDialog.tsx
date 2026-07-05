@@ -18,9 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useRole from "@/features/role/hooks";
+import { useMember, useRole } from "@org/core";
 import { useState } from "react";
-import useMember from "../hooks";
 
 interface Props {
   open: boolean;

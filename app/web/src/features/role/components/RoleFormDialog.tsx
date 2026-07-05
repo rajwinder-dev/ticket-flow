@@ -15,9 +15,8 @@ import type { CreateRoleInput, RoleSchema } from "@org/zod";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import useRole from "../hooks";
-import { totalPermCount } from "../utils";
 import { PermissionEditor } from "./PermissionEditor";
+import { totalPermCount, useRole } from "@org/core";
 
 interface RoleFormDialogProps {
   trigger: React.ReactNode;

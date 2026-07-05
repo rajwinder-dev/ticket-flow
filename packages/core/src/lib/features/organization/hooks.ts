@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { orgApi } from "./api.js";
 
-function useOrganizations() {
+export const useOrganizations = ()  => {
   const { orgId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -77,4 +77,3 @@ function useOrganizations() {
   };
 }
 
-export default useOrganizations;

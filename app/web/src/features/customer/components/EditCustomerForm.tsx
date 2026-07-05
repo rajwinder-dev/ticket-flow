@@ -1,12 +1,10 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateCustomerInput, type CustomerSchemaResponse, type UpdateCustomerInput } from "@org/zod";
-import useCustomer from "../hooks";
+import { useCustomer } from "@org/core";
 
 interface props {
   customer: CustomerSchemaResponse ;

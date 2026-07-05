@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useTicket } from "../hooks";
+import { useTicket } from "@org/core";
 
 const TicketDetailsHeader = () => {
   const { ticketDetails, isLoadingTicketDetails } = useTicket();

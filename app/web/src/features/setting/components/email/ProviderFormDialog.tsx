@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,10 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmail } from "@org/core";
 import type { CreateEmailProviderInput, EmailProviderSchema } from "@org/zod";
 import { KeyRound, Mail, Webhook } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
-import useEmail from "../../hooks";
 
 type Props = {
   open: boolean;

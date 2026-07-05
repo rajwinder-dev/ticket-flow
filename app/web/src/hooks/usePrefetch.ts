@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { ticketApi } from "@/features/ticket/api";
+import { ticketApi } from "@org/core";
 
 export function useOrgPrefetch() {
   const queryClient = useQueryClient();

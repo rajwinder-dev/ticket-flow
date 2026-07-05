@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { permissions } from "@repo/constants";
+import { permissions } from "@org/constants";
+import { useRole, useRoleStore } from "@org/core";
 import { Shield, ShieldCheck } from "lucide-react";
-import useRole from "../hooks";
-import { useRoleStore } from "../store";
 
 export function PermissionReadView() {
   const { roles } = useRole();

@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext";
-import useOrganizations from "@/features/organization/hooks";
 import OrganizationPage from "@/features/organization/pages/OrganizationPage";
+import { useOrganizations } from "@org/core";
 import { useEffect } from "react";
 import { Outlet, useParams } from "react-router";
 

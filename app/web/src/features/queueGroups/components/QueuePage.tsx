@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useGroups } from "../hooks";
 import { CreateQueueDialog } from "./CreateQueueDialog";
 import { CreateGroupDialog } from "./groups/CreateQueueGroup";
 import { GroupSidebar } from "./groups/GroupSidebar";
 import { QueuePanel } from "./queue/QueuePanel";
 import { QueuePageHeader } from "./QueuepageHeader";
+import { useGroups } from "@org/core";
 
 export default function QueuePage() {
   const { selectedGroup } = useGroups();

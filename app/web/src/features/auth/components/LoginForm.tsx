@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginInput, type LoginInput } from "@org/zod"; // Assuming loginInputSchema is the Zod schema
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useMembersStore } from "@/features/members/store";
+import { useMembersStore } from "@org/core";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { toast } from "sonner";

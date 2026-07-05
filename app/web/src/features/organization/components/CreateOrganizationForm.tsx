@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type CreateOrganizationInput, createOrganizationInput } from "@org/zod";
-import useOrganizations from "../hooks";
 import { useNavigate } from "react-router";
+import { useOrganizations } from "@org/core";
 const CreateOrganizationForm = () => {
   const navigate = useNavigate();
   const { createOrg, isCreatingOrg } = useOrganizations();

@@ -2,13 +2,12 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router"; // or "react-router-dom"
 
 import ProtectedRoute from "./components/ProtectedRoute";
-
-const HomePage = lazy(() => import("./features/home/HomePage"));
-const LoginPage = lazy(() => import("./features/auth/pages/LoginPage"));
-const SignupPage = lazy(() => import("./features/auth/pages/SignupPage"));
-const ForgetPasswordPage = lazy(() => import("./features/auth/pages/ForgetPasswordPage"));
-const ResetPasswordPage = lazy(() => import("./features/auth/pages/ResetPasswordPage"));
-const InviteMemberPage = lazy(() => import("./features/members/components/InviteMemberPage"));
+import HomePage from "./features/home/HomePage";
+import LoginPage from "./features/auth/pages/LoginPage";
+import SignupPage from "./features/auth/pages/SignupPage";
+import ForgetPasswordPage from "./features/auth/pages/ForgetPasswordPage";
+import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage";
+import InviteMemberPage from "./features/members/components/InviteMemberPage";
 
 const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
 const OrganizationPage = lazy(() => import("./features/organization/pages/OrganizationPage"));

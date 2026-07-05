@@ -17,9 +17,9 @@ import {
 
 // Custom Hooks & Utils
 import QueryBoundary from "@/components/QueryError";
-import { useQueue } from "@/features/queue/hooks";
-import { useTicket } from "@/features/ticket/hooks";
+import { useTicket } from "@org/core";
 import { getAgeMetrics } from "@/lib/utils";
+import { useQueue } from "@org/core";
 
 type QueueTicketTableProps = {
   isLoading?: boolean; // Accept the loading control passed down from the parent shell

@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useQueue } from "@/features/queue/hooks";
+import { useQueue } from "@org/core";
 import type { QueueSchemaResponse } from "@org/zod";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";

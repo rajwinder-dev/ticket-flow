@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createQueueGroupInput, type CreateQueueGroupInput } from "@org/zod";
-import { useQueueGroup } from "../../hooks";
+import { useQueueGroup } from "@org/core";
 
 // Define the validation schema
 

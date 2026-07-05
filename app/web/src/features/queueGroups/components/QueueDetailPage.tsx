@@ -1,11 +1,11 @@
 import QueryBoundary from "@/components/QueryError";
 import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useQueue } from "@/features/queue/hooks";
 import { formatDate } from "@/lib/utils";
 import { useParams } from "react-router";
 import { QueueAgentTable } from "./queue/QueueAgentTable";
 import QueueMatrices from "./queue/QueueMatrices";
 import { QueueTicketTable } from "./queue/QueueTicketTable";
+import { useQueue } from "@org/core";
 
 const QueueDetailPage = () => {
   const { queueId } = useParams();
