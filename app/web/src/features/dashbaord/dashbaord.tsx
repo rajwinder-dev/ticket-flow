@@ -9,8 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton"; // Import the shadcn skelet
 
 import PageHeader from "@/components/PageHeader";
 import DashboardMatrices from "./DashbaordMatrices";
-import { useDashboard } from "./hooks";
 import OnboardingBanner from "@/components/OnboardingBanner";
+import { useDashboard } from "@org/core";
 
 const DashboardPage = () => {
   const { orgId } = useParams();

@@ -29,6 +29,7 @@ export default defineConfig({
     alias: {
       '@org/constants': path.resolve(__dirname, '../../packages/constants/src'),
       '@org/zod': path.resolve(__dirname, '../../packages/zod/src'),
+      '@org/core': path.resolve(__dirname, '../../packages/core/src'),
       '@': path.resolve(__dirname, './src'),
     },
   },

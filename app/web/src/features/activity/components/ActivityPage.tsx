@@ -16,9 +16,9 @@ import {
 import { useDebounceValue } from "@/hooks/useDebounce";
 import { Filter, Search } from "lucide-react";
 import { useState } from "react";
-import useActivity from "../hooks";
 import ActivityMatrices from "./ActivityMatrices";
 import { ActivityRow } from "./ActivityRow";
+import { useActivity } from "@org/core";
 
 const ActivityPage = () => {
   const [pagination, setPagination] = useState({

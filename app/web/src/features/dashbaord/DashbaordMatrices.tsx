@@ -1,6 +1,5 @@
-import { useDashboard } from "./hooks";
 import { Skeleton } from "@/components/ui/skeleton"; // Adjust this path based on your setup
-
+import  {useDashboard} from "@org/core"
 const DashboardMatrices = () => {
   const { summary, isLoadingSummary } = useDashboard();
 

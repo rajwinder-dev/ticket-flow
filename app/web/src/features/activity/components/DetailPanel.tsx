@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import type { ActivityLogSchema } from "@org/zod";
 import { Building2, Clock, Globe, Info, Monitor, Shield, User } from "lucide-react";
-import { formatDate } from "../utils";
+import { formatDate } from "@org/core";
 
 export function DetailPanel({ log }: { log: ActivityLogSchema }) {
   const { date, time } = formatDate(log.createdAt);

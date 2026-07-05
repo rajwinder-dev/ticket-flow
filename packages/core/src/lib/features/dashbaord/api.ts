@@ -1,13 +1,13 @@
-import { getRequest, getRequestMany } from "@org/web-utils";
 import { type RecentTicketSchema, type StatusCountsSchema } from "@org/zod";
+import { api } from "../../api.js";
 
 export const dashboardApi = {
   getSummary: async () => {
-    const data = await getRequest<StatusCountsSchema>({ path: "/dashboard/summary" });
+    const data = await api.get<StatusCountsSchema>({ path: "/dashboard/summary" });
     return data;
   },
   getRecentTickets: async () => {
-    const data = await getRequestMany<RecentTicketSchema>({ path: "/dashboard/recent-tickets" });
+    const data = await api.getMany<RecentTicketSchema>({ path: "/dashboard/recent-tickets" });
     return data;
   },
 };

@@ -1,4 +1,3 @@
-import { deleteRequest, getRequest, getRequestMany, patchRequest, postRequest } from "@org/web-utils";
 import type {
   CreateOrganizationInput,
   CreateOrganizationResponse,
@@ -7,29 +6,30 @@ import type {
   UpdateOrganizationInput,
 } from "@org/zod";
 import type { InviteDetails, Organization } from "./types.js";
+import { api } from "../../api.js";
 
 export const orgApi = {
   checkInvite: async (token: string) => {
-    const data = await getRequest<InviteDetails>({
+    const data = await api.get<InviteDetails>({
       path: `/org/token/${token}`,
     });
     return data;
   },
 
   getMine: async () => {
-    const data = await getRequestMany<Organization>({
+    const data = await api.getMany<Organization>({
       path: `/org/me`,
     });
     return data;
   },
   getCurrent: async () => {
-    const data = await getRequest<OrganizationSchemaResponse>({
+    const data = await api.get<OrganizationSchemaResponse>({
       path: "/org/current",
     });
     return data;
   },
   create: async (input: CreateOrganizationInput) => {
-    const data = await postRequest<CreateOrganizationResponse>({
+    const data = await api.post<CreateOrganizationResponse>({
       path: `/org`,
       data: input,
     });
@@ -37,7 +37,7 @@ export const orgApi = {
   },
 
   update: async (input: UpdateOrganizationInput) => {
-    const data = await patchRequest<Organization>({
+    const data = await api.patch<Organization>({
       path: `/org`,
       data: input,
     });
@@ -45,13 +45,13 @@ export const orgApi = {
   },
 
   delete: async (organizationId: string) => {
-    const data = await deleteRequest<Organization>({
+    const data = await api.delete<Organization>({
       path: `/org/${organizationId}`,
     });
     return data;
   },
   onboardStatus: async () => {
-    const data = await getRequest<OnboardingStatusResponse>({
+    const data = await api.get<OnboardingStatusResponse>({
       path: `/org/onboardStatus`
     })
     return data

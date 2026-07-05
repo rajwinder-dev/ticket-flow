@@ -5,7 +5,7 @@ import { activityApi } from "./api.js";
 interface props {
   filterOptions?: FilterOptions;
 }
-const useActivity = ({ filterOptions }: props = {}) => {
+export const useActivity = ({ filterOptions }: props = {}) => {
   const { orgId } = useParams();
   const {
     data: activity,
@@ -35,4 +35,3 @@ const useActivity = ({ filterOptions }: props = {}) => {
   };
 };
 
-export default useActivity;

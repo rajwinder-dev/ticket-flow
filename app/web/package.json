@@ -1,7 +1,7 @@
 {
   "name": "@org/web",
   "version": "0.0.1",
-  "private": true,
+  "private": true, 
   "dependencies": {
     "@better-auth/infra": "^0.2.7",
     "@floating-ui/react": "^0.27.19",

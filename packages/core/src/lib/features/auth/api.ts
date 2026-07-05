@@ -8,11 +8,11 @@ import {
   type ResetPasswordInput,
   type SignupInput,
 } from "@org/zod";
-import { getRequest, patchRequest, postRequest } from "@org/web-utils";
+import { api } from "../../api.js";
 
 export const authApi = {
   signUp: async (input: SignupInput) => {
-    const data = await postRequest<AuthToken>({
+    const data = await  api.post<AuthToken>({
       path: "/auth/signup",
       data: input,
     });
@@ -20,7 +20,7 @@ export const authApi = {
   },
 
   login: async (input: LoginInput) => {
-    const data = await postRequest<AuthToken>({
+    const data = await api.post<AuthToken>({
       path: "/auth/login",
       data: input,
     });
@@ -28,21 +28,21 @@ export const authApi = {
   },
 
   refresh: async () => {
-    const res = await getRequest<AuthToken>({
+    const res = await api.post<AuthToken>({
       path: "/auth/refresh-token",
     });
     return res;
   },
 
   forgotPassword: async (email: string) => {
-    const res = await getRequest({
+    const res = await api.get({
       path: `/auth/forget-password/${email}`,
     });
     return res;
   },
 
   resetPassword: async ({ token, input }: { token: string; input: ResetPasswordInput }) => {
-    const res = await patchRequest<ApiMessage>({
+    const res = await api.patch<ApiMessage>({
       path: `/auth/reset-password/${token}`,
       data: input,
     });
@@ -50,7 +50,7 @@ export const authApi = {
   },
 
   changePassword: async (input: ChangePasswordInput) => {
-    const data = await patchRequest<ApiMessage>({
+    const data = await api.patch<ApiMessage>({
       path: "/auth/change-password",
       data: input,
     });
@@ -58,20 +58,20 @@ export const authApi = {
   },
 
   logout: async () => {
-    const data = await postRequest({
+    const data = await api.patch({
       path: "/auth/logout",
     });
     return data;
   },
 
   getDetails: async () => {
-    const data = await getRequest<AuthDetails>({
+    const data = await api.get<AuthDetails>({
       path: "/auth/details",
     });
     return data;
   },
   tokenDetails: async (token: string) => {
-    const data = await getRequest<tokenSchemaResponse>({
+    const data = await api.get<tokenSchemaResponse>({
       path: `/token/${token}/details`,
     });
     return data;

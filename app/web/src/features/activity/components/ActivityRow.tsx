@@ -5,8 +5,7 @@ import type { ActivityLogSchema } from "@org/zod";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { DetailPanel } from "./DetailPanel";
-import { formatDate } from "../utils";
-import { severityConfig, truncateId } from "../types";
+import { formatDate, severityConfig, truncateId } from "@org/core";
 
 export function ActivityRow({ log }: { log: ActivityLogSchema }) {
   const [open, setOpen] = useState(false);

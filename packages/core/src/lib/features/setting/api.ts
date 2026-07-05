@@ -1,34 +1,34 @@
-import { deleteRequest, getRequestMany, patchRequest, postRequest } from "@org/web-utils";
 import type {
   CreateEmailProviderInput,
   CreateSmtpInput,
   EmailProviderSchema,
   UpdateEmailProviderInput,
 } from "@org/zod";
+import { api } from "../../api.js";
 
 export const emailApi = {
   createProvider: async (data: CreateEmailProviderInput) => {
-    const res = await postRequest({ path: "/email", data });
+    const res = await api.post({ path: "/email", data });
     return res;
   },
   createSMTP: async (data: CreateSmtpInput) => {
-    const res = await postRequest({ path: "/email/smtp", data });
+    const res = await api.post({ path: "/email/smtp", data });
     return res;
   },
   getProviders: async () => {
-    const res = await getRequestMany<EmailProviderSchema>({ path: "/email" });
+    const res = await api.getMany<EmailProviderSchema>({ path: "/email" });
     return res;
   },
   updateCredentials: async (id: string, data: UpdateEmailProviderInput) => {
-    const res = await patchRequest({ path: `/email/${id}`, data });
+    const res = await api.patch({ path: `/email/${id}`, data });
     return res;
   },
   deleteProvider: async (id: string) => {
-    const res = await deleteRequest({ path: `/email/${id}` });
+    const res = await api.delete({ path: `/email/${id}` });
     return res;
   },
   testProvider: async () => {
-    const res = await postRequest({ path: `/email/test` });
+    const res = await api.post({ path: `/email/test` });
     return res;
   },
 };

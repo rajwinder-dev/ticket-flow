@@ -9,7 +9,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { authApi } from "./api.js";
 
-function useAuth() {
+export const useAuth = () => {
   const navigate = useNavigate();
   const { data: authDetails, isLoading: isLoadingAuthDetails } = useQuery({
     queryFn: authApi.getDetails,
@@ -91,4 +91,3 @@ function useAuth() {
   };
 }
 
-export default useAuth;

@@ -7,7 +7,7 @@ import { memberApi } from "./api.js";
 interface props {
   filterOptions?: FilterOptions;
 }
-const useMember = ({ filterOptions }: props = {}) => {
+export const useMember = ({ filterOptions }: props = {}) => {
   const { orgId, token } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -108,4 +108,3 @@ const useMember = ({ filterOptions }: props = {}) => {
     membersError,
   };
 };
-export default useMember;
