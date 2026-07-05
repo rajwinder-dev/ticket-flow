@@ -4,7 +4,7 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/constants"
+      "path": "./packages/constants/"
     },
     {
       "path": "./packages/utils"
@@ -38,6 +38,9 @@
     },
     {
       "path": "./packages/web-utils"
+    },
+    {
+      "path": "./packages/constants"
     }
   ]
 }
