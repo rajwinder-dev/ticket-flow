@@ -6,7 +6,6 @@
       "node",
       "express"
     ],
-    "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
   "include": [
@@ -15,7 +14,7 @@
   "exclude": [
     "eslint.config.js",
     "eslint.config.cjs",
-    "eslint.config.mjs"
+    "eslint.config.mjs",
   ],
   "references": [
     {
@@ -32,6 +31,6 @@
     },
     {
       "path": "../../packages/constants/tsconfig.lib.json"
-    },
+    }
   ]
 }

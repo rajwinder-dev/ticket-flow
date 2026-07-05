@@ -67,6 +67,7 @@
     "@org/database": "workspace:*",
     "@org/utils": "workspace:*",
     "@org/zod": "workspace:*",
+    "@org/email-providers": "workspace:*",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/hpp": "^0.2.7",

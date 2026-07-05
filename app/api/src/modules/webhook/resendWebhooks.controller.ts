@@ -85,6 +85,6 @@ export class resendWebhookController {
       });
       return response(res, "Ticket Created Success", 200);
     }
-    response(res, null, 200);
+    return response(res, null, 200);
   });
 }

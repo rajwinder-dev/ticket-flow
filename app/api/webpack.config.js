@@ -9,9 +9,19 @@ module.exports = {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
+  resolve: {
+  conditionNames: [
+    '@org/source',
+    'import',
+    'module',
+    'require',
+    'default'
+  ]
+},
   plugins: [
     new NxAppWebpackPlugin({
       target: 'node',
+
       compiler: 'tsc',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',

@@ -28,7 +28,7 @@ export class EmailController {
   static updateCredentials = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const input = req.body as CreateEmailProviderInput;
-    await EmailService.updateEmailProvider(id, req.user.email, req.organization.id, input);
+    await EmailService.updateEmailProvider(id, req.organization.id, input);
     response(res, { message: "Email Provider updated successfully" }, 200);
   });
   static deleteCredentials = catchAsync(async (req, res, _next) => {
