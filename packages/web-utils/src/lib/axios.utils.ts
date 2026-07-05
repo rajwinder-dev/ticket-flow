@@ -1,6 +1,5 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
-const apiUrl = "/api/v1"; // user reverse proxy / api url
 
 import type {
   ApiResponse,
@@ -8,160 +7,179 @@ import type {
   geneticApiResponse,
   PaginateResponse,
   PostRequest,
-} from "./axios.types.js";
-import { getOrgIdFromUrl } from "./browser.utils.js";
+} from './axios.types.js';
 
-export const api = axios.create({
-  baseURL: apiUrl,
-  withCredentials: true,
-});
+export class AxiosApi {
+  apiUrl: string;
+  api: AxiosInstance;
+  getOrgId?: () => string | undefined;
+  constructor({
+    apiUrl = '/api/v1',
+    getOrgId,
+  }: {
+    apiUrl?: string;
+    getOrgId?: () => string | undefined;
+  } = {}) {
+    this.apiUrl = apiUrl;
+    this.getOrgId = getOrgId;
 
-export async function postRequest<T = geneticApiResponse>({
-  path,
-  data,
-  headers = "application/json",
-  options,
-}: PostRequest): Promise<ApiResponse<T>> {
-  return await catchError(async () => {
-    const response = await api.post<ApiResponse<T>>(`${path}`, data, {
-      headers: {
-        "Content-Type": headers,
-      },
-      ...(options || {}),
+    this.api = axios.create({
+      baseURL: this.apiUrl,
+      withCredentials: true,
     });
-    const res = response.data;
-    return res;
-  });
-}
+    this.api.interceptors.request.use(
+      async (config: InternalAxiosRequestConfig) => {
+        const organizationId = this.getOrgId?.();
+        if (organizationId)
+          config.headers['x-organization-id'] = organizationId;
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      },
+    );
+  }
+  async post<T = geneticApiResponse>({
+    path,
+    data,
+    headers = 'application/json',
+    options,
+  }: PostRequest): Promise<ApiResponse<T>> {
+    return await this.catchError(async () => {
+      const response = await this.api.post<ApiResponse<T>>(`${path}`, data, {
+        headers: {
+          'Content-Type': headers,
+        },
+        ...(options || {}),
+      });
+      const res = response.data;
+      return res;
+    });
+  }
+  async get<T = geneticApiResponse>({
+    path,
+    filterOptions,
+    headers = 'application/json',
+  }: {
+    path: string;
+    filterOptions?: FilterOptions;
+    headers?: string;
+  }): Promise<ApiResponse<T>> {
+    return await this.catchError(async () => {
+      let query = '';
+      if (filterOptions) query = this.buildQuery(filterOptions);
+      const response = await this.api.get<ApiResponse<T>>(`${path}?${query}`, {
+        headers: {
+          'Content-Type': headers,
+        },
+      });
+      const res = response.data;
+      if (res.status === 'fail') throw new Error(res.message);
 
-export async function getRequest<T = geneticApiResponse>({
-  path,
-  filterOptions,
-  headers = "application/json",
-}: {
-  path: string;
-  filterOptions?: FilterOptions;
-  headers?: string;
-}): Promise<ApiResponse<T>> {
-  return await catchError(async () => {
-    let query = "";
-    if (filterOptions) query = buildQuery(filterOptions);
-    const response = await api.get<ApiResponse<T>>(`${path}?${query}`, {
-      headers: {
-        "Content-Type": headers,
-      },
+      return res;
     });
-    const res = response.data;
-    if (res.status === "fail") throw new Error(res.message);
-
-    return res;
-  });
-}
-export async function getRequestMany<T>({
-  path,
-  filterOptions,
-  headers = "application/json",
-}: {
-  path: string;
-  filterOptions?: FilterOptions;
-  headers?: string;
-}): Promise<PaginateResponse<T>> {
-  return await catchError(async () => {
-    let query = "";
-    if (filterOptions) query = buildQuery(filterOptions);
-    const response = await api.get<PaginateResponse<T>>(`${path}?${query}`, {
-      headers: {
-        "Content-Type": headers,
-      },
+  }
+  async getMany<T>({
+    path,
+    filterOptions,
+    headers = 'application/json',
+  }: {
+    path: string;
+    filterOptions?: FilterOptions;
+    headers?: string;
+  }): Promise<PaginateResponse<T>> {
+    return await this.catchError(async () => {
+      let query = '';
+      if (filterOptions) query = this.buildQuery(filterOptions);
+      const response = await this.api.get<PaginateResponse<T>>(
+        `${path}?${query}`,
+        {
+          headers: {
+            'Content-Type': headers,
+          },
+        },
+      );
+      const res = response.data;
+      if (res.status === 'fail') throw new Error(res.message);
+      return res;
     });
-    const res = response.data;
-    if (res.status === "fail") throw new Error(res.message);
-    return res;
-  });
-}
-export async function patchRequest<T = geneticApiResponse>({
-  path,
-  data,
-  headers = "application/json",
-}: PostRequest): Promise<ApiResponse<T>> {
-  return await catchError(async () => {
-    const response = await api.patch<ApiResponse<T>>(`${path}`, data, {
-      headers: {
-        "Content-Type": headers,
-      },
+  }
+  async patch<T = geneticApiResponse>({
+    path,
+    data,
+    headers = 'application/json',
+  }: PostRequest): Promise<ApiResponse<T>> {
+    return await this.catchError(async () => {
+      const response = await this.api.patch<ApiResponse<T>>(`${path}`, data, {
+        headers: {
+          'Content-Type': headers,
+        },
+      });
+      const res = response.data;
+      if (res.status === 'fail') throw new Error(res.message);
+      return res;
     });
-    const res = response.data;
-    if (res.status === "fail") throw new Error(res.message);
-    return res;
-  });
-}
-export async function deleteRequest<T = geneticApiResponse>({
-  path,
-  filterOptions,
-  headers = "application/json",
-}: {
-  path: string;
-  filterOptions?: FilterOptions;
-  headers?: string;
-}): Promise<ApiResponse<T>> {
-  let query = "";
-  if (filterOptions) query = buildQuery(filterOptions);
-  return await catchError(async () => {
-    const response = await api.delete<ApiResponse<T>>(`${path}?${query}`, {
-      headers: {
-        "Content-Type": headers,
-      },
+  }
+  async delete<T = geneticApiResponse>({
+    path,
+    filterOptions,
+    headers = 'application/json',
+  }: {
+    path: string;
+    filterOptions?: FilterOptions;
+    headers?: string;
+  }): Promise<ApiResponse<T>> {
+    let query = '';
+    if (filterOptions) query = this.buildQuery(filterOptions);
+    return await this.catchError(async () => {
+      const response = await this.api.delete<ApiResponse<T>>(
+        `${path}?${query}`,
+        {
+          headers: {
+            'Content-Type': headers,
+          },
+        },
+      );
+      const res = response.data;
+      if (res.status === 'fail') throw new Error(res.message);
+      return res;
     });
-    const res = response.data;
-    if (res.status === "fail") throw new Error(res.message);
-    return res;
-  });
-}
-// axios helper
-export function buildQuery(input: Record<string, string | number | boolean | string[] | object>) {
-  const array: string[] = [];
-  for (const [key, value] of Object.entries(input)) {
-    if (Array.isArray(value)) {
-      array.push(`${key}=${value.join(",")}`);
-    } else if (typeof value === "object" && value !== null) {
-      for (const [key, subValue] of Object.entries(value)) {
-        array.push(`${key}=${subValue}`);
+  }
+  buildQuery(
+    input: Record<string, string | number | boolean | string[] | object>,
+  ) {
+    const array: string[] = [];
+    for (const [key, value] of Object.entries(input)) {
+      if (Array.isArray(value)) {
+        array.push(`${key}=${value.join(',')}`);
+      } else if (typeof value === 'object' && value !== null) {
+        for (const [key, subValue] of Object.entries(value)) {
+          array.push(`${key}=${subValue}`);
+        }
+      } else {
+        array.push(`${key}=${value}`);
       }
-    } else {
-      array.push(`${key}=${value}`);
     }
+    return array.join('&');
   }
-  return array.join("&");
-}
-
-export async function catchError<T>(callback: () => Promise<T>): Promise<T> {
-  try {
-    return await callback();
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const apiMsg = error.response?.data?.message || error.message;
-      throw {
-        message: apiMsg,
-        status: error.response?.status,
-        data: error.response?.data,
-      };
+  async catchError<T>(callback: () => Promise<T>): Promise<T> {
+    try {
+      return await callback();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const apiMsg = error.response?.data?.message || error.message;
+        throw {
+          message: apiMsg,
+          status: error.response?.status,
+          data: error.response?.data,
+        };
+      }
+      const unknownError = new Error('Unknown error occurred');
+      throw unknownError;
     }
-    const unknownError = new Error("Unknown error occurred");
-    throw unknownError;
   }
 }
 
-api.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    const organizationId = getOrgIdFromUrl();
-    if (organizationId) config.headers["x-organization-id"] = organizationId;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
+// axios helper
 
-
-
-export * from "./axios.types.js"
+export * from './axios.types.js';
