@@ -26,7 +26,7 @@ type QueueTicketTableProps = {
 };
 
 export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTableProps) {
-  const { queueId } = useParams();
+  const { queueId , orgId} = useParams();
   const [ticketSearch, setTicketSearch] = useState("");
 
   // Data Fetching
@@ -36,6 +36,7 @@ export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTabl
         queueId: queueId!,
       },
     },
+    orgId
   });
 
   const { queueSummary } = useQueue({ queueId });

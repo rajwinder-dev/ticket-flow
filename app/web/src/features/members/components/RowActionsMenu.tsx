@@ -17,7 +17,6 @@ interface Props {
 export function RowActionsMenu({ member }: Props) {
   const [openEditRole, setOpenEditRole] = useState(false);
   const [openAssignQueue, setOpenAssignQueue] = useState(false);
-  // const [openDisableMember, setOpenDisableMember] = useState(false);
 
   return (
     <DropdownMenu>

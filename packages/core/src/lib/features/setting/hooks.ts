@@ -4,13 +4,11 @@ import type {
   UpdateEmailProviderInput,
 } from '@org/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router';
-import { toast } from 'sonner';
 import { emailApi } from './api.js';
-
-export const useEmail = () => {
-  const { orgId } = useParams();
-  const navigate = useNavigate();
+interface props {
+  orgId: string | undefined;
+}
+export const useEmail = ({ orgId }: props) => {
   const queryClient = useQueryClient();
 
   // --- Queries ---
@@ -26,25 +24,17 @@ export const useEmail = () => {
       mutationFn: (data: CreateEmailProviderInput) =>
         emailApi.createProvider(data),
       onSuccess: () => {
-        toast.success('Provider created successfully');
         queryClient.invalidateQueries({
           queryKey: ['email-provider', { orgId }],
         });
-      },
-      onError: (error) => {
-        toast.error(error.message);
       },
     });
   const { mutate: createSMTP, isPending: isCreatingSMTP } = useMutation({
     mutationFn: (data: CreateSmtpInput) => emailApi.createSMTP(data),
     onSuccess: () => {
-      toast.success('Provider created successfully');
       queryClient.invalidateQueries({
         queryKey: ['email-provider', { orgId }],
       });
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 
@@ -58,13 +48,9 @@ export const useEmail = () => {
         data: UpdateEmailProviderInput;
       }) => emailApi.updateCredentials(id, data),
       onSuccess: () => {
-        toast.success('Organization updated successfully');
         queryClient.invalidateQueries({
           queryKey: ['email-provider', { orgId }],
         });
-      },
-      onError: (error) => {
-        toast.error(error.message);
       },
     });
 
@@ -72,13 +58,9 @@ export const useEmail = () => {
     {
       mutationFn: (id: string) => emailApi.deleteProvider(id),
       onSuccess: () => {
-        toast.success('Provider deleted successfully');
         queryClient.invalidateQueries({
           queryKey: ['email-provider', { orgId }],
         });
-      },
-      onError: (error) => {
-        toast.error(error.message);
       },
     },
   );
@@ -86,14 +68,9 @@ export const useEmail = () => {
   const { mutate: testProvider, isPending: isTestingProvider } = useMutation({
     mutationFn: emailApi.testProvider,
     onSuccess: () => {
-      toast.success('email send successfully');
       queryClient.invalidateQueries({
         queryKey: ['email-provider', { orgId }],
       });
-      navigate('/org');
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 
@@ -112,5 +89,3 @@ export const useEmail = () => {
     isTestingProvider,
   };
 };
-
-export default useEmail;

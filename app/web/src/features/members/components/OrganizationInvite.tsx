@@ -1,27 +1,33 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { inviteUserOrganizationInput, type InviteUserOrganizationInput } from "@org/zod";
-import { useMember, useRole } from "@org/core";
+} from '@/components/ui/select';
+import {
+  inviteUserOrganizationInput,
+  type InviteUserOrganizationInput,
+} from '@org/zod';
+import { useMember, useRole } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 // Define the schema
 interface props {
   onclose: () => void;
 }
 export function OrganizationInvite({ onclose }: props) {
-  const { inviteUserMutate, isInvitingUser } = useMember();
+  const { orgId } = useParams();
+  const { inviteUserMutate, isInvitingUser } = useMember({ orgId });
   const {
     register,
     handleSubmit,
@@ -31,17 +37,19 @@ export function OrganizationInvite({ onclose }: props) {
   } = useForm<InviteUserOrganizationInput>({
     resolver: zodResolver(inviteUserOrganizationInput.bodySchema),
     defaultValues: {
-      email: "",
-      roleId: "",
+      email: '',
+      roleId: '',
     },
   });
-  const { roles } = useRole();
+  const { roles } = useRole({ orgId });
   const onSubmit = async (data: InviteUserOrganizationInput) => {
     inviteUserMutate(data, {
       onSuccess: () => {
+        toast.success('Invite sent successfully');
         reset();
         onclose();
       },
+      onError: (error) => toast.error(error.message),
     });
   };
 
@@ -54,10 +62,12 @@ export function OrganizationInvite({ onclose }: props) {
           id="email"
           type="email"
           placeholder="name@example.com"
-          {...register("email")}
-          className={errors.email ? "border-destructive" : ""}
+          {...register('email')}
+          className={errors.email ? 'border-destructive' : ''}
         />
-        {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-destructive text-xs">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Role Selector Field */}
@@ -70,7 +80,9 @@ export function OrganizationInvite({ onclose }: props) {
             <Select onValueChange={field.onChange} value={field.value}>
               <SelectTrigger
                 id="role"
-                className={errors.roleId ? "border-destructive w-full" : "w-full"}
+                className={
+                  errors.roleId ? 'border-destructive w-full' : 'w-full'
+                }
               >
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
@@ -84,15 +96,22 @@ export function OrganizationInvite({ onclose }: props) {
             </Select>
           )}
         />
-        {errors.roleId && <p className="text-destructive text-xs">{errors.roleId.message}</p>}
+        {errors.roleId && (
+          <p className="text-destructive text-xs">{errors.roleId.message}</p>
+        )}
       </div>
       <div className="flex gap-4">
-        <Button type="button" variant={"secondary"} className="flex-1" onClick={onclose}>
+        <Button
+          type="button"
+          variant={'secondary'}
+          className="flex-1"
+          onClick={onclose}
+        >
           Cancel
         </Button>
 
         <Button type="submit" disabled={isInvitingUser} className="flex-1">
-          {isInvitingUser ? "Sending Invite..." : "Send Invitation"}
+          {isInvitingUser ? 'Sending Invite...' : 'Send Invitation'}
         </Button>
       </div>
     </form>

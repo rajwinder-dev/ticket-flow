@@ -1,35 +1,36 @@
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useLookupHook , ticketApi,useTicket } from "@org/core";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { escalationReasons, ticketPriority } from "@org/constants";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useLookupHook, ticketApi, useTicket } from '@org/core';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { escalationReasons, ticketPriority } from '@org/constants';
 import {
   escalateTicketInput,
   type EscalateTicketInput,
   type TicketSchemaResponse,
-} from "@org/zod";
-import { useQuery } from "@tanstack/react-query";
-import { ChevronUp } from "lucide-react";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { QueueFlow } from "./QueueFlow";
+} from '@org/zod';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronUp } from 'lucide-react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { QueueFlow } from './QueueFlow';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface TicketEscalateDialogProps {
   open: boolean;
@@ -37,14 +38,19 @@ interface TicketEscalateDialogProps {
   ticket: TicketSchemaResponse | null;
   onSubmit?: (ticketId: string, values: TicketSchemaResponse) => void;
 }
-export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDialogProps) {
-  const { groupsData } = useLookupHook();
+export function TicketEscalateDialog({
+  open,
+  setOpen,
+  ticket,
+}: TicketEscalateDialogProps) {
+  const { orgId } = useParams();
+  const { groupsData } = useLookupHook({ orgId });
   const { data: escalateOptions } = useQuery({
     queryFn: () => ticketApi.escalateOptions(ticket!.id),
-    queryKey: ["escalation-options", { ticketId: ticket?.id }],
+    queryKey: ['escalation-options', { ticketId: ticket?.id }],
     enabled: !!ticket?.id,
   });
-  const { escalateTicket, isEscalatingTicket } = useTicket();
+  const { escalateTicket, isEscalatingTicket } = useTicket({ orgId });
   const {
     control,
     handleSubmit,
@@ -53,12 +59,12 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
   } = useForm<EscalateTicketInput>({
     resolver: zodResolver(escalateTicketInput.bodySchema),
     defaultValues: {
-      comment: "",
-      priority: ticket?.priority ?? "MEDIUM",
+      comment: '',
+      priority: ticket?.priority ?? 'MEDIUM',
     },
   });
 
-  const watchedPriority = useWatch({ control, name: "priority" });
+  const watchedPriority = useWatch({ control, name: 'priority' });
 
   const handleFormSubmit = async (data: EscalateTicketInput) => {
     if (!ticket) return;
@@ -66,8 +72,12 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
       { ticketId: ticket.id, data },
       {
         onSuccess: () => {
+          toast.success('ticket escalated successfully');
           setOpen(false);
           reset();
+        },
+        onError: (error) => {
+          toast.error(error.message);
         },
       },
     );
@@ -97,7 +107,10 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 pt-1">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="space-y-5 pt-1"
+        >
           {/* Queue Flow */}
           {escalateOptions && (
             <QueueFlow
@@ -113,12 +126,12 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
               <Controller
                 name="groupId"
                 control={control}
-                rules={{ required: "Please select a group" }}
+                rules={{ required: 'Please select a group' }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger
                       id="group"
-                      className={cn(errors.groupId && "border-destructive")}
+                      className={cn(errors.groupId && 'border-destructive')}
                     >
                       <SelectValue placeholder="Select next Group to escalate" />
                     </SelectTrigger>
@@ -133,7 +146,9 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
                 )}
               />
               {errors.groupId && (
-                <p className="text-destructive text-xs">{errors.groupId.message}</p>
+                <p className="text-destructive text-xs">
+                  {errors.groupId.message}
+                </p>
               )}
             </div>
           )}
@@ -145,10 +160,13 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
             <Controller
               name="reason"
               control={control}
-              rules={{ required: "Please select a reason" }}
+              rules={{ required: 'Please select a reason' }}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger id="reason" className={cn(errors.reason && "border-destructive")}>
+                  <SelectTrigger
+                    id="reason"
+                    className={cn(errors.reason && 'border-destructive')}
+                  >
                     <SelectValue placeholder="Why is this being escalated?" />
                   </SelectTrigger>
                   <SelectContent>
@@ -161,7 +179,11 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
                 </Select>
               )}
             />
-            {errors.reason && <p className="text-destructive text-xs">{errors.reason.message}</p>}
+            {errors.reason && (
+              <p className="text-destructive text-xs">
+                {errors.reason.message}
+              </p>
+            )}
           </div>
 
           {/* Priority Change */}
@@ -179,7 +201,10 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger id="reason" className={cn(errors.reason && "border-destructive")}>
+                  <SelectTrigger
+                    id="reason"
+                    className={cn(errors.reason && 'border-destructive')}
+                  >
                     <SelectValue placeholder="Why is this being escalated?" />
                   </SelectTrigger>
                   <SelectContent>
@@ -217,7 +242,11 @@ export function TicketEscalateDialog({ open, setOpen, ticket }: TicketEscalateDi
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isEscalatingTicket} className="gap-1.5">
+            <Button
+              type="submit"
+              disabled={isEscalatingTicket}
+              className="gap-1.5"
+            >
               <ChevronUp className="h-3.5 w-3.5" />
               Escalate Ticket
             </Button>

@@ -8,14 +8,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { PermissionModule, RoleSchema } from "@org/zod";
-import { ChevronRight, Pencil, Shield, ShieldCheck, Trash2 } from "lucide-react";
-import { RoleFormDialog } from "./RoleFormDialog";
-import { totalPermCount, useRole, useRoleStore } from "@org/core";
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import type { PermissionModule, RoleSchema } from '@org/zod';
+import {
+  ChevronRight,
+  Pencil,
+  Shield,
+  ShieldCheck,
+  Trash2,
+} from 'lucide-react';
+import { RoleFormDialog } from './RoleFormDialog';
+import { totalPermCount, useRole, useRoleStore } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface RoleCardProps {
   role: RoleSchema;
@@ -25,12 +39,12 @@ export function RoleCard({ role }: RoleCardProps) {
   const { setRoleId, roleId } = useRoleStore();
   const total = totalPermCount(role?.permissions);
   const isSelected = role.id === roleId;
-
-  const { deleteRole } = useRole();
+  const { orgId } = useParams();
+  const { deleteRole } = useRole({ orgId });
   return (
     <Card
       className={`hover:border-primary/40 cursor-pointer transition-all hover:shadow-md ${
-        isSelected ? "border-primary ring-primary/20 shadow-md ring-2" : ""
+        isSelected ? 'border-primary ring-primary/20 shadow-md ring-2' : ''
       }`}
       onClick={() => setRoleId(role.id)}
     >
@@ -39,7 +53,7 @@ export function RoleCard({ role }: RoleCardProps) {
           <div className="flex min-w-0 items-center gap-2">
             <ShieldCheck
               className={`h-4 w-4 shrink-0 ${
-                isSelected ? "text-primary" : "text-muted-foreground"
+                isSelected ? 'text-primary' : 'text-muted-foreground'
               }`}
             />
             <CardTitle className="truncate text-base">{role.name}</CardTitle>
@@ -76,15 +90,24 @@ export function RoleCard({ role }: RoleCardProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete "{role.name}"?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. All users assigned this role will lose its
-                    permissions.
+                    This action cannot be undone. All users assigned this role
+                    will lose its permissions.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    onClick={() => deleteRole(role.id)}
+                    onClick={() =>
+                      deleteRole(role.id, {
+                        onSuccess: () => {
+                          toast.success('role deleted successfully');
+                        },
+                        onError: (error) => {
+                          toast.error(error.message);
+                        },
+                      })
+                    }
                   >
                     Delete
                   </AlertDialogAction>
@@ -107,7 +130,11 @@ export function RoleCard({ role }: RoleCardProps) {
             .filter(([, v]) => v.length > 0)
             .map(([module]) => {
               return (
-                <Badge key={module} variant="secondary" className="gap-1 px-1.5 py-0.5 text-xs">
+                <Badge
+                  key={module}
+                  variant="secondary"
+                  className="gap-1 px-1.5 py-0.5 text-xs"
+                >
                   <Shield className={`h-3 w-3`} />
                   {module}
                 </Badge>

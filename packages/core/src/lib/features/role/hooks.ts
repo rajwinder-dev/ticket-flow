@@ -1,22 +1,22 @@
-import type { CreateRoleInput } from "@org/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { toast } from "sonner";
-import { roleApi } from "./api.js";
-
-export const useRole = () =>  {
-  const { roleId, orgId } = useParams();
+import type { CreateRoleInput } from '@org/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { roleApi } from './api.js';
+interface props {
+  roleId?: string | undefined;
+  orgId: string | undefined;
+}
+export const useRole = ({ roleId, orgId }: props) => {
   const queryClient = useQueryClient();
 
   // --- Queries ---
   const { data: roles, isLoading: isLoadingRoles } = useQuery({
     queryFn: roleApi.getAllRoles,
-    queryKey: ["role", { orgId }],
+    queryKey: ['role', { orgId }],
     retry: false,
   });
   const { data: getRoleDetails, isLoading: isLoadingRoleDetails } = useQuery({
     queryFn: () => roleApi.getDetails(roleId!),
-    queryKey: ["role", { roleId }],
+    queryKey: ['role', { roleId }],
     enabled: !!roleId,
   });
 
@@ -24,34 +24,22 @@ export const useRole = () =>  {
   const { mutate: createRole, isPending: isCreatingRole } = useMutation({
     mutationFn: (data: CreateRoleInput) => roleApi.create(data),
     onSuccess: () => {
-      toast.success("role created successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
-    },
-    onError: (error) => {
-      console.dir(error);
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['role', { orgId }] });
     },
   });
 
   const { mutate: updateRole, isPending: isUpdatingRole } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CreateRoleInput }) => roleApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: CreateRoleInput }) =>
+      roleApi.update(id, data),
     onSuccess: () => {
-      toast.success("role updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['role', { orgId }] });
     },
   });
 
   const { mutate: deleteRole, isPending: isDeletingRole } = useMutation({
     mutationFn: (roleId: string) => roleApi.delete(roleId),
     onSuccess: () => {
-      toast.success("role deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["role", { orgId }] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['role', { orgId }] });
     },
   });
 
@@ -67,7 +55,4 @@ export const useRole = () =>  {
     deleteRole,
     isDeletingRole,
   };
-}
-
-
-
+};

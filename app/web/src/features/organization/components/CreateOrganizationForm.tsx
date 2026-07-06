@@ -1,25 +1,30 @@
-import { Globe, Loader2 } from "lucide-react";
-import { useForm, useWatch } from "react-hook-form";
+import { Globe, Loader2 } from 'lucide-react';
+import { useForm, useWatch } from 'react-hook-form';
 
 // UI Components
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type CreateOrganizationInput, createOrganizationInput } from "@org/zod";
-import { useNavigate } from "react-router";
-import { useOrganizations } from "@org/core";
+} from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  type CreateOrganizationInput,
+  createOrganizationInput,
+} from '@org/zod';
+import { useNavigate, useParams } from 'react-router';
+import { useOrganizations } from '@org/core';
+import { toast } from 'sonner';
 const CreateOrganizationForm = () => {
   const navigate = useNavigate();
-  const { createOrg, isCreatingOrg } = useOrganizations();
+  const { orgId } = useParams();
+  const { createOrg, isCreatingOrg } = useOrganizations({ orgId });
   const {
     register,
     handleSubmit,
@@ -29,24 +34,32 @@ const CreateOrganizationForm = () => {
   } = useForm<CreateOrganizationInput>({
     resolver: zodResolver(createOrganizationInput.bodySchema),
     defaultValues: {
-      type: "PERSONAL",
+      type: 'PERSONAL',
       teamSize: 5,
     },
   });
   const name = useWatch({
     control,
-    name: "name",
+    name: 'name',
   });
   const slug = name
     ?.trim()
     .toLowerCase()
-    .replace(/\s+/g, "-") // spaces → dash
-    .replace(/[^a-z0-9-]/g, "") // remove special chars
-    .replace(/-+/g, "-"); // remove duplicate dashes
-  setValue("slug", slug);
+    .replace(/\s+/g, '-') // spaces → dash
+    .replace(/[^a-z0-9-]/g, '') // remove special chars
+    .replace(/-+/g, '-'); // remove duplicate dashes
+  setValue('slug', slug);
 
   const onSubmit = (data: CreateOrganizationInput) => {
-    createOrg(data);
+    createOrg(data, {
+      onSuccess: (data) => {
+        toast.success('Organization created successfully');
+        navigate(`/org/${data.data.id}`);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -60,13 +73,17 @@ const CreateOrganizationForm = () => {
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">Organization Name</Label>
-            <Input id="name" placeholder="Acme Corp" {...register("name")} />
-            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+            <Input id="name" placeholder="Acme Corp" {...register('name')} />
+            {errors.name && (
+              <p className="text-destructive text-xs">{errors.name.message}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="slug">URL Slug</Label>
-            <Input id="slug" placeholder="acme-corp" {...register("slug")} />
-            {errors.slug && <p className="text-destructive text-xs">{errors.slug.message}</p>}
+            <Input id="slug" placeholder="acme-corp" {...register('slug')} />
+            {errors.slug && (
+              <p className="text-destructive text-xs">{errors.slug.message}</p>
+            )}
           </div>
         </CardContent>
         <CardContent className="grid gap-6 sm:grid-cols-2">
@@ -76,18 +93,20 @@ const CreateOrganizationForm = () => {
               id="teamSize"
               placeholder="27"
               type="number"
-              {...register("teamSize", {
+              {...register('teamSize', {
                 valueAsNumber: true,
                 min: 1,
               })}
             />
             {errors.teamSize && (
-              <p className="text-destructive text-xs">{errors.teamSize.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.teamSize.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
             <Label>Type</Label>
-            <Select {...register("type")} defaultValue={"PERSONAL"}>
+            <Select {...register('type')} defaultValue={'PERSONAL'}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Type" />
               </SelectTrigger>
@@ -102,7 +121,11 @@ const CreateOrganizationForm = () => {
 
       {/* Footer Actions */}
       <div className="flex items-center justify-end gap-4">
-        <Button type="button" variant={"secondary"} onClick={() => navigate(-1)}>
+        <Button
+          type="button"
+          variant={'secondary'}
+          onClick={() => navigate(-1)}
+        >
           Back
         </Button>
         <Button type="submit" disabled={isCreatingOrg}>

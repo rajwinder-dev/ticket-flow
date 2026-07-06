@@ -5,13 +5,15 @@ import { Plus } from "lucide-react";
 import { GroupCard } from "./GroupCard";
 import { Card } from "@/components/ui/card";
 import { useQueueGroup } from "@org/core";
+import { useParams } from "react-router";
 
 interface GroupSidebarProps {
   onCreateGroup: () => void;
 }
 
 export function GroupSidebar({ onCreateGroup }: GroupSidebarProps) {
-  const { queueGroups, queueGroupError, isLoadingQueueGroups } = useQueueGroup();
+  const {orgId} = useParams()
+  const { queueGroups, queueGroupError, isLoadingQueueGroups } = useQueueGroup({orgId});
 
   return (
     <aside className="bg-background flex h-[calc(100vh-151px)] w-80 shrink-0 flex-col border-r">

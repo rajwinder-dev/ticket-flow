@@ -7,19 +7,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useQueue } from "@org/core";
-import type { QueueSchemaResponse } from "@org/zod";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui/dropdown-menu';
+import { useQueue } from '@org/core';
+import type { QueueSchemaResponse } from '@org/zod';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface QueueActionsMenuProps {
   queue: QueueSchemaResponse;
@@ -28,17 +29,27 @@ interface QueueActionsMenuProps {
 
 export function QueueActionsMenu({ queue, onEdit }: QueueActionsMenuProps) {
   const [showConfirmDelete, setShowConfirm] = useState(false);
-  const { deletedQueue, isDeletingQueue } = useQueue();
+  const { deleteQueue, isDeletingQueue } = useQueue();
   const handleQueueDelete = (id: string) => {
-    deletedQueue(id, {
-      onSuccess: () => setShowConfirm(true),
+    deleteQueue(id, {
+      onSuccess: () => {
+        toast.success('queue deleted successfully');
+        setShowConfirm(true);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
     });
   };
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => e.stopPropagation()}
+          >
             <MoreHorizontal className="h-4 w-4" />
             <span className="sr-only">Open actions</span>
           </Button>
@@ -75,9 +86,11 @@ export function QueueActionsMenu({ queue, onEdit }: QueueActionsMenuProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowConfirm(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setShowConfirm(false)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
-              variant={"destructive"}
+              variant={'destructive'}
               onClick={() => handleQueueDelete(queue.id)}
               disabled={isDeletingQueue}
             >

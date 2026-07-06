@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -7,29 +7,35 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import ErrorState from "@/components/ui/errorState";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { useNavigate, useParams } from "react-router";
+} from '@/components/ui/card';
+import ErrorState from '@/components/ui/errorState';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { useNavigate, useParams } from 'react-router';
 
-import { useMember , useMembersStore} from "@org/core";
-import { useEffect } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useMember, useMembersStore } from '@org/core';
+import { useEffect } from 'react';
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 const InviteMemberPage = () => {
-  const { token } = useParams();
+  const { token, orgId } = useParams();
   const { data: session, isPending } = authClient.useSession();
   const { setInviteToken, clearInvite } = useMembersStore();
   const navigate = useNavigate();
 
-  const { inviteDetails, isLoadingInviteDetails, acceptInviteMutate, InviteError } = useMember();
+  const {
+    inviteDetails,
+    isLoadingInviteDetails,
+    acceptInviteMutate,
+    InviteError,
+  } = useMember({ orgId, token });
   const inviteData = inviteDetails?.data;
   const isLoading = isLoadingInviteDetails || isPending;
 
   useEffect(() => {
     if (token && inviteDetails?.data.invitedTo) {
-      console.log("ticket details updated");
+      console.log('ticket details updated');
       setInviteToken({ token, email: inviteDetails?.data.invitedTo });
     }
   }, [token, setInviteToken, inviteDetails]);
@@ -38,7 +44,7 @@ const InviteMemberPage = () => {
   useEffect(() => {
     if (!isLoading && !InviteError) {
       if (session?.user.email !== inviteDetails?.data.invitedTo) {
-        navigate("/login");
+        navigate('/login');
       }
     }
   }, [session, inviteDetails, isLoading, InviteError, navigate]);
@@ -47,7 +53,11 @@ const InviteMemberPage = () => {
     acceptInviteMutate(token!, {
       onSuccess: (data) => {
         clearInvite();
+        toast.success('organization joined  successfully');
         navigate(`/org/${data.data.organizationId}`);
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   };
@@ -57,7 +67,10 @@ const InviteMemberPage = () => {
     navigate(`/`);
   };
 
-  if (InviteError) return <ErrorState message={InviteError.message} onAction={handleDecline} />;
+  if (InviteError)
+    return (
+      <ErrorState message={InviteError.message} onAction={handleDecline} />
+    );
 
   return (
     <div className="bg-muted/30 flex min-h-screen items-center justify-center p-4">
@@ -78,7 +91,9 @@ const InviteMemberPage = () => {
             {isLoading ? (
               <Skeleton className="h-4 w-32 justify-self-end" />
             ) : (
-              <p className="text-right font-medium">{inviteData?.organization}</p>
+              <p className="text-right font-medium">
+                {inviteData?.organization}
+              </p>
             )}
 
             {/* Role Row */}
@@ -113,7 +128,8 @@ const InviteMemberPage = () => {
               <Skeleton className="h-4 w-36 justify-self-end" />
             ) : (
               <p className="text-right font-medium">
-                {inviteData?.expiresAt && new Date(inviteData.expiresAt).toLocaleString()}
+                {inviteData?.expiresAt &&
+                  new Date(inviteData.expiresAt).toLocaleString()}
               </p>
             )}
           </div>
@@ -125,12 +141,18 @@ const InviteMemberPage = () => {
             {isLoading ? (
               <Skeleton className="h-3 w-48" />
             ) : (
-              <span className="text-foreground font-mono font-medium">{token}</span>
+              <span className="text-foreground font-mono font-medium">
+                {token}
+              </span>
             )}
           </div>
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
-          <Button variant="outline" onClick={handleDecline} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={handleDecline}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button onClick={handleInvite} disabled={isLoading}>

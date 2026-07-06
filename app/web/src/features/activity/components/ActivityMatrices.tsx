@@ -1,7 +1,9 @@
 import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
 import { useActivity } from '@org/core';
+import { useParams } from 'react-router';
 const ActivityMatrices = () => {
-  const { activitySummary, isLoadingActivitySummary } = useActivity();
+  const { orgId } = useParams();
+  const { activitySummary, isLoadingActivitySummary } = useActivity({ orgId });
 
   const metrics = [
     { label: 'Total Events', value: activitySummary?.data.total },

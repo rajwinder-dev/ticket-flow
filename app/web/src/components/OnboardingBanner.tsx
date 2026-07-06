@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useOrganizations } from "@org/core";
 
 const ONBOARDING_STEPS = [
@@ -53,7 +53,8 @@ const ONBOARDING_STEPS = [
 
 export default function OnboardingBanner() {
   const navigate = useNavigate();
-  const { onboardSatus } = useOrganizations();
+  const {orgId} = useParams()
+  const { onboardSatus } = useOrganizations({orgId});
 
   const onboardingData = onboardSatus?.data;
 

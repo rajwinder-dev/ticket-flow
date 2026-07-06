@@ -10,7 +10,7 @@ const OrgLayout = () => {
   useEffect(() => {
     if (orgId) setOrgId(orgId);
   }, [orgId]);
-  const { organizations } = useOrganizations();
+  const { organizations } = useOrganizations({orgId});
   const isExist = organizations?.data.find((org) => org.id === orgId);
   if (!isExist) return <OrganizationPage />;
   return <Outlet />;

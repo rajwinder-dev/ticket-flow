@@ -1,12 +1,14 @@
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { permissions } from "@org/constants";
-import { useRole, useRoleStore } from "@org/core";
-import { Shield, ShieldCheck } from "lucide-react";
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { permissions } from '@org/constants';
+import { useRole, useRoleStore } from '@org/core';
+import { Shield, ShieldCheck } from 'lucide-react';
+import { useParams } from 'react-router';
 
 export function PermissionReadView() {
-  const { roles } = useRole();
+  const { orgId } = useParams();
   const { roleId } = useRoleStore();
+  const { roles } = useRole({ orgId });
   const selectedRole = roles?.data.find((role) => role.id === roleId);
   if (!selectedRole) {
     return (
@@ -22,7 +24,9 @@ export function PermissionReadView() {
       <div>
         <h2 className="text-lg font-bold">{selectedRole.name}</h2>
         {selectedRole.description && (
-          <p className="text-muted-foreground text-sm">{selectedRole.description}</p>
+          <p className="text-muted-foreground text-sm">
+            {selectedRole.description}
+          </p>
         )}
       </div>
 
@@ -36,8 +40,13 @@ export function PermissionReadView() {
             <div key={module} className="overflow-hidden rounded-lg border">
               <div className="bg-muted/40 flex items-center gap-2.5 px-4 py-2.5">
                 <Shield className={`h-4 w-4 `} />
-                <span className="text-sm font-semibold capitalize">{module}</span>
-                <Badge variant="secondary" className="ml-auto text-xs tabular-nums">
+                <span className="text-sm font-semibold capitalize">
+                  {module}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="ml-auto text-xs tabular-nums"
+                >
                   {granted.length} / {allPerms.length}
                 </Badge>
               </div>
@@ -49,15 +58,17 @@ export function PermissionReadView() {
                     <div
                       key={perm}
                       className={`flex items-center gap-1.5 text-xs ${
-                        has ? "text-foreground" : "text-muted-foreground/35"
+                        has ? 'text-foreground' : 'text-muted-foreground/35'
                       }`}
                     >
                       <span
                         className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                          has ? "bg-green-500" : "bg-muted-foreground/25"
+                          has ? 'bg-green-500' : 'bg-muted-foreground/25'
                         }`}
                       />
-                      <span className="capitalize">{perm.replace(/_/g, " ")}</span>
+                      <span className="capitalize">
+                        {perm.replace(/_/g, ' ')}
+                      </span>
                     </div>
                   );
                 })}

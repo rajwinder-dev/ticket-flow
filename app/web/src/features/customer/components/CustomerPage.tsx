@@ -16,9 +16,10 @@ import { useState } from "react";
 import CreateCustomerFrom from "./CreateCustomerFrom";
 import CustomerTable from "./CustomerTable";
 import { useCustomer } from "@org/core";
+import { useParams } from "react-router";
 
 const CustomerPage = () => {
-
+  const {orgId} = useParams()
   const [openCustomerForm, setOpenCustomerForm] = useState(false)
   const [search, setSearch] = useState<string | undefined>();
   const [pagination, setPagination] = useState({
@@ -28,6 +29,7 @@ const CustomerPage = () => {
   const searchItem = useDebounceValue(search);
   const { customers } = useCustomer({
     filterOptions: { search: { search: searchItem }, ...pagination },
+    orgId
   });
   return (
     <>

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox"; // Assuming you have a shadcn Checkbox
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox'; // Assuming you have a shadcn Checkbox
 import {
   Dialog,
   DialogContent,
@@ -7,14 +7,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import type { CreateQueueGroupInput, QueueGroupSchemaResponse } from "@org/zod";
-import { Controller, useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { useQueueGroup } from "@org/core";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import type { CreateQueueGroupInput, QueueGroupSchemaResponse } from '@org/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useQueueGroup } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface Props {
   editOpen: boolean;
@@ -23,28 +25,34 @@ interface Props {
 }
 
 const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
-  const { updateGroup, isUpdatingGroup } = useQueueGroup();
+  const { orgId } = useParams();
+  const { updateGroup, isUpdatingGroup } = useQueueGroup({ orgId });
   const {
     register,
     handleSubmit,
     control,
     reset,
     formState: { isDirty },
-  } = useForm<CreateQueueGroupInput>({
-  });
+  } = useForm<CreateQueueGroupInput>({});
 
   useEffect(() => {
     reset({
       name: groupData.name,
       isDefault: groupData.default,
-      description: groupData.description ?? "",
-    })
-  }, [groupData])
+      description: groupData.description ?? '',
+    });
+  }, [groupData]);
   const onSubmit = async (data: CreateQueueGroupInput) => {
     updateGroup(
       { id: groupData.id, data },
       {
-        onSuccess: () => setEditOpen(false),
+        onSuccess: () => {
+          toast.success('group updated successfully');
+          setEditOpen(false);
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
       },
     );
   };
@@ -66,7 +74,7 @@ const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
             <Input
               id="edit-name"
               placeholder="Group name"
-              {...register("name", { required: "Name is required" })}
+              {...register('name', { required: 'Name is required' })}
             />
           </div>
 
@@ -77,7 +85,7 @@ const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
               id="edit-description"
               placeholder="Short description…"
               rows={3}
-              {...register("description")}
+              {...register('description')}
             />
           </div>
 
@@ -108,11 +116,15 @@ const EditQueueGroupDialog = ({ editOpen, setEditOpen, groupData }: Props) => {
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setEditOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isUpdatingGroup || !isDirty}>
-              {isUpdatingGroup ? "Saving..." : "Save changes"}
+              {isUpdatingGroup ? 'Saving...' : 'Save changes'}
             </Button>
           </DialogFooter>
         </form>

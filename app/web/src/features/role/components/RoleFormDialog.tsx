@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,26 +7,35 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import type { CreateRoleInput, RoleSchema } from "@org/zod";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { PermissionEditor } from "./PermissionEditor";
-import { totalPermCount, useRole } from "@org/core";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import type { CreateRoleInput, RoleSchema } from '@org/zod';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { PermissionEditor } from './PermissionEditor';
+import { totalPermCount, useRole } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface RoleFormDialogProps {
   trigger: React.ReactNode;
   initialRole?: RoleSchema;
-  mode?: "create" | "edit";
+  mode?: 'create' | 'edit';
 }
 
-export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFormDialogProps) {
+export function RoleFormDialog({
+  trigger,
+  initialRole,
+  mode = 'create',
+}: RoleFormDialogProps) {
+  const { orgId } = useParams();
   const [open, setOpen] = useState(false);
-  const { createRole, isCreatingRole, updateRole, isUpdatingRole } = useRole();
+  const { createRole, isCreatingRole, updateRole, isUpdatingRole } = useRole({
+    orgId,
+  });
 
   const isPending = isCreatingRole || isUpdatingRole;
 
@@ -43,7 +52,7 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
     },
   });
 
-  const permissions = useWatch({ control, name: "permissions" });
+  const permissions = useWatch({ control, name: 'permissions' });
 
   const onSubmit = (data: CreateRoleInput) => {
     const payload: CreateRoleInput = {
@@ -52,12 +61,29 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
       permissions: data.permissions,
     };
 
-    if (mode === "create") {
+    if (mode === 'create') {
       createRole(payload, {
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          toast.success('role created successfully');
+          setOpen(false);
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
       });
-    } else if (mode === "edit" && initialRole) {
-      updateRole({ id: initialRole.id, data: payload }, { onSuccess: () => setOpen(false) });
+    } else if (mode === 'edit' && initialRole) {
+      updateRole(
+        { id: initialRole.id, data: payload },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            toast.success('role updated successfully');
+          },
+          onError: (error) => {
+            toast.error(error.message);
+          },
+        },
+      );
     }
   };
 
@@ -68,11 +94,13 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
       <DialogContent className="flex max-h-[90vh] w-4xl max-w-4xl flex-col gap-0 p-0">
         <DialogHeader className="shrink-0 px-6 pt-6 pb-4">
           <DialogTitle className="text-xl">
-            {mode === "create" ? "Create New Role" : `Edit Role — ${initialRole?.name}`}
+            {mode === 'create'
+              ? 'Create New Role'
+              : `Edit Role — ${initialRole?.name}`}
           </DialogTitle>
           <DialogDescription>
-            {mode === "create"
-              ? "Define a role name and select the permissions it should have."
+            {mode === 'create'
+              ? 'Define a role name and select the permissions it should have.'
               : "Update the role's details and its permission set."}
           </DialogDescription>
         </DialogHeader>
@@ -94,12 +122,16 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
                 id="role-name"
                 placeholder="e.g. Support Agent"
                 disabled={isPending}
-                {...register("name", {
-                  required: "Role name is required.",
-                  validate: (v) => !!v.trim() || "Role name cannot be blank.",
+                {...register('name', {
+                  required: 'Role name is required.',
+                  validate: (v) => !!v.trim() || 'Role name cannot be blank.',
                 })}
               />
-              {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-destructive text-xs">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -108,7 +140,7 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
                 id="role-desc"
                 placeholder="Short description (optional)"
                 disabled={isPending}
-                {...register("description")}
+                {...register('description')}
               />
             </div>
           </div>
@@ -126,7 +158,10 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
               name="permissions"
               control={control}
               render={({ field }) => (
-                <PermissionEditor permissionsData={field.value} onChange={field.onChange} />
+                <PermissionEditor
+                  permissionsData={field.value}
+                  onChange={field.onChange}
+                />
               )}
             />
           </div>
@@ -145,13 +180,13 @@ export function RoleFormDialog({ trigger, initialRole, mode = "create" }: RoleFo
           </Button>
           <Button type="submit" form="role-form" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === "create"
+            {mode === 'create'
               ? isCreatingRole
-                ? "Creating…"
-                : "Create Role"
+                ? 'Creating…'
+                : 'Create Role'
               : isUpdatingRole
-                ? "Saving…"
-                : "Save Changes"}
+                ? 'Saving…'
+                : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

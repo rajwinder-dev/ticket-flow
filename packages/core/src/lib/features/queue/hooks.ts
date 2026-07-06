@@ -1,7 +1,6 @@
-import type { CreateQueueInput, UpdateQueueInput } from "@org/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { queueApi } from "./api.js";
+import type { CreateQueueInput, UpdateQueueInput } from '@org/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { queueApi } from './api.js';
 interface props {
   groupId?: string;
   queueId?: string;
@@ -14,7 +13,7 @@ export function useQueue({ groupId, queueId }: props = {}) {
     error: queueError,
   } = useQuery({
     queryFn: () => queueApi.getByGroupId(groupId!),
-    queryKey: ["queue", { groupId }],
+    queryKey: ['queue', { groupId }],
     enabled: !!groupId,
   });
   const {
@@ -23,7 +22,7 @@ export function useQueue({ groupId, queueId }: props = {}) {
     error: queueDetailsError,
   } = useQuery({
     queryFn: () => queueApi.getDetails(queueId!),
-    queryKey: ["queue", "details", { queueId }],
+    queryKey: ['queue', 'details', { queueId }],
     enabled: !!queueId,
   });
   const {
@@ -32,41 +31,39 @@ export function useQueue({ groupId, queueId }: props = {}) {
     error: queueSummaryError,
   } = useQuery({
     queryFn: () => queueApi.getSummary(queueId!),
-    queryKey: ["queue", "summary", { queueId }],
+    queryKey: ['queue', 'summary', { queueId }],
     enabled: !!queueId,
   });
   const { mutate: createQueue, isPending: isCreatingQueue } = useMutation({
-    mutationFn: ({ groupId, data }: { groupId: string; data: CreateQueueInput }) =>
-      queueApi.create(groupId, data),
+    mutationFn: ({
+      groupId,
+      data,
+    }: {
+      groupId: string;
+      data: CreateQueueInput;
+    }) => queueApi.create(groupId, data),
     onSuccess: () => {
-      toast.success("queue created successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
+      queryClient.invalidateQueries({ queryKey: ['queue', { groupId }] });
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+      });
 
   const { mutate: updatedQueue, isPending: isUpdatingQueue } = useMutation({
-    mutationFn: ({ queueId, data }: { queueId: string; data: UpdateQueueInput }) =>
-      queueApi.update(queueId, data),
+    mutationFn: ({
+      queueId,
+      data,
+    }: {
+      queueId: string;
+      data: UpdateQueueInput;
+    }) => queueApi.update(queueId, data),
     onSuccess: () => {
-      toast.success("queue updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['queue', { groupId }] });
     },
   });
 
-  const { mutate: deletedQueue, isPending: isDeletingQueue } = useMutation({
+  const { mutate: deleteQueue, isPending: isDeletingQueue } = useMutation({
     mutationFn: (queueId: string) => queueApi.delete(queueId),
     onSuccess: () => {
-      toast.success("queue deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["queue", { groupId }] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['queue', { groupId }] });
     },
   });
 
@@ -77,7 +74,7 @@ export function useQueue({ groupId, queueId }: props = {}) {
     isCreatingQueue,
     updatedQueue,
     isUpdatingQueue,
-    deletedQueue,
+    deleteQueue,
     isDeletingQueue,
     queuesDetails,
     isLoadingDetails,

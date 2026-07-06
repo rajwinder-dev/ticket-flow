@@ -4,21 +4,37 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { type TicketSchemaResponse, type TicketStatus } from "@org/zod";
-import { useTicket } from "@org/core";
-import { allowedTransitions } from "@org/constants";
+} from '@/components/ui/select';
+import { type TicketSchemaResponse, type TicketStatus } from '@org/zod';
+import { useTicket } from '@org/core';
+import { allowedTransitions } from '@org/constants';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 interface props {
   ticket: TicketSchemaResponse;
 }
 export const TicketStatusCell = ({ ticket }: props) => {
-  const { updateTicketStatus, isUpdatingTicketStatus } = useTicket();
-  const nextStatus = allowedTransitions?.[ticket.status] || ["OPEN"];
+  const { orgId } = useParams();
+  const { updateTicketStatus, isUpdatingTicketStatus } = useTicket({ orgId });
+  const nextStatus = allowedTransitions?.[ticket.status] || ['OPEN'];
   return (
     <Select
       value={ticket.status}
       onValueChange={(status: TicketStatus) =>
-        updateTicketStatus({ id: ticket.id, data: { status: status, version: ticket.version } })
+        updateTicketStatus(
+          {
+            id: ticket.id,
+            data: { status: status, version: ticket.version },
+          },
+          {
+            onSuccess: () => {
+              toast.success('ticket updated successfully');
+            },
+            onError: (error) => {
+              toast.error(error.message);
+            },
+          },
+        )
       }
       disabled={isUpdatingTicketStatus}
     >

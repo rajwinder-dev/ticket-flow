@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -6,17 +6,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea"; // Added for description
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useOrganizations } from "@org/core";
-import { updateOrganizationInput, type UpdateOrganizationInput } from "@org/zod";
-import { useForm } from "react-hook-form";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea'; // Added for description
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useOrganizations } from '@org/core';
+import {
+  updateOrganizationInput,
+  type UpdateOrganizationInput,
+} from '@org/zod';
+import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 const OrganizationForm = () => {
-  const { currentOrganization, isLoadingCurrent, updateOrg, isUpdatingOrg } = useOrganizations();
+  const { orgId } = useParams();
+  const { currentOrganization, isLoadingCurrent, updateOrg, isUpdatingOrg } =
+    useOrganizations({ orgId });
 
   const {
     register,
@@ -32,7 +39,15 @@ const OrganizationForm = () => {
   });
 
   const isDirty = Object.keys(dirtyFields).length === 0;
-  const onSubmit = async (data: UpdateOrganizationInput) => updateOrg(data);
+  const onSubmit = async (data: UpdateOrganizationInput) =>
+    updateOrg(data, {
+      onSuccess: () => {
+        toast.success('Organization updated successfully');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   if (isLoadingCurrent) return <div>Loading organization...</div>;
 
   return (
@@ -41,24 +56,30 @@ const OrganizationForm = () => {
         <CardHeader>
           <CardTitle>Organization Settings</CardTitle>
           <CardDescription>
-            Created on{" "}
+            Created on{' '}
             {currentOrganization?.data.createdAt &&
-              new Date(currentOrganization?.data.createdAt).toLocaleDateString()}
+              new Date(
+                currentOrganization?.data.createdAt,
+              ).toLocaleDateString()}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Organization Name</Label>
-            <Input id="name" {...register("name")} placeholder="Acme Inc." />
-            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+            <Input id="name" {...register('name')} placeholder="Acme Inc." />
+            {errors.name && (
+              <p className="text-destructive text-xs">{errors.name.message}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="slug">Workspace URL</Label>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">app.com/</span>
-              <Input id="slug" {...register("slug")} placeholder="acme-inc" />
+              <Input id="slug" {...register('slug')} placeholder="acme-inc" />
             </div>
-            {errors.slug && <p className="text-destructive text-xs">{errors.slug.message}</p>}
+            {errors.slug && (
+              <p className="text-destructive text-xs">{errors.slug.message}</p>
+            )}
           </div>
 
           {/* Description (from your JSON) */}
@@ -66,17 +87,25 @@ const OrganizationForm = () => {
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              {...register("description")}
+              {...register('description')}
               placeholder="Tell us about your organization..."
             />
             {errors.description && (
-              <p className="text-destructive text-xs">{errors.description.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.description.message}
+              </p>
             )}
           </div>
           <div className="col-span-2 space-y-2">
             <Label htmlFor="avatar">logo URL</Label>
-            <Input id="avatar" {...register("logo")} placeholder="https://..." />
-            {errors.logo && <p className="text-destructive text-xs">{errors.logo.message}</p>}
+            <Input
+              id="avatar"
+              {...register('logo')}
+              placeholder="https://..."
+            />
+            {errors.logo && (
+              <p className="text-destructive text-xs">{errors.logo.message}</p>
+            )}
           </div>
           {/* Read-only info from your JSON */}
           <div className="grid grid-cols-2 gap-4 border-t pt-4 text-sm">
@@ -92,11 +121,13 @@ const OrganizationForm = () => {
         </CardContent>
         <CardFooter className="flex justify-between">
           <p className="text-muted-foreground text-xs">
-            Type:{" "}
-            <span className="capitalize">{currentOrganization?.data.type?.toLowerCase()}</span>
+            Type:{' '}
+            <span className="capitalize">
+              {currentOrganization?.data.type?.toLowerCase()}
+            </span>
           </p>
           <Button type="submit" disabled={isDirty || isUpdatingOrg}>
-            {isUpdatingOrg ? "Saving..." : "Save Changes"}
+            {isUpdatingOrg ? 'Saving...' : 'Save Changes'}
           </Button>
         </CardFooter>
       </Card>

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -6,13 +6,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueue } from "@org/core";
-import { updateQueueInput, type QueueSchemaResponse, type UpdateQueueInput } from "@org/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+} from '@/components/ui/dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueue } from '@org/core';
+import {
+  updateQueueInput,
+  type QueueSchemaResponse,
+  type UpdateQueueInput,
+} from '@org/zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface QueueFormModalProps {
   open: boolean;
@@ -30,20 +34,24 @@ export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
   } = useForm<UpdateQueueInput>({
     resolver: zodResolver(updateQueueInput.bodySchema),
   });
-   useEffect(()=> {
+  useEffect(() => {
     reset({
       name: queue?.name,
-      description: queue?.description || ''
-    })
-   }, [queue, reset])
+      description: queue?.description || '',
+    });
+  }, [queue, reset]);
   function handleFormSubmit(data: UpdateQueueInput) {
-    if (!queue?.id) return toast.error("Queue Id not defined ");
+    if (!queue?.id) return toast.error('Queue Id not defined ');
     updatedQueue(
       { queueId: queue?.id, data },
       {
         onSuccess: () => {
+          toast.success('queue updated successfully');
           reset();
-          onClose()
+          onClose();
+        },
+        onError: (error) => {
+          toast.error(error.message);
         },
       },
     );
@@ -66,7 +74,10 @@ export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 pt-2">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="space-y-4 pt-2"
+        >
           <div className="space-y-1.5">
             <label htmlFor="queue-name" className="text-sm font-medium">
               Name
@@ -75,9 +86,11 @@ export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
               id="queue-name"
               placeholder="Queue name"
               className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              {...register("name")}
+              {...register('name')}
             />
-            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-destructive text-xs">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -89,10 +102,12 @@ export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
               placeholder="Optional description…"
               rows={3}
               className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full resize-none rounded-md border px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              {...register("description")}
+              {...register('description')}
             />
             {errors.description && (
-              <p className="text-destructive text-xs">{errors.description.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.description.message}
+              </p>
             )}
           </div>
 

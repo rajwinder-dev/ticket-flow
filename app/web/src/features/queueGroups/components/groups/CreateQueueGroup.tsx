@@ -1,21 +1,23 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { createQueueGroupInput, type CreateQueueGroupInput } from "@org/zod";
-import { useQueueGroup } from "@org/core";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { createQueueGroupInput, type CreateQueueGroupInput } from '@org/zod';
+import { useQueueGroup } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 // Define the validation schema
 
@@ -25,7 +27,8 @@ interface CreateGroupDialogProps {
 }
 
 export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
-  const { createGroup, isCreatingGroup } = useQueueGroup();
+  const { orgId } = useParams();
+  const { createGroup, isCreatingGroup } = useQueueGroup({ orgId });
   const {
     register,
     handleSubmit,
@@ -49,7 +52,11 @@ export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
   const onSubmit = (data: CreateQueueGroupInput) => {
     createGroup(data, {
       onSuccess: () => {
+        toast.success('group created successfully');
         onClose();
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   };
@@ -68,10 +75,12 @@ export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
             <Input
               id="name"
               placeholder="e.g. Technical Support"
-              {...register("name")}
-              className={errors.name ? "border-destructive" : ""}
+              {...register('name')}
+              className={errors.name ? 'border-destructive' : ''}
             />
-            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-destructive text-xs">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Description Field */}
@@ -81,7 +90,7 @@ export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
               id="description"
               placeholder="What does this group handle?"
               rows={2}
-              {...register("description")}
+              {...register('description')}
             />
           </div>
 
@@ -91,7 +100,11 @@ export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
               name="isDefault"
               control={control}
               render={({ field }) => (
-                <Checkbox id="isDefault" checked={field.value} onCheckedChange={field.onChange} />
+                <Checkbox
+                  id="isDefault"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
               )}
             />
             <div className="grid gap-1.5 leading-none">
@@ -112,7 +125,7 @@ export function CreateGroupDialog({ open, onClose }: CreateGroupDialogProps) {
               Cancel
             </Button>
             <Button type="submit" size="sm" disabled={isCreatingGroup}>
-              {isCreatingGroup ? "Creating..." : "Create"}
+              {isCreatingGroup ? 'Creating...' : 'Create'}
             </Button>
           </DialogFooter>
         </form>

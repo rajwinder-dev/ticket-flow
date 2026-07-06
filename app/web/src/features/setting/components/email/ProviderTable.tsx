@@ -12,6 +12,7 @@ import {
 import type { EmailProviderSchema } from "@org/zod";
 import { Pencil, Trash2 } from "lucide-react";
 import {useEmail} from "@org/core";
+import { useParams } from "react-router";
 
 type Props = {
   onEdit: (provider: EmailProviderSchema) => void;
@@ -20,7 +21,8 @@ type Props = {
 };
 
 export function ProviderTable({ onEdit, onDelete, onAddClick }: Props) {
-  const { emailProviders, isLoadingEmailProviders } = useEmail();
+  const {orgId} = useParams()
+  const { emailProviders, isLoadingEmailProviders } = useEmail({orgId});
   const providers = emailProviders?.data;
 
   return (

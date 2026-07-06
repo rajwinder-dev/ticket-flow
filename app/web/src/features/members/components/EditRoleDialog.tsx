@@ -1,5 +1,4 @@
-
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,18 +7,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useMember, useRole } from "@org/core";
-import { useState } from "react";
+} from '@/components/ui/select';
+import { useMember, useRole } from '@org/core';
+import { useState } from 'react';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface Props {
   open: boolean;
@@ -29,19 +30,24 @@ interface Props {
 }
 
 const EditRoleDialog = ({ open, onOpenChange, userId, currentRole }: Props) => {
-  const { roles } = useRole();
-  const { updateRoleMutate, isUpdatingRole } = useMember();
-  const [roleId, setRoleId] = useState<string>(currentRole ?? "");
+  const { orgId } = useParams();
+  const { updateRoleMutate, isUpdatingRole } = useMember({ orgId });
+  const [roleId, setRoleId] = useState<string>(currentRole ?? '');
+  const { roles } = useRole({ orgId });
   const canSubmit = Boolean(roleId) && !isUpdatingRole;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Change role</DropdownMenuItem>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          Change role
+        </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Change role</DialogTitle>
-          <DialogDescription>Update the member role for this organization.</DialogDescription>
+          <DialogDescription>
+            Update the member role for this organization.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
           <Label>Role</Label>
@@ -74,12 +80,18 @@ const EditRoleDialog = ({ open, onOpenChange, userId, currentRole }: Props) => {
               updateRoleMutate(
                 { roleId, userId },
                 {
-                  onSuccess: () => onOpenChange(false),
+                  onSuccess: () => {
+                    onOpenChange(false);
+                    toast.success('Role updated successfully');
+                  },
+                  onError: (error) => {
+                    toast.error(error.message);
+                  },
                 },
               )
             }
           >
-            {isUpdatingRole ? "Saving..." : "Save changes"}
+            {isUpdatingRole ? 'Saving...' : 'Save changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

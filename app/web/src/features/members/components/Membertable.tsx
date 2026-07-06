@@ -1,14 +1,14 @@
-import { Pagination } from "@/components/Pagination";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Pagination } from '@/components/Pagination';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton"; // Replaced global Spinner with layout Skeletons
+} from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton'; // Replaced global Spinner with layout Skeletons
 import {
   Table,
   TableBody,
@@ -16,17 +16,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+} from '@/components/ui/table';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
-import { useMember , useMembersStore, useLookupHook} from "@org/core";
-import { Avatar } from "./MemberBandges";
-import { RowActionsMenu } from "./RowActionsMenu";
-import TableQueueCell from "./TableQueueCell";
+import { useMember, useMembersStore, useLookupHook } from '@org/core';
+import { Avatar } from './MemberBandges';
+import { RowActionsMenu } from './RowActionsMenu';
+import TableQueueCell from './TableQueueCell';
+import { useParams } from 'react-router';
 
 export function MembersTable() {
-  const { rolesData } = useLookupHook();
+  const { orgId } = useParams();
+  const { rolesData } = useLookupHook({ orgId });
   const [pagination, setPagination] = useState({
     offset: 0,
     limit: 20,
@@ -38,9 +40,10 @@ export function MembersTable() {
       offset: pagination.offset,
       limit: pagination.limit,
       filter: {
-        ...(roleId && roleId !== "ALL" && { roleId }),
+        ...(roleId && roleId !== 'ALL' && { roleId }),
       },
     },
+    orgId,
   });
   const { selected } = useMembersStore();
 
@@ -132,18 +135,20 @@ export function MembersTable() {
                     <TableRow
                       key={member.id}
                       className={cn(
-                        "group/row",
-                        isSelected && "bg-violet-50/60 dark:bg-violet-900/10",
+                        'group/row',
+                        isSelected && 'bg-violet-50/60 dark:bg-violet-900/10',
                       )}
                     >
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar name={member.name ?? "User"} index={i} />
+                          <Avatar name={member.name ?? 'User'} index={i} />
                           <div>
                             <p className="text-sm leading-tight font-medium">
-                              {member.name ?? "Unknown User"}
+                              {member.name ?? 'Unknown User'}
                             </p>
-                            <p className="text-muted-foreground text-[11px]">{member.email}</p>
+                            <p className="text-muted-foreground text-[11px]">
+                              {member.email}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
@@ -157,18 +162,26 @@ export function MembersTable() {
                         {member.queues && member.queues.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
                             {member.queues.map((q) => (
-                              <TableQueueCell key={q.queueId} queue={q} userId={member.userId} />
+                              <TableQueueCell
+                                key={q.queueId}
+                                queue={q}
+                                userId={member.userId}
+                              />
                             ))}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground/50 text-[11px]">—</span>
+                          <span className="text-muted-foreground/50 text-[11px]">
+                            —
+                          </span>
                         )}
                       </TableCell>
                       <TableCell className="text-right text-sm font-medium">
                         {member.totalTickets}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
-                        {member.createdAt ? new Date(member.createdAt).toLocaleDateString() : ""}
+                        {member.createdAt
+                          ? new Date(member.createdAt).toLocaleDateString()
+                          : ''}
                       </TableCell>
                       <TableCell className="pr-3">
                         <RowActionsMenu member={member} />

@@ -1,20 +1,24 @@
-
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import type { EmailProviderSchema } from "@org/zod";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { DeleteProviderDialog } from "./DeleteProviderDialog";
-import { ProviderFormDialog } from "./ProviderFormDialog";
-import { ProviderTable } from "./ProviderTable";
-import { useEmail } from "@org/core";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import type { EmailProviderSchema } from '@org/zod';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { DeleteProviderDialog } from './DeleteProviderDialog';
+import { ProviderFormDialog } from './ProviderFormDialog';
+import { ProviderTable } from './ProviderTable';
+import { useEmail } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 export default function EmailProviderTable() {
-  const { deleteProvider } = useEmail();
+  const { orgId } = useParams();
+  const { deleteProvider } = useEmail({ orgId });
   const [formOpen, setFormOpen] = useState(false);
   // const [smtpFormOpen, setSmtpFormOpen] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const [editProvider, setEditProvider] = useState<EmailProviderSchema | null>(null);
+  const [editProvider, setEditProvider] = useState<EmailProviderSchema | null>(
+    null,
+  );
   // const [editSmtp, setEditSmtp] = useState<EmailProviderSchema | null>(null);
   function confirmDelete(id: string) {
     setDeleteTarget(id);
@@ -22,12 +26,19 @@ export default function EmailProviderTable() {
 
   function handleDelete() {
     if (!deleteTarget) return;
-    deleteProvider(deleteTarget);
+    deleteProvider(deleteTarget, {
+      onSuccess: () => {
+        toast.success('Provider deleted successfully');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   }
   function openEdit(provider: EmailProviderSchema) {
     setEditProvider(provider);
     setFormOpen(true);
- }
+  }
 
   function openAdd() {
     setEditProvider(null);
@@ -42,7 +53,9 @@ export default function EmailProviderTable() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Email Providers</h2>
+          <h2 className="text-xl font-semibold tracking-tight">
+            Email Providers
+          </h2>
           <p className="text-muted-foreground text-sm">
             Manage outbound email provider configurations.
           </p>
@@ -60,8 +73,12 @@ export default function EmailProviderTable() {
       </div>
 
       {/* Table */}
-      <ProviderTable onEdit={openEdit} onDelete={confirmDelete} onAddClick={openAdd} />
-      
+      <ProviderTable
+        onEdit={openEdit}
+        onDelete={confirmDelete}
+        onAddClick={openAdd}
+      />
+
       {/* Add / Edit Dialog */}
       <ProviderFormDialog
         open={formOpen}

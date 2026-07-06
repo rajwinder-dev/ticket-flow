@@ -1,24 +1,26 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useEmail } from "@org/core";
-import type { CreateEmailProviderInput, EmailProviderSchema } from "@org/zod";
-import { KeyRound, Mail, Webhook } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+} from '@/components/ui/select';
+import { useEmail } from '@org/core';
+import type { CreateEmailProviderInput, EmailProviderSchema } from '@org/zod';
+import { KeyRound, Mail, Webhook } from 'lucide-react';
+import { Controller, useForm } from 'react-hook-form';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 type Props = {
   open: boolean;
@@ -27,9 +29,19 @@ type Props = {
   providerData?: EmailProviderSchema | null;
 };
 
-export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData }: Props) {
-  const { createEmailProvider, isCreatingEmailProvider, updateCredentials, isUpdatingCredentials } =
-    useEmail();
+export function ProviderFormDialog({
+  open,
+  onOpenChange,
+  isEditing,
+  providerData,
+}: Props) {
+  const { orgId } = useParams();
+  const {
+    createEmailProvider,
+    isCreatingEmailProvider,
+    updateCredentials,
+    isUpdatingCredentials,
+  } = useEmail({ orgId });
   const isSublimiting = isCreatingEmailProvider || isUpdatingCredentials;
   const {
     register,
@@ -39,30 +51,39 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
     formState: { errors },
   } = useForm<CreateEmailProviderInput>({
     defaultValues: {
-      providerType: "RESEND",
+      providerType: 'RESEND',
       fromEmail: providerData?.fromEmail,
-      credentials: { apiKey: "" },
-      webhookSecret: "",
+      credentials: { apiKey: '' },
+      webhookSecret: '',
     },
   });
 
   const onSubmit = (data: CreateEmailProviderInput) => {
     if (isEditing) {
-      if (!providerData?.id) return console.error("email provider not provided to edit");
+      if (!providerData?.id)
+        return console.error('email provider not provided to edit');
       return updateCredentials(
         { id: providerData?.id, data },
         {
           onSuccess: () => {
+            toast.success('credentials updated successfully');
             reset();
             onOpenChange(false);
+          },
+          onError: (error) => {
+            toast.error(error.message);
           },
         },
       );
     }
     createEmailProvider(data, {
       onSuccess: () => {
+        toast.success('Provider created successfully');
         reset();
         onOpenChange(false);
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   };
@@ -74,7 +95,9 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
     <Dialog open={open} onOpenChange={onclose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Email Provider" : "Add Email Provider"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? 'Edit Email Provider' : 'Add Email Provider'}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
@@ -85,7 +108,10 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
               name="providerType"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
@@ -107,10 +133,12 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
               id="fromEmail"
               type="email"
               placeholder="noreply@yourdomain.com"
-              {...register("fromEmail", { required: "Required" })}
+              {...register('fromEmail', { required: 'Required' })}
             />
             {errors.fromEmail && (
-              <p className="text-destructive text-xs">{errors.fromEmail.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.fromEmail.message}
+              </p>
             )}
           </div>
 
@@ -124,34 +152,47 @@ export function ProviderFormDialog({ open, onOpenChange, isEditing, providerData
               id="apiKey"
               type="password"
               placeholder="••••••••••••••••"
-              {...register("credentials.apiKey", { required: "API Key is required" })}
+              {...register('credentials.apiKey', {
+                required: 'API Key is required',
+              })}
             />
             {errors.credentials?.apiKey && (
-              <p className="text-destructive text-xs">{errors.credentials.apiKey.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.credentials.apiKey.message}
+              </p>
             )}
           </div>
 
           {/* Webhook Secret */}
           <div className="space-y-1.5">
-            <Label htmlFor="webhookSecret" className="flex items-center gap-1.5">
+            <Label
+              htmlFor="webhookSecret"
+              className="flex items-center gap-1.5"
+            >
               <Webhook className="h-3.5 w-3.5" />
               Webhook Secret
-              <span className="text-muted-foreground ml-1 text-xs font-normal">(optional)</span>
+              <span className="text-muted-foreground ml-1 text-xs font-normal">
+                (optional)
+              </span>
             </Label>
             <Input
               id="webhookSecret"
               type="password"
               placeholder="••••••••••••••••"
-              {...register("webhookSecret")}
+              {...register('webhookSecret')}
             />
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSublimiting}>
-              {isEditing ? "Save Changes" : "Add Provider"}
+              {isEditing ? 'Save Changes' : 'Add Provider'}
             </Button>
           </DialogFooter>
         </form>

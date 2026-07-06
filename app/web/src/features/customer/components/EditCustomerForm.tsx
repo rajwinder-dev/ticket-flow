@@ -1,18 +1,25 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { updateCustomerInput, type CustomerSchemaResponse, type UpdateCustomerInput } from "@org/zod";
-import { useCustomer } from "@org/core";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  updateCustomerInput,
+  type CustomerSchemaResponse,
+  type UpdateCustomerInput,
+} from '@org/zod';
+import { useCustomer } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface props {
-  customer: CustomerSchemaResponse ;
-  onEdit: (x: boolean) => void
+  customer: CustomerSchemaResponse;
+  onEdit: (x: boolean) => void;
 }
 
 const EditCustomerForm = ({ onEdit, customer }: props) => {
-  const { updateCustomer, isUpdatingCustomer } = useCustomer();
+  const { orgId } = useParams();
+  const { updateCustomer, isUpdatingCustomer } = useCustomer({ orgId });
 
   const {
     register,
@@ -28,9 +35,18 @@ const EditCustomerForm = ({ onEdit, customer }: props) => {
   });
 
   const onSubmit = (data: UpdateCustomerInput) => {
-    updateCustomer({ id: customer.id, data }, {
-      onSuccess: () => onEdit(false)
-    });
+    updateCustomer(
+      { id: customer.id, data },
+      {
+        onSuccess: () => {
+          toast.success('customer updated successfully');
+          onEdit(false);
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      },
+    );
   };
 
   return (
@@ -43,15 +59,19 @@ const EditCustomerForm = ({ onEdit, customer }: props) => {
         <Label htmlFor="name">Full Name</Label>
         <Input
           id="name"
-          {...register("name")}
-          className={errors.name ? "border-destructive" : ""}
+          {...register('name')}
+          className={errors.name ? 'border-destructive' : ''}
         />
-        {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-destructive text-xs">{errors.name.message}</p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="phone">Phone Number (Optional)</Label>
-        <Input id="phone" {...register("phone")} />
-        {errors.phone && <p className="text-destructive text-xs">{errors.phone.message}</p>}
+        <Input id="phone" {...register('phone')} />
+        {errors.phone && (
+          <p className="text-destructive text-xs">{errors.phone.message}</p>
+        )}
       </div>
 
       {/* Avatar URL Field */}
@@ -59,14 +79,16 @@ const EditCustomerForm = ({ onEdit, customer }: props) => {
         <Label htmlFor="avatarUrl">Avatar URL (Optional)</Label>
         <Input
           id="avatarUrl"
-          {...register("avatarUrl")}
-          className={errors.avatarUrl ? "border-destructive" : ""}
+          {...register('avatarUrl')}
+          className={errors.avatarUrl ? 'border-destructive' : ''}
         />
-        {errors.avatarUrl && <p className="text-destructive text-xs">{errors.avatarUrl.message}</p>}
+        {errors.avatarUrl && (
+          <p className="text-destructive text-xs">{errors.avatarUrl.message}</p>
+        )}
       </div>
 
       <Button type="submit" className="w-full" disabled={isUpdatingCustomer}>
-        {isUpdatingCustomer ? "Saving Changes..." : "Update Profile"}
+        {isUpdatingCustomer ? 'Saving Changes...' : 'Update Profile'}
       </Button>
     </form>
   );

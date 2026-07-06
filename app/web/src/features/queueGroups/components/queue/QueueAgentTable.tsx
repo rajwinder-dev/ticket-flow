@@ -1,12 +1,12 @@
-import { Search } from "lucide-react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Search } from 'lucide-react';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 // Shadcn/UI & Components
-import QueryBoundary from "@/components/QueryError";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
+import QueryBoundary from '@/components/QueryError';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
 import {
   Table,
   TableBody,
@@ -14,19 +14,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useMember, useQueue } from "@org/core";
+} from '@/components/ui/table';
+import { useMember, useQueue } from '@org/core';
 
 type QueueAgentTableProps = {
   isLoading?: boolean; // Accept parent page cascade state parameter
 };
 
-export function QueueAgentTable({ isLoading: isParentLoading }: QueueAgentTableProps) {
-  const { queueId } = useParams();
-  const [agentSearch, setAgentSearch] = useState("");
+export function QueueAgentTable({
+  isLoading: isParentLoading,
+}: QueueAgentTableProps) {
+  const { queueId, orgId } = useParams();
+  const [agentSearch, setAgentSearch] = useState('');
 
   const { members, membersError, isLoadingMembers } = useMember({
-    filterOptions: { filter: { queueId: queueId || "" } },
+    filterOptions: { filter: { queueId: queueId || '' } },
+    orgId,
   });
   const { queueSummary } = useQueue({ queueId });
 
@@ -38,7 +41,7 @@ export function QueueAgentTable({ isLoading: isParentLoading }: QueueAgentTableP
     return name
       .split(/[_.\s]/)
       .map((n) => n[0])
-      .join("")
+      .join('')
       .toUpperCase()
       .slice(0, 2);
   };
@@ -91,39 +94,45 @@ export function QueueAgentTable({ isLoading: isParentLoading }: QueueAgentTableP
                   <TableRow key={index} className="hover:bg-transparent">
                     <TableCell className="pl-5">
                       <div className="flex items-center gap-2">
-                        <Skeleton className="h-7 w-7 rounded-full" />{" "}
+                        <Skeleton className="h-7 w-7 rounded-full" />{' '}
                         {/* Avatar circle placeholder */}
                         <div className="space-y-1.5">
-                          <Skeleton className="h-3.5 w-28" />{" "}
+                          <Skeleton className="h-3.5 w-28" />{' '}
                           {/* Agent string identifier name line */}
-                          <Skeleton className="h-2.5 w-36" />{" "}
+                          <Skeleton className="h-2.5 w-36" />{' '}
                           {/* Secondary address communication string line */}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5">
-                        <Skeleton className="h-2 w-2 rounded-full" />{" "}
+                        <Skeleton className="h-2 w-2 rounded-full" />{' '}
                         {/* Static active circle placeholder */}
-                        <Skeleton className="h-3.5 w-14" />{" "}
+                        <Skeleton className="h-3.5 w-14" />{' '}
                         {/* Identity permissions indicator token */}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-6 font-mono" />{" "}
+                      <Skeleton className="h-4 w-6 font-mono" />{' '}
                       {/* Numeric ticket tracking weight metrics placeholder */}
                     </TableCell>
                   </TableRow>
                 ))
               ) : members?.data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-muted-foreground h-24 text-center">
+                  <TableCell
+                    colSpan={3}
+                    className="text-muted-foreground h-24 text-center"
+                  >
                     No agents assigned to this queue.
                   </TableCell>
                 </TableRow>
               ) : (
                 members?.data.map((member) => (
-                  <TableRow key={member.id} className="hover:bg-muted/50 cursor-pointer">
+                  <TableRow
+                    key={member.id}
+                    className="hover:bg-muted/50 cursor-pointer"
+                  >
                     <TableCell className="pl-5">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
@@ -132,18 +141,26 @@ export function QueueAgentTable({ isLoading: isParentLoading }: QueueAgentTableP
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-sm leading-tight font-medium">{member.name}</p>
-                          <p className="text-muted-foreground text-[10px]">{member.email}</p>
+                          <p className="text-sm leading-tight font-medium">
+                            {member.name}
+                          </p>
+                          <p className="text-muted-foreground text-[10px]">
+                            {member.email}
+                          </p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-sm">
                         <div className="h-2 w-2 rounded-full bg-green-500" />
-                        <span className="text-xs capitalize">{member.role?.toLowerCase()}</span>
+                        <span className="text-xs capitalize">
+                          {member.role?.toLowerCase()}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{member.totalTickets}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {member.totalTickets}
+                    </TableCell>
                   </TableRow>
                 ))
               )}

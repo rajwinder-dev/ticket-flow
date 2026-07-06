@@ -4,21 +4,40 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { type TicketPriority, type TicketSchemaResponse } from "@org/zod";
-import { useTicket } from "@org/core";
-import { ticketPriority } from "@org/constants";
+} from '@/components/ui/select';
+import { type TicketPriority, type TicketSchemaResponse } from '@org/zod';
+import { useTicket } from '@org/core';
+import { ticketPriority } from '@org/constants';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 interface props {
   ticket: TicketSchemaResponse;
 }
 export const TicketPriorityCell = ({ ticket }: props) => {
-  const { updateTicketPriority, isUpdatingTicketPriority } = useTicket();
+  const { orgId, ticketId } = useParams();
+  const { updateTicketPriority, isUpdatingTicketPriority } = useTicket({
+    orgId,
+    ticketId,
+  });
 
   return (
     <Select
       value={ticket.priority}
       onValueChange={(status: TicketPriority) =>
-        updateTicketPriority({ id: ticket.id, data: { priority: status, version: ticket.version } })
+        updateTicketPriority(
+          {
+            id: ticket.id,
+            data: { priority: status, version: ticket.version },
+          },
+          {
+            onSuccess: () => {
+              toast.success('ticket updated successfully');
+            },
+            onError: (error) => {
+              toast.error(error.message);
+            },
+          },
+        )
       }
       disabled={isUpdatingTicketPriority}
     >

@@ -29,7 +29,7 @@ import type { TicketSchemaResponse } from "@org/zod";
 import { useState } from "react";
 import TicketEditDialog from "./TicketEditDialog";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTicket ,formatDate} from "@org/core";
 
 import { Pagination } from "@/components/Pagination";
@@ -41,6 +41,7 @@ import { TicketStatusCell } from "./TicketStatusCell";
 import { useCustomParams } from "@/hooks/useCustomParams";
 
 const TicketTable = () => {
+  const {orgId} = useParams()
   const { getParams } = useCustomParams();
   const { assignedTo } = getParams("assignedTo");
   const [pagination, setPagination] = useState({
@@ -66,6 +67,7 @@ const TicketTable = () => {
         search: searchItem,
       },
     },
+    orgId
   });
 
   const [editTicketForm, setEditTicketForm] = useState(false);

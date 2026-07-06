@@ -1,12 +1,11 @@
 import type { FilterOptions } from "@org/web-utils";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
 import { activityApi } from "./api.js";
 interface props {
   filterOptions?: FilterOptions;
+  orgId: string | undefined
 }
-export const useActivity = ({ filterOptions }: props = {}) => {
-  const { orgId } = useParams();
+export const useActivity = ({ filterOptions, orgId }: props ) => {
   const {
     data: activity,
     isLoading: isLoadingActivity,

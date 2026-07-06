@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/web-utils";
+import type { FilterOptions } from '@org/web-utils';
 import type {
   AssignTicketInput,
   CreateTicketCommentInput,
@@ -7,19 +7,21 @@ import type {
   UpdateTicketInput,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
-} from "@org/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { toast } from "sonner";
-import { ticketApi } from "./api.js";
-import { useCustomParams } from "../useCustomParams.js";
+} from '@org/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ticketApi } from './api.js';
 interface props {
   filterOptions?: FilterOptions;
+  orgId: string | undefined;
+  ticketId?: string | undefined;
+  assignedTo?: Record<string, string | null>;
 }
-export function useTicket({ filterOptions }: props = {}) {
-  const { orgId, ticketId } = useParams();
-  const { getParams } = useCustomParams();
-  const assignedTo = getParams("assignedTo");
+export function useTicket({
+  filterOptions,
+  orgId,
+  ticketId,
+  assignedTo,
+}: props) {
   const queryClient = useQueryClient();
   const {
     data: ticketData,
@@ -27,7 +29,7 @@ export function useTicket({ filterOptions }: props = {}) {
     error: ticketDataError,
   } = useQuery({
     queryFn: () => ticketApi.getAll(filterOptions),
-    queryKey: ["ticket", { orgId }, filterOptions],
+    queryKey: ['ticket', { orgId }, filterOptions],
     enabled: !!orgId,
   });
   const {
@@ -36,7 +38,7 @@ export function useTicket({ filterOptions }: props = {}) {
     error: ticketSummaryError,
   } = useQuery({
     queryFn: () => ticketApi.getSummary(assignedTo),
-    queryKey: ["ticket", "summary", { orgId, assignedTo }],
+    queryKey: ['ticket', 'summary', { orgId, assignedTo }],
     enabled: !!orgId,
   });
   const {
@@ -45,7 +47,7 @@ export function useTicket({ filterOptions }: props = {}) {
     error: assignedTicketDataError,
   } = useQuery({
     queryFn: ticketApi.getAssigned,
-    queryKey: ["ticket", "me", { orgId }],
+    queryKey: ['ticket', 'me', { orgId }],
     enabled: !!orgId,
   });
   const {
@@ -54,7 +56,7 @@ export function useTicket({ filterOptions }: props = {}) {
     error: ticketDetailsError,
   } = useQuery({
     queryFn: () => ticketApi.getDetails(ticketId!),
-    queryKey: ["ticket", "details", { ticketId }],
+    queryKey: ['ticket', 'details', { ticketId }],
     enabled: !!ticketId,
   });
   const {
@@ -63,7 +65,7 @@ export function useTicket({ filterOptions }: props = {}) {
     error: ticketCommentsError,
   } = useQuery({
     queryFn: () => ticketApi.getComments(ticketId!),
-    queryKey: ["ticket", "comment", { ticketId }],
+    queryKey: ['ticket', 'comment', { ticketId }],
     enabled: !!ticketId,
   });
   const {
@@ -72,89 +74,90 @@ export function useTicket({ filterOptions }: props = {}) {
     error: ticketTransitionsError,
   } = useQuery({
     queryFn: () => ticketApi.getTransitionHistory(ticketId!),
-    queryKey: ["ticket", "transitions", { ticketId }],
+    queryKey: ['ticket', 'transitions', { ticketId }],
     enabled: !!ticketId,
   });
-  const { mutate: createdTicket, isPending: isCreatingTicket } = useMutation({
+  const { mutate: createTicket, isPending: isCreatingTicket } = useMutation({
     mutationFn: (data: CreateTicketInput) => ticketApi.create(data),
     onSuccess: () => {
-      toast.success("ticket created successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['ticket'] });
     },
   });
   const { mutate: updateTicket, isPending: isUpdatingTicket } = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTicketInput }) =>
       ticketApi.update(id, data),
     onSuccess: () => {
-      toast.success("ticket updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['ticket'] });
     },
   });
-  const { mutate: updateTicketStatus, isPending: isUpdatingTicketStatus } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTicketStatusInput }) =>
-      ticketApi.updateStatus(id, data),
-    onSuccess: () => {
-      toast.success("ticket updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-  const { mutate: updateTicketPriority, isPending: isUpdatingTicketPriority } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTicketPriorityInput }) =>
-      ticketApi.updatePriority(id, data),
-    onSuccess: () => {
-      toast.success("ticket updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { mutate: updateTicketStatus, isPending: isUpdatingTicketStatus } =
+    useMutation({
+      mutationFn: ({
+        id,
+        data,
+      }: {
+        id: string;
+        data: UpdateTicketStatusInput;
+      }) => ticketApi.updateStatus(id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['ticket'] });
+      },
+    });
+  const { mutate: updateTicketPriority, isPending: isUpdatingTicketPriority } =
+    useMutation({
+      mutationFn: ({
+        id,
+        data,
+      }: {
+        id: string;
+        data: UpdateTicketPriorityInput;
+      }) => ticketApi.updatePriority(id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['ticket'] });
+      },
+    });
   const { mutate: assignTicket, isPending: isAssigningTicket } = useMutation({
-    mutationFn: ({ ticketId, data }: { ticketId: string; data: AssignTicketInput }) =>
-      ticketApi.assignTicket(ticketId, data),
+    mutationFn: ({
+      ticketId,
+      data,
+    }: {
+      ticketId: string;
+      data: AssignTicketInput;
+    }) => ticketApi.assignTicket(ticketId, data),
     onSuccess: () => {
-      toast.success("ticket assigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['ticket'] });
     },
   });
   const { mutate: commentTicket, isPending: isAssigningComment } = useMutation({
-    mutationFn: ({ ticketId, data }: { ticketId: string; data: CreateTicketCommentInput }) =>
-      ticketApi.comment(ticketId, data),
+    mutationFn: ({
+      ticketId,
+      data,
+    }: {
+      ticketId: string;
+      data: CreateTicketCommentInput;
+    }) => ticketApi.comment(ticketId, data),
     onSuccess: () => {
-      toast.success("ticket assigned successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['ticket'] });
     },
   });
-  const { mutate: escalateTicket, isPending: isEscalatingTicket } = useMutation({
-    mutationFn: ({ ticketId, data }: { ticketId: string; data: EscalateTicketInput }) =>
-      ticketApi.escalate(ticketId, data),
-    onSuccess: () => {
-      toast.success("ticket escalated successfully");
-      queryClient.invalidateQueries({ queryKey: ["ticket"] });
+  const { mutate: escalateTicket, isPending: isEscalatingTicket } = useMutation(
+    {
+      mutationFn: ({
+        ticketId,
+        data,
+      }: {
+        ticketId: string;
+        data: EscalateTicketInput;
+      }) => ticketApi.escalate(ticketId, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['ticket'] });
+      },
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  );
   return {
     ticketData,
     isLoadingTicketData,
-    createdTicket,
+    createTicket,
     isCreatingTicket,
     updateTicketPriority,
     isUpdatingTicketPriority,

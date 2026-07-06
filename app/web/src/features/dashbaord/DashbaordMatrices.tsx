@@ -1,7 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton"; // Adjust this path based on your setup
 import  {useDashboard} from "@org/core"
+import { useParams } from "react-router";
 const DashboardMatrices = () => {
-  const { summary, isLoadingSummary } = useDashboard();
+  const {orgId} = useParams()
+  const { summary, isLoadingSummary } = useDashboard({orgId});
 
   const metrics = [
     { label: "Total", value: summary?.data.TOTAL },

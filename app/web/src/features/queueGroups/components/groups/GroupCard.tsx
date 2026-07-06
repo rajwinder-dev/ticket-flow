@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,24 +7,34 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import type { QueueGroupSchemaResponse } from "@org/zod";
-import { ChevronRight, Pencil, Trash2, Users } from "lucide-react";
-import { useState } from "react";
-import EditQueueGroupDialog from "./EditQueueGroupDialog";
-import { useQueueGroup, useQueueGroupStore } from "@org/core";
+} from '@/components/ui/dialog';
+import type { QueueGroupSchemaResponse } from '@org/zod';
+import { ChevronRight, Pencil, Trash2, Users } from 'lucide-react';
+import { useState } from 'react';
+import EditQueueGroupDialog from './EditQueueGroupDialog';
+import { useQueueGroup, useQueueGroupStore } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface GroupCardProps {
   group: QueueGroupSchemaResponse;
 }
 
 export function GroupCard({ group }: GroupCardProps) {
+  const { orgId } = useParams();
   const { setGroupId, selectedId } = useQueueGroupStore();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const { deleteGroup } = useQueueGroup();
+  const { deleteGroup } = useQueueGroup({ orgId });
   function handleDelete() {
-    deleteGroup?.(group.id);
+    deleteGroup(group.id, {
+      onSuccess: () => {
+        toast.success('group deleted successfully');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
     setDeleteOpen(false);
   }
   const selected = group.id === selectedId;
@@ -34,14 +44,14 @@ export function GroupCard({ group }: GroupCardProps) {
         onClick={() => setGroupId(group.id)}
         className={`group relative w-full overflow-hidden rounded-xl border p-4 text-left transition-all duration-150 ${
           selected
-            ? "dark:bg-muted border-transparent bg-white shadow-sm"
-            : "bg-card border-border hover:shadow-sm"
+            ? 'dark:bg-muted border-transparent bg-white shadow-sm'
+            : 'bg-card border-border hover:shadow-sm'
         }`}
       >
         {/* Left accent bar */}
         <span
           className={`bg-primary absolute top-3 bottom-3 left-0 w-[3px] rounded-full transition-opacity duration-150 ${
-            selected ? "opacity-100" : "opacity-30"
+            selected ? 'opacity-100' : 'opacity-30'
           }`}
         />
 
@@ -79,42 +89,60 @@ export function GroupCard({ group }: GroupCardProps) {
               <ChevronRight
                 className={`mt-0.5 h-3.5 w-3.5 shrink-0 transition-transform duration-150 ${
                   selected
-                    ? "text-foreground rotate-90"
-                    : "text-muted-foreground/30 group-hover:text-muted-foreground"
+                    ? 'text-foreground rotate-90'
+                    : 'text-muted-foreground/30 group-hover:text-muted-foreground'
                 }`}
               />
             </div>
           </div>
 
-          <p className="mt-2.5 text-sm leading-snug font-semibold">{group.name}</p>
-          <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{group.description}</p>
+          <p className="mt-2.5 text-sm leading-snug font-semibold">
+            {group.name}
+          </p>
+          <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
+            {group.description}
+          </p>
 
           <div className="mt-3 flex items-center gap-2">
             <span className="text-muted-foreground text-xs">
-              <span className="text-foreground font-semibold">{group.queueCount}</span> queues
+              <span className="text-foreground font-semibold">
+                {group.queueCount}
+              </span>{' '}
+              queues
             </span>
             <span className="text-muted-foreground text-xs">·</span>
             <span className="text-muted-foreground text-xs">
-              <span className="text-foreground font-semibold">{group.queueAgentsCount}</span> agents
+              <span className="text-foreground font-semibold">
+                {group.queueAgentsCount}
+              </span>{' '}
+              agents
             </span>
             {group.default && (
-              <Badge className="ml-auto h-4 border px-1.5 text-[10px] font-semibold">Default</Badge>
+              <Badge className="ml-auto h-4 border px-1.5 text-[10px] font-semibold">
+                Default
+              </Badge>
             )}
           </div>
         </div>
       </button>
 
       {/* ── Edit Modal ── */}
-      <EditQueueGroupDialog editOpen={editOpen} setEditOpen={setEditOpen} groupData={group} />
+      <EditQueueGroupDialog
+        editOpen={editOpen}
+        setEditOpen={setEditOpen}
+        groupData={group}
+      />
       {/* ── Delete Confirmation Modal ── */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Delete Group</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete{" "}
-              <span className="text-foreground font-semibold">"{group.name}"</span>? This action
-              cannot be undone.
+              Are you sure you want to delete{' '}
+              <span className="text-foreground font-semibold">
+                "{group.name}"
+              </span>
+              ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
 

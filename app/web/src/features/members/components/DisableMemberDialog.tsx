@@ -17,7 +17,6 @@ interface Props {
 }
 
 const DisableMemberDialog = ({ open, onOpenChange, memberId }: Props) => {
-  console.log(memberId)
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>

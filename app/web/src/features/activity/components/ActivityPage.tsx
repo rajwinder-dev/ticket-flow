@@ -19,6 +19,7 @@ import { useState } from "react";
 import ActivityMatrices from "./ActivityMatrices";
 import { ActivityRow } from "./ActivityRow";
 import { useActivity } from "@org/core";
+import { useParams } from "react-router";
 
 const ActivityPage = () => {
   const [pagination, setPagination] = useState({
@@ -27,6 +28,7 @@ const ActivityPage = () => {
   });
   const [search, setSearch] = useState<string | undefined>();
   const searchItem = useDebounceValue(search);
+  const {orgId} = useParams()
   const { activity, isLoadingActivity, activityError } = useActivity({
     filterOptions: {
       ...pagination,
@@ -35,6 +37,7 @@ const ActivityPage = () => {
         search: searchItem,
       },
     },
+    orgId
   });
 
   return (

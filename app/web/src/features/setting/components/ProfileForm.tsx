@@ -13,6 +13,7 @@ import { dirtyValues } from '@/lib/utils';
 import { useUser } from '@org/core';
 import type { UpdateMyDetailsInput } from '@org/zod';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 // 1. Define the schema for editable fields only
 
@@ -32,7 +33,14 @@ const ProfileForm = () => {
 
   const onSubmit = async (data: UpdateMyDetailsInput) => {
     const output = dirtyValues(dirtyFields, data);
-    updateMyDetails(output);
+    updateMyDetails(output, {
+      onSuccess: () => {
+        toast.success('Profile updated successfully');
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

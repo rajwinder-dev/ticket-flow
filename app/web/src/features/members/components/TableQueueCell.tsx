@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,10 +9,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { X } from "lucide-react";
-import { useState } from "react";
-import { useMember } from "@org/core";
+} from '@/components/ui/alert-dialog';
+import { X } from 'lucide-react';
+import { useState } from 'react';
+import { useMember } from '@org/core';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 interface props {
   queue: {
     name: string | null;
@@ -21,8 +23,9 @@ interface props {
   userId: string;
 }
 const TableQueueCell = ({ queue, userId }: props) => {
+  const { orgId } = useParams();
   const [open, onOpenChange] = useState(false);
-  const { unassignQueueMutate, isUnAssigningQueue } = useMember();
+  const { unassignQueueMutate, isUnAssigningQueue } = useMember({ orgId });
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -42,7 +45,8 @@ const TableQueueCell = ({ queue, userId }: props) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Unassign queue</AlertDialogTitle>
           <AlertDialogDescription>
-            Remove this member from <span className="font-medium">{queue.name}</span>?
+            Remove this member from{' '}
+            <span className="font-medium">{queue.name}</span>?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -56,11 +60,19 @@ const TableQueueCell = ({ queue, userId }: props) => {
               queue.queueId &&
               unassignQueueMutate(
                 { queueId: queue.queueId, userId },
-                { onSuccess: () => onOpenChange(false) },
+                {
+                  onSuccess: () => {
+                    toast.success('Queue unassigned successfully');
+                    onOpenChange(false);
+                  },
+                  onError: (error) => {
+                    toast.error(error.message);
+                  },
+                },
               )
             }
           >
-            {isUnAssigningQueue ? "Removing..." : "Remove"}
+            {isUnAssigningQueue ? 'Removing...' : 'Remove'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -13,7 +13,6 @@ import { OrganizationInvite } from "./OrganizationInvite";
 import { useState } from "react";
 
 export default function MembersPage() {
-  // const { selected } = useMembersStore();
   const [openInviteMember, setOpenInviteMember] = useState(false);
   return (
     <div className="flex flex-1 flex-col">

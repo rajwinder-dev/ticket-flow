@@ -1,20 +1,27 @@
-import { Link, useParams } from "react-router";
+import { Link, useParams } from 'react-router';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton"; // Import the shadcn skeleton component
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton'; // Import the shadcn skeleton component
 
-import PageHeader from "@/components/PageHeader";
-import DashboardMatrices from "./DashbaordMatrices";
-import OnboardingBanner from "@/components/OnboardingBanner";
-import { useDashboard } from "@org/core";
+import PageHeader from '@/components/PageHeader';
+import DashboardMatrices from './DashbaordMatrices';
+import OnboardingBanner from '@/components/OnboardingBanner';
+import { useDashboard } from '@org/core';
 
 const DashboardPage = () => {
   const { orgId } = useParams();
-  const { recentTickets, summary, isLoadingSummary, isLoadingRecentTicket } = useDashboard();
+  const { recentTickets, summary, isLoadingSummary, isLoadingRecentTicket } =
+    useDashboard({ orgId });
 
   // Calculate remaining open/active work
   const Remaining = summary
@@ -26,7 +33,9 @@ const DashboardPage = () => {
   // Fixed the math bug here: changed RESOLVED + RESOLVED to RESOLVED + CLOSED
   const resolveRate = summary?.data.TOTAL
     ? Math.round(
-        (((summary?.data.RESOLVED || 0) + (summary?.data.CLOSED || 0)) / summary.data.TOTAL) * 100,
+        (((summary?.data.RESOLVED || 0) + (summary?.data.CLOSED || 0)) /
+          summary.data.TOTAL) *
+          100,
       )
     : 0;
 
@@ -57,7 +66,8 @@ const DashboardPage = () => {
                 <div key={i} className="space-y-2 rounded-md border p-3">
                   <div className="flex items-center justify-between gap-2">
                     <Skeleton className="h-4 w-24" /> {/* Ticket ID */}
-                    <Skeleton className="h-5 w-14 rounded-full" /> {/* Priority Badge */}
+                    <Skeleton className="h-5 w-14 rounded-full" />{' '}
+                    {/* Priority Badge */}
                   </div>
                   <Skeleton className="h-5 w-3/4" /> {/* Ticket Subject */}
                   <div className="flex items-center gap-2">
@@ -68,10 +78,15 @@ const DashboardPage = () => {
                 </div>
               ))
             ) : recentTickets?.data.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No tickets available yet.</p>
+              <p className="text-muted-foreground text-sm">
+                No tickets available yet.
+              </p>
             ) : (
               recentTickets?.data.map((ticket) => (
-                <div key={ticket.id} className="space-y-2 rounded-md border p-3">
+                <div
+                  key={ticket.id}
+                  className="space-y-2 rounded-md border p-3"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-mono text-xs">{ticket.id}</p>
                     <Badge variant="outline">{ticket.priority}</Badge>
@@ -80,7 +95,7 @@ const DashboardPage = () => {
                   <div className="text-muted-foreground flex items-center gap-2 text-xs">
                     <span>{ticket.status}</span>
                     <span>-</span>
-                    <span>{ticket.assignedToUser?.name || "Unassigned"}</span>
+                    <span>{ticket.assignedToUser?.name || 'Unassigned'}</span>
                   </div>
                 </div>
               ))
@@ -122,7 +137,9 @@ const DashboardPage = () => {
               // Content state once loaded
               <>
                 <div>
-                  <p className="mb-2 text-sm font-medium">{resolveRate}% completed</p>
+                  <p className="mb-2 text-sm font-medium">
+                    {resolveRate}% completed
+                  </p>
                   <Progress value={resolveRate} />
                 </div>
                 <Separator />

@@ -1,42 +1,35 @@
-import type { FilterOptions } from "@org/web-utils";
-import type { CreateCustomerInput, UpdateCustomerInput } from "@org/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { toast } from "sonner";
-import { customerApi } from "./api.js";
+import type { FilterOptions } from '@org/web-utils';
+import type { CreateCustomerInput, UpdateCustomerInput } from '@org/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { customerApi } from './api.js';
 interface props {
   filterOptions?: FilterOptions;
+  orgId: string | undefined;
 }
-export const  useCustomer = ({ filterOptions }: props = {}) => {
-  const { orgId } = useParams();
+export const useCustomer = ({ filterOptions, orgId }: props) => {
   const queryClient = useQueryClient();
   const { data: customers, isLoading: isLoadingCustomers } = useQuery({
     queryFn: () => customerApi.getAll(filterOptions),
-    queryKey: ["customer", { orgId }, filterOptions],
+    queryKey: ['customer', { orgId }, filterOptions],
   });
-  // --- Mutations ---
-  const { mutate: createCustomer, isPending: isCreatingCustomer } = useMutation({
-    mutationFn: (data: CreateCustomerInput) => customerApi.create(data),
-    onSuccess: () => {
-      toast.success("customer created successfully");
-      queryClient.invalidateQueries({ queryKey: ["customer", { orgId }] });
+  const { mutate: createCustomer, isPending: isCreatingCustomer } = useMutation(
+    {
+      mutationFn: (data: CreateCustomerInput) => customerApi.create(data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['customer', { orgId }] });
+      },
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  );
 
-  const { mutate: updateCustomer, isPending: isUpdatingCustomer } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerInput }) =>
-      customerApi.update(id, data),
-    onSuccess: () => {
-      toast.success("customer updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["customer", { orgId }] });
+  const { mutate: updateCustomer, isPending: isUpdatingCustomer } = useMutation(
+    {
+      mutationFn: ({ id, data }: { id: string; data: UpdateCustomerInput }) =>
+        customerApi.update(id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['customer', { orgId }] });
+      },
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  );
 
   return {
     customers,
@@ -46,6 +39,4 @@ export const  useCustomer = ({ filterOptions }: props = {}) => {
     updateCustomer,
     isUpdatingCustomer,
   };
-}
-
-export default useCustomer;
+};

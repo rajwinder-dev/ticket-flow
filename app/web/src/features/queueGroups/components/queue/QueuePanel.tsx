@@ -5,6 +5,7 @@ import { Inbox, Layers, Plus } from "lucide-react";
 import { NoGroupSelected } from "../groups/NoGroupSelected";
 import { QueueTable } from "./QueueTable";
 import { useQueue, useQueueGroup, useQueueGroupStore } from "@org/core";
+import { useParams } from "react-router";
 
 interface QueuePanelProps {
   onAddQueue: () => void;
@@ -31,8 +32,10 @@ function QueueEmptyState({ onAddQueue }: { onAddQueue: () => void }) {
 }
 
 export function QueuePanel({ onAddQueue }: QueuePanelProps) {
+  const {orgId} = useParams()
   const { selectedId } = useQueueGroupStore();
-  const { queueGroups, isLoadingQueueGroups } = useQueueGroup();
+
+  const { queueGroups, isLoadingQueueGroups } = useQueueGroup({orgId});
 
   // Only execute query if we have a selected group ID
   const { queues, isLoadingQueues, queueError } = useQueue({ groupId: selectedId! });

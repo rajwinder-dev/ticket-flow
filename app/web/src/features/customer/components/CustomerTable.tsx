@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/table";
 import { CustomerActionsMenu } from "./CustomerActions";
 import { useCustomer } from "@org/core";
+import { useParams } from "react-router";
 
 const CustomerTable = () => {
-  const { customers, isLoadingCustomers } = useCustomer();
+  const {orgId} = useParams()
+  const { customers, isLoadingCustomers } = useCustomer({orgId});
   return (
     <div className="min-h-0 flex-1 overflow-auto border-t">
       <Table>

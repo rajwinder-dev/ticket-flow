@@ -1,28 +1,28 @@
-import type { CreateOrganizationInput, UpdateOrganizationInput } from "@org/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
-import { toast } from "sonner";
-import { orgApi } from "./api.js";
-
-export const useOrganizations = ()  => {
-  const { orgId } = useParams();
-  const navigate = useNavigate();
+import type {
+  CreateOrganizationInput,
+  UpdateOrganizationInput,
+} from '@org/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { orgApi } from './api.js';
+interface props {
+  orgId: string | undefined;
+}
+export const useOrganizations = ({ orgId }: props) => {
   const queryClient = useQueryClient();
   const { data: onboardSatus } = useQuery({
-
     queryFn: orgApi.onboardStatus,
     enabled: !!orgId,
-    queryKey: ["organization","onboarding-status",  { orgId }],
+    queryKey: ['organization', 'onboarding-status', { orgId }],
   });
   // --- Queries ---
   const { data: organizations, isLoading: isLoadingOrganizations } = useQuery({
     queryFn: orgApi.getMine,
-    queryKey: ["organizations"],
+    queryKey: ['organizations'],
     retry: false,
   });
   const { data: currentOrganization, isLoading: isLoadingCurrent } = useQuery({
     queryFn: orgApi.getCurrent,
-    queryKey: ["organization", { orgId }],
+    queryKey: ['organization', { orgId }],
     enabled: !!orgId,
     retry: false,
   });
@@ -30,35 +30,22 @@ export const useOrganizations = ()  => {
   // --- Mutations ---
   const { mutate: createOrg, isPending: isCreatingOrg } = useMutation({
     mutationFn: (data: CreateOrganizationInput) => orgApi.create(data),
-    onSuccess: (data) => {
-      toast.success("Organization created successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      navigate(`/org/${data.data.id}`);
-    },
-    onError: (error) => {
-      toast.error(error.message);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
     },
   });
 
   const { mutate: updateOrg, isPending: isUpdatingOrg } = useMutation({
     mutationFn: (data: UpdateOrganizationInput) => orgApi.update(data),
     onSuccess: () => {
-      toast.success("Organization updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
     },
   });
 
   const { mutate: deleteOrg, isPending: isDeletingOrg } = useMutation({
     mutationFn: (organizationId: string) => orgApi.delete(organizationId),
     onSuccess: () => {
-      toast.success("Organization deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
     },
   });
 
@@ -75,5 +62,4 @@ export const useOrganizations = ()  => {
     currentOrganization,
     isLoadingCurrent,
   };
-}
-
+};

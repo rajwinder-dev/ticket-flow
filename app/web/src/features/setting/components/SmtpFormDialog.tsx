@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useEmail } from "@org/core";
-import type { CreateSmtpInput } from "@org/zod";
-import { AlertCircle, Loader2, Mail, Server } from "lucide-react";
-import { useForm } from "react-hook-form";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useEmail } from '@org/core';
+import type { CreateSmtpInput } from '@org/zod';
+import { AlertCircle, Loader2, Mail, Server } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 type SmtpFormDialogProps = {
   open: boolean;
@@ -23,8 +25,13 @@ type SmtpFormDialogProps = {
   // providerData?: CreateSmtpInput | null;
 };
 
-const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) => {
-  const { createSMTP, isCreatingSMTP } = useEmail();
+const SmtpFormDialog = ({
+  open,
+  onOpenChange,
+  isEditing,
+}: SmtpFormDialogProps) => {
+  const { orgId } = useParams();
+  const { createSMTP, isCreatingSMTP } = useEmail({ orgId });
   const {
     register,
     handleSubmit,
@@ -32,19 +39,25 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
     formState: { errors },
   } = useForm<CreateSmtpInput>({
     defaultValues: {
-      fromEmail: "",
+      fromEmail: '',
       credentials: {
-        host: "",
+        host: '',
         port: 587,
-        user: "",
-        pass: "",
+        user: '',
+        pass: '',
       },
     },
   });
 
   const onSubmit = (data: CreateSmtpInput) => {
     createSMTP(data, {
-      onSuccess: () => reset()
+      onSuccess: () => {
+        toast.success("Provider added successfully")
+        reset();
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      }
     });
     onOpenChange(false);
   };
@@ -55,7 +68,7 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Server className="h-5 w-5" />
-            {isEditing ? "Edit SMTP Fallback" : "Add SMTP Fallback"}
+            {isEditing ? 'Edit SMTP Fallback' : 'Add SMTP Fallback'}
           </DialogTitle>
           <DialogDescription className="flex items-center gap-1.5">
             <AlertCircle className="h-3.5 w-3.5" />
@@ -73,10 +86,12 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
             <Input
               id="fromEmail"
               placeholder="noreply@yourdomain.com"
-              {...register("fromEmail", { required: "Required" })}
+              {...register('fromEmail', { required: 'Required' })}
             />
             {errors.fromEmail && (
-              <p className="text-destructive text-xs">{errors.fromEmail.message}</p>
+              <p className="text-destructive text-xs">
+                {errors.fromEmail.message}
+              </p>
             )}
           </div>
 
@@ -87,10 +102,12 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
               <Input
                 id="smtpHost"
                 placeholder="smtp.mailtrap.io"
-                {...register("credentials.host", { required: "Required" })}
+                {...register('credentials.host', { required: 'Required' })}
               />
               {errors.credentials?.host && (
-                <p className="text-destructive text-xs">{errors.credentials.host.message}</p>
+                <p className="text-destructive text-xs">
+                  {errors.credentials.host.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -99,13 +116,15 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
                 id="smtpPort"
                 type="number"
                 placeholder="587"
-                {...register("credentials.port", {
-                  required: "Required",
+                {...register('credentials.port', {
+                  required: 'Required',
                   valueAsNumber: true,
                 })}
               />
               {errors.credentials?.port && (
-                <p className="text-destructive text-xs">{errors.credentials.port.message}</p>
+                <p className="text-destructive text-xs">
+                  {errors.credentials.port.message}
+                </p>
               )}
             </div>
           </div>
@@ -117,10 +136,12 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
               <Input
                 id="smtpUser"
                 placeholder="user@example.com"
-                {...register("credentials.user", { required: "Required" })}
+                {...register('credentials.user', { required: 'Required' })}
               />
               {errors.credentials?.user && (
-                <p className="text-destructive text-xs">{errors.credentials.user.message}</p>
+                <p className="text-destructive text-xs">
+                  {errors.credentials.user.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -129,21 +150,29 @@ const SmtpFormDialog = ({ open, onOpenChange, isEditing }: SmtpFormDialogProps) 
                 id="smtpPass"
                 type="password"
                 placeholder="••••••••"
-                {...register("credentials.pass", { required: "Required" })}
+                {...register('credentials.pass', { required: 'Required' })}
               />
               {errors.credentials?.pass && (
-                <p className="text-destructive text-xs">{errors.credentials.pass.message}</p>
+                <p className="text-destructive text-xs">
+                  {errors.credentials.pass.message}
+                </p>
               )}
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" variant="secondary" disabled={isCreatingSMTP}>
-              {isCreatingSMTP && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Save Changes" : "Test & Save Fallback"}
+              {isCreatingSMTP && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isEditing ? 'Save Changes' : 'Test & Save Fallback'}
             </Button>
           </DialogFooter>
         </form>

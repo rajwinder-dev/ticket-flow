@@ -6,29 +6,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+} from '@/components/ui/dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import {
-
   updateTicketInput,
   type TicketSchemaResponse,
   type UpdateTicketInput,
-} from "@org/zod";
-import { useTicket } from "@org/core";
-import { ticketCategory, ticketPriority } from "@org/constants";
+} from '@org/zod';
+import { useTicket } from '@org/core';
+import { ticketCategory, ticketPriority } from '@org/constants';
+import { useParams } from 'react-router';
+import { toast } from 'sonner';
 
 interface props {
   ticket: TicketSchemaResponse;
@@ -36,7 +37,8 @@ interface props {
   setOpen: (value: boolean) => void;
 }
 const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
-  const { updateTicket, isUpdatingTicket } = useTicket();
+  const { orgId } = useParams();
+  const { updateTicket, isUpdatingTicket } = useTicket({ orgId });
   const {
     register,
     handleSubmit,
@@ -47,7 +49,7 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
     resolver: zodResolver(updateTicketInput.bodySchema),
     defaultValues: {
       subject: ticket.subject,
-      description: ticket.description || "",
+      description: ticket.description || '',
       priority: ticket.priority,
       category: ticket.category,
     },
@@ -58,8 +60,12 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
       { id: ticket.id, data },
       {
         onSuccess: () => {
+          toast.success('ticket updated successfully');
           setOpen(false);
           reset();
+        },
+        onError: (error) => {
+          toast.error(error.message);
         },
       },
     );
@@ -74,20 +80,30 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" {...register("subject")} placeholder="Ticket title" />
-            {errors.subject && <p className="text-destructive text-sm">{errors.subject.message}</p>}
+            <Input
+              id="subject"
+              {...register('subject')}
+              placeholder="Ticket title"
+            />
+            {errors.subject && (
+              <p className="text-destructive text-sm">
+                {errors.subject.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              {...register("description")}
+              {...register('description')}
               placeholder="Detailed description of the issue..."
               rows={4}
             />
             {errors.description && (
-              <p className="text-destructive text-sm">{errors.description.message}</p>
+              <p className="text-destructive text-sm">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
@@ -98,14 +114,17 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                 control={control}
                 name="priority"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select priority" />
                     </SelectTrigger>
                     <SelectContent>
                       {ticketPriority.map((item) => (
                         <SelectItem value={item} className="capitalize">
-                          {item.toLocaleLowerCase().split("_").join(" ")}
+                          {item.toLocaleLowerCase().split('_').join(' ')}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -113,7 +132,9 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                 )}
               />
               {errors.priority && (
-                <p className="text-destructive text-sm">{errors.priority.message}</p>
+                <p className="text-destructive text-sm">
+                  {errors.priority.message}
+                </p>
               )}
             </div>
 
@@ -123,14 +144,17 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                 control={control}
                 name="category"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
                       {ticketCategory.map((item) => (
                         <SelectItem value={item} className="capitalize">
-                          {item.toLocaleLowerCase().split("_").join(" ")}
+                          {item.toLocaleLowerCase().split('_').join(' ')}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -138,7 +162,9 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
                 )}
               />
               {errors.category && (
-                <p className="text-destructive text-sm">{errors.category.message}</p>
+                <p className="text-destructive text-sm">
+                  {errors.category.message}
+                </p>
               )}
             </div>
           </div>

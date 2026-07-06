@@ -1,11 +1,13 @@
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import { RoleCard } from "./RoleCard";
-import { Card } from "@/components/ui/card";
-import { useRole } from "@org/core";
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { RoleCard } from './RoleCard';
+import { Card } from '@/components/ui/card';
+import { useRole } from '@org/core';
+import { useParams } from 'react-router';
 
 export function RoleList() {
-  const { roles, isLoadingRoles } = useRole();
+  const { orgId } = useParams();
+  const { roles, isLoadingRoles } = useRole({ orgId });
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r">
@@ -26,7 +28,8 @@ export function RoleList() {
             <Card key={index} className="bg-card/50 space-y-2.5 rounded-xl p-3">
               <div className="flex items-center justify-between">
                 <Skeleton className="h-4 w-28" /> {/* Role Name */}
-                <Skeleton className="h-5 w-14 rounded-full" /> {/* Optional Badge/Status */}
+                <Skeleton className="h-5 w-14 rounded-full" />{' '}
+                {/* Optional Badge/Status */}
               </div>
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-11/12" /> {/* Description Line 1 */}
@@ -40,7 +43,9 @@ export function RoleList() {
             </Card>
           ))
         ) : roles?.data.length === 0 ? (
-          <p className="text-muted-foreground py-8 text-center text-xs">No roles found</p>
+          <p className="text-muted-foreground py-8 text-center text-xs">
+            No roles found
+          </p>
         ) : (
           roles?.data.map((role) => <RoleCard key={role.id} role={role} />)
         )}
