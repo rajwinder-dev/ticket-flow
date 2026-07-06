@@ -9,6 +9,7 @@
       }
     },
     "serve": {
+      "continuous": true,
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx watch src/main.ts",

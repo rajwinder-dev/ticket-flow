@@ -20,9 +20,6 @@
     "@org/zod": "workspace:*",
     "@org/web-utils": "workspace:*",
     "@tanstack/react-query": "^5.101.2",
-    "react-router": "^8.1.0",
-    "react-router-dom": "^7.18.1",
-    "sonner": "^2.0.7",
     "tslib": "^2.3.0",
     "zustand": "^5.0.14"
   }
