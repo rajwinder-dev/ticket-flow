@@ -98,6 +98,26 @@
           "fields": ["extends", "files", "include"]
         }
       ]
+    }, 
+    "generate": {
+      "cache": true,
+      "inputs": ["{projectRoot}/prisma/schema.prisma"],
+      "outputs": ["{projectRoot}/src/generated"]
+    },
+    "build": {
+      "dependsOn": ["^generate", "generate"]
+    },
+    "dev": {
+      "dependsOn": ["^generate", "generate"]
+    },
+    "serve": {
+      "dependsOn": ["^generate", "generate"]
+    },
+    "test": {
+      "dependsOn": ["^generate", "generate"]
+    },
+    "lint": {
+      "dependsOn": ["^generate", "generate"]
     }
   }
 }

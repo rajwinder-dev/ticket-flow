@@ -1,5 +1,4 @@
 export * from "./features/activity/index.js"
-export * from "./features/auth/index.js"
 export * from "./features/customer/index.js"
 export * from "./features/dashbaord/index.js"
 export * from "./features/lookup/index.js"
