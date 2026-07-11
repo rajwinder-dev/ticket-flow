@@ -23,7 +23,8 @@
     "seedAdmin": "ts-node prisma/seed.ts --admin",
     "deploy": "prisma migrate deploy",
     "migrate": "prisma migrate dev",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "setup-role": "tsc ./src/lib/setup-rls-role.ts"
   },
   "devDependencies": {
     "prisma": "^7.4.2"

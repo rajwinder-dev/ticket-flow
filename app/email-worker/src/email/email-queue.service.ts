@@ -37,7 +37,7 @@ export class EmailQueueService {
     emailProvider: providerData,
     { to, subject, html }: { to: string; subject: string; html: string },
   ) => {
-    const crypto = new CryptoUtils(process.env.encryptionKey!);
+    const crypto = new CryptoUtils(process.env.ENCRYPTION_KEY!);
     const verifiedCredentials = cryptoType.safeParse(emailProvider.credentials);
     if (!verifiedCredentials.success) throw new Error("Invalid credentials");
     const credentials = JSON.parse(crypto.decrypt(verifiedCredentials.data));

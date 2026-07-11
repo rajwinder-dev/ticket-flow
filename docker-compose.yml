@@ -1,0 +1,66 @@
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    networks:
+      - prisma-network
+
+  api:
+    build:
+      context: .
+      target: api
+    # image: rajwindersxxx/ticket-management:api
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      - BETTER_AUTH_URL=http://localhost
+
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        'node -e "require(\"http\").get(\"http://localhost:3000\", (r) => process.exit(r.statusCode === 200 ? 0 : 1))"'
+      ]
+      retries: 5
+    depends_on:
+      - redis  
+    networks:
+      - prisma-network
+
+  email-worker: # Note: watch out for the typo in "workder" if you want to fix it later!
+    build:
+      context: .
+      target: email-worker
+    # image: rajwindersxxx/ticket-management:email-worker
+    env_file:
+      - .env
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - prisma-network # ADDED: Essential so it can see the redis container
+
+  web:
+    build:
+      context: .
+      target: api
+    # image: rajwindersxxx/ticket-management:web
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - prisma-network
+
+networks:
+  prisma-network:
+
+volumes:
+  redis-data:

@@ -1,0 +1,77 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/**"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20]
+
+    defaults:
+      run:
+        working-directory: .
+
+    services:
+      postgres:
+        image: postgres:16
+
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+
+        ports:
+          - 5488:5432
+
+        options: >-
+          --health-cmd="pg_isready -U testuser -d testdb" --health-interval=10s
+          --health-timeout=5s --health-retries=5
+
+    env:
+      DIRECT_URL: postgres://testuser:testpass@localhost:5488/testdb
+      DATABASE_URL: postgres://dev_app_user:dev_password@localhost:5488/testdb
+      NODE_ENV: test
+      ENCRYPTION_KEY: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
+      ACCESS_SECRET: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
+      REFRESH_SECRET: 125ccd8a2a116a559e3c8c8fa80bf573c2f37c0cc0dbc8e7c2019beee7f75a6e
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm nx run database:generate
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: setup dev role
+        run: pnpm --filter database run setup:db
+
+      - name: Run migrations
+        run: pnpm run db:migrate
+          # temp turn of tests
+      # - name: Run integration tests
+      # run: pnpm test

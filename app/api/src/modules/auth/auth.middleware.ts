@@ -90,7 +90,7 @@ export class authMiddleware {
       }
       const resourcePermissions = permissions[module];
       if (!resourcePermissions || !resourcePermissions.includes(action)) {
-        return next(new appError("Permission denied", 403, "FORBIDDEN", req.user.permissions));
+        return next(new appError("Permission denied", 403, "FORBIDDEN"));
       }
       next();
     });
