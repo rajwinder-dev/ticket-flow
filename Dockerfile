@@ -4,6 +4,9 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+ENV CI=true
+
+ENV NX_NO_CLOUD=true
 RUN corepack prepare pnpm@10.30.3 --activate
 
 RUN apt-get update -y && apt-get install -y openssl
@@ -19,8 +22,8 @@ ENV DIRECT_URL=postgresql://postgres:postgres@postgres:5433/postgres
 
 
 # Nx cache speeds up repeat builds across layers/CI
-RUN --mount=type=cache,id=nx,target=/usr/src/app/.nx/cache \
-  pnpm exec nx run database:generate
+RUN pnpm --filter database run generate
+
 
 RUN pnpm run build 
 
@@ -46,7 +49,7 @@ CMD ["pnpm", "start"]
 
 # ---------- web RUNTIME ----------
 FROM nginx:stable-alpine AS web
-COPY --from=build /usr/src/app/apps/web/dist /usr/share/nginx/html
+COPY --from=build /usr/src/app/app/web/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -26,10 +26,8 @@
     "generate": "prisma generate",
     "setup-role": "tsc ./src/lib/setup-rls-role.ts"
   },
-  "devDependencies": {
-    "prisma": "^7.4.2"
-  },
   "dependencies": {
+    "prisma": "^7.4.2",
     "tslib": "^2.3.0",
     "@faker-js/faker": "^8.4.1",
     "@prisma/adapter-pg": "^7.4.2",
@@ -39,6 +37,5 @@
     "@org/utils": "workspace:*",
     "@org/constants": "workspace:*",
     "@org/zod": "workspace:*"
-
   }
 }

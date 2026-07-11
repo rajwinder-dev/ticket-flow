@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
+  injectWorkspacePackages: true
 
 importers:
 
@@ -240,6 +241,9 @@ importers:
       sanitize-html:
         specifier: ^2.17.5
         version: 2.17.5
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -296,6 +300,9 @@ importers:
       svix:
         specifier: ^1.89.0
         version: 1.96.1
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
       tsx:
         specifier: ^4.21.0
         version: 4.23.0
@@ -548,16 +555,15 @@ importers:
       dotenv:
         specifier: ^17.3.1
         version: 17.4.2
+      prisma:
+        specifier: ^7.4.2
+        version: 7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
         specifier: ^4.3.6
         version: 4.4.3
-    devDependencies:
-      prisma:
-        specifier: ^7.4.2
-        version: 7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)
 
   packages/email-providers:
     dependencies:

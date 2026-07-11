@@ -31,7 +31,7 @@ services:
     networks:
       - prisma-network
 
-  email-worker: # Note: watch out for the typo in "workder" if you want to fix it later!
+  email-worker: 
     build:
       context: .
       target: email-worker
@@ -49,7 +49,7 @@ services:
   web:
     build:
       context: .
-      target: api
+      target: web
     # image: rajwindersxxx/ticket-management:web
     ports:
       - "80:80"
