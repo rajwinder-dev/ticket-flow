@@ -1,3 +1,3 @@
-export * from "./providers/nodeMailer.provider.js";
-export * from "./providers/resend.provider.js";
-export * from "./providers/provider.factory.js";
+export * from "./lib/nodeMailer.provider.js";
+export * from "./lib/resend.provider.js";
+export * from "./lib/provider.factory.js";

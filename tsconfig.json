@@ -1,24 +1,46 @@
 {
   "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
   "files": [],
   "references": [
     {
-      "path": "packages/constants"
+      "path": "./packages/constants/"
     },
     {
-      "path": "packages/schemas"
+      "path": "./packages/utils"
     },
     {
-      "path": "packages/utils"
+      "path": "./packages/zod"
     },
     {
-      "path": "packages/database"
+      "path": "./packages/database"
     },
     {
-      "path": "apps/frontend"
+      "path": "./packages/email-providers"
     },
     {
-      "path": "apps/backend"
+      "path": "./packages/core"
+    },
+    {
+      "path": "./app/api-e2e"
+    },
+    {
+      "path": "./app/api"
+    },
+    {
+      "path": "./app/web-e2e"
+    },
+    {
+      "path": "./app/web"
+    },
+    {
+      "path": "./app/email-worker"
+    },
+    {
+      "path": "./packages/web-utils"
+    },
+    {
+      "path": "./packages/constants"
     }
   ]
 }

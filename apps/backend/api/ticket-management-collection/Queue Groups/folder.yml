@@ -1,7 +1,0 @@
-info:
-  name: Queue Groups
-  type: folder
-  seq: 8
-
-request:
-  auth: inherit

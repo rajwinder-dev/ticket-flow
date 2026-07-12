@@ -1,28 +1,21 @@
 {
   "compilerOptions": {
-    "strict": true,
+    "composite": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["es2022"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "paths": {
-      "@repo/constants": [
-        "./packages/constants/src"
-      ],
-      "@repo/schemas": [
-        "./packages/schemas/src"
-      ],
-      "@repo/database": [
-        "./packages/database/src"
-      ],
-      "@repo/utils": [
-        "./packages/utils/src"
-      ],
-    },
-    "target": "ES2022",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true, // Recommended to avoid type errors in node_modules
-    "composite": true,
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2022",
+    "customConditions": ["@org/source"]
   }
 }

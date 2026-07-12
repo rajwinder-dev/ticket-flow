@@ -7,11 +7,11 @@ services:
     networks:
       - prisma-network
 
-  backend:
+  api:
     build:
       context: .
-      target: backend
-    image: rajwindersxxx/ticket-management:backend
+      target: api
+    # image: rajwindersxxx/ticket-management:api
     env_file:
       - .env
     environment:
@@ -31,11 +31,11 @@ services:
     networks:
       - prisma-network
 
-  email-service: # Note: watch out for the typo in "workder" if you want to fix it later!
+  email-worker: 
     build:
       context: .
-      target: email-service
-    image: rajwindersxxx/ticket-management:email-service
+      target: email-worker
+    # image: rajwindersxxx/ticket-management:email-worker
     env_file:
       - .env
     environment:
@@ -46,15 +46,15 @@ services:
     networks:
       - prisma-network # ADDED: Essential so it can see the redis container
 
-  frontend:
+  web:
     build:
       context: .
-      target: frontend
-    image: rajwindersxxx/ticket-management:frontend
+      target: web
+    # image: rajwindersxxx/ticket-management:web
     ports:
       - "80:80"
     depends_on:
-      backend:
+      api:
         condition: service_healthy
     networks:
       - prisma-network

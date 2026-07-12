@@ -1,35 +1,43 @@
 {
-  "name": "@repo/database",
+  "name": "@org/database",
+  "version": "0.0.1",
+  "private": true,
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
+      "@org/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
     "build": "prisma generate && tsc -b",
     "dev": "tsc -w",
-    "db:setup": "tsx ./src/setup-rls-role.ts",
-    "db:push": " prisma generate && prisma db push",
-    "db:seedAdmin": "ts-node prisma/seed.ts --admin",
-    "db:deploy": "prisma migrate deploy",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate"
+    "setup": "tsx ./src/setup-rls-role.ts",
+    "push": " prisma generate && prisma db push",
+    "seedAdmin": "ts-node prisma/seed.ts --admin",
+    "deploy": "prisma migrate deploy",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "setup-role": "tsx ./src/lib/setup-rls-role.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@org/constants": "workspace:*",
+    "@org/utils": "workspace:*",
+    "@org/zod": "workspace:*",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
-    "@repo/constants": "workspace:*",
-    "@repo/schemas": "workspace:*",
-    "@repo/utils": "workspace:*",
     "dotenv": "^17.3.1",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
     "prisma": "^7.4.2",
-    "typescript": "^6.0.2"
+    "tslib": "^2.3.0",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2",
+    "zod": "^4.3.6"
   }
 }

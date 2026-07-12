@@ -1,10 +1,10 @@
-import { prisma } from "../src/prismaClient.js";
-import { seedAgents } from "../src/seed/agent.seed.js";
-import { seedCustomers } from "../src/seed/customers.seed.js";
-import { seedMembers } from "../src/seed/membership.seed.js";
-import { seedOrganizations } from "../src/seed/organization.seed.js";
-import { seedQueueGroups } from "../src/seed/queue.seed.js";
-import { seedUsers } from "../src/seed/users.seed.js";
+import { prisma } from "../src/lib/prismaClient.js";
+import { seedAgents } from "../src/lib/seed/agent.seed.js";
+import { seedCustomers } from "../src/lib/seed/customers.seed.js";
+import { seedMembers } from "../src/lib/seed/membership.seed.js";
+import { seedOrganizations } from "../src/lib/seed/organization.seed.js";
+import { seedQueueGroups } from "../src/lib/seed/queue.seed.js";
+import { seedUsers } from "../src/lib/seed/users.seed.js";
 const seedConfig = {
   usersCount: 100,
   ownersCount: 20,

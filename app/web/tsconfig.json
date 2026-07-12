@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "include": [],
+  "compilerOptions": {
+    "declaration": false,
+    "emitDeclarationOnly": false
+  },
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ],
+  "extends": "../../tsconfig.base.json"
+}

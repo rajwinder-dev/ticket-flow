@@ -1,7 +1,0 @@
-info:
-  name: add organiztain
-  type: folder
-  seq: 13
-
-request:
-  auth: inherit

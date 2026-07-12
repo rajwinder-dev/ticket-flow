@@ -1,22 +1,23 @@
 {
-  "name": "@repo/utils",
+  "name": "@org/utils",
+  "version": "0.0.1",
+  "private": true,
   "type": "module",
-  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -w"
-  },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
+      "@org/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
-  "devDependencies": {
-    "@types/node": "^25.9.3",
-    "typescript": "^6.0.2"
-  },
   "dependencies": {
+    "axios": "^1.18.1",
+    "crypto": "^1.0.1",
+    "tslib": "^2.3.0"
   }
 }

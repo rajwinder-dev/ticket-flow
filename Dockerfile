@@ -1,9 +1,12 @@
 # ---------- BASE ----------
-FROM node:20-slim AS base
+FROM node:22-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+ENV CI=true
+
+ENV NX_NO_CLOUD=true
 RUN corepack prepare pnpm@10.30.3 --activate
 
 RUN apt-get update -y && apt-get install -y openssl
@@ -14,35 +17,39 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-# required for prisma generate
+# dummy required for prisma generate
 ENV DIRECT_URL=postgresql://postgres:postgres@postgres:5433/postgres
 
-RUN pnpm run db:generate
+
+# Nx cache speeds up repeat builds across layers/CI
+RUN pnpm --filter database run generate
+
+
 RUN pnpm run build 
 
-RUN pnpm deploy --filter=backend --prod /prod/backend
-RUN pnpm deploy --filter=frontend --prod /prod/frontend
-RUN pnpm deploy --filter=email-service --prod /prod/email-service
+RUN pnpm deploy --filter=api --prod /prod/api
+RUN pnpm deploy --filter=web --prod /prod/web
+RUN pnpm deploy --filter=email-worker --prod /prod/email-worker
 
-RUN mkdir -p /prod/backend/prisma \
-  && cp -r packages/database/prisma/* /prod/backend/prisma/
+RUN mkdir -p /prod/api/prisma \
+  && cp -r packages/database/prisma/* /prod/api/prisma/
 
-# ---------- BACKEND RUNTIME ----------
-FROM base AS backend
-COPY --from=build /prod/backend /prod/backend
-WORKDIR /prod/backend
+# ---------- api RUNTIME ----------
+FROM base AS api
+COPY --from=build /prod/api /prod/api
+WORKDIR /prod/api
 EXPOSE 3000
 CMD ["pnpm", "start"]
 
-# ---------- EMAIL SERVICE RUNTIME ----------
-FROM base AS email-service
-COPY --from=build /prod/email-service /prod/email-service 
-WORKDIR /prod/email-service
+# ---------- EMAIL worker RUNTIME ----------
+FROM base AS email-worker
+COPY --from=build /prod/email-worker /prod/email-worker 
+WORKDIR /prod/email-worker
 CMD ["pnpm", "start"]
 
-# ---------- FRONTEND RUNTIME ----------
-FROM nginx:stable-alpine AS frontend
-COPY --from=build /usr/src/app/apps/frontend/dist /usr/share/nginx/html
+# ---------- web RUNTIME ----------
+FROM nginx:stable-alpine AS web
+COPY --from=build /usr/src/app/app/web/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
