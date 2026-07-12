@@ -7,7 +7,6 @@ on:
       - "apps/**"
       - "packages/**"
       - "package.json"
-      - "package-lock.json"
       - ".github/**"
 jobs:
   test:
@@ -15,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [22]
 
     defaults:
       run:
@@ -51,6 +50,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with: 
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -68,10 +69,10 @@ jobs:
         run: pnpm run build
 
       - name: setup dev role
-        run: pnpm --filter database run setup:db
+        run: pnpm nx run database:setup-role
 
       - name: Run migrations
-        run: pnpm run db:migrate
+        run: pnpm nx run database:migrate
           # temp turn of tests
       # - name: Run integration tests
       # run: pnpm test

@@ -24,18 +24,20 @@
     "deploy": "prisma migrate deploy",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
-    "setup-role": "tsc ./src/lib/setup-rls-role.ts"
+    "setup-role": "tsx ./src/lib/setup-rls-role.ts"
   },
   "dependencies": {
-    "prisma": "^7.4.2",
-    "tslib": "^2.3.0",
     "@faker-js/faker": "^8.4.1",
+    "@org/constants": "workspace:*",
+    "@org/utils": "workspace:*",
+    "@org/zod": "workspace:*",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "dotenv": "^17.3.1",
-    "zod": "^4.3.6",
-    "@org/utils": "workspace:*",
-    "@org/constants": "workspace:*",
-    "@org/zod": "workspace:*"
+    "prisma": "^7.4.2",
+    "tslib": "^2.3.0",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2",
+    "zod": "^4.3.6"
   }
 }
