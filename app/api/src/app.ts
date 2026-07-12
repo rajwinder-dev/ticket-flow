@@ -29,6 +29,7 @@ import lookupRouter from './modules/lookup/lookup.routes.js';
 import { auth } from './lib/auth.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import { configLogger } from './core/utils/logger.js';
+import { prisma } from '@org/database';
 
 export const app: Express = express();
 
@@ -67,8 +68,14 @@ if (devMode) app.use(DevMiddleware.logRequests);
 
 //  Routes:w
 //
-app.get('/', (_req, res) => {
-  res.status(200).json({ status: 'success' });
+// routes/health.js
+app.get('/health', async (req, res) => {
+  try {
+   await prisma.$executeRaw`SELECT 1`; 
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+  } catch (err) {
+    res.status(503).json({ status: 'error', message: 'DB unreachable' });
+  }
 });
 app.use('/api/v1/token', tokenRoute);
 app.use('/api/v1/org', organizationRouter);
