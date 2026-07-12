@@ -7,7 +7,9 @@
       "node",
       "express"
     ],
-    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
+    "emitDeclarationOnly": false,
+    "declaration": false
   },
   "include": [
     "src/**/*.ts"

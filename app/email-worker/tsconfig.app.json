@@ -5,7 +5,9 @@
     "types": ["node"],
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "emitDeclarationOnly": false,
+    "declaration": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["eslint.config.js", "eslint.config.cjs", "eslint.config.mjs"],
