@@ -1,3 +1,10 @@
+import * as Sentry from '@sentry/node';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 0.1,
+});
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Express } from 'express';
@@ -71,12 +78,13 @@ if (devMode) app.use(DevMiddleware.logRequests);
 // routes/health.js
 app.get('/health', async (req, res) => {
   try {
-   await prisma.$executeRaw`SELECT 1`; 
+    await prisma.$executeRaw`SELECT 1`;
     res.status(200).json({ status: 'ok', uptime: process.uptime() });
   } catch (err) {
     res.status(503).json({ status: 'error', message: 'DB unreachable' });
   }
 });
+
 app.use('/api/v1/token', tokenRoute);
 app.use('/api/v1/org', organizationRouter);
 app.use('/api/v1/user', userRouter);
@@ -100,6 +108,6 @@ app.all(/(.*)/, (req, _res, next) => {
     ),
   );
 });
-
+Sentry.setupExpressErrorHandler(app);
 app.use(globalHandler);
 export default app;
