@@ -15,7 +15,6 @@
     "@org/core": "workspace:*",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-query": "^5.95.2",
-    "@tanstack/react-query-devtools": "^5.95.2",
     "@tanstack/react-table": "^8.21.3",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^6.0.2",
@@ -48,6 +47,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.95.2",
     "@eslint/js": "^10.0.1",
     "@hookform/devtools": "^4.4.0",
     "@testing-library/dom": "^10.4.1",
