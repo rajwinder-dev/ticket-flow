@@ -1,13 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AxiosError } from "axios";
-import { RouterProvider } from "react-router";
-import { Toaster } from "./components/ui/sonner";
-import { TooltipProvider } from "./components/ui/tooltip";
-import { GlobalProvider } from "./context/GlobalContext";
-import router from "./router";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { AxiosError } from 'axios';
+import { RouterProvider } from 'react-router';
+import { Toaster } from './components/ui/sonner';
+import { TooltipProvider } from './components/ui/tooltip';
+import { GlobalProvider } from './context/GlobalContext';
+import router from './router';
 
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary } from 'react-error-boundary';
+import { devMode } from './config/apiconfig';
 const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -28,8 +29,7 @@ function App() {
               <RouterProvider router={router} />
               <Toaster />
             </GlobalProvider>
-
-            <ReactQueryDevtools />
+            {devMode && <ReactQueryDevtools />}
           </TooltipProvider>
         </QueryClientProvider>
       </ErrorBoundary>

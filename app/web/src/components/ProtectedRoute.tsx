@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 const ProtectedRoute = () => {
   const { data: session, isPending} = authClient.useSession();
-  console.log(session, isPending, )
   const { tokenEmail, inviteToken } = useMembersStore();
 
   const navigate = useNavigate();
