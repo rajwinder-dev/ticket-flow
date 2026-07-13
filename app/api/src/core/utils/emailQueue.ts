@@ -6,8 +6,12 @@ const emailQueue = new Queue('email-queue', {
     host: process.env.REDIS_HOST,
     port: Number(process.env.REDIS_PORT),
     username: process.env.REDIS_USERNAME,
-    password: process.env.REDIS_Password,
+    password: process.env.REDIS_PASSWORD,
     maxRetriesPerRequest: null,
+    tls: {},
+    retryStrategy: (times) => Math.min(times * 200, 2000),
+    reconnectOnError: () => true,
+    keepAlive: 10000,
   },
 });
 

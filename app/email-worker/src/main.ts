@@ -13,7 +13,13 @@ const connection = new Redis({
   port: Number(process.env.REDIS_PORT),
   username: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD,
+  
   maxRetriesPerRequest: null,
+  tls: {},
+  retryStrategy: (times) => Math.min(times* 200, 2000),
+  reconnectOnError: () => true,
+  keepAlive: 10000,
+  enableReadyCheck: true,
 });
 
 // Redis connection logs
