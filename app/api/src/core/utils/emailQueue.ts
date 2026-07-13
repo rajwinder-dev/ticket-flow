@@ -1,11 +1,13 @@
-import { Queue } from "bullmq";
-import { EmailQueueInput } from "@org/zod";
+import { Queue } from 'bullmq';
+import { EmailQueueInput } from '@org/zod';
 
-const emailQueue = new Queue("email-queue", {
+const emailQueue = new Queue('email-queue', {
   connection: {
     host: process.env.REDIS_HOST,
     port: Number(process.env.REDIS_PORT),
-    ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_Password,
+    maxRetriesPerRequest: null,
   },
 });
 
@@ -14,7 +16,7 @@ export async function emailQueuePush(data: EmailQueueInput) {
     const job = await emailQueue.add(data.jobType, data, {
       attempts: 3,
       backoff: {
-        type: "exponential",
+        type: 'exponential',
         delay: 2000,
       },
     });
