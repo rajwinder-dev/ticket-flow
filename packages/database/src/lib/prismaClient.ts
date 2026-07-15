@@ -4,7 +4,7 @@ import { PrismaClient } from '../generated/client.js';
 import { log } from '@org/utils';
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) log.error('connectionString is undefined');
-const adapter = new PrismaPg({ connectionString });
+const adapter = new PrismaPg({ connectionString, max: 5 });
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });

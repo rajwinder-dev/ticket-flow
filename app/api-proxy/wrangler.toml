@@ -3,6 +3,6 @@ main = "worker.js"
 compatibility_date = "2026-07-15"
 
 routes = [
-  { pattern = "ticketflow-api.devtiven.com/api/*", zone_name = "ticketflow-api.devtiven.com" },
-  { pattern = "ticketflow-api.devtiven.com/webhooks/*", zone_name = "ticketflow-api.devtiven.com" }
-] 
+  { pattern = "ticketflow.devtiven.com/api/*", zone_name = "devtiven.com" },
+  { pattern = "ticketflow.devtiven.com/webhooks/*", zone_name = "devtiven.com" },
+]
