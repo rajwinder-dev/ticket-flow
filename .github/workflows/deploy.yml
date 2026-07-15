@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [api, web, email-worker]
+        service: [api, email-worker]
 
     steps:
       - name: Checkout Code
