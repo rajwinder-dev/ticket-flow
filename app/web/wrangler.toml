@@ -3,4 +3,3 @@ compatibility_date = "2026-07-15"
 
 [assets]
 directory = "dist"          # relative to THIS file's location now
-binding = "ASSETS"
