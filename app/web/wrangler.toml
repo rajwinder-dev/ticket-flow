@@ -1,8 +1,6 @@
-name = "api-proxy-worker"
-main = "src/index.js"
+name = "web-app"
 compatibility_date = "2026-07-15"
 
-routes = [
-  { pattern = "yourdomain.com/api/*", zone_name = "yourdomain.com" },
-  { pattern = "yourdomain.com/webhooks/*", zone_name = "yourdomain.com" }
-]
+[assets]
+directory = "dist"          # relative to THIS file's location now
+binding = "ASSETS"

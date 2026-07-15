@@ -1,0 +1,8 @@
+name = "web-app"
+main = "worker.js"
+compatibility_date = "2026-07-15"
+
+routes = [
+  { pattern = "devtiven-api.devtiven.com/api/*", zone_name = "devtiven-api.devtiven.com" },
+  { pattern = "devtiven-api.devtiven.com/webhooks/*", zone_name = "devtiven-api.devtiven.com" }
+]
