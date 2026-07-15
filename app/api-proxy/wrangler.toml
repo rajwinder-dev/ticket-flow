@@ -1,8 +1,8 @@
-name = "web-app"
+name = "ticketflow-proxy"
 main = "worker.js"
 compatibility_date = "2026-07-15"
 
 routes = [
-  { pattern = "devtiven-api.devtiven.com/api/*", zone_name = "devtiven-api.devtiven.com" },
-  { pattern = "devtiven-api.devtiven.com/webhooks/*", zone_name = "devtiven-api.devtiven.com" }
-]
+  { pattern = "ticketflow-api.devtiven.com/api/*", zone_name = "ticketflow-api.devtiven.com" },
+  { pattern = "ticketflow-api.devtiven.com/webhooks/*", zone_name = "ticketflow-api.devtiven.com" }
+] 
