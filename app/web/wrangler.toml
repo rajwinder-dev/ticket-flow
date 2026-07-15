@@ -1,0 +1,8 @@
+name = "api-proxy-worker"
+main = "src/index.js"
+compatibility_date = "2026-07-15"
+
+routes = [
+  { pattern = "yourdomain.com/api/*", zone_name = "yourdomain.com" },
+  { pattern = "yourdomain.com/webhooks/*", zone_name = "yourdomain.com" }
+]
