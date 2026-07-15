@@ -1,5 +1,7 @@
+"$schema" =  "./node_modules/wrangler/config-schema.json"
 name = "web-app"
 compatibility_date = "2026-07-15"
 
 [assets]
 directory = "dist"          # relative to THIS file's location now
+not_found_handling = "single-page-application"

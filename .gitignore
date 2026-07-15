@@ -52,3 +52,6 @@ Thumbs.db
 vite.config.*.timestamp*
 test-output
 .env
+
+.wrangler
+.dev.vars*
