@@ -30,6 +30,7 @@ export default defineConfig({
       '@org/constants': path.resolve(__dirname, '../../packages/constants/src'),
       '@org/zod': path.resolve(__dirname, '../../packages/zod/src'),
       '@org/core': path.resolve(__dirname, '../../packages/core/src'),
+      '@org/web-utils': path.resolve(__dirname, '../../packages/web-utils/src'),
       '@': path.resolve(__dirname, './src'),
     },
   },
