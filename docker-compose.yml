@@ -11,14 +11,13 @@ services:
     build:
       context: .
       target: api
-    # image: rajwindersxxx/ticket-management:api
+    image: rajwindersxxx/ticket-management:api
     env_file:
       - .env
     environment:
       - PORT=3000
       - REDIS_PORT=6379
       - REDIS_HOST=redis
-      - BETTER_AUTH_URL=http://localhost
 
     healthcheck:
       test: [
@@ -35,7 +34,7 @@ services:
     build:
       context: .
       target: email-worker
-    # image: rajwindersxxx/ticket-management:email-worker
+    image: rajwindersxxx/ticket-management:email-worker
     env_file:
       - .env
     environment:
@@ -50,9 +49,9 @@ services:
     build:
       context: .
       target: web
-    # image: rajwindersxxx/ticket-management:web
+    image: rajwindersxxx/ticket-management:web
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       api:
         condition: service_healthy
