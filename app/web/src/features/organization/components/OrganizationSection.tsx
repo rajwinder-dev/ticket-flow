@@ -90,9 +90,9 @@ const OrganizationSection = () => {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent className="flex-row justify-center gap-2">
-              <Link to={'org/new'}>
-                <Button asChild>Create Organization</Button>
-              </Link>
+              <Button asChild>
+                <Link to={'org/new'}>Create Organization</Link>
+              </Button>
             </EmptyContent>
           </Empty>
         </Card>
