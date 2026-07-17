@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { EmailQueueInput, UpdateEmailProviderInput } from "@org/zod";
 import { appError } from "../../core/utils/appError.js";
-import { prisma, ProviderType } from "@org/database";
+import { getTenantClient, prisma, ProviderType } from "@org/database";
 import { emailQueuePush } from "../../core/utils/emailQueue.js";
 import { crypto } from "../../core/utils/crypto.js";
 export class EmailService {
@@ -13,6 +13,12 @@ export class EmailService {
     data,
     isSystemEmail,
   }: Omit<EmailQueueInput, "jobType">) => {
+    if(!isSystemEmail) {
+      const tenantdb = getTenantClient(organizationId!)
+      const emailProvider = await tenantdb.emailProvider.count();
+      if(!emailProvider) throw new appError("You need to setup emailProvider", 404,"NOT_FOUND");
+
+    }
     return await emailQueuePush({
       organizationId,
       to,
