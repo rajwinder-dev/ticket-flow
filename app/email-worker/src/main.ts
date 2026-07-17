@@ -15,7 +15,7 @@ const connection = new Redis({
   password: process.env.REDIS_PASSWORD,
   
   maxRetriesPerRequest: null,
-  tls: {},
+  tls: process.env.REDIS_TLS ? {} : undefined,
   retryStrategy: (times) => Math.min(times* 200, 2000),
   reconnectOnError: () => true,
   keepAlive: 10000,
