@@ -1,10 +1,4 @@
 import * as Sentry from '@sentry/node';
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  tracesSampleRate: 0.1,
-});
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Express } from 'express';
@@ -15,29 +9,35 @@ import morgan from 'morgan';
 import { devMode } from './config/appConfig.js';
 import { env } from './config/env.js';
 
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 0.1,
+});
+
 import { appError } from './core/utils/appError.js';
 import { globalHandler } from './core/utils/globalHandler.js';
 
+import { prisma } from '@org/database';
 import { toNodeHandler } from 'better-auth/node';
 import { DevMiddleware } from './core/middleware/devMiddleware.js';
+import { configLogger } from './core/utils/logger.js';
+import { auth } from './lib/auth.js';
 import ActivityRouter from './modules/activity/activity.routes.js';
 import customerRoutes from './modules/customer/customer.routes.js';
 import dashboardRouter from './modules/dashboard/dashboard.route.js';
 import emailRouter from './modules/email/email.routes.js';
+import lookupRouter from './modules/lookup/lookup.routes.js';
 import memberRouter from './modules/member/member.routes.js';
+import notificationRouter from './modules/notification/notification.routes.js';
 import organizationRouter from './modules/organizations/organization.routes.js';
 import QueueRoutes from './modules/queue/queue.routes.js';
+import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import roleRouter from './modules/role/role.route.js';
 import TicketRouter from './modules/ticket/ticket.routes.js';
 import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
-import lookupRouter from './modules/lookup/lookup.routes.js';
-import { auth } from './lib/auth.js';
-import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
-import { configLogger } from './core/utils/logger.js';
-import { prisma } from '@org/database';
-import notificationRouter from './modules/notification/notification.routes.js';
 
 export const app: Express = express();
 
@@ -100,7 +100,7 @@ app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1/member', memberRouter);
 app.use('/api/v1/activity', ActivityRouter);
 app.use('/api/v1/lookup', lookupRouter);
-app.use('/api/vi/notification', notificationRouter);
+app.use('/api/v1/notification', notificationRouter);
 
 app.all(/(.*)/, (req, _res, next) => {
   return next(

@@ -10,4 +10,5 @@ export * from "./features/role/index.js"
 export * from "./features/setting/index.js"
 export * from "./features/ticket/index.js"
 export * from "./features/users/index.js"
+export * from "./features/notification/index.js"
 

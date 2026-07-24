@@ -6,6 +6,7 @@ export * from "./lib/email.zod.js";
 export * from "./lib/global.zod.js";
 export * from "./lib/lookup.zod.js";
 export * from "./lib/member.zod.js";
+export * from "./lib/notification.zod.js";
 export * from "./lib/organization.zod.js";
 export * from "./lib/permissions.zod.js";
 export * from "./lib/queue.zod.js";

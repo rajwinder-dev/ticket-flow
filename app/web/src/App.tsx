@@ -6,7 +6,6 @@ import { Toaster } from './components/ui/sonner';
 import { TooltipProvider } from './components/ui/tooltip';
 import { GlobalProvider } from './context/GlobalContext';
 import router from './router';
-
 import { ErrorBoundary } from 'react-error-boundary';
 import { devMode } from './config/apiconfig';
 import { useSocket } from './hooks/useSocket';
