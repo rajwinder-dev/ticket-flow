@@ -70,7 +70,9 @@ export const ModelName = {
   ActivityLog: 'ActivityLog',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Notification: 'Notification',
+  NotificationPreference: 'NotificationPreference'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -296,10 +298,9 @@ export const TicketScalarFieldEnum = {
   updatedAt: 'updatedAt',
   version: 'version',
   organizationId: 'organizationId',
-  queueId: 'queueId',
+  userId: 'userId',
   customerId: 'customerId',
-  assignedTo: 'assignedTo',
-  assignedBy: 'assignedBy'
+  queueId: 'queueId'
 } as const
 
 export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
@@ -422,6 +423,43 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  recipientId: 'recipientId',
+  actorId: 'actorId',
+  ticketId: 'ticketId',
+  type: 'type',
+  channel: 'channel',
+  title: 'title',
+  message: 'message',
+  metadata: 'metadata',
+  readAt: 'readAt',
+  isRead: 'isRead',
+  deletedAt: 'deletedAt',
+  deleted: 'deleted',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  type: 'type',
+  channel: 'channel',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const SortOrder = {

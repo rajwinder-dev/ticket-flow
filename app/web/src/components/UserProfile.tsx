@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { disconnectSocket } from "@/lib/socketIo";
 import { LogoutIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useNavigate } from "react-router";
@@ -21,6 +22,7 @@ export function UserProfile() {
       fetchOptions: {
         onSuccess: () => {
           navigate("/");
+          disconnectSocket()
         },
       },
     });

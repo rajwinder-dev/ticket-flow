@@ -4,7 +4,6 @@
   "include": [],
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "declaration": false
   },
   "references": [
     {

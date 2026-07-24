@@ -37,6 +37,7 @@ import { auth } from './lib/auth.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import { configLogger } from './core/utils/logger.js';
 import { prisma } from '@org/database';
+import notificationRouter from './modules/notification/notification.routes.js';
 
 export const app: Express = express();
 
@@ -70,13 +71,14 @@ app.use('/api/auth/{*any}', toNodeHandler(auth));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
+
 // custom middleware
 if (devMode) app.use(DevMiddleware.logRequests);
 
 //  Routes:w
 //
 // routes/health.js
-app.get('/health', async (req, res) => {
+app.get('/health', async (_req, res) => {
   try {
     await prisma.$executeRaw`SELECT 1`;
     res.status(200).json({ status: 'ok', uptime: process.uptime() });
@@ -98,6 +100,7 @@ app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1/member', memberRouter);
 app.use('/api/v1/activity', ActivityRouter);
 app.use('/api/v1/lookup', lookupRouter);
+app.use('/api/vi/notification', notificationRouter);
 
 app.all(/(.*)/, (req, _res, next) => {
   return next(

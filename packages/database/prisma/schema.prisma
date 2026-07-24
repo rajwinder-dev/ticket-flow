@@ -13,40 +13,41 @@ datasource db {
 //  ============================ USERS / ROLES / ORG ==============================
 
 model User {
-  id                String             @id @default(uuid()) @db.Uuid
-  code              String?            @unique
-  email             String             @unique
-  phoneNo           String?            @unique
-  passwordHash      String?
-  passwordChangeAt  DateTime?
-  avatar            String?
-  location          String?
-  active            Boolean            @default(true)
-  isOnboarded       Boolean            @default(false)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  creator           User?              @relation("UserCreatedBy", fields: [createdBy], references: [id])
-  createdBy         String?            @db.Uuid
-  createdUsers      User[]             @relation("UserCreatedBy")
-  activityLogs      ActivityLog[]
-  sessions          Session[]
-  createdRoles      Role[]             @relation("RoleCreatedBy")
-  ticketsAssigned   Ticket[]           @relation("TicketAssignedTo")
-  ticketsCreated    Ticket[]           @relation("TicketAssignedBy")
-  ticketComments    TicketComment[]
-  fromTransitions   TicketTransition[] @relation("TransitionFromAgent")
-  toTransitions     TicketTransition[] @relation("TransitionToAgent")
-  organization      Organization[]
-  membership        Membership[]
-  token             Token[]
-  TokenCreatedBy    Token[]            @relation("TokenCreatedBy")
-  queueAgents       QueueAgent[]
-  queueGroups       QueueGroup[]
-  ticketTransitions TicketTransition[]
-  name              String
-  emailVerified     Boolean            @default(false)
-  image             String?
-  accounts          Account[]
+  id                      String                   @id @default(uuid()) @db.Uuid
+  code                    String?                  @unique
+  email                   String                   @unique
+  phoneNo                 String?                  @unique
+  passwordHash            String?
+  passwordChangeAt        DateTime?
+  avatar                  String?
+  location                String?
+  active                  Boolean                  @default(true)
+  isOnboarded             Boolean                  @default(false)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  creator                 User?                    @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  createdBy               String?                  @db.Uuid
+  createdUsers            User[]                   @relation("UserCreatedBy")
+  activityLogs            ActivityLog[]
+  sessions                Session[]
+  createdRoles            Role[]                   @relation("RoleCreatedBy")
+  ticketComments          TicketComment[]
+  fromTransitions         TicketTransition[]       @relation("TransitionFromAgent")
+  toTransitions           TicketTransition[]       @relation("TransitionToAgent")
+  organization            Organization[]
+  membership              Membership[]
+  token                   Token[]
+  TokenCreatedBy          Token[]                  @relation("TokenCreatedBy")
+  queueAgents             QueueAgent[]
+  queueGroups             QueueGroup[]
+  ticketTransitions       TicketTransition[]
+  name                    String
+  emailVerified           Boolean                  @default(false)
+  image                   String?
+  accounts                Account[]
+  receivedNotifications   Notification[]           @relation("NotificationRecipient")
+  triggeredNotifications  Notification[]           @relation("NotificationActor")
+  notificationPreferences NotificationPreference[]
 
   @@index([createdBy])
   @@index([active])
@@ -55,33 +56,35 @@ model User {
 }
 
 model Organization {
-  id                String             @id @default(uuid()) @db.Uuid
-  name              String
-  description       String?
-  teamSize          Int?
-  slug              String?            @unique
-  code              String             @unique
-  type              String?
-  active            Boolean            @default(true)
-  logo              String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  user              User?              @relation(fields: [createdBy], references: [id])
-  createdBy         String             @db.Uuid
-  tickets           Ticket[]
-  membership        Membership[]
-  role              Role[]
-  tokens            Token[]
-  email             EmailProvider[]
-  customer          Customer[]
-  emailMessages     EmailMessage[]
-  queues            Queue[]
-  queueAgents       QueueAgent[]
-  queueGroups       QueueGroup[]
-  attachments       Attachment[]
-  auditLogs         ActivityLog[]
-  ticketComment     TicketComment[]
-  ticketTransitions TicketTransition[]
+  id                      String                   @id @default(uuid()) @db.Uuid
+  name                    String
+  description             String?
+  teamSize                Int?
+  slug                    String?                  @unique
+  code                    String                   @unique
+  type                    String?
+  active                  Boolean                  @default(true)
+  logo                    String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  user                    User?                    @relation(fields: [createdBy], references: [id])
+  createdBy               String                   @db.Uuid
+  tickets                 Ticket[]
+  membership              Membership[]
+  role                    Role[]
+  tokens                  Token[]
+  email                   EmailProvider[]
+  customer                Customer[]
+  emailMessages           EmailMessage[]
+  queues                  Queue[]
+  queueAgents             QueueAgent[]
+  queueGroups             QueueGroup[]
+  attachments             Attachment[]
+  auditLogs               ActivityLog[]
+  ticketComment           TicketComment[]
+  ticketTransitions       TicketTransition[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
 
   @@index([createdBy])
   @@index([active])
@@ -344,23 +347,19 @@ model Ticket {
   version        Int                @default(1)
   organization   Organization?      @relation(fields: [organizationId], references: [id])
   organizationId String?            @db.Uuid
-  queue          Queue?             @relation(fields: [queueId], references: [id])
-  queueId        String?            @db.Uuid
-  customer       Customer?          @relation(fields: [customerId], references: [id])
-  customerId     String?            @db.Uuid
-  assignedToUser User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
-  assignedTo     String?            @db.Uuid
-  assignedByUser User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
-  assignedBy     String?            @db.Uuid
   transitions    TicketTransition[]
   comments       TicketComment[]
   emailMessages  EmailMessage[]
   attachments    Attachment[]
+  notifications  Notification[]
+  userId         String?            @db.Uuid
+  customer       Customer?          @relation(fields: [customerId], references: [id])
+  customerId     String?            @db.Uuid
+  queue          Queue?             @relation(fields: [queueId], references: [id])
+  queueId        String?            @db.Uuid
 
-  @@index([assignedTo, assignedBy, customerId, organizationId])
   @@index([status])
   @@index([priority])
-  @@index([queueId])
 }
 
 model Attachment {
@@ -539,4 +538,68 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// ============================= Notifiction ==============================
+
+enum NotificationType {
+  TICKET_ASSIGNED
+  TICKET_STATUS_CHANGED
+  TICKET_PRIORITY_CHANGED
+  TICKET_COMMENT_ADDED
+  TICKET_ESCALATED
+  TICKET_REOPENED
+  SLA_WARNING
+  SLA_BREACHED
+  SYSTEM
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+}
+
+model Notification {
+  id             String              @id @default(uuid()) @db.Uuid
+  organizationId String              @db.Uuid
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recipientId    String              @db.Uuid
+  recipient      User                @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actorId        String?             @db.Uuid
+  actor          User?               @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  ticketId       String?             @db.Uuid
+  ticket         Ticket?             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  channel        NotificationChannel @default(IN_APP)
+  title          String              @db.VarChar(255)
+  message        String              @db.Text
+  metadata       Json?
+  readAt         DateTime?
+  isRead         Boolean             @default(false)
+  deletedAt      DateTime?
+  deleted        Boolean             @default(false)
+  expiresAt      DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([recipientId, readAt, createdAt(sort: Desc)])
+  @@index([organizationId, createdAt(sort: Desc)])
+  @@index([ticketId])
+  @@index([type])
+}
+
+model NotificationPreference {
+  id             String              @id @default(uuid()) @db.Uuid
+  userId         String              @db.Uuid
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String              @db.Uuid
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  channel        NotificationChannel
+  enabled        Boolean             @default(true)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@unique([userId, organizationId, type, channel])
+  @@index([organizationId, type, channel])
 }

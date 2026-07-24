@@ -5,7 +5,7 @@ dotenv.config();
 export const env = {
   encryptionKey: process.env.ENCRYPTION_KEY,
   wss: process.env.WSS,
-  coreURL: process.env.CORE_URL,
+  coreURL: process.env.BETTER_AUTH_URL,
   betterAuthUrl: process.env.BETTER_AUTH_URL,
   betterAuthSecret: process.env.BETTER_AUTH_SECRET,
   refreshSecret: process.env.REFRESH_SECRET,

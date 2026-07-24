@@ -4,15 +4,15 @@ import { catchAsync } from "../../core/utils/catchAsync.js";
 import response from "../../core/utils/response.js";
 import { prisma } from "@org/database";
 
-export class LookupController {
-  static getGroups = catchAsync(async (req, res, _next) => {
+class LookupControllerClass {
+   getGroups = catchAsync(async (req, res, _next) => {
     const data = await prisma.queueGroup.findMany({
       where: { organizationId: req.organization.id },
       select: { id: true, name: true },
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
   });
-  static getQueues = catchAsync(async (req, res, _next) => {
+   getQueues = catchAsync(async (req, res, _next) => {
     const groupId = req.params.groupId as string;
     const data = await prisma.queue.findMany({
       where: { organizationId: req.organization.id, queueGroupId: groupId },
@@ -20,7 +20,7 @@ export class LookupController {
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
   });
-  static getAgents = catchAsync(async (req, res, _next) => {
+   getAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.queueId as string;
     const data = await prisma.queueAgent.findMany({
       where: { organizationId: req.organization.id, queueId },
@@ -29,7 +29,7 @@ export class LookupController {
     const output = data.map((item) => ({ id: item.user?.id, name: item.user?.username }));
     response(res, output, 200, { schema: z.array(lookupSchema) });
   });
-  static getRoles = catchAsync(async (req, res, _next) => {
+   getRoles = catchAsync(async (req, res, _next) => {
     const data = await prisma.role.findMany({
       where: {
         organizationId: req.organization.id,
@@ -43,3 +43,5 @@ export class LookupController {
     response(res, output, 200, { schema: z.array(lookupSchema) });
   });
 }
+
+export const LookupController =  new LookupControllerClass();

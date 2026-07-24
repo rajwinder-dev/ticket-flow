@@ -119,3 +119,26 @@ export const EntryType = {
 } as const
 
 export type EntryType = (typeof EntryType)[keyof typeof EntryType]
+
+
+export const NotificationType = {
+  TICKET_ASSIGNED: 'TICKET_ASSIGNED',
+  TICKET_STATUS_CHANGED: 'TICKET_STATUS_CHANGED',
+  TICKET_PRIORITY_CHANGED: 'TICKET_PRIORITY_CHANGED',
+  TICKET_COMMENT_ADDED: 'TICKET_COMMENT_ADDED',
+  TICKET_ESCALATED: 'TICKET_ESCALATED',
+  TICKET_REOPENED: 'TICKET_REOPENED',
+  SLA_WARNING: 'SLA_WARNING',
+  SLA_BREACHED: 'SLA_BREACHED',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const NotificationChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL'
+} as const
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]

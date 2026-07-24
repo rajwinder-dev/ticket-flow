@@ -9,6 +9,7 @@ import router from './router';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { devMode } from './config/apiconfig';
+import { useSocket } from './hooks/useSocket';
 const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -20,6 +21,7 @@ const queryclient = new QueryClient({
   },
 });
 function App() {
+  useSocket();
   return (
     <>
       <ErrorBoundary fallback={<div>error ErrorBoundary</div>}>

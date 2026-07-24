@@ -7,10 +7,26 @@ import { log } from '@org/utils';
 import { connectUntilSuccess } from './core/utils/dbConnect.js';
 import { prisma } from '@org/database';
 import { logger } from './core/utils/logger.js';
-
+import { Server } from 'socket.io';
+import { authMiddleware } from './modules/auth/auth.middleware.js';
 const port = Number(env.port);
 export const server = http.createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: env.coreURL,
+    credentials: true,
+  },
+});
+io.use(authMiddleware.SocketAuth);
+io.on('connection', (socket) => {
+  const { userId } = socket.handshake.auth;
+  socket.join(`user:${userId}`);
+  log.success(`${userId} connected`);
 
+  socket.on('disconnect', () => {
+    log.info(`${userId} disconnected`);
+  });
+});
 if (env.nodeEnv !== 'test')
   server.listen(port, '0.0.0.0', async () => {
     await connectUntilSuccess();
