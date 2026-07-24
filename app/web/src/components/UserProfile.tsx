@@ -1,21 +1,22 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { authClient } from '@/lib/auth-client';
 import { disconnectSocket } from '@/lib/socketIo';
-import { LogoutIcon } from '@hugeicons/core-free-icons';
+import { Gear, LogoutIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { useNotification } from '@org/core';
 export function UserProfile() {
+  const { orgId } = useParams();
   const { data: session } = authClient.useSession();
   useNotification({ userId: session?.user.id });
   const navigate = useNavigate();
@@ -71,16 +72,12 @@ export function UserProfile() {
             </div>
           </div>
         </DropdownMenuLabel>
-        {/* <DropdownMenuSeparator /> */}
+        <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem> */}
-          {/* <HugeiconsIcon icon={NotificationIcon} strokeWidth={2} /> */}
-          {/* Notifications */}
-          {/* </DropdownMenuItem> */}
-          {/* <DropdownMenuItem onClick={() => navigate(`/org/${orgId}/setting`)}> */}
-          {/*   <HugeiconsIcon icon={Gear} strokeWidth={2} /> */}
-          {/*   Settings */}
-          {/* </DropdownMenuItem> */}
+          <DropdownMenuItem onClick={() => navigate(`/org/${orgId}/setting`)}>
+            <HugeiconsIcon icon={Gear} strokeWidth={2} />
+            Settings
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handlerLogout}>

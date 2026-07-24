@@ -568,8 +568,8 @@ enum NotificationChannel {
 
 model Notification {
   id             String              @id @default(uuid()) @db.Uuid
-  organizationId String              @db.Uuid
-  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String?             @db.Uuid
+  organization   Organization?       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   recipientId    String              @db.Uuid
   recipient      User                @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
   actorId        String?             @db.Uuid

@@ -8,7 +8,7 @@ import { GlobalProvider } from './context/GlobalContext';
 import router from './router';
 import { ErrorBoundary } from 'react-error-boundary';
 import { devMode } from './config/apiconfig';
-import { useSocket } from './hooks/useSocket';
+import { SocketProvider } from './context/SocketContext';
 const queryclient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -20,18 +20,19 @@ const queryclient = new QueryClient({
   },
 });
 function App() {
-  useSocket();
   return (
     <>
       <ErrorBoundary fallback={<div>error ErrorBoundary</div>}>
         <QueryClientProvider client={queryclient}>
-          <TooltipProvider>
-            <GlobalProvider>
-              <RouterProvider router={router} />
-              <Toaster />
-            </GlobalProvider>
-            {devMode && <ReactQueryDevtools />}
-          </TooltipProvider>
+          <SocketProvider>
+            <TooltipProvider>
+              <GlobalProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+              </GlobalProvider>
+              {devMode && <ReactQueryDevtools />}
+            </TooltipProvider>
+          </SocketProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </>

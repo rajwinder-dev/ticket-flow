@@ -122,7 +122,8 @@ export class authMiddleware {
     next();
   });
 
-  static SocketAuth = async (socket: Socket, next: (err?: Error) => void) => {      
+  static SocketAuth = async (socket: Socket, next: (err?: Error) => void) => {
+      
     const cookieHeader = socket.request.headers.cookie;
     const session = await auth.api.getSession({
       headers: {

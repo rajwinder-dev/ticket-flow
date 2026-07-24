@@ -4,11 +4,23 @@ import response from '../../core/utils/response.js';
 import { notificationService } from './notification.service.js';
 
 class NotificationControllerClass {
+  sendtestnotification = catchAsync(async (req, res) => {
+    const data = await notificationService.sendNotification({
+      recipientId: req.params.id as string ,
+      data: {
+        title: 'test',
+        message: 'test',
+        type: 'SYSTEM',
+        metadata: { test: 'test' },
+        expiresAt: new Date(),
+      },
+    });
+    response(res, data);
+  });
   getNotifications = catchAsync(async (req, res) => {
     const { limit, offset } = new APIFeatures(req.query).pagination();
     const result = await notificationService.getNotifications({
       userId: req.user.id,
-      organizationId: req.organization.id,
       limit,
       offset,
     });

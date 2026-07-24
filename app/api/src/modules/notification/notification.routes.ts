@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { NotificationController } from './notification.controller';
 import { authMiddleware } from '../auth/auth.middleware';
+import { NotificationController } from './notification.controller';
 
 const notificationRouter: Router = Router();
-
-notificationRouter.use(authMiddleware.protectedRoute, authMiddleware.tenant)
+notificationRouter.post('/test/:id', NotificationController.sendtestnotification);
+notificationRouter.use(authMiddleware.protectedRoute)
 
 notificationRouter.get('/', NotificationController.getNotifications);
 notificationRouter.patch(

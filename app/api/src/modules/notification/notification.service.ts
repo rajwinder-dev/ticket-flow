@@ -9,12 +9,11 @@ import { io } from '../../main';
 export class NotificationServiceClass {
   async sendNotification({
     recipientId,
-    organizationId,
     data,
   }: {
     recipientId: string;
-    organizationId: string;
     data: {
+      organizationId?: string;
       title: string;
       message: string;
       type: NotificationType;
@@ -28,28 +27,28 @@ export class NotificationServiceClass {
     const notification = await prisma.notification.create({
       data: {
         recipientId,
-        organizationId,
         ...data,
       },
     });
-    io.to(`user.${notification.recipientId}`).emit('queryKey', 'notification');
+    io.to(`user:${notification.recipientId}`).emit('event', {
+      type: 'invalidate',
+      keys: [['notification']],
+    });
     return notification;
   }
   async getNotifications({
     userId,
-    organizationId,
     limit,
     offset,
   }: {
     userId: string;
-    organizationId: string;
     limit: number;
     offset: number;
   }) {
     const where = {
       recipientId: userId,
       deleted: false,
-      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      // OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
     };
 
     const [data, total, unread] = await Promise.all([
@@ -62,7 +61,6 @@ export class NotificationServiceClass {
         skip: offset,
         include: {
           actor: { select: { id: true, name: true, image: true } },
-          ticket: { select: { id: true, code: true, subject: true } },
           organization: { select: { id: true, name: true } },
         },
       }),
@@ -70,7 +68,6 @@ export class NotificationServiceClass {
       prisma.notification.count({
         where: {
           recipientId: userId,
-          organizationId,
           deleted: false,
           isRead: false,
         },

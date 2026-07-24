@@ -10,21 +10,26 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserProfile } from "@/components/UserProfile";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { Moon, Sun } from "lucide-react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { Button } from "./ui/button";
 import { ProjectLogo } from "@/features/home/ProjectLogo";
+import { NotificationPanel } from "@/features/notification/NotificationPannel";
+import { authClient } from "@/lib/auth-client";
+
 export function AppHeader() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { orgId } = useParams();
+  const { data} = authClient.useSession();
   const { theme, toggleTheme } = useGlobalContext();
   const breadCrumpData = location.pathname.split("/");
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2">
         {orgId && <SidebarTrigger className="-ml-1" />}
         {!orgId && <ProjectLogo />}
-
         {orgId && (
           <>
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
@@ -53,6 +58,10 @@ export function AppHeader() {
         )}
       </div>
       <div className="flex items-center justify-center gap-2">
+        <NotificationPanel
+          userId={data?.user.id}
+          onTicketClick={(ticketId) => navigate(`/${orgId}/tickets/${ticketId}`)}
+        />
         <Button variant="outline" size="icon" onClick={() => toggleTheme()}>
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
