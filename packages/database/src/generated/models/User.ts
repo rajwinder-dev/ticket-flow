@@ -289,6 +289,8 @@ export type UserWhereInput = {
   receivedNotifications?: Prisma.NotificationListRelationFilter
   triggeredNotifications?: Prisma.NotificationListRelationFilter
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
+  ticketsAssigned?: Prisma.TicketListRelationFilter
+  ticketsCreated?: Prisma.TicketListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -327,6 +329,8 @@ export type UserOrderByWithRelationInput = {
   receivedNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   triggeredNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   notificationPreferences?: Prisma.NotificationPreferenceOrderByRelationAggregateInput
+  ticketsAssigned?: Prisma.TicketOrderByRelationAggregateInput
+  ticketsCreated?: Prisma.TicketOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -368,6 +372,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   receivedNotifications?: Prisma.NotificationListRelationFilter
   triggeredNotifications?: Prisma.NotificationListRelationFilter
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
+  ticketsAssigned?: Prisma.TicketListRelationFilter
+  ticketsCreated?: Prisma.TicketListRelationFilter
 }, "id" | "code" | "email" | "phoneNo">
 
 export type UserOrderByWithAggregationInput = {
@@ -449,6 +455,8 @@ export type UserCreateInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -486,6 +494,8 @@ export type UserUncheckedCreateInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUpdateInput = {
@@ -523,6 +533,8 @@ export type UserUpdateInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -560,6 +572,8 @@ export type UserUncheckedUpdateInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -885,6 +899,38 @@ export type UserUpdateOneWithoutQueueAgentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutQueueAgentsInput, Prisma.UserUpdateWithoutQueueAgentsInput>, Prisma.UserUncheckedUpdateWithoutQueueAgentsInput>
 }
 
+export type UserCreateNestedOneWithoutTicketsAssignedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTicketsAssignedInput, Prisma.UserUncheckedCreateWithoutTicketsAssignedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTicketsAssignedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutTicketsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTicketsCreatedInput, Prisma.UserUncheckedCreateWithoutTicketsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTicketsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutTicketsAssignedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTicketsAssignedInput, Prisma.UserUncheckedCreateWithoutTicketsAssignedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTicketsAssignedInput
+  upsert?: Prisma.UserUpsertWithoutTicketsAssignedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTicketsAssignedInput, Prisma.UserUpdateWithoutTicketsAssignedInput>, Prisma.UserUncheckedUpdateWithoutTicketsAssignedInput>
+}
+
+export type UserUpdateOneWithoutTicketsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTicketsCreatedInput, Prisma.UserUncheckedCreateWithoutTicketsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTicketsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutTicketsCreatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTicketsCreatedInput, Prisma.UserUpdateWithoutTicketsCreatedInput>, Prisma.UserUncheckedUpdateWithoutTicketsCreatedInput>
+}
+
 export type UserCreateNestedOneWithoutTicketCommentsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutTicketCommentsInput, Prisma.UserUncheckedCreateWithoutTicketCommentsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutTicketCommentsInput
@@ -1069,6 +1115,8 @@ export type UserCreateWithoutCreatedUsersInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatedUsersInput = {
@@ -1105,6 +1153,8 @@ export type UserUncheckedCreateWithoutCreatedUsersInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatedUsersInput = {
@@ -1146,6 +1196,8 @@ export type UserCreateWithoutCreatorInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatorInput = {
@@ -1182,6 +1234,8 @@ export type UserUncheckedCreateWithoutCreatorInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatorInput = {
@@ -1239,6 +1293,8 @@ export type UserUpdateWithoutCreatedUsersInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedUsersInput = {
@@ -1275,6 +1331,8 @@ export type UserUncheckedUpdateWithoutCreatedUsersInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -1349,6 +1407,8 @@ export type UserCreateWithoutOrganizationInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationInput = {
@@ -1385,6 +1445,8 @@ export type UserUncheckedCreateWithoutOrganizationInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationInput = {
@@ -1437,6 +1499,8 @@ export type UserUpdateWithoutOrganizationInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationInput = {
@@ -1473,6 +1537,8 @@ export type UserUncheckedUpdateWithoutOrganizationInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutMembershipInput = {
@@ -1509,6 +1575,8 @@ export type UserCreateWithoutMembershipInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipInput = {
@@ -1545,6 +1613,8 @@ export type UserUncheckedCreateWithoutMembershipInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipInput = {
@@ -1597,6 +1667,8 @@ export type UserUpdateWithoutMembershipInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipInput = {
@@ -1633,6 +1705,8 @@ export type UserUncheckedUpdateWithoutMembershipInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutCreatedRolesInput = {
@@ -1669,6 +1743,8 @@ export type UserCreateWithoutCreatedRolesInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCreatedRolesInput = {
@@ -1705,6 +1781,8 @@ export type UserUncheckedCreateWithoutCreatedRolesInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCreatedRolesInput = {
@@ -1757,6 +1835,8 @@ export type UserUpdateWithoutCreatedRolesInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedRolesInput = {
@@ -1793,6 +1873,8 @@ export type UserUncheckedUpdateWithoutCreatedRolesInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutTokenInput = {
@@ -1829,6 +1911,8 @@ export type UserCreateWithoutTokenInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutTokenInput = {
@@ -1865,6 +1949,8 @@ export type UserUncheckedCreateWithoutTokenInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutTokenInput = {
@@ -1906,6 +1992,8 @@ export type UserCreateWithoutTokenCreatedByInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutTokenCreatedByInput = {
@@ -1942,6 +2030,8 @@ export type UserUncheckedCreateWithoutTokenCreatedByInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutTokenCreatedByInput = {
@@ -1994,6 +2084,8 @@ export type UserUpdateWithoutTokenInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTokenInput = {
@@ -2030,6 +2122,8 @@ export type UserUncheckedUpdateWithoutTokenInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUpsertWithoutTokenCreatedByInput = {
@@ -2077,6 +2171,8 @@ export type UserUpdateWithoutTokenCreatedByInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTokenCreatedByInput = {
@@ -2113,6 +2209,8 @@ export type UserUncheckedUpdateWithoutTokenCreatedByInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutQueueGroupsInput = {
@@ -2149,6 +2247,8 @@ export type UserCreateWithoutQueueGroupsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutQueueGroupsInput = {
@@ -2185,6 +2285,8 @@ export type UserUncheckedCreateWithoutQueueGroupsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutQueueGroupsInput = {
@@ -2237,6 +2339,8 @@ export type UserUpdateWithoutQueueGroupsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQueueGroupsInput = {
@@ -2273,6 +2377,8 @@ export type UserUncheckedUpdateWithoutQueueGroupsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutQueueAgentsInput = {
@@ -2309,6 +2415,8 @@ export type UserCreateWithoutQueueAgentsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutQueueAgentsInput = {
@@ -2345,6 +2453,8 @@ export type UserUncheckedCreateWithoutQueueAgentsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutQueueAgentsInput = {
@@ -2397,6 +2507,8 @@ export type UserUpdateWithoutQueueAgentsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQueueAgentsInput = {
@@ -2433,6 +2545,344 @@ export type UserUncheckedUpdateWithoutQueueAgentsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
+}
+
+export type UserCreateWithoutTicketsAssignedInput = {
+  id?: string
+  code?: string | null
+  email: string
+  phoneNo?: string | null
+  passwordHash?: string | null
+  passwordChangeAt?: Date | string | null
+  avatar?: string | null
+  location?: string | null
+  active?: boolean
+  isOnboarded?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  emailVerified?: boolean
+  image?: string | null
+  creator?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
+  createdUsers?: Prisma.UserCreateNestedManyWithoutCreatorInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatorInput
+  ticketComments?: Prisma.TicketCommentCreateNestedManyWithoutAuthorInput
+  fromTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutFromAgentInput
+  toTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutToAgentInput
+  organization?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  membership?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  token?: Prisma.TokenCreateNestedManyWithoutUserInput
+  TokenCreatedBy?: Prisma.TokenCreateNestedManyWithoutTokenCreatedByInput
+  queueAgents?: Prisma.QueueAgentCreateNestedManyWithoutUserInput
+  queueGroups?: Prisma.QueueGroupCreateNestedManyWithoutCreatorInput
+  ticketTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutChangedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
+}
+
+export type UserUncheckedCreateWithoutTicketsAssignedInput = {
+  id?: string
+  code?: string | null
+  email: string
+  phoneNo?: string | null
+  passwordHash?: string | null
+  passwordChangeAt?: Date | string | null
+  avatar?: string | null
+  location?: string | null
+  active?: boolean
+  isOnboarded?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  name: string
+  emailVerified?: boolean
+  image?: string | null
+  createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatorInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatorInput
+  ticketComments?: Prisma.TicketCommentUncheckedCreateNestedManyWithoutAuthorInput
+  fromTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutFromAgentInput
+  toTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutToAgentInput
+  organization?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  token?: Prisma.TokenUncheckedCreateNestedManyWithoutUserInput
+  TokenCreatedBy?: Prisma.TokenUncheckedCreateNestedManyWithoutTokenCreatedByInput
+  queueAgents?: Prisma.QueueAgentUncheckedCreateNestedManyWithoutUserInput
+  queueGroups?: Prisma.QueueGroupUncheckedCreateNestedManyWithoutCreatorInput
+  ticketTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutChangedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
+}
+
+export type UserCreateOrConnectWithoutTicketsAssignedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTicketsAssignedInput, Prisma.UserUncheckedCreateWithoutTicketsAssignedInput>
+}
+
+export type UserCreateWithoutTicketsCreatedInput = {
+  id?: string
+  code?: string | null
+  email: string
+  phoneNo?: string | null
+  passwordHash?: string | null
+  passwordChangeAt?: Date | string | null
+  avatar?: string | null
+  location?: string | null
+  active?: boolean
+  isOnboarded?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  name: string
+  emailVerified?: boolean
+  image?: string | null
+  creator?: Prisma.UserCreateNestedOneWithoutCreatedUsersInput
+  createdUsers?: Prisma.UserCreateNestedManyWithoutCreatorInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatorInput
+  ticketComments?: Prisma.TicketCommentCreateNestedManyWithoutAuthorInput
+  fromTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutFromAgentInput
+  toTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutToAgentInput
+  organization?: Prisma.OrganizationCreateNestedManyWithoutUserInput
+  membership?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  token?: Prisma.TokenCreateNestedManyWithoutUserInput
+  TokenCreatedBy?: Prisma.TokenCreateNestedManyWithoutTokenCreatedByInput
+  queueAgents?: Prisma.QueueAgentCreateNestedManyWithoutUserInput
+  queueGroups?: Prisma.QueueGroupCreateNestedManyWithoutCreatorInput
+  ticketTransitions?: Prisma.TicketTransitionCreateNestedManyWithoutChangedByInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+}
+
+export type UserUncheckedCreateWithoutTicketsCreatedInput = {
+  id?: string
+  code?: string | null
+  email: string
+  phoneNo?: string | null
+  passwordHash?: string | null
+  passwordChangeAt?: Date | string | null
+  avatar?: string | null
+  location?: string | null
+  active?: boolean
+  isOnboarded?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  name: string
+  emailVerified?: boolean
+  image?: string | null
+  createdUsers?: Prisma.UserUncheckedCreateNestedManyWithoutCreatorInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatorInput
+  ticketComments?: Prisma.TicketCommentUncheckedCreateNestedManyWithoutAuthorInput
+  fromTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutFromAgentInput
+  toTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutToAgentInput
+  organization?: Prisma.OrganizationUncheckedCreateNestedManyWithoutUserInput
+  membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  token?: Prisma.TokenUncheckedCreateNestedManyWithoutUserInput
+  TokenCreatedBy?: Prisma.TokenUncheckedCreateNestedManyWithoutTokenCreatedByInput
+  queueAgents?: Prisma.QueueAgentUncheckedCreateNestedManyWithoutUserInput
+  queueGroups?: Prisma.QueueGroupUncheckedCreateNestedManyWithoutCreatorInput
+  ticketTransitions?: Prisma.TicketTransitionUncheckedCreateNestedManyWithoutChangedByInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+}
+
+export type UserCreateOrConnectWithoutTicketsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTicketsCreatedInput, Prisma.UserUncheckedCreateWithoutTicketsCreatedInput>
+}
+
+export type UserUpsertWithoutTicketsAssignedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTicketsAssignedInput, Prisma.UserUncheckedUpdateWithoutTicketsAssignedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTicketsAssignedInput, Prisma.UserUncheckedCreateWithoutTicketsAssignedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTicketsAssignedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTicketsAssignedInput, Prisma.UserUncheckedUpdateWithoutTicketsAssignedInput>
+}
+
+export type UserUpdateWithoutTicketsAssignedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOnboarded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
+  createdUsers?: Prisma.UserUpdateManyWithoutCreatorNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatorNestedInput
+  ticketComments?: Prisma.TicketCommentUpdateManyWithoutAuthorNestedInput
+  fromTransitions?: Prisma.TicketTransitionUpdateManyWithoutFromAgentNestedInput
+  toTransitions?: Prisma.TicketTransitionUpdateManyWithoutToAgentNestedInput
+  organization?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  membership?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  token?: Prisma.TokenUpdateManyWithoutUserNestedInput
+  TokenCreatedBy?: Prisma.TokenUpdateManyWithoutTokenCreatedByNestedInput
+  queueAgents?: Prisma.QueueAgentUpdateManyWithoutUserNestedInput
+  queueGroups?: Prisma.QueueGroupUpdateManyWithoutCreatorNestedInput
+  ticketTransitions?: Prisma.TicketTransitionUpdateManyWithoutChangedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTicketsAssignedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOnboarded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatorNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatorNestedInput
+  ticketComments?: Prisma.TicketCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  fromTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutFromAgentNestedInput
+  toTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutToAgentNestedInput
+  organization?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  membership?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  token?: Prisma.TokenUncheckedUpdateManyWithoutUserNestedInput
+  TokenCreatedBy?: Prisma.TokenUncheckedUpdateManyWithoutTokenCreatedByNestedInput
+  queueAgents?: Prisma.QueueAgentUncheckedUpdateManyWithoutUserNestedInput
+  queueGroups?: Prisma.QueueGroupUncheckedUpdateManyWithoutCreatorNestedInput
+  ticketTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutChangedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
+}
+
+export type UserUpsertWithoutTicketsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTicketsCreatedInput, Prisma.UserUncheckedUpdateWithoutTicketsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTicketsCreatedInput, Prisma.UserUncheckedCreateWithoutTicketsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTicketsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTicketsCreatedInput, Prisma.UserUncheckedUpdateWithoutTicketsCreatedInput>
+}
+
+export type UserUpdateWithoutTicketsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOnboarded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creator?: Prisma.UserUpdateOneWithoutCreatedUsersNestedInput
+  createdUsers?: Prisma.UserUpdateManyWithoutCreatorNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatorNestedInput
+  ticketComments?: Prisma.TicketCommentUpdateManyWithoutAuthorNestedInput
+  fromTransitions?: Prisma.TicketTransitionUpdateManyWithoutFromAgentNestedInput
+  toTransitions?: Prisma.TicketTransitionUpdateManyWithoutToAgentNestedInput
+  organization?: Prisma.OrganizationUpdateManyWithoutUserNestedInput
+  membership?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  token?: Prisma.TokenUpdateManyWithoutUserNestedInput
+  TokenCreatedBy?: Prisma.TokenUpdateManyWithoutTokenCreatedByNestedInput
+  queueAgents?: Prisma.QueueAgentUpdateManyWithoutUserNestedInput
+  queueGroups?: Prisma.QueueGroupUpdateManyWithoutCreatorNestedInput
+  ticketTransitions?: Prisma.TicketTransitionUpdateManyWithoutChangedByNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTicketsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOnboarded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdUsers?: Prisma.UserUncheckedUpdateManyWithoutCreatorNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatorNestedInput
+  ticketComments?: Prisma.TicketCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  fromTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutFromAgentNestedInput
+  toTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutToAgentNestedInput
+  organization?: Prisma.OrganizationUncheckedUpdateManyWithoutUserNestedInput
+  membership?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  token?: Prisma.TokenUncheckedUpdateManyWithoutUserNestedInput
+  TokenCreatedBy?: Prisma.TokenUncheckedUpdateManyWithoutTokenCreatedByNestedInput
+  queueAgents?: Prisma.QueueAgentUncheckedUpdateManyWithoutUserNestedInput
+  queueGroups?: Prisma.QueueGroupUncheckedUpdateManyWithoutCreatorNestedInput
+  ticketTransitions?: Prisma.TicketTransitionUncheckedUpdateManyWithoutChangedByNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
 }
 
 export type UserCreateWithoutTicketCommentsInput = {
@@ -2469,6 +2919,8 @@ export type UserCreateWithoutTicketCommentsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutTicketCommentsInput = {
@@ -2505,6 +2957,8 @@ export type UserUncheckedCreateWithoutTicketCommentsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutTicketCommentsInput = {
@@ -2557,6 +3011,8 @@ export type UserUpdateWithoutTicketCommentsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTicketCommentsInput = {
@@ -2593,6 +3049,8 @@ export type UserUncheckedUpdateWithoutTicketCommentsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutFromTransitionsInput = {
@@ -2629,6 +3087,8 @@ export type UserCreateWithoutFromTransitionsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutFromTransitionsInput = {
@@ -2665,6 +3125,8 @@ export type UserUncheckedCreateWithoutFromTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutFromTransitionsInput = {
@@ -2706,6 +3168,8 @@ export type UserCreateWithoutToTransitionsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutToTransitionsInput = {
@@ -2742,6 +3206,8 @@ export type UserUncheckedCreateWithoutToTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutToTransitionsInput = {
@@ -2783,6 +3249,8 @@ export type UserCreateWithoutTicketTransitionsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutTicketTransitionsInput = {
@@ -2819,6 +3287,8 @@ export type UserUncheckedCreateWithoutTicketTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutTicketTransitionsInput = {
@@ -2871,6 +3341,8 @@ export type UserUpdateWithoutFromTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFromTransitionsInput = {
@@ -2907,6 +3379,8 @@ export type UserUncheckedUpdateWithoutFromTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUpsertWithoutToTransitionsInput = {
@@ -2954,6 +3428,8 @@ export type UserUpdateWithoutToTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutToTransitionsInput = {
@@ -2990,6 +3466,8 @@ export type UserUncheckedUpdateWithoutToTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUpsertWithoutTicketTransitionsInput = {
@@ -3037,6 +3515,8 @@ export type UserUpdateWithoutTicketTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTicketTransitionsInput = {
@@ -3073,6 +3553,8 @@ export type UserUncheckedUpdateWithoutTicketTransitionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutActivityLogsInput = {
@@ -3109,6 +3591,8 @@ export type UserCreateWithoutActivityLogsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutActivityLogsInput = {
@@ -3145,6 +3629,8 @@ export type UserUncheckedCreateWithoutActivityLogsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutActivityLogsInput = {
@@ -3197,6 +3683,8 @@ export type UserUpdateWithoutActivityLogsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivityLogsInput = {
@@ -3233,6 +3721,8 @@ export type UserUncheckedUpdateWithoutActivityLogsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -3269,6 +3759,8 @@ export type UserCreateWithoutSessionsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -3305,6 +3797,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -3357,6 +3851,8 @@ export type UserUpdateWithoutSessionsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -3393,6 +3889,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -3429,6 +3927,8 @@ export type UserCreateWithoutAccountsInput = {
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -3465,6 +3965,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -3517,6 +4019,8 @@ export type UserUpdateWithoutAccountsInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -3553,6 +4057,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutReceivedNotificationsInput = {
@@ -3589,6 +4095,8 @@ export type UserCreateWithoutReceivedNotificationsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutReceivedNotificationsInput = {
@@ -3625,6 +4133,8 @@ export type UserUncheckedCreateWithoutReceivedNotificationsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutReceivedNotificationsInput = {
@@ -3666,6 +4176,8 @@ export type UserCreateWithoutTriggeredNotificationsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutTriggeredNotificationsInput = {
@@ -3702,6 +4214,8 @@ export type UserUncheckedCreateWithoutTriggeredNotificationsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutTriggeredNotificationsInput = {
@@ -3754,6 +4268,8 @@ export type UserUpdateWithoutReceivedNotificationsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReceivedNotificationsInput = {
@@ -3790,6 +4306,8 @@ export type UserUncheckedUpdateWithoutReceivedNotificationsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUpsertWithoutTriggeredNotificationsInput = {
@@ -3837,6 +4355,8 @@ export type UserUpdateWithoutTriggeredNotificationsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTriggeredNotificationsInput = {
@@ -3873,6 +4393,8 @@ export type UserUncheckedUpdateWithoutTriggeredNotificationsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPreferencesInput = {
@@ -3909,6 +4431,8 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationCreateNestedManyWithoutActorInput
+  ticketsAssigned?: Prisma.TicketCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -3945,6 +4469,8 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   triggeredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput
+  ticketsAssigned?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedToUserInput
+  ticketsCreated?: Prisma.TicketUncheckedCreateNestedManyWithoutAssignedByUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -3997,6 +4523,8 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -4033,6 +4561,8 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserCreateManyCreatorInput = {
@@ -4087,6 +4617,8 @@ export type UserUpdateWithoutCreatorInput = {
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatorInput = {
@@ -4123,6 +4655,8 @@ export type UserUncheckedUpdateWithoutCreatorInput = {
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   triggeredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  ticketsAssigned?: Prisma.TicketUncheckedUpdateManyWithoutAssignedToUserNestedInput
+  ticketsCreated?: Prisma.TicketUncheckedUpdateManyWithoutAssignedByUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCreatorInput = {
@@ -4167,6 +4701,8 @@ export type UserCountOutputType = {
   receivedNotifications: number
   triggeredNotifications: number
   notificationPreferences: number
+  ticketsAssigned: number
+  ticketsCreated: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4188,6 +4724,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   receivedNotifications?: boolean | UserCountOutputTypeCountReceivedNotificationsArgs
   triggeredNotifications?: boolean | UserCountOutputTypeCountTriggeredNotificationsArgs
   notificationPreferences?: boolean | UserCountOutputTypeCountNotificationPreferencesArgs
+  ticketsAssigned?: boolean | UserCountOutputTypeCountTicketsAssignedArgs
+  ticketsCreated?: boolean | UserCountOutputTypeCountTicketsCreatedArgs
 }
 
 /**
@@ -4326,6 +4864,20 @@ export type UserCountOutputTypeCountNotificationPreferencesArgs<ExtArgs extends 
   where?: Prisma.NotificationPreferenceWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTicketsAssignedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTicketsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4363,6 +4915,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   receivedNotifications?: boolean | Prisma.User$receivedNotificationsArgs<ExtArgs>
   triggeredNotifications?: boolean | Prisma.User$triggeredNotificationsArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.User$notificationPreferencesArgs<ExtArgs>
+  ticketsAssigned?: boolean | Prisma.User$ticketsAssignedArgs<ExtArgs>
+  ticketsCreated?: boolean | Prisma.User$ticketsCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4446,6 +5000,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   receivedNotifications?: boolean | Prisma.User$receivedNotificationsArgs<ExtArgs>
   triggeredNotifications?: boolean | Prisma.User$triggeredNotificationsArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.User$notificationPreferencesArgs<ExtArgs>
+  ticketsAssigned?: boolean | Prisma.User$ticketsAssignedArgs<ExtArgs>
+  ticketsCreated?: boolean | Prisma.User$ticketsCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4477,6 +5033,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     receivedNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     triggeredNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[]
+    ticketsAssigned: Prisma.$TicketPayload<ExtArgs>[]
+    ticketsCreated: Prisma.$TicketPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4908,6 +5466,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   receivedNotifications<T extends Prisma.User$receivedNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   triggeredNotifications<T extends Prisma.User$triggeredNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$triggeredNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationPreferences<T extends Prisma.User$notificationPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ticketsAssigned<T extends Prisma.User$ticketsAssignedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ticketsAssignedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ticketsCreated<T extends Prisma.User$ticketsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ticketsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5802,6 +6362,54 @@ export type User$notificationPreferencesArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.NotificationPreferenceScalarFieldEnum | Prisma.NotificationPreferenceScalarFieldEnum[]
+}
+
+/**
+ * User.ticketsAssigned
+ */
+export type User$ticketsAssignedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Ticket
+   */
+  select?: Prisma.TicketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Ticket
+   */
+  omit?: Prisma.TicketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketInclude<ExtArgs> | null
+  where?: Prisma.TicketWhereInput
+  orderBy?: Prisma.TicketOrderByWithRelationInput | Prisma.TicketOrderByWithRelationInput[]
+  cursor?: Prisma.TicketWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketScalarFieldEnum | Prisma.TicketScalarFieldEnum[]
+}
+
+/**
+ * User.ticketsCreated
+ */
+export type User$ticketsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Ticket
+   */
+  select?: Prisma.TicketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Ticket
+   */
+  omit?: Prisma.TicketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketInclude<ExtArgs> | null
+  where?: Prisma.TicketWhereInput
+  orderBy?: Prisma.TicketOrderByWithRelationInput | Prisma.TicketOrderByWithRelationInput[]
+  cursor?: Prisma.TicketWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketScalarFieldEnum | Prisma.TicketScalarFieldEnum[]
 }
 
 /**

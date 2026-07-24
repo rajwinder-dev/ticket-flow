@@ -48,6 +48,8 @@ model User {
   receivedNotifications   Notification[]           @relation("NotificationRecipient")
   triggeredNotifications  Notification[]           @relation("NotificationActor")
   notificationPreferences NotificationPreference[]
+  ticketsAssigned         Ticket[]                 @relation("TicketAssignedTo")
+  ticketsCreated          Ticket[]                 @relation("TicketAssignedBy")
 
   @@index([createdBy])
   @@index([active])
@@ -347,19 +349,24 @@ model Ticket {
   version        Int                @default(1)
   organization   Organization?      @relation(fields: [organizationId], references: [id])
   organizationId String?            @db.Uuid
+  queue          Queue?             @relation(fields: [queueId], references: [id])
+  queueId        String?            @db.Uuid
+  customer       Customer?          @relation(fields: [customerId], references: [id])
+  customerId     String?            @db.Uuid
+  assignedToUser User?              @relation("TicketAssignedTo", fields: [assignedTo], references: [id])
+  assignedTo     String?            @db.Uuid
+  assignedByUser User?              @relation("TicketAssignedBy", fields: [assignedBy], references: [id])
+  assignedBy     String?            @db.Uuid
   transitions    TicketTransition[]
   comments       TicketComment[]
   emailMessages  EmailMessage[]
   attachments    Attachment[]
   notifications  Notification[]
-  userId         String?            @db.Uuid
-  customer       Customer?          @relation(fields: [customerId], references: [id])
-  customerId     String?            @db.Uuid
-  queue          Queue?             @relation(fields: [queueId], references: [id])
-  queueId        String?            @db.Uuid
 
+  @@index([assignedTo, assignedBy, customerId, organizationId])
   @@index([status])
   @@index([priority])
+  @@index([queueId])
 }
 
 model Attachment {
