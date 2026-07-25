@@ -1,12 +1,13 @@
-import { permissions } from "@org/constants";
-import { CreateOrganizationInput } from "@org/zod";
-import { addDays } from "date-fns";
-import { env } from "../../config/env.js";
-import { appError } from "../../core/utils/appError.js";
-import { readableId } from "../../core/utils/utils.js";
-import { ActivityService } from "../activity/activity.service.js";
-import { TokenService } from "../token/token.service.js";
-import { prisma } from "@org/database";
+import { permissions } from '@org/constants';
+import { CreateOrganizationInput } from '@org/zod';
+import { addDays } from 'date-fns';
+import { env } from '../../config/env.js';
+import { appError } from '../../core/utils/appError.js';
+import { readableId } from '../../core/utils/utils.js';
+import { ActivityService } from '../activity/activity.service.js';
+import { TokenService } from '../token/token.service.js';
+import { prisma } from '@org/database';
+import { NotificationService } from '../notification/notification.service.js';
 
 export class OrganizationService {
   static create = async (userId: string, input: CreateOrganizationInput) => {
@@ -15,7 +16,7 @@ export class OrganizationService {
         data: {
           createdBy: userId,
           ...input,
-          code: readableId("ORG"),
+          code: readableId('ORG'),
         },
         select: {
           id: true,
@@ -27,8 +28,8 @@ export class OrganizationService {
       //  create role for member too
       const role = await tx.role.create({
         data: {
-          name: "OWNER",
-          code: readableId("ROL"),
+          name: 'OWNER',
+          code: readableId('ROL'),
           organizationId: organization.id,
           permissions: permissions,
           createdBy: userId,
@@ -47,11 +48,11 @@ export class OrganizationService {
       await ActivityService.lagActivity({
         organizationId: organization.id,
         actorId: userId,
-        actorType: "USER",
-        message: "User created new organization ",
-        event: "organization.create",
+        actorType: 'USER',
+        message: 'User created new organization ',
+        event: 'organization.create',
         entityId: organization.id,
-        entityType: "ORGANIZATION",
+        entityType: 'ORGANIZATION',
       });
       return { organization, membership };
     });
@@ -82,11 +83,11 @@ export class OrganizationService {
         },
       },
     });
-    if (!user) throw new appError("Owner Details not found", 404, "NOT_FOUND");
+    if (!user) throw new appError('Owner Details not found', 404, 'NOT_FOUND');
     const { token, id } = await TokenService.createToken({
       input: {
         email,
-        type: "INVITE_USER",
+        type: 'INVITE_USER',
         organizationId,
         roleId,
         createdBy: userId,
@@ -97,20 +98,32 @@ export class OrganizationService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "created invite link to join organization",
-      event: "organization.invite",
+      actorType: 'USER',
+      message: 'created invite link to join organization',
+      event: 'organization.invite',
       entityId: id,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return { url };
   };
-  static acceptInvite = async (userId: string, email: string, token: string) => {
+  static acceptInvite = async (
+    userId: string,
+    email: string,
+    token: string,
+  ) => {
     const verifyToken = await TokenService.verifyToken(token);
     if (!verifyToken?.organizationId || !verifyToken?.roleId)
-      throw new appError("Invite Link is Invalid or Expire", 400, "INVALID_TOKEN");
+      throw new appError(
+        'Invite Link is Invalid or Expire',
+        400,
+        'INVALID_TOKEN',
+      );
     if (verifyToken?.email !== email)
-      throw new appError("Invite not applicable for your Email", 403, "FORBIDDEN");
+      throw new appError(
+        'Invite not applicable for your Email',
+        403,
+        'FORBIDDEN',
+      );
     const data = await prisma.membership.create({
       data: {
         userId,
@@ -126,20 +139,42 @@ export class OrganizationService {
         },
       },
     });
-    await TokenService.updateTokenStatus(token, "USED");
+    await TokenService.updateTokenStatus(token, 'USED');
     await ActivityService.lagActivity({
       organizationId: data.organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "user joined organization",
-      event: "organization.join",
+      actorType: 'USER',
+      message: 'user joined organization',
+      event: 'organization.join',
       entityId: data.id,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
       metadata: {
         memberShipId: data.id,
         roleId: data.roleId,
       },
     });
+    const orgOwner = await prisma.membership.findFirst({
+      where: {
+        organizationId: data.organizationId,
+        role: {
+          isSystem: true,
+          name: 'OWNER',
+        },
+      },
+    });
+    if (orgOwner?.userId)
+      NotificationService.sendNotification({
+        recipientId: orgOwner?.userId,
+        userId: null,
+        data: {
+          organizationId: data.organizationId,
+          channel: 'IN_APP',
+          title: 'User acept the Invite',
+          message: `User ${email} accepted the invite`,
+          type: 'MEMBER',
+          actorId: userId,
+        },
+      });
     return { organizationId: data.organizationId };
   };
   static onboardingStatus = async (organizationId: string) => {
@@ -147,18 +182,18 @@ export class OrganizationService {
       prisma.role.count({ where: { organizationId, isSystem: false } }),
       prisma.queueGroup.count({ where: { organizationId } }),
       prisma.queue.count({ where: { organizationId } }),
-      prisma.token.count({ where: { type: "INVITE_USER", organizationId } }),
+      prisma.token.count({ where: { type: 'INVITE_USER', organizationId } }),
       prisma.emailProvider.count({ where: { organizationId } }),
     ]);
-    const data = await prisma.role.count({ where: { organizationId, isSystem: false } });
-    console.log(data);
     return {
       hasRoles: roles > 0,
       hasGroups: groups > 0,
       hasQueues: queues > 0,
       hasInvites: invites > 0,
       hasEmail: providers > 0,
-      currentStep: [roles, groups, queues, invites, providers].filter((c) => c > 0).length,
+      currentStep: [roles, groups, queues, invites, providers].filter(
+        (c) => c > 0,
+      ).length,
     };
   };
 }

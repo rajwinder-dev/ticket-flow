@@ -20,6 +20,7 @@ import { TicketService } from "./ticket.service.js";
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
     const output = await TicketService.createAndAssign({
+      ownerId: req.organization.ownerId,
       input: req.body,
       organizationId: req.organization.id,
       userId: req.user.id,

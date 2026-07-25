@@ -5,13 +5,20 @@ import {
   prisma,
 } from '@org/database';
 import { io } from '../../main';
-
+import { logger } from '../../core/utils/logger';
+/**
+ * invalidate belong to frontend cache of react query
+ */
 export class NotificationServiceClass {
   async sendNotification({
+    userId,
     recipientId,
+    invalidate,
     data,
   }: {
     recipientId: string;
+    userId: string | null;
+    invalidate?: string[];
     data: {
       organizationId?: string;
       title: string;
@@ -19,18 +26,26 @@ export class NotificationServiceClass {
       type: NotificationType;
       actorId?: string;
       ticketId?: string;
-      channel?: NotificationChannel;
+      channel: NotificationChannel;
       metadata?: Prisma.InputJsonValue;
       expiresAt?: Date;
     };
   }) {
+    if(userId === recipientId)  return logger.info('cannot send notification to yourself');
+    
     const notification = await prisma.notification.create({
       data: {
         recipientId,
         ...data,
       },
     });
-    io.to(`user:${notification.recipientId}`).emit('event', {
+    if (invalidate) {
+      io.to(`user:${recipientId}`).emit('event', {
+        type: 'invalidate',
+        keys: invalidate,
+      });
+    }
+    io.to(`user:${recipientId}`).emit('event', {
       type: 'invalidate',
       keys: ['notification'],
     });
@@ -149,4 +164,4 @@ export class NotificationServiceClass {
   }
 }
 
-export const notificationService = new NotificationServiceClass();
+export const NotificationService = new NotificationServiceClass();

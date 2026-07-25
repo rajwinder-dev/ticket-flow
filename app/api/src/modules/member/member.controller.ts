@@ -1,17 +1,24 @@
-import { ChangeMemberQueueInput, ChangeMemberRoleInput, memberSchemaResponse } from "@org/zod";
-import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import response from "../../core/utils/response.js";
-import { prisma } from "@org/database";
+import {
+  ChangeMemberQueueInput,
+  ChangeMemberRoleInput,
+  memberSchemaResponse,
+} from '@org/zod';
+import z from 'zod';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { prisma } from '@org/database';
+import { NotificationService } from '../notification/notification.service.js';
 
 export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {
     const queueId = req.query.queueId as string;
 
-    const queuefilter = queueId ? { user: { queueAgents: { some: { queueId } } } } : {};
+    const queuefilter = queueId
+      ? { user: { queueAgents: { some: { queueId } } } }
+      : {};
     const { filterOptions, limit, offset } = new APIFeatures(req.query, {
-      ignore: ["queueId"],
+      ignore: ['queueId'],
     })
       .filter()
       .pagination();
@@ -62,7 +69,10 @@ export class MemberController {
     const data = membership.map((item) => {
       const user = item.user;
 
-      const totalTickets = user?.queueAgents.reduce((sum, qa) => sum + qa.ticketCount, 0);
+      const totalTickets = user?.queueAgents.reduce(
+        (sum, qa) => sum + qa.ticketCount,
+        0,
+      );
 
       return {
         id: item.id,
@@ -105,7 +115,28 @@ export class MemberController {
       data: {
         roleId,
       },
+      include: {
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
+
+    NotificationService.sendNotification({
+      recipientId: userId,
+      userId: req.user.id,
+      data: {
+        organizationId: data.organizationId,
+        channel: 'IN_APP',
+        title: 'Your role changed',
+        message: `Your role has been changed to ${data.role?.name}`,
+        type: 'RBAC',
+        actorId: req.user.id,
+      },
+    });
+
     response(res, data);
   });
   static assignQueue = catchAsync(async (req, res, _next) => {
@@ -125,6 +156,19 @@ export class MemberController {
         organizationId: req.organization.id,
       },
     });
+    NotificationService.sendNotification({
+      recipientId: userId,
+      userId: req.user.id,
+      data: {
+        organizationId: data.organizationId,
+        channel: 'IN_APP',
+        title: 'Queue assigned',
+        message: `You have been assigned to a queue`,
+        type: 'QUEUE',
+        actorId: req.user.id,
+      },
+    });
+
     response(res, data);
   });
   static unassignQueue = catchAsync(async (req, res, _next) => {
@@ -138,6 +182,19 @@ export class MemberController {
         },
       },
     });
+    NotificationService.sendNotification({
+      recipientId: userId,
+      userId: req.user.id,
+      data: {
+        organizationId: data.organizationId,
+        channel: 'IN_APP',
+        title: 'Queue unassigned',
+        message: `You have been removed to a queue`,
+        type: 'QUEUE',
+        actorId: req.user.id,
+      },
+    });
+
     response(res, data);
   });
 }

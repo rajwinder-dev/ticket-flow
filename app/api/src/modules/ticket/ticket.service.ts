@@ -1,8 +1,8 @@
-import { allowedTransitions } from "@org/constants";
-import { CreateTicketInput, TicketPriority, UpdateTicketInput } from "@org/zod";
-import { ParsedQs } from "qs";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { appError } from "../../core/utils/appError.js";
+import { allowedTransitions } from '@org/constants';
+import { CreateTicketInput, TicketPriority, UpdateTicketInput } from '@org/zod';
+import { ParsedQs } from 'qs';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { appError } from '../../core/utils/appError.js';
 import {
   getTenantClient,
   prisma,
@@ -10,21 +10,24 @@ import {
   priority,
   TicketAction,
   TicketStatus,
-} from "@org/database";
-import { readableId } from "../../core/utils/utils.js";
-import { ActivityService } from "../activity/activity.service.js";
-import { CustomerService } from "../customer/customer.service.js";
-import { QueueService } from "../queue/queue.service.js";
-import { QueueGroupService } from "../queueGroup/queueGroup.service.js";
+} from '@org/database';
+import { readableId } from '../../core/utils/utils.js';
+import { ActivityService } from '../activity/activity.service.js';
+import { CustomerService } from '../customer/customer.service.js';
+import { QueueService } from '../queue/queue.service.js';
+import { QueueGroupService } from '../queueGroup/queueGroup.service.js';
+import { NotificationService } from '../notification/notification.service.js';
 
 export class TicketService {
   static createAndAssign = async ({
     input,
     organizationId,
     userId,
+    ownerId,
   }: {
     input: CreateTicketInput;
     organizationId: string;
+    ownerId: string;
     userId?: string;
   }) => {
     const { email, assignment, ...data } = input;
@@ -32,7 +35,10 @@ export class TicketService {
     let queueId = assignment?.queueId;
     let agentId = assignment?.agentId;
 
-    const customerData = await CustomerService.createCustomerIdentity(email, organizationId);
+    const customerData = await CustomerService.createCustomerIdentity(
+      email,
+      organizationId,
+    );
     if (!groupId) {
       groupId = await QueueGroupService.getDefaultGroup(organizationId);
     }
@@ -60,6 +66,7 @@ export class TicketService {
       customerId: customerData.id,
       queueId: finalAssignment.queueId,
       userId,
+      ownerId,
     });
 
     if (agentId && queueId) {
@@ -68,40 +75,61 @@ export class TicketService {
         nextAgentId: agentId,
         nextQueueId: queueId,
         organizationId,
-        action: "ASSIGNED",
+        action: 'ASSIGNED',
       });
       await ActivityService.lagActivity({
         organizationId,
         actorId: userId,
-        actorType: assignment?.agentId ? "USER" : "SYSTEM",
-        message: "ticket escalated ",
-        event: "ticket.assigned",
+        actorType: assignment?.agentId ? 'USER' : 'SYSTEM',
+        message: 'ticket escalated ',
+        event: 'ticket.assigned',
         entityId: ticket.id,
-        entityType: "TICKET",
+        entityType: 'TICKET',
+      });
+      NotificationService.sendNotification({
+        recipientId: agentId,
+        userId: null,
+        invalidate: ['ticket'],
+        data: {
+          organizationId,
+          channel: 'IN_APP',
+          title: 'New Ticket assigned',
+          message: `Ticket ${ticket.code} has been assigned to you`,
+          type: 'TICKET',
+          actorId: userId,
+          ticketId: ticket.id,
+        },
       });
       return finalAssignment;
     }
-    return null
+    return null;
   };
   static createTicket = async ({
     data,
     organizationId,
+    ownerId,
     customerId,
     assignedTo,
     queueId,
     userId,
   }: {
-    data: { subject: string; description: string; priority: priority; category: string };
+    data: {
+      subject: string;
+      description: string;
+      priority: priority;
+      category: string;
+    };
     organizationId: string;
     customerId: string;
     assignedTo?: string;
     queueId?: string;
     userId?: string;
+    ownerId: string;
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const ticket = await tenantDb.ticket.create({
       data: {
-        code: readableId("TKT"),
+        code: readableId('TKT'),
         ...data,
         organizationId,
         customerId,
@@ -112,13 +140,26 @@ export class TicketService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "new ticket is created",
-      event: "ticket.created",
+      actorType: 'USER',
+      message: 'new ticket is created',
+      event: 'ticket.created',
       entityId: ticket.id,
-      entityType: "TICKET",
+      entityType: 'TICKET',
     });
-
+    NotificationService.sendNotification({
+      recipientId: ownerId,
+      invalidate: ['ticket'],
+      userId: null,
+      data: {
+        organizationId,
+        channel: 'IN_APP',
+        title: 'New Ticket created and assigned',
+        message: `Ticket ${ticket.code} has been created.`,
+        type: 'TICKET',
+        actorId: userId,
+        ticketId: ticket.id,
+      },
+    });
     return ticket;
   };
   static updateTicket = async ({
@@ -145,14 +186,30 @@ export class TicketService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "ticket updated is created",
-      event: "ticket.updated",
+      actorType: 'USER',
+      message: 'ticket updated is created',
+      event: 'ticket.updated',
       entityId: ticketId,
-      entityType: "TICKET",
+      entityType: 'TICKET',
       oldData: input,
       newData: updatedTicket,
     });
+    if (updatedTicket.assignedTo)
+      NotificationService.sendNotification({
+        recipientId: updatedTicket.assignedTo,
+        invalidate: ['ticket'],
+        userId,
+        data: {
+          organizationId,
+          channel: 'IN_APP',
+          title: 'New Ticket created and assigned',
+          message: `Ticket ${updatedTicket.code} has been updated.`,
+          type: 'TICKET',
+          actorId: userId,
+          ticketId: updatedTicket.id,
+        },
+      });
+
     return updatedTicket;
   };
   static getTicketDetails = async ({
@@ -207,7 +264,7 @@ export class TicketService {
         },
       },
     });
-    if (!data) throw new appError("Ticket not found ", 404, "NOT_FOUND");
+    if (!data) throw new appError('Ticket not found ', 404, 'NOT_FOUND');
 
     const normalized = {
       ...data,
@@ -250,7 +307,7 @@ export class TicketService {
       },
 
       orderBy: {
-        ticketCount: "asc",
+        ticketCount: 'asc',
       },
     });
     return agent?.agentId;
@@ -278,11 +335,11 @@ export class TicketService {
         assignedTo: true,
       },
     });
-    if (!currentData) throw new appError("Ticket not found", 404);
+    if (!currentData) throw new appError('Ticket not found', 404);
 
     // validate allowed status
     if (!allowedTransitions[currentData.status].includes(nextStatus)) {
-      throw new appError("Invalid transition", 403);
+      throw new appError('Invalid transition', 403);
     }
 
     const ticket = await tanentDb.$transaction(async (tx) => {
@@ -307,14 +364,19 @@ export class TicketService {
           select: { version: true },
         });
         if (existTicket)
-          throw new appError("Ticket already updated , refresh again", 409, "VERSION_MISSMATCH", {
-            currenVersion: existTicket.version,
-          });
+          throw new appError(
+            'Ticket already updated , refresh again',
+            409,
+            'VERSION_MISSMATCH',
+            {
+              currenVersion: existTicket.version,
+            },
+          );
       }
 
       const { queueId, assignedTo } = currentData;
 
-      if (nextStatus === "CLOSED" && queueId && assignedTo) {
+      if (nextStatus === 'CLOSED' && queueId && assignedTo) {
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {
@@ -330,7 +392,7 @@ export class TicketService {
           },
         });
       }
-      if (nextStatus === "REOPENED" && queueId && assignedTo) {
+      if (nextStatus === 'REOPENED' && queueId && assignedTo) {
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {
@@ -349,7 +411,7 @@ export class TicketService {
       await tx.ticketTransition.create({
         data: {
           ticketId,
-          action: "STATUS_CHANGED",
+          action: 'STATUS_CHANGED',
           fromStatus: currentData?.status,
           toStatus: nextStatus,
           organizationId,
@@ -360,14 +422,28 @@ export class TicketService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "ticket status updated ",
-      event: "ticket.update",
+      actorType: 'USER',
+      message: 'ticket status updated ',
+      event: 'ticket.update',
       entityId: ticketId,
-      entityType: "TICKET",
+      entityType: 'TICKET',
       oldData: { status: currentData.status },
       newData: { status: nextStatus },
     });
+    if (currentData?.assignedTo)
+      NotificationService.sendNotification({
+        recipientId: currentData.assignedTo,
+        invalidate: ['ticket'],
+        userId,
+        data: {
+          channel: 'IN_APP',
+          title: 'Ticket status updated',
+          message: `Ticket status updated to ${nextStatus}`,
+          type: 'SYSTEM',
+          metadata: { test: 'test' },
+          expiresAt: new Date(),
+        },
+      });
     return ticket;
   };
   static updatePriority = async ({
@@ -386,7 +462,7 @@ export class TicketService {
     const tanentDb = getTenantClient(organizationId);
     const currentTicket = await tanentDb.ticket.findUnique({
       where: { id: ticketId },
-      select: { priority: true },
+      select: { priority: true, assignedTo: true },
     });
     const ticket = await tanentDb.$transaction(async (tx) => {
       const updatedTicket = await tx.ticket.updateMany({
@@ -408,14 +484,19 @@ export class TicketService {
           select: { version: true },
         });
         if (existTicket)
-          throw new appError("Ticket already updated , refersh", 409, "VERSION_MISSMATCH", {
-            currenVersion: existTicket.version,
-          });
+          throw new appError(
+            'Ticket already updated , refersh',
+            409,
+            'VERSION_MISSMATCH',
+            {
+              currenVersion: existTicket.version,
+            },
+          );
       }
       await tx.ticketTransition.create({
         data: {
           ticketId,
-          action: "PRIORITY_CHANGED",
+          action: 'PRIORITY_CHANGED',
           toPriority: priority,
           fromPriority: currentTicket?.priority,
           organizationId,
@@ -426,14 +507,29 @@ export class TicketService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "ticket priority changed ",
-      event: "ticket.update",
+      actorType: 'USER',
+      message: 'ticket priority changed ',
+      event: 'ticket.update',
       entityId: ticketId,
-      entityType: "TICKET",
+      entityType: 'TICKET',
       oldData: { priority: currentTicket?.priority },
       newData: { priority: priority },
     });
+    if (currentTicket?.assignedTo)
+      NotificationService.sendNotification({
+        recipientId: currentTicket.assignedTo,
+        invalidate: ['ticket'],
+        userId,
+        data: {
+          channel: 'IN_APP',
+          title: 'Ticket status updated',
+          message: `Ticket Priority updated to ${priority}`,
+          type: 'SYSTEM',
+          metadata: { test: 'test' },
+          expiresAt: new Date(),
+        },
+      });
+
     return ticket;
   };
   static createTicketComment = async ({
@@ -457,16 +553,39 @@ export class TicketService {
         isInternal,
         organizationId,
       },
+      include: {
+        ticket: {
+          select: {
+            assignedTo: true,
+          },
+        },
+      },
     });
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "user added comment in ticket ",
-      event: "ticket.comment.created",
+      actorType: 'USER',
+      message: 'user added comment in ticket ',
+      event: 'ticket.comment.created',
       entityId: data.id,
-      entityType: "TICKET",
+      entityType: 'TICKET',
     });
+    if (data.ticket.assignedTo)
+      NotificationService.sendNotification({
+        recipientId: data.ticket.assignedTo,
+        invalidate: ['ticket'],
+        userId,
+        data: {
+          organizationId,
+          channel: 'IN_APP',
+          title: 'New Comment added',
+          message: `Ticket comment added`,
+          type: 'TICKET',
+          actorId: userId,
+          ticketId: data.ticketId,
+        },
+      });
+
     return data;
   };
   static getTicketComments = async ({
@@ -490,7 +609,7 @@ export class TicketService {
         id: true,
         author: { select: { name: true, email: true } },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: 'asc' },
       take: limit,
       skip: offset,
     });
@@ -518,14 +637,14 @@ export class TicketService {
     ticketId: string;
     organizationId: string;
     assignId: string;
-    targetType: "AGENT" | "QUEUE";
+    targetType: 'AGENT' | 'QUEUE';
     userId: string;
   }) => {
     let queueId;
     let agentId;
     switch (targetType) {
       // if queue given , resovle agent only
-      case "QUEUE":
+      case 'QUEUE':
         {
           agentId = await this.resolveAgentAssignment({
             queueId: assignId,
@@ -533,7 +652,7 @@ export class TicketService {
           });
         }
         break;
-      case "AGENT":
+      case 'AGENT':
         // if agent given , find agent and it queueID
         {
           const queueData = await prisma.queueAgent.findFirst({
@@ -549,28 +668,29 @@ export class TicketService {
         }
         break;
       default:
-        throw new appError("Invalid targetType ", 400);
+        throw new appError('Invalid targetType ', 400);
     }
-    if (!queueId) throw new appError("Queue not found ", 404, "NOT_FOUND");
-    if (!agentId) throw new appError("Agent not found in queue", 404, "NOT_FOUND");
+    if (!queueId) throw new appError('Queue not found ', 404, 'NOT_FOUND');
+    if (!agentId)
+      throw new appError('Agent not found in queue', 404, 'NOT_FOUND');
     if (agentId === assignId)
-      throw new appError("Already assigned to agent ", 409, "CONFLICT_ERROR");
+      throw new appError('Already assigned to agent ', 409, 'CONFLICT_ERROR');
 
     const { updatedTicket, currentTicket } = await this.updateTicketMovement({
       ticketId,
       organizationId,
       nextAgentId: agentId,
       nextQueueId: queueId,
-      action: "ASSIGNED",
+      action: 'ASSIGNED',
     });
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "ticket assignment updated ",
-      event: "ticket.agent.assigned",
+      actorType: 'USER',
+      message: 'ticket assignment updated ',
+      event: 'ticket.agent.assigned',
       entityId: ticketId,
-      entityType: "TICKET",
+      entityType: 'TICKET',
       oldData: currentTicket,
       newData: updatedTicket,
     });
@@ -604,7 +724,7 @@ export class TicketService {
       },
     });
     if (!currentTicket?.queue) {
-      throw new appError("Invalid Ticket Id", 404, "NOT_FOUND");
+      throw new appError('Invalid Ticket Id', 404, 'NOT_FOUND');
     }
     //  find next queue in same group
     const nextQueues = await prisma.queue.findMany({
@@ -622,23 +742,30 @@ export class TicketService {
         }, // or relation you use
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
     const nextQueue = nextQueues.find((q) => q._count.queueAgents > 0);
     if (!nextQueue)
-      throw new appError("No further queue. Please select another group.", 409, "CONFLICT_ERROR");
+      throw new appError(
+        'No further queue. Please select another group.',
+        409,
+        'CONFLICT_ERROR',
+      );
 
     // try to get agent
-    const agentId = await this.resolveAgentAssignment({ queueId: nextQueue.id, organizationId });
-    if (!agentId) throw new appError("No Agent found.", 409, "CONFLICT_ERROR");
+    const agentId = await this.resolveAgentAssignment({
+      queueId: nextQueue.id,
+      organizationId,
+    });
+    if (!agentId) throw new appError('No Agent found.', 409, 'CONFLICT_ERROR');
 
-    const updatedTicket = await this.updateTicketMovement({
+    const { updatedTicket } = await this.updateTicketMovement({
       ticketId,
       nextQueueId: nextQueue.id,
       nextAgentId: agentId,
       organizationId,
-      action: "ESCALATED",
+      action: 'ESCALATED',
       reason: input.reason,
     });
     await TicketService.createTicketComment({
@@ -650,15 +777,32 @@ export class TicketService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: userId ? "USER" : "SYSTEM",
-      message: "ticket escalated ",
-      event: "ticket.agent.escalated",
+      actorType: userId ? 'USER' : 'SYSTEM',
+      message: 'ticket escalated ',
+      event: 'ticket.agent.escalated',
       entityId: ticketId,
-      entityType: "TICKET",
+      entityType: 'TICKET',
 
       oldData: currentTicket,
       newData: updatedTicket,
     });
+
+    if (updatedTicket.assignedTo)
+      NotificationService.sendNotification({
+        recipientId: updatedTicket.assignedTo,
+        invalidate: ['ticket'],
+        userId,
+        data: {
+          organizationId,
+          channel: 'IN_APP',
+          title: ' Ticket Escalated',
+          message: `Ticket ${updatedTicket.code} has been escalated.`,
+          type: 'TICKET',
+          actorId: userId,
+          ticketId: updatedTicket.id,
+        },
+      });
+
     // update ticket count for new Agent
     return updatedTicket;
   };
@@ -685,8 +829,15 @@ export class TicketService {
       // ! ts ignore undefined case
       //  todo: if queue id not in ticket then find
       // decrement previous agent (only if different)
-      if (currentTicket?.assignedTo && currentTicket.assignedTo !== nextAgentId) {
-        console.log(organizationId, currentTicket.assignedTo, currentTicket.queueId);
+      if (
+        currentTicket?.assignedTo &&
+        currentTicket.assignedTo !== nextAgentId
+      ) {
+        console.log(
+          organizationId,
+          currentTicket.assignedTo,
+          currentTicket.queueId,
+        );
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {
@@ -707,7 +858,7 @@ export class TicketService {
         data: {
           assignedTo: nextAgentId,
           queueId: nextQueueId,
-          status: "OPEN",
+          status: 'OPEN',
         },
       });
       await tx.ticketTransition.create({
@@ -815,7 +966,7 @@ export class TicketService {
         organizationId,
         ticketId,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       select: {
         action: true,
         fromPriority: true,

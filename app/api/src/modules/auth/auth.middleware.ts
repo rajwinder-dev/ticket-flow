@@ -74,15 +74,24 @@ export class authMiddleware {
         },
       },
     });
-
+    const ownerData = await prisma.membership.findFirst({
+      where: {
+        id: organizationId,
+        isSystem: true,
+        role: {
+          name: 'OWNER',
+        },
+      },
+    });
     if (!member?.role)
       return next(
         new appError('user not member of any organization', 403, 'FORBIDDEN'),
       );
-
+    // some files consided as exit
     req.organization = {
       ...req.organization,
       isOwner: member?.role?.name === 'OWNER',
+      ownerId: ownerData?.userId as string,
       id: organizationId,
       name: member.organization?.name as string,
     };
@@ -123,13 +132,12 @@ export class authMiddleware {
   });
 
   static SocketAuth = async (socket: Socket, next: (err?: Error) => void) => {
-      
     const cookieHeader = socket.request.headers.cookie;
     const session = await auth.api.getSession({
       headers: {
         cookie: cookieHeader,
       },
-    })
+    });
     if (!session) {
       return next(new appError('Unauthorized', 401, 'INVALID_SESSION'));
     }
@@ -138,6 +146,6 @@ export class authMiddleware {
       username: session.user.name,
       email: session.user.email,
     };
-    next()
+    next();
   };
 }
