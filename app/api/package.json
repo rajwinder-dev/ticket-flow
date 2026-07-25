@@ -71,6 +71,7 @@
     "@org/email-providers": "workspace:*",
     "@org/utils": "workspace:*",
     "@org/zod": "workspace:*",
+    "@org/auth": "workspace:*",
     "@sentry/node": "^10.65.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",

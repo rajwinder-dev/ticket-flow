@@ -3,22 +3,16 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "types": [
-      "node",
-      "express"
-    ],
+    "types": ["node", "express"],
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "eslint.config.js",
-    "eslint.config.cjs",
-    "eslint.config.mjs",
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["eslint.config.js", "eslint.config.cjs", "eslint.config.mjs"],
   "references": [
+    {
+      "path": "../../packages/auth/tsconfig.lib.json"
+    },
     {
       "path": "../../packages/zod/tsconfig.lib.json"
     },

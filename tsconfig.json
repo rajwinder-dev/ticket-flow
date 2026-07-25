@@ -41,6 +41,9 @@
     },
     {
       "path": "./packages/constants"
+    },
+    {
+      "path": "./packages/auth"
     }
   ]
 }

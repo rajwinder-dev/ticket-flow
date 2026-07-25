@@ -2,7 +2,7 @@ import { PermissionAction, PermissionModule } from '@org/zod';
 import { z } from 'zod';
 import { appError } from '../../core/utils/appError.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
-import { auth } from '../../lib/auth.js';
+import { auth } from '@org/auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import { prisma } from '@org/database';
 import { Socket } from 'socket.io';

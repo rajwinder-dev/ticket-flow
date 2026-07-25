@@ -97,7 +97,7 @@
           "fields": ["extends", "files", "include"]
         }
       ]
-    }, 
+    },
     "generate": {
       "cache": true,
       "inputs": ["{projectRoot}/prisma/schema.prisma"],

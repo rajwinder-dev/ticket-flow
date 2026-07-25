@@ -22,7 +22,7 @@ import { prisma } from '@org/database';
 import { toNodeHandler } from 'better-auth/node';
 import { DevMiddleware } from './core/middleware/devMiddleware.js';
 import { configLogger } from './core/utils/logger.js';
-import { auth } from './lib/auth.js';
+import { auth } from '@org/auth';
 import ActivityRouter from './modules/activity/activity.routes.js';
 import customerRoutes from './modules/customer/customer.routes.js';
 import dashboardRouter from './modules/dashboard/dashboard.route.js';
