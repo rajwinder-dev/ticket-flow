@@ -15,11 +15,13 @@ interface TransitionHistoryProps {
 }
 
 export function TransitionHistory({ className }: TransitionHistoryProps) {
-  const { orgId } = useParams();
+  const { orgId, ticketId } = useParams();
   const { ticketTransitions, isLoadingTicketTransitions } = useTicket({
     orgId,
-  });
+    ticketId,
 
+  });
+  console.log(ticketTransitions?.data)
   return (
     <Card className={className}>
       <CardHeader className="pb-4">

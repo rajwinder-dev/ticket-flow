@@ -32,7 +32,7 @@ export class NotificationServiceClass {
     });
     io.to(`user:${notification.recipientId}`).emit('event', {
       type: 'invalidate',
-      keys: [['notification']],
+      keys: ['notification'],
     });
     return notification;
   }

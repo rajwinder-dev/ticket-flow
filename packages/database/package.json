@@ -19,6 +19,7 @@
     "build": "prisma generate && tsc -b",
     "dev": "tsc -w",
     "setup": "tsx ./src/setup-rls-role.ts",
+    "seed": "tsx ./prisma/seed.ts",
     "push": " prisma generate && prisma db push",
     "seedAdmin": "ts-node prisma/seed.ts --admin",
     "deploy": "prisma migrate deploy",

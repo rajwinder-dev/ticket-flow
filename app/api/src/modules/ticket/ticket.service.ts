@@ -803,6 +803,7 @@ export class TicketService {
     queryString: ParsedQs;
   }) => {
     const { offset, limit } = new APIFeatures(queryString).pagination();
+    console.log(organizationId, ticketId);
     const total = await prisma.ticketTransition.count({
       where: {
         organizationId,
