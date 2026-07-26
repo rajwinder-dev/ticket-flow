@@ -36,16 +36,18 @@ TicketFlow is built for small teams and organizations that need a focused, relia
 - **Agent Groups & Queue Management** — organize agents into groups and route tickets through queues
 - **Queue-Based Email Processing** — background workers handle email ingestion without blocking the main app
 - **Structured API** — validated requests/responses with consistent error handling
+- **IN-app notifications** - added real-time in app notifications to the system
+- **Real time ticket details** — real-time ticket updates system
 
 ---
 
 ## Tech Stack
 
-| Layer | Technologies |
-|---|---|
-| **Frontend** | React, TypeScript, Tailwind CSS, shadcn/ui, React Query, Zustand |
-| **Backend** | Node.js, Express, TypeScript, Zod, Prisma, BullMQ, Redis, PostgreSQL |
-| **Deployment & DevOps** | Docker, DigitalOcean, CI/CD pipeline |
+| Layer                   | Technologies                                                         |
+| ----------------------- | -------------------------------------------------------------------- |
+| **Frontend**            | React, TypeScript, Tailwind CSS, shadcn/ui, React Query, Zustand     |
+| **Backend**             | Node.js, Express, TypeScript, Zod, Prisma, BullMQ, Redis, PostgreSQL |
+| **Deployment & DevOps** | Docker, DigitalOcean, CI/CD pipeline                                 |
 
 **Architecture style:** modular, layered structure with clear separation of concerns between controllers, services, and the database layer.
 
@@ -118,7 +120,7 @@ Deliberate scope decisions made to keep the system focused and shippable:
 - No real-time webhook notifications (yet) — see [Future Improvements](#future-improvements)
 - Limited caching to reduce system complexity
 - Prioritized backend robustness over UI polish
-- Manual authentication (access + refresh tokens) rather than a third-party auth provider *(later replaced — see [Architecture docs](./docs/architecture.md#authentication-evolution))*
+- Manual authentication (access + refresh tokens) rather than a third-party auth provider _(later replaced — see [Architecture docs](./docs/architecture.md#authentication-evolution))_
 - Email handling is integrated inside the app rather than fully externalized
 
 ---
@@ -184,11 +186,11 @@ pnpm run dev
 
 **Default port mapping**
 
-| Service | Port |
-|---|---|
-| Backend | `3000` (configurable via `.env`) |
-| Frontend | `5173` (Vite dev server) |
-| PostgreSQL | `5432` |
+| Service    | Port                             |
+| ---------- | -------------------------------- |
+| Backend    | `3000` (configurable via `.env`) |
+| Frontend   | `5173` (Vite dev server)         |
+| PostgreSQL | `5432`                           |
 
 ---
 
