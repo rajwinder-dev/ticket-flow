@@ -48,7 +48,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
               if (typeof key === 'string') {
                 queryClient.invalidateQueries({ queryKey: [key] });
               } else if (Array.isArray(key)) {
-                console.log(key)
                 queryClient.invalidateQueries({ queryKey: key });
               } else {
                 console.error('Invalid invalidate payload');

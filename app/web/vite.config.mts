@@ -14,7 +14,15 @@ export default defineConfig({
     port: 4200,
     host: 'localhost',
     proxy: {
-      '/api': 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        ws: true,
+      },
     },
     allowedHosts: ['app.tiven.xyz'],
   },
