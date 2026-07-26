@@ -62,6 +62,7 @@ const TicketTable = () => {
         ...(priority && priority !== "ALL" && { priority }),
         ...(assignedTo ? { assignedTo } : {}),
       },
+      sorting: { sortby: "createdAt" , sortOrder: "desc" },
       search: {
         searchBy: "subject",
         search: searchItem,

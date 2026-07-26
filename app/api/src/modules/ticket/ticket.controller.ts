@@ -9,13 +9,13 @@ import {
   ticketTranslationSchema,
   UpdateTicketPriorityInput,
   UpdateTicketStatusInput,
-} from "@org/zod";
-import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import { getTenantClient } from "@org/database";
-import response from "../../core/utils/response.js";
-import { TicketService } from "./ticket.service.js";
+} from '@org/zod';
+import z from 'zod';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import { getTenantClient } from '@org/database';
+import response from '../../core/utils/response.js';
+import { TicketService } from './ticket.service.js';
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
@@ -39,20 +39,22 @@ export class TicketController {
   });
   static getAllTickets = catchAsync(async (req, res, _next) => {
     const assignedTo = req.query.assignedTo as string;
-    const { filterOptions, limit, offset } = new APIFeatures(req.query, { ignore: ["assignedTo"] })
+    const { filterOptions, limit, offset } = new APIFeatures(req.query, {
+      ignore: ['assignedTo'],
+    })
       .filter()
       .sort()
       .pagination()
       .search();
     // implement custom filter
     let assignedToFilter;
-    if (assignedTo === "mine") {
+    if (assignedTo === 'mine') {
       assignedToFilter = {
         assignedToUser: {
           id: req.user.id,
         },
       };
-    } else if (assignedTo === "none") {
+    } else if (assignedTo === 'none') {
       assignedToFilter = {
         assignedToUser: null,
       };
@@ -73,6 +75,8 @@ export class TicketController {
         assignedToUser: { select: { id: true, name: true } },
         queue: { select: { name: true } },
       },
+      orderBy: filterOptions.orderBy,
+
       take: limit,
       skip: offset,
     });
@@ -85,13 +89,13 @@ export class TicketController {
     const organizationId = req.organization.id;
     const assignedTo = req.query.assignedTo as string;
     let assignedToFilter;
-    if (assignedTo === "mine") {
+    if (assignedTo === 'mine') {
       assignedToFilter = {
         assignedToUser: {
           id: req.user.id,
         },
       };
-    } else if (assignedTo === "none") {
+    } else if (assignedTo === 'none') {
       assignedToFilter = {
         assignedToUser: null,
       };
@@ -101,13 +105,13 @@ export class TicketController {
     const [total, open, inProgress, resolved] = await Promise.all([
       tenantDB.ticket.count({ where: { ...(assignedToFilter || {}) } }),
       tenantDB.ticket.count({
-        where: { status: "OPEN", ...(assignedToFilter || {}) },
+        where: { status: 'OPEN', ...(assignedToFilter || {}) },
       }),
       tenantDB.ticket.count({
-        where: { status: "IN_PROGRESS", ...(assignedToFilter || {}) },
+        where: { status: 'IN_PROGRESS', ...(assignedToFilter || {}) },
       }),
       tenantDB.ticket.count({
-        where: { status: "RESOLVED", ...(assignedToFilter || {}) },
+        where: { status: 'RESOLVED', ...(assignedToFilter || {}) },
       }),
     ]);
 
@@ -235,11 +239,13 @@ export class TicketController {
   });
   static getTransitionHistory = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
-    const { data, pagination } = await TicketService.getTicketTransitionHistory({
-      ticketId,
-      organizationId: req.organization.id,
-      queryString: req.query,
-    });
+    const { data, pagination } = await TicketService.getTicketTransitionHistory(
+      {
+        ticketId,
+        organizationId: req.organization.id,
+        queryString: req.query,
+      },
+    );
     response(res, data, 200, {
       otherFields: { ...pagination },
       schema: z.array(ticketTranslationSchema),
