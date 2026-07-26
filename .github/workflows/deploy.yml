@@ -63,7 +63,7 @@ jobs:
         run: |
           sudo mkdir -p --mode=0755 /usr/share/keyrings
           curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
-          echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.lis
+          echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
           sudo apt-get update
           sudo apt-get install -y cloudflared
 
@@ -73,19 +73,20 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-      - name: Configure SSH through Cloudflare Tunnel
+      - name: Configure SSH with Cloudflare Tunnel
         run: |
           cat > ~/.ssh/config <<EOF
           Host ${{ secrets.SSH_HOST }}
+            HostName ${{ secrets.SSH_HOST }}
             User ${{ secrets.SSH_USER }}
             IdentityFile ~/.ssh/id_ed25519
             StrictHostKeyChecking no
             ProxyCommand cloudflared access ssh --hostname %h
           EOF
 
-      - name: Test SSH
+      - name: Test SSH connection
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "hostname"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo SSH OK && hostname && uptime"
 
       - name: Deploy to Server
         run: |
