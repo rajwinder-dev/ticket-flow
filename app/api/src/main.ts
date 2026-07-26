@@ -14,7 +14,7 @@ const port = Number(env.port);
 export const server = http.createServer(app);
 export const io = new Server(server, {
   cors: {
-    origin: env.coreURL,
+    origin: env.betterAuthUrl,
     credentials: true,
   },
 });
