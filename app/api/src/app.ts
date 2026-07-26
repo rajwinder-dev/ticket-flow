@@ -60,7 +60,7 @@ if (!devMode) app.use(limiter);
 
 app.use(
   cors({
-    origin: env.coreURL,
+    origin: env.betterAuthUrl,
     credentials: true,
   }),
 );
