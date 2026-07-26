@@ -133,6 +133,8 @@ export class authMiddleware {
 
   static SocketAuth = async (socket: Socket, next: (err?: Error) => void) => {
     const cookieHeader = socket.request.headers.cookie;
+    if (!cookieHeader)
+      return next(new appError('Cookie header not found', 401, 'NOT_FOUND'));
     const session = await auth.api.getSession({
       headers: {
         cookie: cookieHeader,

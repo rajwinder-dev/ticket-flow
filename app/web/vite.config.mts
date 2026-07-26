@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
-import {cloudflare} from "@cloudflare/vite-plugin"
+import { cloudflare } from '@cloudflare/vite-plugin';
 export default defineConfig({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/app/web',
@@ -16,6 +16,7 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000',
     },
+    allowedHosts: ['app.tiven.xyz'],
   },
 
   preview: {

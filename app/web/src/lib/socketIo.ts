@@ -13,9 +13,10 @@ export function getSocket({
   if (window.__socketPromise) return window.__socketPromise;
   window.__socketPromise = (async () => {
     const socket = io(
-      import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3000',
+      window.location.origin,
       {
         transports: ['websocket'],
+        withCredentials: true,
         auth: {
           userId,
           token,
