@@ -8,19 +8,26 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) log.error('connectionString is undefined');
 
 const adapter = new PrismaPg({ connectionString });
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-export const prisma: PrismaClient =
-  globalForPrisma.prisma || new PrismaClient({ adapter });
+export const prisma = new PrismaClient({
+  adapter,
+  log: [
+    {
+      emit: 'event',
+      level: 'query',
+    },
+    'error',
+  ],
+});
+prisma.$on('error', (e) => {
+  log.error(e.target);
+});
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-
-// name the extended type explicitly instead of letting it flow through ReturnType<>
 type TenantClient = ReturnType<typeof createTenantClient>;
 const clientCache = new Map<string, TenantClient>();
 
 function createTenantClient(organizationId: string) {
-  log.data('organizationId', organizationId);
+  log.data('', organizationId);
   return prisma.$extends({
     query: {
       $allModels: {
@@ -36,7 +43,7 @@ function createTenantClient(organizationId: string) {
   });
 }
 
-export const getTenantClient = (organizationId: string): TenantClient => {
+export const getTenantClient = (organizationId: string) => {
   if (!clientCache.has(organizationId)) {
     clientCache.set(organizationId, createTenantClient(organizationId));
   }

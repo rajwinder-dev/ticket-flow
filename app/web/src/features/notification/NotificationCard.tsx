@@ -1,18 +1,11 @@
 import { formatDistanceToNow } from 'date-fns';
 import {
-  UserPlusIcon,
-  RefreshCwIcon,
-  ArrowUpDownIcon,
-  MessageSquareIcon,
-  TrendingUpIcon,
-  RotateCcwIcon,
-  ClockIcon,
-  AlertOctagonIcon,
   SettingsIcon,
   CheckIcon,
   MoreVerticalIcon,
   Trash2Icon,
   type LucideIcon,
+  BellIcon,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -27,20 +20,41 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NotificationSchema } from '@org/zod';
 
-
-const typeConfig: Record<
-  NotificationSchema['type'],
-  { icon: LucideIcon; className: string }
+import {
+  TicketIcon,
+  ShieldIcon,
+  UserIcon,
+  UsersIcon,
+  FolderIcon,
+  ListOrderedIcon,
+  Building2Icon,
+  BriefcaseIcon,
+  MailIcon,
+} from 'lucide-react';
+const typeConfig: Partial<
+  Record<NotificationSchema['type'], { icon: LucideIcon; className: string }>
 > = {
-  TICKET_ASSIGNED: { icon: UserPlusIcon, className: 'text-blue-500 bg-blue-500/10' },
-  TICKET_STATUS_CHANGED: { icon: RefreshCwIcon, className: 'text-blue-500 bg-blue-500/10' },
-  TICKET_PRIORITY_CHANGED: { icon: ArrowUpDownIcon, className: 'text-amber-500 bg-amber-500/10' },
-  TICKET_COMMENT_ADDED: { icon: MessageSquareIcon, className: 'text-violet-500 bg-violet-500/10' },
-  TICKET_ESCALATED: { icon: TrendingUpIcon, className: 'text-amber-500 bg-amber-500/10' },
-  TICKET_REOPENED: { icon: RotateCcwIcon, className: 'text-blue-500 bg-blue-500/10' },
-  SLA_WARNING: { icon: ClockIcon, className: 'text-amber-500 bg-amber-500/10' },
-  SLA_BREACHED: { icon: AlertOctagonIcon, className: 'text-destructive bg-destructive/10' },
+  TICKET: { icon: TicketIcon, className: 'text-blue-500 bg-blue-500/10' },
+  RBAC: { icon: ShieldIcon, className: 'text-purple-500 bg-purple-500/10' },
+  USER: { icon: UserIcon, className: 'text-blue-500 bg-blue-500/10' },
+  MEMBER: { icon: UsersIcon, className: 'text-violet-500 bg-violet-500/10' },
+  GROUP: { icon: FolderIcon, className: 'text-violet-500 bg-violet-500/10' },
+  QUEUE: { icon: ListOrderedIcon, className: 'text-amber-500 bg-amber-500/10' },
+  ORGANIZATION: {
+    icon: Building2Icon,
+    className: 'text-emerald-500 bg-emerald-500/10',
+  },
+  CUSTOMER: {
+    icon: BriefcaseIcon,
+    className: 'text-emerald-500 bg-emerald-500/10',
+  },
+  EMAIL: { icon: MailIcon, className: 'text-blue-500 bg-blue-500/10' },
   SYSTEM: { icon: SettingsIcon, className: 'text-muted-foreground bg-muted' },
+};
+
+const DEFAULT_TYPE_CONFIG: { icon: LucideIcon; className: string } = {
+  icon: BellIcon,
+  className: 'text-muted-foreground bg-muted',
 };
 
 interface NotificationCardProps {
@@ -60,14 +74,16 @@ export function NotificationCard({
   isMarkingAsRead,
   isDeleting,
 }: NotificationCardProps) {
-  const { icon: Icon, className: iconClassName } = typeConfig[notification.type];
+    const { icon: Icon, className: iconClassName } =
+    typeConfig[notification.type] ?? DEFAULT_TYPE_CONFIG;
   const { isRead, actor, ticket } = notification;
-
   return (
     <div
       className={cn(
         'group relative flex gap-3 rounded-lg border p-3 transition-colors',
-        isRead ? 'border-transparent bg-transparent' : 'border-border bg-muted/40',
+        isRead
+          ? 'border-transparent bg-transparent'
+          : 'border-border bg-muted/40',
       )}
     >
       {!isRead && (
@@ -102,7 +118,9 @@ export function NotificationCard({
           <p
             className={cn(
               'text-sm leading-none',
-              isRead ? 'font-normal text-muted-foreground' : 'font-medium text-foreground',
+              isRead
+                ? 'font-normal text-muted-foreground'
+                : 'font-medium text-foreground',
             )}
           >
             {notification.title}

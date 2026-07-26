@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Express } from 'express';
-import "socket.io";
+import 'socket.io';
 declare global {
   namespace Express {
     interface Request {
@@ -24,12 +24,13 @@ declare global {
   }
 }
 
-declare module "socket.io" {
+declare module 'socket.io' {
   interface Socket {
     user?: {
       id: string;
       username: string;
       email: string;
     };
+    currentOrg?: string;
   }
 }

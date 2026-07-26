@@ -1,18 +1,19 @@
 import { z } from 'zod';
-
+// must be sync with schema 
 export const notificationType = z.enum([
-  'TICKET_ASSIGNED',
-  'TICKET_STATUS_CHANGED',
-  'TICKET_PRIORITY_CHANGED',
-  'TICKET_COMMENT_ADDED',
-  'TICKET_ESCALATED',
-  'TICKET_REOPENED',
-  'SLA_WARNING',
-  'SLA_BREACHED',
+  'TICKET',
+  'RBAC',
+  'MEMBER',
+  'GROUP',
+  'QUEUE',
+  'ORGANIZATION',
+  'CUSTOMER',
+  'EMAIL',
+  'USER',
   'SYSTEM',
-]);
+]) ;
 
-export const notificationChannel = z.enum(['IN_APP', 'EMAIL']);
+const notificationChannel = z.enum(['IN_APP', 'EMAIL']);
 
 export const notificationSchema = z.object({
   id: z.uuid(),

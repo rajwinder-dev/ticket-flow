@@ -17,6 +17,7 @@ import { CustomerService } from '../customer/customer.service.js';
 import { QueueService } from '../queue/queue.service.js';
 import { QueueGroupService } from '../queueGroup/queueGroup.service.js';
 import { NotificationService } from '../notification/notification.service.js';
+import { SocketService } from '../socket/socket.service.js';
 
 export class TicketService {
   static createAndAssign = async ({
@@ -99,6 +100,10 @@ export class TicketService {
           actorId: userId,
           ticketId: ticket.id,
         },
+      });
+      SocketService.invlidOrganizationQuery({
+        organizationId,
+        keys: ['ticket'],
       });
       return finalAssignment;
     }
@@ -209,7 +214,7 @@ export class TicketService {
           ticketId: updatedTicket.id,
         },
       });
-
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return updatedTicket;
   };
   static getTicketDetails = async ({
@@ -444,6 +449,7 @@ export class TicketService {
           expiresAt: new Date(),
         },
       });
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return ticket;
   };
   static updatePriority = async ({
@@ -530,6 +536,7 @@ export class TicketService {
         },
       });
 
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return ticket;
   };
   static createTicketComment = async ({
@@ -545,7 +552,8 @@ export class TicketService {
     isInternal?: boolean;
     organizationId: string;
   }) => {
-    const data = await prisma.ticketComment.create({
+    const tenantDb = getTenantClient(organizationId);
+    const data = await tenantDb.ticketComment.create({
       data: {
         authorId: userId,
         ticketId,
@@ -586,6 +594,10 @@ export class TicketService {
         },
       });
 
+    SocketService.invlidOrganizationQuery({
+      organizationId,
+      keys: ['ticket', 'comment'],
+    });
     return data;
   };
   static getTicketComments = async ({

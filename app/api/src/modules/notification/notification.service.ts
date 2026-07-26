@@ -4,8 +4,8 @@ import {
   Prisma,
   prisma,
 } from '@org/database';
-import { io } from '../../main';
 import { logger } from '../../core/utils/logger';
+import { SocketService } from '../socket/socket.service';
 /**
  * invalidate belong to frontend cache of react query
  */
@@ -31,8 +31,9 @@ export class NotificationServiceClass {
       expiresAt?: Date;
     };
   }) {
-    if(userId === recipientId)  return logger.info('cannot send notification to yourself');
-    
+    if (userId === recipientId)
+      return logger.info('cannot send notification to yourself');
+
     const notification = await prisma.notification.create({
       data: {
         recipientId,
@@ -40,15 +41,9 @@ export class NotificationServiceClass {
       },
     });
     if (invalidate) {
-      io.to(`user:${recipientId}`).emit('event', {
-        type: 'invalidate',
-        keys: invalidate,
-      });
+      SocketService.invlidUserQuery({ recipientId, keys: invalidate });
     }
-    io.to(`user:${recipientId}`).emit('event', {
-      type: 'invalidate',
-      keys: ['notification'],
-    });
+    SocketService.invlidUserQuery({ recipientId, keys: ['notification'] });
     return notification;
   }
   async getNotifications({
