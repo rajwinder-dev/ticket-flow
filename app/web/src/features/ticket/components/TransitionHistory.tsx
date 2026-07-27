@@ -21,7 +21,6 @@ export function TransitionHistory({ className }: TransitionHistoryProps) {
     ticketId,
 
   });
-  console.log(ticketTransitions?.data)
   return (
     <Card className={className}>
       <CardHeader className="pb-4">

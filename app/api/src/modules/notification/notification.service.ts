@@ -13,12 +13,10 @@ export class NotificationServiceClass {
   async sendNotification({
     userId,
     recipientId,
-    invalidate,
     data,
   }: {
     recipientId: string;
     userId: string | null;
-    invalidate?: string[];
     data: {
       organizationId?: string;
       title: string;
@@ -40,9 +38,7 @@ export class NotificationServiceClass {
         ...data,
       },
     });
-    if (invalidate) {
-      SocketService.invlidUserQuery({ recipientId, keys: invalidate });
-    }
+
     SocketService.invlidUserQuery({ recipientId, keys: ['notification'] });
     return notification;
   }

@@ -19,10 +19,9 @@ export class SocketServiceClass {
     organizationId: string;
     keys: string[];
   }) {
-    const appendOrgId = [...keys, { orgId: organizationId }];
     io.to(`org:${organizationId}`).emit('event', {
       type: 'invalidate',
-      keys: [appendOrgId],
+      keys, 
     });
   }
 }

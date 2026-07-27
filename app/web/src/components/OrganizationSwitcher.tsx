@@ -29,7 +29,6 @@ export function OrganizationSwitcher() {
   const { organizations } = useOrganizations({ orgId });
   const navigate = useNavigate();
   const location = useLocation();
-  const { socket } = useSocket();
   const handleChangeOrg = (orgId: string) =>
     navigate(
       `/org/${orgId}/${location.pathname.split('/').slice(3).join('/')}`,
@@ -37,10 +36,7 @@ export function OrganizationSwitcher() {
   const activeOrganization = organizations?.data.find(
     (item) => item.id === orgId,
   );
-  useEffect(() => {
-    if (!orgId) return;
-    socket?.emit('join-org', orgId);
-  }, [orgId]);
+ 
   return (
     <SidebarMenu>
       <SidebarMenuItem>

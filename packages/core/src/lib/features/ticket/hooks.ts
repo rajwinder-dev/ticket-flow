@@ -56,7 +56,7 @@ export function useTicket({
     error: ticketDetailsError,
   } = useQuery({
     queryFn: () => ticketApi.getDetails(ticketId!),
-    queryKey: ['ticket', 'details', { ticketId }],
+    queryKey: ['ticket', 'details', { ticketId, orgId }],
     enabled: !!ticketId,
   });
   const {
@@ -65,7 +65,7 @@ export function useTicket({
     error: ticketCommentsError,
   } = useQuery({
     queryFn: () => ticketApi.getComments(ticketId!),
-    queryKey: ['ticket', 'comment', { ticketId }],
+    queryKey: ['ticket', 'comment', { ticketId, orgId}],
     enabled: !!ticketId,
   });
   const {
@@ -74,7 +74,7 @@ export function useTicket({
     error: ticketTransitionsError,
   } = useQuery({
     queryFn: () => ticketApi.getTransitionHistory(ticketId!),
-    queryKey: ['ticket', 'transitions', { ticketId }],
+    queryKey: ['ticket', 'transitions', { ticketId , orgId}],
     enabled: !!ticketId,
   });
   const { mutate: createTicket, isPending: isCreatingTicket } = useMutation({

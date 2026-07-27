@@ -90,7 +90,6 @@ export class TicketService {
       NotificationService.sendNotification({
         recipientId: agentId,
         userId: null,
-        invalidate: ['ticket'],
         data: {
           organizationId,
           channel: 'IN_APP',
@@ -153,7 +152,6 @@ export class TicketService {
     });
     NotificationService.sendNotification({
       recipientId: ownerId,
-      invalidate: ['ticket'],
       userId: null,
       data: {
         organizationId,
@@ -202,7 +200,6 @@ export class TicketService {
     if (updatedTicket.assignedTo)
       NotificationService.sendNotification({
         recipientId: updatedTicket.assignedTo,
-        invalidate: ['ticket'],
         userId,
         data: {
           organizationId,
@@ -214,7 +211,7 @@ export class TicketService {
           ticketId: updatedTicket.id,
         },
       });
-    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({organizationId,  keys: ['ticket'] });
     return updatedTicket;
   };
   static getTicketDetails = async ({
@@ -439,7 +436,6 @@ export class TicketService {
     if (currentData?.assignedTo)
       NotificationService.sendNotification({
         recipientId: currentData.assignedTo,
-        invalidate: ['ticket'],
         userId,
         data: {
           channel: 'IN_APP',
@@ -450,7 +446,7 @@ export class TicketService {
           expiresAt: new Date(),
         },
       });
-    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({organizationId, keys: ['ticket'] });
     return ticket;
   };
   static updatePriority = async ({
@@ -525,7 +521,6 @@ export class TicketService {
     if (currentTicket?.assignedTo)
       NotificationService.sendNotification({
         recipientId: currentTicket.assignedTo,
-        invalidate: ['ticket'],
         userId,
         data: {
           channel: 'IN_APP',
@@ -537,7 +532,7 @@ export class TicketService {
         },
       });
 
-    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({organizationId, keys: ['ticket'] });
     return ticket;
   };
   static createTicketComment = async ({
@@ -582,7 +577,6 @@ export class TicketService {
     if (data.ticket.assignedTo)
       NotificationService.sendNotification({
         recipientId: data.ticket.assignedTo,
-        invalidate: ['ticket'],
         userId,
         data: {
           organizationId,
@@ -803,7 +797,6 @@ export class TicketService {
     if (updatedTicket.assignedTo)
       NotificationService.sendNotification({
         recipientId: updatedTicket.assignedTo,
-        invalidate: ['ticket'],
         userId,
         data: {
           organizationId,
