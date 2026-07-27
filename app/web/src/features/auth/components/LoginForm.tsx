@@ -1,18 +1,32 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginInput, type LoginInput } from "@org/zod"; // Assuming loginInputSchema is the Zod schema
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { useMembersStore } from "@org/core";
-import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginInput, type LoginInput } from '@org/zod'; // Assuming loginInputSchema is the Zod schema
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMembersStore } from '@org/core';
+import { authClient } from '@/lib/auth-client';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
   const { refetch } = authClient.useSession();
@@ -38,7 +52,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         onRequest: () => setIsLoggingIn(true),
         onResponse: () => refetch(),
         onSuccess: async () => {
-          navigate("/org");
+          navigate('/org');
           setIsLoggingIn(false);
         },
         onError: (ctx) => {
@@ -50,11 +64,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -62,7 +78,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  {...register('email')}
+                />
 
                 {errors.email && (
                   <FieldDescription className="text-red-500">
@@ -73,7 +94,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Link to={"/forget-password"} className="ml-auto text-sm hover:underline">
+                  <Link
+                    to={'/forget-password'}
+                    className="ml-auto text-sm hover:underline"
+                  >
                     Forgot your password?
                   </Link>
                 </div>
@@ -81,7 +105,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <Input
                   id="password"
                   type="password"
-                  {...register("password")}
+                  {...register('password')}
                   placeholder="********"
                 />
 
@@ -106,6 +130,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
           </form>
         </CardContent>
       </Card>
+      <Button
+        type="submit"
+        variant={'outline'}
+        onClick={() =>
+          onSubmit({ email: 'rajwindersxxx@gmail.com', password: '8968585382' })
+        }
+      >
+        Login Demo account
+      </Button>
     </div>
   );
 }
