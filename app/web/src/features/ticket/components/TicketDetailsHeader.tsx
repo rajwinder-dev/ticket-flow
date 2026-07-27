@@ -53,7 +53,7 @@ const TicketDetailsHeader = () => {
           disabled={isLoadingTicketDetails}
         >
           <ArrowUp className="h-4 w-4" />
-          Escelate
+          Escalate
         </Button>
         <Button
           variant="secondary"
