@@ -42,7 +42,7 @@ export function QueueFormModal({ open, queue, onClose }: QueueFormModalProps) {
   }, [queue, reset]);
   function handleFormSubmit(data: UpdateQueueInput) {
     if (!queue?.id) return toast.error('Queue Id not defined ');
-    updatedQueue(
+    return updatedQueue(
       { queueId: queue?.id, data },
       {
         onSuccess: () => {

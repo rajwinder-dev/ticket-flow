@@ -25,7 +25,7 @@ export function ResetpasswordForm({ className, ...props }: React.ComponentProps<
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const onSubmit = async (data: ResetPasswordInput) => {
     if (!token) return toast.error("token not found");
-    await authClient.resetPassword(
+    return await authClient.resetPassword(
       {
         newPassword: data.password,
         token,

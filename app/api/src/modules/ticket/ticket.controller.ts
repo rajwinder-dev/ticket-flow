@@ -196,13 +196,13 @@ export class TicketController {
   });
   static addComment = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const { comment, isInternal } = req.body as CreateTicketCommentInput;
+    const { comment } = req.body as CreateTicketCommentInput;
     const data = await TicketService.createTicketComment({
       organizationId: req.organization.id,
       ticketId: id,
       userId: req.user.id,
       comment,
-      isInternal,
+      isInternal: true,
     });
     response(res, data, 200);
   });

@@ -21,7 +21,7 @@ export function ErrorBoundary() {
 
   let title = 'Something went wrong';
   let description = 'An unexpected error occurred. Please try again.';
-  let status: number | undefined;
+  let status: number | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
     status = error.status;
