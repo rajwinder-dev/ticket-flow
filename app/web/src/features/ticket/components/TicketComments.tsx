@@ -5,9 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatDateTime, useTicket } from '@org/core';
 import { useParams } from 'react-router';
+import TicketCommentForm from './TicketCommentForm';
 
 const TicketComments = () => {
   const { orgId, ticketId } = useParams();
@@ -24,18 +26,15 @@ const TicketComments = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         {isLoadingTicketComments ? (
-          // Renders an array of structured comment card skeletons to match formatting layout
           Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-2">
-                <Skeleton className="h-4 w-24" />{' '}
-                {/* Commenter handle placeholder */}
-                <Skeleton className="h-3 w-32" />{' '}
-                {/* Created date metric placeholder */}
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-32" />
               </div>
               <div className="space-y-1.5 pt-1">
-                <Skeleton className="h-3.5 w-full" /> {/* Comment text row 1 */}
-                <Skeleton className="h-3.5 w-5/6" /> {/* Comment text row 2 */}
+                <Skeleton className="h-3.5 w-full" />
+                <Skeleton className="h-3.5 w-5/6" />
               </div>
             </div>
           ))
@@ -56,6 +55,10 @@ const TicketComments = () => {
             </div>
           ))
         )}
+
+        <Separator />
+
+        {ticketId && <TicketCommentForm  ticketId={ticketId}/>}
       </CardContent>
     </Card>
   );

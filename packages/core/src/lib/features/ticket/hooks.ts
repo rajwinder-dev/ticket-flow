@@ -128,7 +128,7 @@ export function useTicket({
       queryClient.invalidateQueries({ queryKey: ['ticket'] });
     },
   });
-  const { mutate: commentTicket, isPending: isAssigningComment } = useMutation({
+  const { mutate: commentTicket, isPending: isCreateingComment } = useMutation({
     mutationFn: ({
       ticketId,
       data,
@@ -170,7 +170,7 @@ export function useTicket({
     updateTicketStatus,
     isUpdatingTicketStatus,
     commentTicket,
-    isAssigningComment,
+    isCreateingComment,
     escalateTicket,
     isEscalatingTicket,
     updateTicket,

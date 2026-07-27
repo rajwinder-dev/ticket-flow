@@ -67,7 +67,6 @@ export const createTicketCommentInput = {
     .object({
       // Using trim and min(1) to prevent empty comments
       comment: z.string().trim().min(1, 'Comment cannot be empty'),
-      isInternal: z.boolean().default(false),
     })
     .strict(),
   ...validUuidParams,
