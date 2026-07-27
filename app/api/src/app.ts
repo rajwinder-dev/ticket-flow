@@ -21,7 +21,7 @@ import { globalHandler } from './core/utils/globalHandler.js';
 import { prisma } from '@org/database';
 import { toNodeHandler } from 'better-auth/node';
 import { DevMiddleware } from './core/middleware/devMiddleware.js';
-import { configLogger } from './core/utils/logger.js';
+import { configLogger, logger } from './core/utils/logger.js';
 import { auth } from '@org/auth';
 import ActivityRouter from './modules/activity/activity.routes.js';
 import customerRoutes from './modules/customer/customer.routes.js';
@@ -38,6 +38,7 @@ import TicketRouter from './modules/ticket/ticket.routes.js';
 import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
+import { log } from '@org/utils';
 
 export const app: Express = express();
 
@@ -49,11 +50,22 @@ app.use(helmet());
 app.use(hpp());
 
 configLogger(app);
+app.use((req, res, next) => {
+  log.data('IP', {
+    ip: req.ip,
+    ips: req.ips,
+    cfIp: req.headers['cf-connecting-ip'],
+    xForwardedFor: req.headers['x-forwarded-for'],
+    realIp: req.headers['x-real-ip'],
+  });
 
+  next();
+});
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 500,
   standardHeaders: true,
+  legacyHeaders: true,
   message: 'Too many requests from this IP , please try again in an hour!',
 });
 if (!devMode) app.use(limiter);
