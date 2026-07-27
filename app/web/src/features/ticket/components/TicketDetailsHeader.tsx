@@ -1,20 +1,22 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
-import { ArrowLeft } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowLeft, ArrowUp, Edit } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
-import { useTicket } from '@org/core';
+import { useTicket, useTicketStore } from '@org/core';
 
 const TicketDetailsHeader = () => {
   const { orgId, ticketId } = useParams();
+
   const { ticketDetails, isLoadingTicketDetails } = useTicket({
     orgId,
     ticketId,
   });
+  const { handleOpenTicketForm, handleOpenEscalateForm } = useTicketStore();
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-start justify-between gap-3 border-b p-4">
+    <div className="flex items-center justify-between md:flex-row flex-col gap-3 border-b p-4 w-full">
       <div className="flex-1 space-y-2">
         {isLoadingTicketDetails ? (
           <div className="space-y-2">
@@ -42,15 +44,37 @@ const TicketDetailsHeader = () => {
           </>
         )}
       </div>
+      <div className='flex gap-2'>
+        <Button
+          variant="default"
+          onClick={() =>
+            ticketDetails?.data && handleOpenEscalateForm(ticketDetails?.data)
+          }
+          disabled={isLoadingTicketDetails}
+        >
+          <ArrowUp className="h-4 w-4" />
+          Escelate
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() =>
+            ticketDetails?.data && handleOpenTicketForm(ticketDetails?.data)
+          }
+          disabled={isLoadingTicketDetails}
+        >
+          <Edit className="h-4 w-4" />
+          Edit
+        </Button>
+        <Button
+          variant="outline"
 
-      <Button
-        variant="secondary"
-        onClick={() => navigate(-1)}
-        disabled={isLoadingTicketDetails} // Safe control protection against rapid state re-entry
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </Button>
+          onClick={() => navigate(-1)}
+          disabled={isLoadingTicketDetails}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+      </div>
     </div>
   );
 };

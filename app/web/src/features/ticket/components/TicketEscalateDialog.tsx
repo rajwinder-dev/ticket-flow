@@ -22,8 +22,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { escalationReasons, ticketPriority } from '@org/constants';
 import {
   escalateTicketInput,
+  TicketPriority,
   type EscalateTicketInput,
-  type TicketSchemaResponse,
 } from '@org/zod';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronUp } from 'lucide-react';
@@ -31,12 +31,19 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { QueueFlow } from './QueueFlow';
 import { useParams } from 'react-router';
 import { toast } from 'sonner';
-
+type TicketData = {
+  id: string;
+  code: string;
+  subject: string;
+  description?: string;
+  priority: TicketPriority;
+  category: string;
+};
 interface TicketEscalateDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  ticket: TicketSchemaResponse | null;
-  onSubmit?: (ticketId: string, values: TicketSchemaResponse) => void;
+  ticket: TicketData;
+  onSubmit?: (ticketId: string, values: TicketData) => void;
 }
 export function TicketEscalateDialog({
   open,

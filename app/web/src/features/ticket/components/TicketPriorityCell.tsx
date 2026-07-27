@@ -5,13 +5,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { type TicketPriority, type TicketSchemaResponse } from '@org/zod';
+import { type TicketPriority } from '@org/zod';
 import { useTicket } from '@org/core';
 import { ticketPriority } from '@org/constants';
 import { useParams } from 'react-router';
 import { toast } from 'sonner';
 interface props {
-  ticket: TicketSchemaResponse;
+  ticket: {
+    id: string;
+    priority: TicketPriority;
+    version: number;
+  };
 }
 export const TicketPriorityCell = ({ ticket }: props) => {
   const { orgId, ticketId } = useParams();

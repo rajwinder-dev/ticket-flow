@@ -4,10 +4,14 @@ import {
   ticketCategory,
   ticketPriority,
   ticketStatus,
-} from "@org/constants";
-import { z } from "zod";
-import { validBigDescription, validEmail, validString } from "./helper/zodHelper.js";
-import { validUuidParams } from "./global.zod.js";
+} from '@org/constants';
+import { z } from 'zod';
+import {
+  validBigDescription,
+  validEmail,
+  validString,
+} from './helper/zodHelper.js';
+import { validUuidParams } from './global.zod.js';
 
 // zod schemas
 export const createTicketInput = {
@@ -31,10 +35,10 @@ export const createTicketInput = {
 export const updateTicketInput = {
   bodySchema: z
     .object({
-      subject: z.string().min(2, "Subject is required"),
+      subject: z.string().min(2, 'Subject is required'),
       description: z.string().optional(),
       priority: z.enum(ticketPriority),
-      category: z.string().min(1, "Category is required"),
+      category: z.string().min(1, 'Category is required'),
     })
     .strict(),
 };
@@ -62,7 +66,7 @@ export const createTicketCommentInput = {
   bodySchema: z
     .object({
       // Using trim and min(1) to prevent empty comments
-      comment: z.string().trim().min(1, "Comment cannot be empty"),
+      comment: z.string().trim().min(1, 'Comment cannot be empty'),
       isInternal: z.boolean().default(false),
     })
     .strict(),
@@ -72,8 +76,8 @@ export const createTicketCommentInput = {
 export const assignTicketInput = {
   bodySchema: z
     .object({
-      assignId: z.uuid("Invalid Assignment ID"),
-      targetType: z.enum(["AGENT", "QUEUE"]),
+      assignId: z.uuid('Invalid Assignment ID'),
+      targetType: z.enum(['AGENT', 'QUEUE']),
     })
     .strict(),
   ...validUuidParams,
@@ -86,7 +90,7 @@ export const escalateTicketInput = {
   bodySchema: z.object({
     reason: z.enum(escalationReasonValues),
     priority: z.enum(ticketPriority),
-    comment: z.string().min(1, "comment is required"),
+    comment: z.string().min(1, 'comment is required'),
     groupId: z.uuid().optional(),
   }),
   ...validUuidParams,
@@ -128,10 +132,11 @@ export const ticketDetailsSchema = z.object({
   id: z.uuid(),
   code: z.string(),
   subject: z.string(),
-  status: z.string(),
+  status: z.enum(ticketStatus), 
   description: z.string(),
-  priority: z.string(),
+  priority: z.enum(ticketPriority),
   category: z.string(),
+  version: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
   assignedToUser: z
@@ -213,11 +218,19 @@ export type ticketAction = (typeof ticketActions)[number];
 export type TicketSchemaResponse = z.infer<typeof ticketSchemaResponse>;
 export type CreateTicketInput = z.infer<typeof createTicketInput.bodySchema>;
 export type UpdateTicketInput = z.infer<typeof updateTicketInput.bodySchema>;
-export type UpdateTicketStatusInput = z.infer<typeof updateTicketStatusInput.bodySchema>;
-export type UpdateTicketPriorityInput = z.infer<typeof updateTicketPriorityInput.bodySchema>;
-export type CreateTicketCommentInput = z.infer<typeof createTicketCommentInput.bodySchema>;
+export type UpdateTicketStatusInput = z.infer<
+  typeof updateTicketStatusInput.bodySchema
+>;
+export type UpdateTicketPriorityInput = z.infer<
+  typeof updateTicketPriorityInput.bodySchema
+>;
+export type CreateTicketCommentInput = z.infer<
+  typeof createTicketCommentInput.bodySchema
+>;
 export type AssignTicketInput = z.infer<typeof assignTicketInput.bodySchema>;
-export type EscalateTicketInput = z.infer<typeof escalateTicketInput.bodySchema>;
+export type EscalateTicketInput = z.infer<
+  typeof escalateTicketInput.bodySchema
+>;
 export type TicketEscalationOptions = z.infer<typeof ticketEscalationOptions>;
 export type TicketSummary = z.infer<typeof ticketSummary>;
 export type TicketDetailsSchema = z.infer<typeof ticketDetailsSchema>;

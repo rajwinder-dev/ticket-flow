@@ -22,8 +22,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  TicketPriority,
   updateTicketInput,
-  type TicketSchemaResponse,
   type UpdateTicketInput,
 } from '@org/zod';
 import { useTicket } from '@org/core';
@@ -32,7 +32,14 @@ import { useParams } from 'react-router';
 import { toast } from 'sonner';
 
 interface props {
-  ticket: TicketSchemaResponse;
+  ticket: {
+    id: string;
+    code: string;
+    subject: string;
+    description?: string;
+    priority: TicketPriority;
+    category: string;
+  };
   open: boolean;
   setOpen: (value: boolean) => void;
 }

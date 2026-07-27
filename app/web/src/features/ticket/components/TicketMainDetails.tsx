@@ -6,9 +6,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTicket, formatDateTime } from '@org/core';
 import { useParams } from 'react-router';
+import { TicketStatusCell } from './TicketStatusCell';
+import { TicketPriorityCell } from './TicketPriorityCell';
 
 const TicketMainDetails = () => {
   const { orgId, ticketId } = useParams();
@@ -27,14 +29,12 @@ const TicketMainDetails = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {isLoadingTicketDetails ? (
-          // Multi-line layout description text skeleton blocks
           <div className="space-y-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-11/12" />
             <Skeleton className="h-4 w-4/5" />
           </div>
         ) : (
-          // Fixed structural nesting error (changed from paragraph tag to container div)
           <div className="text-sm leading-6">
             {ticketDetails?.data.description ? (
               <div
@@ -52,7 +52,9 @@ const TicketMainDetails = () => {
 
         <Separator />
 
-        <div className="grid gap-3 text-sm md:grid-cols-2">
+        <div className="grid gap-4 text-sm md:grid-cols-2">
+          {/* Status Field */}
+
           {/* Reported by Field */}
           <div>
             <p className="text-muted-foreground">Reported by</p>
@@ -102,6 +104,24 @@ const TicketMainDetails = () => {
                   ? formatDateTime(ticketDetails?.data.updatedAt)
                   : 'N/A'}
               </p>
+            )}
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1">Status</p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="h-9 w-full" />
+            ) : (
+              ticketDetails?.data && <TicketStatusCell ticket={ticketDetails?.data} />
+            )}
+          </div>
+
+          {/* Priority Field */}
+          <div>
+            <p className="text-muted-foreground mb-1">Priority</p>
+            {isLoadingTicketDetails ? (
+              <Skeleton className="h-9 w-full" />
+            ) : (
+              ticketDetails?.data && <TicketPriorityCell ticket={ticketDetails?.data} />
             )}
           </div>
         </div>

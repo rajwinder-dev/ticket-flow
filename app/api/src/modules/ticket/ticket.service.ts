@@ -240,6 +240,7 @@ export class TicketService {
         category: true,
         createdAt: true,
         updatedAt: true,
+        version: true,
         assignedToUser: {
           select: {
             email: true,

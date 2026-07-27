@@ -5,15 +5,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { type TicketSchemaResponse, type TicketStatus } from '@org/zod';
+import { type TicketStatus } from '@org/zod';
 import { useTicket } from '@org/core';
 import { allowedTransitions } from '@org/constants';
 import { useParams } from 'react-router';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 interface props {
-  ticket: TicketSchemaResponse;
+  ticket: {
+    id: string;
+    version: number;
+    status: TicketStatus;
+  };
+  size?: 'default' | 'sm';
+  className?: string;
 }
-export const TicketStatusCell = ({ ticket }: props) => {
+export const TicketStatusCell = ({
+  ticket,
+  size = 'default',
+  className,
+}: props) => {
   const { orgId } = useParams();
   const { updateTicketStatus, isUpdatingTicketStatus } = useTicket({ orgId });
   const nextStatus = allowedTransitions?.[ticket.status] || ['OPEN'];
@@ -38,7 +49,7 @@ export const TicketStatusCell = ({ ticket }: props) => {
       }
       disabled={isUpdatingTicketStatus}
     >
-      <SelectTrigger className="w-[130px]" size="sm">
+      <SelectTrigger className={cn('w-[130px]', className)} size={size}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,15 +7,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -23,27 +23,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
-import type { TicketSchemaResponse } from "@org/zod";
-import { useState } from "react";
-import TicketEditDialog from "./TicketEditDialog";
+} from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { useState } from 'react';
 
-import { Link, useParams } from "react-router-dom";
-import { useTicket ,formatDate} from "@org/core";
+import { Link, useParams } from 'react-router-dom';
+import { useTicket, formatDate, useTicketStore } from '@org/core';
 
-import { Pagination } from "@/components/Pagination";
-import { useDebounceValue } from "@/hooks/useDebounce";
-import { ticketPriority, ticketStatus } from "@org/constants";
-import { TicketEscalateDialog } from "./TicketEscalateDialog";
-import { TicketPriorityCell } from "./TicketPriorityCell";
-import { TicketStatusCell } from "./TicketStatusCell";
-import { useCustomParams } from "@/hooks/useCustomParams";
+import { Pagination } from '@/components/Pagination';
+import { useDebounceValue } from '@/hooks/useDebounce';
+import { ticketPriority, ticketStatus } from '@org/constants';
+import { TicketPriorityCell } from './TicketPriorityCell';
+import { TicketStatusCell } from './TicketStatusCell';
+import { useCustomParams } from '@/hooks/useCustomParams';
 
 const TicketTable = () => {
-  const {orgId} = useParams()
+  const { orgId } = useParams();
   const { getParams } = useCustomParams();
-  const { assignedTo } = getParams("assignedTo");
+  const { assignedTo } = getParams('assignedTo');
   const [pagination, setPagination] = useState({
     offset: 0,
     limit: 10,
@@ -58,38 +55,21 @@ const TicketTable = () => {
       offset: pagination.offset,
       limit: pagination.limit,
       filter: {
-        ...(status && status !== "ALL" && { status }),
-        ...(priority && priority !== "ALL" && { priority }),
+        ...(status && status !== 'ALL' && { status }),
+        ...(priority && priority !== 'ALL' && { priority }),
         ...(assignedTo ? { assignedTo } : {}),
       },
-      sorting: { sortby: "createdAt" , sortOrder: "desc" },
+      sorting: { sortby: 'createdAt', sortOrder: 'desc' },
       search: {
-        searchBy: "subject",
+        searchBy: 'subject',
         search: searchItem,
       },
     },
-    orgId
+    orgId,
   });
-
-  const [editTicketForm, setEditTicketForm] = useState(false);
-  const [escalateTicketForm, setEscalateTicketForm] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<TicketSchemaResponse | null>(null);
-
+  const { handleOpenTicketForm, handleOpenEscalateForm } = useTicketStore();
   function handlePagination(data: { offset: number; limit: number }) {
     setPagination({ offset: data.offset, limit: data.limit });
-  }
-  function handleOpenTicketForm(ticket: TicketSchemaResponse) {
-    setEditTicketForm(true);
-    setSelectedTicket(ticket);
-  }
-  function handleCloseTicketForm() {
-    setEditTicketForm(false);
-    setEscalateTicketForm(false);
-    setSelectedTicket(null);
-  }
-  function handleOpenEscalateForm(ticket: TicketSchemaResponse) {
-    setEscalateTicketForm(true);
-    setSelectedTicket(ticket);
   }
 
   return (
@@ -99,7 +79,8 @@ const TicketTable = () => {
         <div className="flex items-center justify-between p-4">
           <div>
             <h2 className="text-xl font-bold capitalize">
-              {assignedTo ? (assignedTo === "none" ? "unassigned" : "My") : ""} Tickets
+              {assignedTo ? (assignedTo === 'none' ? 'unassigned' : 'My') : ''}{' '}
+              Tickets
             </h2>
             <p className="text-muted-foreground text-sm">
               Search by ticket code, subject, or assignee.
@@ -119,7 +100,7 @@ const TicketTable = () => {
                 <SelectItem value="ALL">All statuses</SelectItem>
                 {ticketStatus.map((item) => (
                   <SelectItem key={item} value={item} className="capitalize">
-                    {item.split("_").join(" ").toLocaleLowerCase()}
+                    {item.split('_').join(' ').toLocaleLowerCase()}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -132,7 +113,7 @@ const TicketTable = () => {
                 <SelectItem value="ALL">All priorities</SelectItem>
                 {ticketPriority.map((item) => (
                   <SelectItem key={item} value={item} className="capitalize">
-                    {item.split("_").join(" ").toLocaleLowerCase()}
+                    {item.split('_').join(' ').toLocaleLowerCase()}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -193,14 +174,19 @@ const TicketTable = () => {
               ))
             ) : ticketData?.data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-muted-foreground py-8 text-center">
+                <TableCell
+                  colSpan={8}
+                  className="text-muted-foreground py-8 text-center"
+                >
                   No tickets found for current filters.
                 </TableCell>
               </TableRow>
             ) : (
               ticketData?.data.map((ticket) => (
                 <TableRow key={ticket.id}>
-                  <TableCell className="font-mono text-xs font-medium">{ticket.code}</TableCell>
+                  <TableCell className="font-mono text-xs font-medium">
+                    {ticket.code}
+                  </TableCell>
                   <TableCell className="max-w-80 truncate font-medium hover:underline">
                     <Link to={ticket.id}>
                       {ticket.subject}
@@ -215,15 +201,15 @@ const TicketTable = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <TicketStatusCell ticket={ticket} />
+                    <TicketStatusCell ticket={ticket} size='sm' />
                   </TableCell>
                   <TableCell>
                     <TicketPriorityCell ticket={ticket} />
                   </TableCell>
                   <TableCell>
-                    <p>{ticket.assignedToUser?.name || "Unassigned"}</p>
+                    <p>{ticket.assignedToUser?.name || 'Unassigned'}</p>
                     <p className="text-muted-foreground text-xs">
-                      {ticket.queue?.name || "No Queue"}
+                      {ticket.queue?.name || 'No Queue'}
                     </p>
                   </TableCell>
                   <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
@@ -236,10 +222,14 @@ const TicketTable = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuLabel>Ticket actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleOpenTicketForm(ticket)}>
+                        <DropdownMenuItem
+                          onClick={() => handleOpenTicketForm(ticket)}
+                        >
                           Edit ticket
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleOpenEscalateForm(ticket)}>
+                        <DropdownMenuItem
+                          onClick={() => handleOpenEscalateForm(ticket)}
+                        >
                           Escalate
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -255,21 +245,6 @@ const TicketTable = () => {
           </TableBody>
         </Table>
       </div>
-
-      {selectedTicket && (
-        <TicketEditDialog
-          open={editTicketForm}
-          setOpen={handleCloseTicketForm}
-          ticket={selectedTicket}
-        />
-      )}
-      {selectedTicket && (
-        <TicketEscalateDialog
-          open={escalateTicketForm}
-          setOpen={handleCloseTicketForm}
-          ticket={selectedTicket}
-        />
-      )}
       {ticketData && (
         <Pagination
           offset={ticketData?.offset}
