@@ -28,7 +28,13 @@ import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
 import { useState } from 'react';
 
 import { Link, useParams } from 'react-router-dom';
-import { useTicket, formatDate, useTicketStore } from '@org/core';
+import {
+  useTicket,
+  formatDate,
+  useTicketStore,
+  formatToDate,
+  formatToTime,
+} from '@org/core';
 
 import { Pagination } from '@/components/Pagination';
 import { useDebounceValue } from '@/hooks/useDebounce';
@@ -36,6 +42,7 @@ import { ticketPriority, ticketStatus } from '@org/constants';
 import { TicketPriorityCell } from './TicketPriorityCell';
 import { TicketStatusCell } from './TicketStatusCell';
 import { useCustomParams } from '@/hooks/useCustomParams';
+import { TicketCard } from './TicketCard';
 
 const TicketTable = () => {
   const { orgId } = useParams();
@@ -73,7 +80,7 @@ const TicketTable = () => {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div>
       {/* Headers & Filters */}
       <div className="h-full">
         <div className="flex items-center justify-between p-4">
@@ -86,7 +93,7 @@ const TicketTable = () => {
               Search by ticket code, subject, or assignee.
             </p>
           </div>
-          <div className="grid gap-2 md:w-auto md:grid-cols-3">
+          <div className="grid gap-2 lg:w-auto lg:grid-cols-3">
             <Input
               placeholder="Search tickets..."
               value={search}
@@ -122,7 +129,7 @@ const TicketTable = () => {
         </div>
 
         {/* Table */}
-        <Table>
+        <Table className="hidden lg:table w-full">
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead>Code</TableHead>
@@ -132,7 +139,7 @@ const TicketTable = () => {
               <TableHead>Priority</TableHead>
               <TableHead>Assigned To</TableHead>
               <TableHead>Updated</TableHead>
-              <TableHead className="w-12 text-right">Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -184,13 +191,14 @@ const TicketTable = () => {
             ) : (
               ticketData?.data.map((ticket) => (
                 <TableRow key={ticket.id}>
-                  <TableCell className="font-mono text-xs font-medium">
+                  <TableCell className="font-mono  text-xs font-medium">
                     {ticket.code}
                   </TableCell>
-                  <TableCell className="max-w-80 truncate font-medium hover:underline">
+                  <TableCell className="min-w-30 truncate font-medium hover:underline">
                     <Link to={ticket.id}>
-                      {ticket.subject}
-                      <p className="text-muted-foreground text-xs font-normal">
+                      <p className="text-wrap">{ticket.subject}</p>
+
+                      <p className="text-muted-foreground text-wrap  text-xs font-normal">
                         {ticket.description}
                       </p>
                     </Link>
@@ -201,10 +209,10 @@ const TicketTable = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <TicketStatusCell ticket={ticket} size='sm' />
+                    <TicketStatusCell ticket={ticket} size="sm" />
                   </TableCell>
                   <TableCell>
-                    <TicketPriorityCell ticket={ticket} />
+                    <TicketPriorityCell ticket={ticket} size="sm" />
                   </TableCell>
                   <TableCell>
                     <p>{ticket.assignedToUser?.name || 'Unassigned'}</p>
@@ -212,7 +220,10 @@ const TicketTable = () => {
                       {ticket.queue?.name || 'No Queue'}
                     </p>
                   </TableCell>
-                  <TableCell>{formatDate(ticket.updatedAt, true)}</TableCell>
+                  <TableCell className="flex flex-col">
+                    <span>{formatToDate(ticket.updatedAt)}</span>
+                    <span>{formatToTime(ticket.updatedAt)}</span>
+                  </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -220,7 +231,7 @@ const TicketTable = () => {
                           ...
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ticket actions</DropdownMenuLabel>
                         <DropdownMenuItem
                           onClick={() => handleOpenTicketForm(ticket)}
@@ -244,6 +255,18 @@ const TicketTable = () => {
             )}
           </TableBody>
         </Table>
+
+        {/* Mobile Table */}
+        <div className="flex flex-col p-4 lg:hidden gap-4">
+          {ticketData?.data.map((ticket) => (
+            <TicketCard
+              key={ticket.id}
+              ticket={ticket}
+              handleOpenTicketForm={handleOpenTicketForm}
+              handleOpenEscalateForm={handleOpenEscalateForm}
+            />
+          ))}
+        </div>
       </div>
       {ticketData && (
         <Pagination

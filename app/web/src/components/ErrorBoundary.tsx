@@ -35,7 +35,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-4">
+    <div className="flex min-h-dvh w-full items-center justify-center p-4">
       <Card className="w-full max-w-lg border-destructive/20">
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">

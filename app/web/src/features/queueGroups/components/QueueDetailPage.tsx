@@ -14,7 +14,7 @@ const QueueDetailPage = () => {
   });
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-dvh flex-col overflow-hidden">
       {/* ── Header ── */}
       <QueryBoundary error={queueDetailsError} description="details not allowed">
         <div className="bg-background flex shrink-0 items-start justify-between gap-4 border-b px-6 py-4">

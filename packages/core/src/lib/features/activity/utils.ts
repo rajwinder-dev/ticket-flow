@@ -2,7 +2,7 @@ export function formatDate(iso: string| Date, asString: true): string;
 export function formatDate(
   iso: string,
   asString?: false
-): { date: string; time: string };
+): { date: string; time: string, returnOnly: 'date' | 'time' };
 
 export function formatDate(iso: string| Date, asString?: boolean) {
   const d = new Date(iso);
@@ -21,4 +21,21 @@ export function formatDate(iso: string| Date, asString?: boolean) {
 
   if (asString) return `${date} at ${time}`;
   return { date, time };
+}
+
+export function formatToDate(iso: Date) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+export function formatToTime(iso: Date) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }

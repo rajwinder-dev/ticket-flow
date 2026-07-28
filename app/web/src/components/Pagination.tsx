@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 type PaginationProps = {
   offset: number;
@@ -7,7 +7,12 @@ type PaginationProps = {
   onChange: (params: { offset: number; limit: number }) => void;
 };
 
-export function Pagination({ offset, limit, total, onChange }: PaginationProps) {
+export function Pagination({
+  offset,
+  limit,
+  total,
+  onChange,
+}: PaginationProps) {
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit);
 
@@ -31,24 +36,36 @@ export function Pagination({ offset, limit, total, onChange }: PaginationProps) 
   };
 
   return (
-    <div className="bg-muted sticky bottom-0 flex items-center justify-between p-4">
-      <p className="text-muted-foreground text-sm">
-        Page {currentPage} of {totalPages} • {total} items
-      </p>
+    <>
+      <div className="bg-muted sticky w-full bottom-0 flex items-center justify-between p-4">
+        <p className="text-muted-foreground text-sm">
+          Page {currentPage} of {totalPages} • {total} items
+        </p>
 
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={handlePrev} disabled={!canGoPrev}>
-          Previous
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrev}
+            disabled={!canGoPrev}
+          >
+            Previous
+          </Button>
 
-        <span className="text-sm font-medium">
-          {currentPage} / {totalPages}
-        </span>
+          <span className="text-sm font-medium">
+            {currentPage} / {totalPages}
+          </span>
 
-        <Button variant="outline" size="sm" onClick={handleNext} disabled={!canGoNext}>
-          Next
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNext}
+            disabled={!canGoNext}
+          >
+            Next
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

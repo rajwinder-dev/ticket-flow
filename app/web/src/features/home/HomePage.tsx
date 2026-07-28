@@ -22,7 +22,7 @@ const DeveloperLandingPage = () => {
   const navigate = useNavigate();
   const { data: session } = authClient.useSession();
   return (
-    <div className="bg-background text-foreground min-h-screen font-sans antialiased">
+    <div className="bg-background text-foreground min-h-dvh font-sans antialiased overflow-y-auto h-dvh">
       {/* --- Navigation --- */}
       <nav className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">

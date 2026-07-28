@@ -12,7 +12,7 @@ export default function DashboardLayout() {
       {orgId && <AppSidebar />}
       <SidebarInset>
         <AppHeader />
-        <div className="flex max-h-[calc(100vh-4rem)] flex-1 flex-col overflow-auto">
+        <div className="flex max-h-[calc(100vh-4rem)] w-full flex-1 flex-col overflow-auto">
           <Outlet />
         </div>
       </SidebarInset>

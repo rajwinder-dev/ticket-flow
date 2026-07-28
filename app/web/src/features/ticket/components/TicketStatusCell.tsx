@@ -49,7 +49,7 @@ export const TicketStatusCell = ({
       }
       disabled={isUpdatingTicketStatus}
     >
-      <SelectTrigger className={cn('w-[130px]', className)} size={size}>
+      <SelectTrigger className={cn('w-full', className)} size={size}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

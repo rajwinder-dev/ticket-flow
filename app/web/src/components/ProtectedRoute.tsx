@@ -36,7 +36,7 @@ const ProtectedRoute = () => {
 
   if (isPending || session === undefined) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
+      <div className="flex h-dvh w-screen items-center justify-center">
         <Spinner className="size-8" />
       </div>
     );

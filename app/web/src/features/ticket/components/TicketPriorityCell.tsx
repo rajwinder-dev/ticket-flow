@@ -16,8 +16,9 @@ interface props {
     priority: TicketPriority;
     version: number;
   };
+    size: 'default' | 'sm';
 }
-export const TicketPriorityCell = ({ ticket }: props) => {
+export const TicketPriorityCell = ({ ticket, size = 'default' }: props) => {
   const { orgId, ticketId } = useParams();
   const { updateTicketPriority, isUpdatingTicketPriority } = useTicket({
     orgId,
@@ -45,7 +46,7 @@ export const TicketPriorityCell = ({ ticket }: props) => {
       }
       disabled={isUpdatingTicketPriority}
     >
-      <SelectTrigger className="w-[130px]" size="sm">
+      <SelectTrigger  className='w-full' size={size}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
