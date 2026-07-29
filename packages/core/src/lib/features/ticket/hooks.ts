@@ -36,7 +36,6 @@ export function useTicket({
 }: props) {
   const { updateCache, rollback } = useOptimisticUpdates();
   const queryClient = useQueryClient();
-
   const {
     data: ticketData,
     isLoading: isLoadingTicketData,
@@ -177,11 +176,23 @@ export function useTicket({
       },
       onError: (_error, _variables, context: any) => {
         rollback({
-          queryKey: ['ticket', 'details', { orgId, ticketId: context.previousData.id}],
+          queryKey: [
+            'ticket',
+            'details',
+            { orgId, ticketId: context.previousData.id },
+          ],
           previousData: context.previousData,
         });
       },
       onMutate: async (data) => {
+        console.log(filterOptions);
+        if (filterOptions)
+          await updateCache({
+            queryKey: ['ticket', { orgId }, filterOptions],
+            updater: (old: any) => {
+              console.log(old);
+            },
+          });
         return await updateCache<ApiResponse<TicketSchemaResponse>>({
           queryKey: ['ticket', 'details', { orgId, ticketId: data.id }],
           updater: (old: any) => {
@@ -218,7 +229,11 @@ export function useTicket({
     }) => ticketApi.comment(ticketId, data),
     onError: (_error, _variables, context: any) => {
       rollback({
-        queryKey: ['ticket', 'comment', { orgId, ticketId: context?.previousData?.id }],
+        queryKey: [
+          'ticket',
+          'comment',
+          { orgId, ticketId: context?.previousData?.id },
+        ],
         previousData: context?.previousData,
       });
     },
