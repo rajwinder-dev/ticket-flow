@@ -38,7 +38,7 @@ async function setup() {
 
     // Existing tables
     await prisma.$executeRawUnsafe(`
-      GRANT SELECT, INSERT, UPDATE, DELETE
+      GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE
       ON ALL TABLES IN SCHEMA public
       TO ${DEV_USER};
     `);

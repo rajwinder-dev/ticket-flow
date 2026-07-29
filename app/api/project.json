@@ -12,8 +12,8 @@
       "continuous": true,
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx watch src/main.ts",
-        "cwd": "app/api"
+        "cwd": "app/api",
+        "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --clear-screen=false src/main.ts"
       }
     }
   }

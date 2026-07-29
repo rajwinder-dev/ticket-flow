@@ -1,5 +1,5 @@
-import { log } from "@org/utils";
-import { prisma } from "../prismaClient.js";
+import { log } from '@org/utils';
+import { prisma } from '@org/database';
 
 export async function seedAgents() {
   log.info(`seeding agents to unique queues.`);
@@ -11,7 +11,7 @@ export async function seedAgents() {
         some: {
           role: {
             name: {
-              not: "OWNER",
+              not: 'OWNER',
             },
           },
         },
@@ -32,7 +32,11 @@ export async function seedAgents() {
     },
   });
 
-  const queueAgentData: { organizationId: string; queueId: string; agentId: string }[] = [];
+  const queueAgentData: {
+    organizationId: string;
+    queueId: string;
+    agentId: string;
+  }[] = [];
 
   for (const org of organizations) {
     const agentIds = org.membership.map((m) => m.userId);
@@ -56,7 +60,9 @@ export async function seedAgents() {
         data: queueAgentData,
         skipDuplicates: true,
       });
-      log.success(`Successfully assigned ${result.count} agents to unique queues.`);
+      log.success(
+        `Successfully assigned ${result.count} agents to unique queues.`,
+      );
     } catch (error) {
       console.error(
         "Batch insert failed. Check if 'agentId' should be the User ID or Membership ID.",

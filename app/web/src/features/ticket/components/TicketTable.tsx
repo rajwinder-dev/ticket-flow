@@ -198,7 +198,7 @@ const TicketTable = () => {
                       <p className="text-wrap">{ticket.subject}</p>
 
                       <p className="text-muted-foreground text-wrap  text-xs font-normal">
-                        {ticket.description}
+                        {ticket.description?.slice(0, 70) + '...'}
                       </p>
                     </Link>
                   </TableCell>

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import {log} from  "@org/utils"
-import { prisma } from "../prismaClient.js";
+import { prisma } from "@org/database";
 
 export async function seedCustomers(maxCustomersPerOrganization: number = 25) {
   const organizations = await prisma.organization.findMany({

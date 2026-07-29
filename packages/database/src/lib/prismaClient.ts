@@ -3,7 +3,6 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/client.js';
 import { log } from '@org/utils';
-
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) log.error('connectionString is undefined');
 
@@ -27,7 +26,6 @@ type TenantClient = ReturnType<typeof createTenantClient>;
 const clientCache = new Map<string, TenantClient>();
 
 function createTenantClient(organizationId: string) {
-  log.data('', organizationId);
   return prisma.$extends({
     query: {
       $allModels: {

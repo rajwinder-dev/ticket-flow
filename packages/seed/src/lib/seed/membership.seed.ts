@@ -1,7 +1,6 @@
-import {log} from  "@org/utils"
-import { prisma } from "../prismaClient.js";
-import { User } from "../../generated/client.js";
-
+import { log } from '@org/utils';
+import { prisma } from '@org/database';
+import { User } from '@org/database';
 
 export async function seedMembers(users: User[]) {
   log.info(`creating membership of ${users.length} users`);
@@ -21,8 +20,10 @@ export async function seedMembers(users: User[]) {
       .slice(0, memberCount); // Take random subset
 
     for (const member of members) {
+      const orgRoles = org.role.filter((role) => role.name !== 'OWNER');
       try {
-        const randomRole = org.role[Math.floor(Math.random() * org.role.length)];
+        const randomRole =
+          orgRoles[Math.floor(Math.random() * orgRoles.length)];
         await prisma.membership.create({
           data: {
             userId: member.id,
@@ -31,11 +32,14 @@ export async function seedMembers(users: User[]) {
           },
         });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred';
 
         console.error(`Error adding ${member.email} to org:`, message);
       }
     }
   }
-  log.success("org members seeded successfully");
+  log.success('org members seeded successfully');
 }

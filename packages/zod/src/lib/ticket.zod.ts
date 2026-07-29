@@ -12,7 +12,6 @@ import {
   validString,
 } from './helper/zodHelper.js';
 import { validUuidParams } from './global.zod.js';
-
 // zod schemas
 export const createTicketInput = {
   bodySchema: z
@@ -71,7 +70,7 @@ export const createTicketCommentInput = {
     .strict(),
   ...validUuidParams,
 };
-      // Using trim and min(1) to prevent empty comments
+// Using trim and min(1) to prevent empty comments
 
 export const assignTicketInput = {
   bodySchema: z

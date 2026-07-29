@@ -1,12 +1,10 @@
 import { permissions } from "@org/constants";
-import { OrganizationSchemaResponse } from "@org/zod";
 import { log } from "@org/utils";
-import { prisma } from "../prismaClient.js";
-import { Organization, User } from "../../generated/client.js";
+import { Organization, User, prisma } from "@org/database";
 
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
   log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
-  const orgData: OrganizationSchemaResponse[] = [];
+  const orgData  = [];
   for (const owner of owners) {
     const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
 

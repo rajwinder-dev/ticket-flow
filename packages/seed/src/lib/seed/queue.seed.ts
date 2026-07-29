@@ -1,9 +1,13 @@
-import { log } from "@org/utils";
-import { prisma } from "../prismaClient.js";
-import { Organization, QueueGroup } from "../../generated/client.js";
+import { log } from '@org/utils';
+import { Organization, QueueGroup, prisma } from '@org/database';
 
-export async function seedQueueGroups(maxQueueGroups: number, maxQueueCount: number) {
-  log.info(`seeding max ${maxQueueGroups} groups and max ${maxQueueCount} queues`);
+export async function seedQueueGroups(
+  maxQueueGroups: number,
+  maxQueueCount: number,
+) {
+  log.info(
+    `seeding max ${maxQueueGroups} groups and max ${maxQueueCount} queues`,
+  );
 
   const organizations = await prisma.organization.findMany({
     include: { user: true },
@@ -21,9 +25,13 @@ export async function seedQueueGroups(maxQueueGroups: number, maxQueueCount: num
       await createQueue(queueGroup, org, maxQueueCount);
     }
   }
-  log.success("queue groups and queues seeded successfully");
+  log.success('queue groups and queues seeded successfully');
 }
-async function createQueue(queueGroup: QueueGroup, org: Organization, maxQueueCount: number) {
+async function createQueue(
+  queueGroup: QueueGroup,
+  org: Organization,
+  maxQueueCount: number,
+) {
   const count = maxQueueCount - 1;
   const queueCount = Math.floor(Math.random() * count) + count;
   for (let j = 0; j < queueCount; j++) {
