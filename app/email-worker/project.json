@@ -12,7 +12,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "app/email-worker",
-        "command": "tsx watch src/main.ts"
+        "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --clear-screen=false src/main.ts"
       },
       "dependsOn": ["^build"]
     }
