@@ -65,12 +65,13 @@ export const updateTicketPriorityInput = {
 export const createTicketCommentInput = {
   bodySchema: z
     .object({
-      // Using trim and min(1) to prevent empty comments
+      id: z.uuid(),
       comment: z.string().trim().min(1, 'Comment cannot be empty'),
     })
     .strict(),
   ...validUuidParams,
 };
+      // Using trim and min(1) to prevent empty comments
 
 export const assignTicketInput = {
   bodySchema: z
@@ -131,7 +132,7 @@ export const ticketDetailsSchema = z.object({
   id: z.uuid(),
   code: z.string(),
   subject: z.string(),
-  status: z.enum(ticketStatus), 
+  status: z.enum(ticketStatus),
   description: z.string(),
   priority: z.enum(ticketPriority),
   category: z.string(),
@@ -140,7 +141,7 @@ export const ticketDetailsSchema = z.object({
   updatedAt: z.date(),
   assignedToUser: z
     .object({
-      email: z.string().email(),
+      email: z.email(),
       name: z.string(),
     })
     .nullable(),

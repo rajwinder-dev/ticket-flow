@@ -16,6 +16,7 @@ import { catchAsync } from '../../core/utils/catchAsync.js';
 import { getTenantClient } from '@org/database';
 import response from '../../core/utils/response.js';
 import { TicketService } from './ticket.service.js';
+import { log } from '@org/utils';
 
 export class TicketController {
   static createTicket = catchAsync(async (req, res, _next) => {
@@ -196,21 +197,23 @@ export class TicketController {
   });
   static addComment = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
-    const { comment } = req.body as CreateTicketCommentInput;
+    const { comment, id: uuid } = req.body as CreateTicketCommentInput;
+    log.data('comment', { comment, id: uuid });
     const data = await TicketService.createTicketComment({
       organizationId: req.organization.id,
       ticketId: id,
       userId: req.user.id,
       comment,
+      id: uuid,
       isInternal: true,
     });
     response(res, data, 200);
   });
   static getTicketComments = catchAsync(async (req, res, _next) => {
-    const ticketId = req.params.id as string;
+    const id = req.params.id as string;
     const { comments, pagination } = await TicketService.getTicketComments({
       organizationId: req.organization.id,
-      ticketId,
+      ticketId: id,
       queryString: req.query,
     });
     response(res, comments, 200, {

@@ -86,6 +86,7 @@ export const ticketApi = {
     return res;
   },
   getComments: async (ticketId: string) => {
+
     const res = await api.getMany<CommentSchemaResponse>({
       path: `/ticket/${ticketId}/comment`,
     });

@@ -9,6 +9,6 @@
     "types": ["node"],
     "lib": ["DOM"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../core/src/lib/optimisticQuery.utils.ts"],
   "references": []
 }

@@ -177,7 +177,7 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
           </div>
 
           <DialogFooter>
-            <DialogClose>
+            <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={isUpdatingTicket}>

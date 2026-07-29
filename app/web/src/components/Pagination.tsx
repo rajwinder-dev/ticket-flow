@@ -34,7 +34,7 @@ export function Pagination({
       limit,
     });
   };
-
+  if (total < limit) return null;
   return (
     <>
       <div className="bg-muted sticky w-full bottom-0 flex items-center justify-between p-4">

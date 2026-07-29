@@ -211,7 +211,7 @@ export class TicketService {
           ticketId: updatedTicket.id,
         },
       });
-    SocketService.invlidOrganizationQuery({organizationId,  keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return updatedTicket;
   };
   static getTicketDetails = async ({
@@ -446,7 +446,7 @@ export class TicketService {
           expiresAt: new Date(),
         },
       });
-    SocketService.invlidOrganizationQuery({organizationId, keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return ticket;
   };
   static updatePriority = async ({
@@ -532,7 +532,7 @@ export class TicketService {
         },
       });
 
-    SocketService.invlidOrganizationQuery({organizationId, keys: ['ticket'] });
+    SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
     return ticket;
   };
   static createTicketComment = async ({
@@ -540,9 +540,11 @@ export class TicketService {
     ticketId,
     userId,
     comment,
+    id,
     isInternal,
   }: {
     ticketId: string;
+    id?: string;
     userId: string;
     comment: string;
     isInternal?: boolean;
@@ -551,6 +553,7 @@ export class TicketService {
     const tenantDb = getTenantClient(organizationId);
     const data = await tenantDb.ticketComment.create({
       data: {
+        id,
         authorId: userId,
         ticketId,
         comment,

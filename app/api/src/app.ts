@@ -50,7 +50,7 @@ app.use(helmet());
 app.use(hpp());
 
 configLogger(app);
-app.use((req, res, next) => {
+if(!devMode) app.use((req, res, next) => {
   log.data('IP', {
     ip: req.ip,
     ips: req.ips,

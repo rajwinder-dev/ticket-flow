@@ -5,23 +5,30 @@ import { Textarea } from '@/components/ui/textarea';
 import { useTicket } from '@org/core';
 import { CreateTicketCommentInput } from '@org/zod';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
 interface Props {
   ticketId: string;
 }
 const TicketCommentForm = ({ ticketId }: Props) => {
+  const { data } = authClient.useSession();
   const { orgId } = useParams();
-  const { commentTicket, isCreateingComment } = useTicket({ orgId, ticketId });
+  const { commentTicket, isCreateingComment } = useTicket({
+    orgId,
+    ticketId,
+    user: { name: data?.user.name, email: data?.user.email },
+  });
   const {
     register,
     handleSubmit,
     reset,
     watch,
-    formState: { errors,  },
+    formState: { errors },
   } = useForm<CreateTicketCommentInput>({});
- const hasComment = watch("comment");
+  const hasComment = watch('comment');
   const onSubmit = (data: CreateTicketCommentInput) => {
+    const input = { ...data, id: crypto.randomUUID() };
     commentTicket(
-      { ticketId, data },
+      { ticketId, data: input },
       {
         onSuccess: () => {
           toast.success('comment added successfully');
@@ -52,7 +59,7 @@ const TicketCommentForm = ({ ticketId }: Props) => {
         <Button
           type="submit"
           size="sm"
-          disabled={isCreateingComment || !hasComment?.trim().length }
+          disabled={isCreateingComment || !hasComment?.trim().length}
         >
           Add Comment
         </Button>

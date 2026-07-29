@@ -43,7 +43,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
       const onEvent = (payload: any) => {
         switch (payload.type) {
-          case 'invalidate':
+          case 'invalidatex':
             payload.keys.forEach((key: string[] | string) => {
               if (typeof key === 'string') {
                 queryClient.invalidateQueries({ queryKey: [key] });
