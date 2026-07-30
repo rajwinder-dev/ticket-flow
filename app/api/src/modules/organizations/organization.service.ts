@@ -6,64 +6,75 @@ import { appError } from '../../core/utils/appError.js';
 import { readableId } from '../../core/utils/utils.js';
 import { ActivityService } from '../activity/activity.service.js';
 import { TokenService } from '../token/token.service.js';
-import { prisma } from '@org/database';
+import { getTenantClient, prisma } from '@org/database';
 import { NotificationService } from '../notification/notification.service.js';
 
 export class OrganizationService {
   static create = async (userId: string, input: CreateOrganizationInput) => {
-    return await prisma.$transaction(async (tx) => {
-      const organization = await tx.organization.create({
-        data: {
-          createdBy: userId,
-          ...input,
-          code: readableId('ORG'),
-        },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          type: true,
-        },
-      });
-      //  create role for member too
-      const role = await tx.role.create({
-        data: {
-          name: 'OWNER',
-          code: readableId('ROL'),
-          organizationId: organization.id,
-          permissions: permissions,
-          createdBy: userId,
-          isSystem: true,
-        },
-      });
-      // create membership
-      const membership = await tx.membership.create({
-        data: {
-          organizationId: role.organizationId,
-          userId,
-          roleId: role.id,
-          isSystem: true,
-        },
-      });
-      await ActivityService.lagActivity({
-        organizationId: organization.id,
-        actorId: userId,
-        actorType: 'USER',
-        message: 'User created new organization ',
-        event: 'organization.create',
-        entityId: organization.id,
-        entityType: 'ORGANIZATION',
-      });
-      return { organization, membership };
+    const organization = await prisma.organization.create({
+      data: {
+        createdBy: userId,
+        ...input,
+        code: readableId('ORG'),
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        type: true,
+      },
     });
+    const tenentDb = getTenantClient(organization.id);
+    let data;
+    try {
+      data = await tenentDb.$transaction(async (tx) => {
+        const role = await tx.role.create({
+          data: {
+            name: 'OWNER',
+            code: readableId('ROL'),
+            organizationId: organization.id,
+            permissions: permissions,
+            createdBy: userId,
+            isSystem: true,
+          },
+        });
+        // create membership
+        const membership = await tx.membership.create({
+          data: {
+            organizationId: role.organizationId,
+            userId,
+            roleId: role.id,
+            isSystem: true,
+          },
+        });
+        await ActivityService.lagActivity({
+          organizationId: organization.id,
+          actorId: userId,
+          actorType: 'USER',
+          message: 'User created new organization ',
+          event: 'organization.create',
+          entityId: organization.id,
+          entityType: 'ORGANIZATION',
+        });
+        return { organization, membership };
+      });
+    } catch (error) {
+      await prisma.organization.delete({
+        where: {
+          id: organization.id,
+        },
+      });
+      throw error;
+    }
+    return data;
   };
   static inviteMember = async (
     userId: string,
     input: { organizationId: string; roleId: string; email: string },
   ) => {
     const { organizationId, email, roleId } = input;
-
-    const user = await prisma.membership.findUnique({
+    const tenentDb = getTenantClient(organizationId);
+    const user = await tenentDb.membership.findUnique({
       where: {
         organizationId_userId: {
           userId,
@@ -124,7 +135,8 @@ export class OrganizationService {
         403,
         'FORBIDDEN',
       );
-    const data = await prisma.membership.create({
+    const tenentDb = getTenantClient(verifyToken.organizationId);
+    const data = await tenentDb.membership.create({
       data: {
         userId,
         organizationId: verifyToken.organizationId,
@@ -153,7 +165,7 @@ export class OrganizationService {
         roleId: data.roleId,
       },
     });
-    const orgOwner = await prisma.membership.findFirst({
+    const orgOwner = await tenentDb.membership.findFirst({
       where: {
         organizationId: data.organizationId,
         role: {
@@ -178,12 +190,13 @@ export class OrganizationService {
     return { organizationId: data.organizationId };
   };
   static onboardingStatus = async (organizationId: string) => {
+    const tenantDb = getTenantClient(organizationId);
     const [roles, groups, queues, invites, providers] = await Promise.all([
-      prisma.role.count({ where: { organizationId, isSystem: false } }),
-      prisma.queueGroup.count({ where: { organizationId } }),
-      prisma.queue.count({ where: { organizationId } }),
-      prisma.token.count({ where: { type: 'INVITE_USER', organizationId } }),
-      prisma.emailProvider.count({ where: { organizationId } }),
+      tenantDb.role.count({ where: { isSystem: false } }),
+      tenantDb.queueGroup.count(),
+      tenantDb.queue.count(),
+      tenantDb.token.count({ where: { type: 'INVITE_USER' } }),
+      tenantDb.emailProvider.count(),
     ]);
     return {
       hasRoles: roles > 0,

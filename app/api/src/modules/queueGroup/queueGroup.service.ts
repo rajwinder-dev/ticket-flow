@@ -3,7 +3,7 @@ import { ParsedQs } from "qs";
 import { APIFeatures } from "../../core/utils/apiFeatures.js";
 import { appError } from "../../core/utils/appError.js";
 import { ActivityService } from "../activity/activity.service.js";
-import { prisma } from "@org/database";
+import { getTenantClient } from "@org/database";
 
 export class QueueGroupService {
   static createQueueGroup = async ({
@@ -15,13 +15,14 @@ export class QueueGroupService {
     organizationId: string;
     input: CreateQueueGroupInput;
   }) => {
-    const existingDefaultGroup = await prisma.queueGroup.findFirst({
+    const tenentDb = getTenantClient(organizationId);
+    const existingDefaultGroup = await tenentDb.queueGroup.findFirst({
       where: {
         organizationId,
         default: true,
       },
     });
-    const queueGroup = await prisma.queueGroup.create({
+    const queueGroup = await tenentDb.queueGroup.create({
       data: {
         organizationId,
         createdBy: userId,
@@ -43,7 +44,8 @@ export class QueueGroupService {
   };
   static getAllQueueGroups = async (organizationId: string, queryString: ParsedQs) => {
     const { filterOptions, limit, offset } = new APIFeatures(queryString).pagination();
-    const queueGroups = await prisma.queueGroup.findMany({
+    const tenentDb = getTenantClient(organizationId);
+    const queueGroups = await tenentDb.queueGroup.findMany({
       where: {
         organizationId,
         active: true,
@@ -77,7 +79,7 @@ export class QueueGroupService {
       skip: offset,
       take: limit,
     });
-    const total = await prisma.queueGroup.count({
+    const total = await tenentDb.queueGroup.count({
       where: {
         organizationId,
         active: true,
@@ -109,7 +111,8 @@ export class QueueGroupService {
     input: CreateQueueGroupInput;
     userId: string;
   }) => {
-    const queueGroup = await prisma.queueGroup.update({
+    const tenantDb = getTenantClient(organizationId);
+    const queueGroup = await tenantDb.queueGroup.update({
       where: {
         id: groupId,
         organizationId,
@@ -141,7 +144,8 @@ export class QueueGroupService {
     organizationId: string;
     userId: string;
   }) => {
-    const queuesInGroup = await prisma.queue.count({
+    const tenantDb = getTenantClient(organizationId);
+    const queuesInGroup = await tenantDb.queue.count({
       where: {
         queueGroupId: groupId,
         organizationId,
@@ -151,7 +155,7 @@ export class QueueGroupService {
     if (queuesInGroup > 0) {
       throw new appError("Cannot delete queue group with active queues", 400, "CONFLICT_ERROR");
     }
-    await prisma.queueGroup.update({
+    await tenantDb.queueGroup.update({
       where: {
         id: groupId,
         organizationId,
@@ -181,7 +185,8 @@ export class QueueGroupService {
     organizationId: string;
     userId: string;
   }) => {
-    const currentState = await prisma.queueGroup.findFirst({
+    const tenantdb = getTenantClient(organizationId);
+    const currentState = await tenantdb.queueGroup.findFirst({
       where: {
         organizationId,
         id: groupId,
@@ -190,7 +195,7 @@ export class QueueGroupService {
         default: true,
       },
     });
-    await prisma.queueGroup.updateMany({
+    await tenantdb.queueGroup.updateMany({
       where: {
         organizationId,
       },
@@ -199,7 +204,7 @@ export class QueueGroupService {
       },
     });
 
-    const queueGroup = await prisma.queueGroup.update({
+    const queueGroup = await tenantdb.queueGroup.update({
       where: {
         id: groupId,
         organizationId,
@@ -225,7 +230,8 @@ export class QueueGroupService {
     return queueGroup;
   };
   static getDefaultGroup = async (organizationId: string) => {
-    const defaultGroup = await prisma.queueGroup.findFirst({
+    const tenantdb = getTenantClient(organizationId);
+    const defaultGroup = await tenantdb.queueGroup.findFirst({
       where: {
         organizationId,
         default: true,

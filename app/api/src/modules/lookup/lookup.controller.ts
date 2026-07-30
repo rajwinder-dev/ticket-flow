@@ -1,39 +1,42 @@
-import { lookupSchema } from "@org/zod";
-import z from "zod";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import response from "../../core/utils/response.js";
-import { prisma } from "@org/database";
+import { lookupSchema } from '@org/zod';
+import z from 'zod';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { getTenantClient } from '@org/database';
 
 class LookupControllerClass {
-   getGroups = catchAsync(async (req, res, _next) => {
-    const data = await prisma.queueGroup.findMany({
-      where: { organizationId: req.organization.id },
+  getGroups = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.queueGroup.findMany({
       select: { id: true, name: true },
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
   });
-   getQueues = catchAsync(async (req, res, _next) => {
+  getQueues = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
     const groupId = req.params.groupId as string;
-    const data = await prisma.queue.findMany({
-      where: { organizationId: req.organization.id, queueGroupId: groupId },
+    const data = await tenantdb.queue.findMany({
+      where: { queueGroupId: groupId },
       select: { id: true, name: true },
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
   });
-   getAgents = catchAsync(async (req, res, _next) => {
+  getAgents = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
     const queueId = req.params.queueId as string;
-    const data = await prisma.queueAgent.findMany({
-      where: { organizationId: req.organization.id, queueId },
-      select: { id: true, user: { select: { id: true, username: true } } },
+    const data = await tenantdb.queueAgent.findMany({
+      where: { queueId },
+      select: { id: true, user: { select: { id: true, name: true } } },
     });
-    const output = data.map((item) => ({ id: item.user?.id, name: item.user?.username }));
+    const output = data.map((item) => ({
+      id: item.user?.id,
+      name: item.user?.name,
+    }));
     response(res, output, 200, { schema: z.array(lookupSchema) });
   });
-   getRoles = catchAsync(async (req, res, _next) => {
-    const data = await prisma.role.findMany({
-      where: {
-        organizationId: req.organization.id,
-      },
+  getRoles = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.role.findMany({
       select: {
         id: true,
         name: true,
@@ -44,4 +47,4 @@ class LookupControllerClass {
   });
 }
 
-export const LookupController =  new LookupControllerClass();
+export const LookupController = new LookupControllerClass();

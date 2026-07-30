@@ -1,6 +1,6 @@
-import { prisma } from "@org/database";
-import { ActivityService } from "../activity/activity.service.js";
-import { CreateCustomerInput } from "@org/zod";
+import { getTenantClient, prisma } from '@org/database';
+import { ActivityService } from '../activity/activity.service.js';
+import { CreateCustomerInput } from '@org/zod';
 
 export class CustomerService {
   static createCustomerIdentity = async (
@@ -8,7 +8,7 @@ export class CustomerService {
     organizationId: string,
     displayName?: string,
   ) => {
-    const customerName = displayName || email.split("@")[0];
+    const customerName = displayName || email.split('@')[0];
     const customerData = await prisma.customer.upsert({
       where: {
         organizationId_identityId: {
@@ -25,18 +25,20 @@ export class CustomerService {
       update: {}, // Update name or metadata if needed
       create: {
         organizationId,
-        identityId: (await prisma.customerIdentity.findUnique({ where: { email } }))!.id,
+        identityId: (await prisma.customerIdentity.findUnique({
+          where: { email },
+        }))!.id,
         name: customerName,
       },
     });
     if (customerData.createdAt === customerData.updatedAt) {
       await ActivityService.lagActivity({
         organizationId,
-        actorType: "SYSTEM",
-        message: "new customer is created ",
-        event: "customer.create",
+        actorType: 'SYSTEM',
+        message: 'new customer is created ',
+        event: 'customer.create',
         entityId: customerData.id,
-        entityType: "ORGANIZATION",
+        entityType: 'ORGANIZATION',
       });
     }
     return customerData;
@@ -48,8 +50,9 @@ export class CustomerService {
     data: CreateCustomerInput;
     organizationId: string;
   }) => {
+    const tenantDb = getTenantClient(organizationId);
     const { email, name, phone, avatarUrl } = data;
-    const customerIdentity = await prisma.customerIdentity.findUnique({
+    const customerIdentity = await tenantDb.customerIdentity.findUnique({
       where: { email },
       include: {
         customer: true,
@@ -58,7 +61,7 @@ export class CustomerService {
 
     if (customerIdentity) {
       // Email already exists
-      return await prisma.customer.create({
+      return await tenantDb.customer.create({
         data: {
           name,
           phone,
@@ -85,8 +88,15 @@ export class CustomerService {
       },
     });
   };
-  static getCustomerByEmail = async (email: string) => {
-    const data = await prisma.customerIdentity.findUnique({
+  static getCustomerByEmail = async ({
+    email,
+    organizationId,
+  }: {
+    email: string;
+    organizationId: string;
+  }) => {
+    const tenantDb = getTenantClient(organizationId);
+    const data = await tenantDb.customerIdentity.findUnique({
       where: {
         email,
       },

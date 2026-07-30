@@ -20,6 +20,7 @@ export const prisma = new PrismaClient({
 });
 prisma.$on('error', (e) => {
   log.error(e.target);
+  log.error(e.message);
 });
 
 type TenantClient = ReturnType<typeof createTenantClient>;

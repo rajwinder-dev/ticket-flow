@@ -5,27 +5,33 @@ import {
   memberSchemaResponse,
   organizationSchemaResponse,
   UpdateOrganizationInput,
-} from "@org/zod";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { appError } from "../../core/utils/appError.js";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import HandleFactory from "../../core/utils/handlerFactory.js";
-import response from "../../core/utils/response.js";
-import { TokenService } from "../token/token.service.js";
-import { OrganizationService } from "./organization.service.js";
-import { prisma, Prisma } from "@org/database";
-import { EmailService } from "../email/email.service.js";
+} from '@org/zod';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { appError } from '../../core/utils/appError.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import HandleFactory from '../../core/utils/handlerFactory.js';
+import response from '../../core/utils/response.js';
+import { TokenService } from '../token/token.service.js';
+import { OrganizationService } from './organization.service.js';
+import { getTenantClient, prisma, Prisma } from '@org/database';
+import { EmailService } from '../email/email.service.js';
 export class OrganizationController {
-  private static handler = new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
-    prisma.organization,
-  );
+  private static handler =
+    new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
+      prisma.organization,
+    );
   static createOrganization = catchAsync(async (req, res) => {
     const input = req.body as CreateOrganizationInput;
-    const { organization } = await OrganizationService.create(req.user.id, input);
+    const { organization } = await OrganizationService.create(
+      req.user.id,
+      input,
+    );
     response(res, organization, 201, { schema: createOrganizationResponse });
   });
   static getMyOrganizations = catchAsync(async (req, res) => {
-    const { filterOptions, limit, offset } = new APIFeatures(req.query).pagination();
+    const { filterOptions, limit, offset } = new APIFeatures(
+      req.query,
+    ).pagination();
     const total = await prisma.membership.count({
       where: {
         userId: req.user.id,
@@ -68,7 +74,7 @@ export class OrganizationController {
         id: req.organization.id,
       },
     });
-    if (!data) throw new appError("Organization not found ", 404);
+    if (!data) throw new appError('Organization not found ', 404);
     response(res, data, 200, { schema: organizationSchemaResponse });
   });
   static updateOrganization = catchAsync(async (req, res) => {
@@ -84,7 +90,7 @@ export class OrganizationController {
   static sendInvite = catchAsync(async (req, res, _next) => {
     const { email, roleId } = req.body as InviteUserOrganizationInput;
     if (email === req.user.email)
-      throw new appError("self invite is not applicable", 403, "FORBIDDEN");
+      throw new appError('self invite is not applicable', 403, 'FORBIDDEN');
     const { url } = await OrganizationService.inviteMember(req.user.id, {
       organizationId: req.organization.id,
       email,
@@ -92,8 +98,8 @@ export class OrganizationController {
     });
     await EmailService.queueEmail({
       to: email,
-      subject: "Invite Email to our organizations",
-      template: "invite",
+      subject: 'Invite Email to our organizations',
+      template: 'invite',
       data: {
         invitedByUsername: req.user.username,
         organization: req.organization.name,
@@ -101,20 +107,28 @@ export class OrganizationController {
       },
       isSystemEmail: false,
     });
-    response(res, { message: "Invite Sent successfully" });
+    response(res, { message: 'Invite Sent successfully' });
   });
   static acceptInvite = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
-    const verifyToken = await OrganizationService.acceptInvite(req.user.id, req.user.email, token);
+    const verifyToken = await OrganizationService.acceptInvite(
+      req.user.id,
+      req.user.email,
+      token,
+    );
     response(res, verifyToken, 200, {
-      otherFields: { message: "Joined Organization successfully" },
+      otherFields: { message: 'Joined Organization successfully' },
     });
   });
   static InviteDetails = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
     const verifyToken = await TokenService.verifyToken(token);
     if (!verifyToken?.organizationId || !verifyToken?.roleId)
-      throw new appError("Invite Link is Invalid or Expire", 400, "INVALID_TOKEN");
+      throw new appError(
+        'Invite Link is Invalid or Expire',
+        400,
+        'INVALID_TOKEN',
+      );
     const inviteData = await prisma.token.findFirst({
       where: {
         token,
@@ -148,8 +162,11 @@ export class OrganizationController {
     response(res, data, 200);
   });
   static getMembers = catchAsync(async (req, res, _next) => {
-    const { filterOptions, limit, offset } = new APIFeatures(req.query).filter().pagination();
-    const membership = await prisma.membership.findMany({
+    const { filterOptions, limit, offset } = new APIFeatures(req.query)
+      .filter()
+      .pagination();
+    const tenantdb = getTenantClient(req.organization.id);
+    const membership = await tenantdb.membership.findMany({
       where: {
         organizationId: req.organization.id,
         isSystem: false,
@@ -168,7 +185,7 @@ export class OrganizationController {
         user: {
           select: {
             email: true,
-            username: true,
+            name: true,
             avatar: true,
 
             queueAgents: {
@@ -192,12 +209,15 @@ export class OrganizationController {
     const data = membership.map((item) => {
       const user = item.user;
 
-      const totalTickets = user?.queueAgents.reduce((sum, qa) => sum + qa.ticketCount, 0);
+      const totalTickets = user?.queueAgents.reduce(
+        (sum, qa) => sum + qa.ticketCount,
+        0,
+      );
 
       return {
         id: item.id,
         email: user?.email,
-        username: user?.username,
+        username: user?.name,
         avatar: user?.avatar,
         role: item.role?.name,
         roleId: item.role?.id,
@@ -223,7 +243,9 @@ export class OrganizationController {
     });
   });
   static getOnBoardingStatus = catchAsync(async (req, res, _next) => {
-    const data = await OrganizationService.onboardingStatus(req.organization.id);
+    const data = await OrganizationService.onboardingStatus(
+      req.organization.id,
+    );
     response(res, data, 200, { schema: organizationSchemaResponse });
   });
 }

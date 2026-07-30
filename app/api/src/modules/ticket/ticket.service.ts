@@ -5,7 +5,6 @@ import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { appError } from '../../core/utils/appError.js';
 import {
   getTenantClient,
-  prisma,
   Priority,
   priority,
   TicketAction,
@@ -301,8 +300,9 @@ export class TicketService {
     queueId: string;
     organizationId: string;
   }) => {
+    const tenantDb = getTenantClient(organizationId);
     // * load balance strategy
-    const agent = await prisma.queueAgent.findFirst({
+    const agent = await tenantDb.queueAgent.findFirst({
       where: {
         queueId,
         organizationId,
@@ -607,8 +607,9 @@ export class TicketService {
     organizationId: string;
     queryString: ParsedQs;
   }) => {
+    const tenantDb = getTenantClient(organizationId);
     const { offset, limit } = new APIFeatures(queryString).pagination();
-    const comments = await prisma.ticketComment.findMany({
+    const comments = await tenantDb.ticketComment.findMany({
       where: {
         ticketId,
         organizationId,
@@ -623,7 +624,7 @@ export class TicketService {
       take: limit,
       skip: offset,
     });
-    const total = await prisma.ticketComment.count({
+    const total = await tenantDb.ticketComment.count({
       where: {
         ticketId,
         organizationId,
@@ -650,6 +651,7 @@ export class TicketService {
     targetType: 'AGENT' | 'QUEUE';
     userId: string;
   }) => {
+    const tenantDb = getTenantClient(organizationId);
     let queueId;
     let agentId;
     switch (targetType) {
@@ -665,7 +667,7 @@ export class TicketService {
       case 'AGENT':
         // if agent given , find agent and it queueID
         {
-          const queueData = await prisma.queueAgent.findFirst({
+          const queueData = await tenantDb.queueAgent.findFirst({
             where: {
               agentId,
               organizationId,
@@ -737,7 +739,7 @@ export class TicketService {
       throw new appError('Invalid Ticket Id', 404, 'NOT_FOUND');
     }
     //  find next queue in same group
-    const nextQueues = await prisma.queue.findMany({
+    const nextQueues = await tenantDb.queue.findMany({
       where: {
         queueGroupId: input.groupId || currentTicket.queue.queueGroupId,
         order: {
@@ -932,7 +934,7 @@ export class TicketService {
     }
 
     if (queueData.queue.order !== null) {
-      nextQueue = await prisma.queue.findFirst({
+      nextQueue = await tenantDb.queue.findFirst({
         where: {
           organizationId,
           queueGroupId: queueData.queue.queueGroupId,
@@ -962,15 +964,16 @@ export class TicketService {
     organizationId: string;
     queryString: ParsedQs;
   }) => {
+    const tenantDb = getTenantClient(organizationId);
     const { offset, limit } = new APIFeatures(queryString).pagination();
     console.log(organizationId, ticketId);
-    const total = await prisma.ticketTransition.count({
+    const total = await tenantDb.ticketTransition.count({
       where: {
         organizationId,
         ticketId,
       },
     });
-    const data = await prisma.ticketTransition.findMany({
+    const data = await tenantDb.ticketTransition.findMany({
       where: {
         organizationId,
         ticketId,

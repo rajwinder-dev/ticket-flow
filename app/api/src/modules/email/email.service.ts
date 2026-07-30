@@ -1,9 +1,9 @@
-import "dotenv/config";
-import { EmailQueueInput, UpdateEmailProviderInput } from "@org/zod";
-import { appError } from "../../core/utils/appError.js";
-import { getTenantClient, prisma, ProviderType } from "@org/database";
-import { emailQueuePush } from "../../core/utils/emailQueue.js";
-import { crypto } from "../../core/utils/crypto.js";
+import 'dotenv/config';
+import { EmailQueueInput, UpdateEmailProviderInput } from '@org/zod';
+import { appError } from '../../core/utils/appError.js';
+import { getTenantClient, ProviderType } from '@org/database';
+import { emailQueuePush } from '../../core/utils/emailQueue.js';
+import { crypto } from '../../core/utils/crypto.js';
 export class EmailService {
   static queueEmail = async ({
     organizationId,
@@ -12,12 +12,12 @@ export class EmailService {
     template,
     data,
     isSystemEmail,
-  }: Omit<EmailQueueInput, "jobType">) => {
-    if(!isSystemEmail) {
-      const tenantdb = getTenantClient(organizationId!)
+  }: Omit<EmailQueueInput, 'jobType'>) => {
+    if (!isSystemEmail) {
+      const tenantdb = getTenantClient(organizationId!);
       const emailProvider = await tenantdb.emailProvider.count();
-      if(!emailProvider) throw new appError("You need to setup emailProvider", 404,"NOT_FOUND");
-
+      if (!emailProvider)
+        throw new appError('You need to setup emailProvider', 404, 'NOT_FOUND');
     }
     return await emailQueuePush({
       organizationId,
@@ -25,13 +25,14 @@ export class EmailService {
       subject,
       template,
       data,
-      jobType: "email",
+      jobType: 'email',
       isSystemEmail,
     });
   };
 
   static getEmailProviders = async (organizationId: string) => {
-    const providers = await prisma.emailProvider.findMany({
+    const tenantdb = getTenantClient(organizationId);
+    const providers = await tenantdb.emailProvider.findMany({
       where: {
         organizationId,
       },
@@ -61,22 +62,27 @@ export class EmailService {
       priority: number;
     },
   ) => {
-    const existingProviderCount = await prisma.emailProvider.count({
+    const tenantdb = getTenantClient(organizationId);
+    const existingProviderCount = await tenantdb.emailProvider.count({
       where: {
         organizationId,
       },
     });
     if (existingProviderCount === 2)
-      throw new appError("Max 2 provider per organization is allowed", 400, "CONFLICT_ERROR");
+      throw new appError(
+        'Max 2 provider per organization is allowed',
+        400,
+        'CONFLICT_ERROR',
+      );
     const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
-    return await prisma.emailProvider.create({
+    return await tenantdb.emailProvider.create({
       data: {
         organizationId,
         credentials: encryptCredentials,
         priority,
         providerType,
         fromEmail,
-        domain: fromEmail.split("@")[1],
+        domain: fromEmail.split('@')[1],
         webhookSecret,
       },
     });
@@ -86,15 +92,16 @@ export class EmailService {
     organizationId: string,
     { credentials, providerType, fromEmail }: UpdateEmailProviderInput,
   ) => {
+    const tenantdb = getTenantClient(organizationId);
     const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
     console.log(id, organizationId);
-    return await prisma.emailProvider.update({
+    return await tenantdb.emailProvider.update({
       where: {
         id,
         organizationId,
       },
       data: {
-        domain: fromEmail.split("@")[1],
+        domain: fromEmail.split('@')[1],
         fromEmail,
         providerType,
         credentials: encryptCredentials,
@@ -102,7 +109,8 @@ export class EmailService {
     });
   };
   static deleteEmailProvider = async (id: string, organizationId: string) => {
-    return await prisma.emailProvider.delete({
+    const tenantdb = getTenantClient(organizationId);
+    return await tenantdb.emailProvider.delete({
       where: {
         id,
         organizationId,

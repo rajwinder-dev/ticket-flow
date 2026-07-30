@@ -5,12 +5,13 @@ import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { ResendConfig, ResendService } from '@org/email-providers';
 import { TicketService } from '../ticket/ticket.service.js';
-import { prisma } from '@org/database';
 import { crypto } from '../../core/utils/crypto.js';
 import { EncryptionType } from '@org/utils';
+import { getTenantClient } from '@org/database';
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
     const rawBody = req.body.toString('utf8');
 
     const headers = {
@@ -33,7 +34,7 @@ export class resendWebhookController {
     }
 
     // Lookup webhook secret
-    const provider = await prisma.emailProvider.findFirst({
+    const provider = await tenantdb.emailProvider.findFirst({
       where: {
         fromEmail: { in: email.to },
         providerType: { not: 'SMTP' },
@@ -79,7 +80,7 @@ export class resendWebhookController {
     const resend = new ResendService(credentials);
     const emailData = await resend.getEmailDetails(data.email_id);
     const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
-    const ownerData = await prisma.membership.findFirst({
+    const ownerData = await tenantdb.membership.findFirst({
       where: {
         organizationId: provider.organizationId,
         role: {
@@ -90,7 +91,7 @@ export class resendWebhookController {
         userId: true,
       },
     });
-    
+
     if (tempPayload?.type === 'email.received') {
       await TicketService.createAndAssign({
         organizationId: provider.organizationId,

@@ -1,25 +1,32 @@
-import { CreateRoleInput, UpdateRoleInput } from "@org/zod";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import HandleFactory from "../../core/utils/handlerFactory.js";
-import response from "../../core/utils/response.js";
-import { RoleService } from "./role.service.js";
-import { prisma, Prisma } from "@org/database";
+import { CreateRoleInput, UpdateRoleInput } from '@org/zod';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { RoleService } from './role.service.js';
+import { getTenantClient } from '@org/database';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
 
 export class roleController {
-  private static handler = new HandleFactory<Prisma.RoleUncheckedCreateInput>(prisma.role);
-
   static createRole = catchAsync(async (req, res, _next) => {
     const input = req.body as CreateRoleInput;
-    const data = await RoleService.create(req.user.id, req.organization.id, input);
+    const data = await RoleService.create(
+      req.user.id,
+      req.organization.id,
+      input,
+    );
     response(res, data, 201);
   });
   static getRoleDetails = catchAsync(async (req, res, _next) => {
     const id = req.user.id as string;
-    const data = await this.handler.getOne(id);
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.role.findUnique({
+      where: { id },
+    });
     response(res, data, 200);
   });
   static getAllRoles = catchAsync(async (req, res, _next) => {
-    const { data, pagination } = await this.handler.getAll(req.query, {
+    const tenantdb = getTenantClient(req.organization.id);
+    const { pagination } = new APIFeatures(req.query).pagination();
+    const data = await tenantdb.role.findMany({
       where: {
         organizationId: req.organization.id,
         active: true,
@@ -33,7 +40,6 @@ export class roleController {
         permissions: true,
       },
     });
-
     response(res, data, 200, { otherFields: { ...pagination } });
   });
   static updateRole = catchAsync(async (req, res, _next) => {
@@ -53,7 +59,6 @@ export class roleController {
       roleId,
       organizationId: req.organization.id,
       userId: req.user.id,
-
     });
     response(res, data, 201);
   });

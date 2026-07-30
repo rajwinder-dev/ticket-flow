@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParsedQs } from 'qs';
 import { APIFeatures } from '../../core/utils/apiFeatures.js';
-import { prisma } from '@org/database';
+import { getTenantClient } from '@org/database';
 import { ActivityLogService } from './activity.types.js';
 
 export class ActivityService {
@@ -20,9 +20,10 @@ export class ActivityService {
     ipAddress,
   }: ActivityLogService) => {
     try {
+      const tenentDb = getTenantClient(organizationId);
       const changes =
         oldData && newData ? this.getDiff(oldData, newData) : null;
-      return await prisma.activityLog.create({
+      return await tenentDb.activityLog.create({
         data: {
           organizationId,
           actorId,
@@ -48,18 +49,17 @@ export class ActivityService {
     organizationId: string,
     queryStaring: ParsedQs,
   ) => {
+    const tenentDb = getTenantClient(organizationId);
     const { limit, offset, filterOptions } = new APIFeatures(queryStaring)
       .pagination()
       .search();
-    const total = await prisma.activityLog.count({
+    const total = await tenentDb.activityLog.count({
       where: {
-        organizationId,
         ...filterOptions.where,
       },
     });
-    const data = await prisma.activityLog.findMany({
+    const data = await tenentDb.activityLog.findMany({
       where: {
-        organizationId,
         ...filterOptions.where,
       },
       orderBy: {
@@ -76,7 +76,8 @@ export class ActivityService {
     return { data, pagination };
   };
   static getActivitySummary = async (organizationId: string) => {
-    const data = await prisma.activityLog.groupBy({
+    const tenentDb = getTenantClient(organizationId);
+    const data = await tenentDb.activityLog.groupBy({
       where: {
         organizationId,
       },
@@ -85,7 +86,7 @@ export class ActivityService {
         _all: true,
       },
     });
-    const total = await prisma.activityLog.count({ where: { organizationId } });
+    const total = await tenentDb.activityLog.count();
     // Format output to group as { WARN: count, INFO: count, ERROR: count }
     const summary = { warn: 0, info: 0, error: 0 };
 

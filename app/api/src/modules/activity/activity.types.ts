@@ -1,7 +1,7 @@
-import { ActorType, EntryType, LogSeverity } from "@org/database";
+import { ActorType, EntryType, LogSeverity } from '@org/database';
 
 export interface ActivityLogService {
-  organizationId?: string;
+  organizationId: string;
   actorId?: string;
   entityType: EntryType;
   event: string;

@@ -1,8 +1,9 @@
-import { prisma } from '@org/database';
+import { getTenantClient } from '@org/database';
 
 export default class AuthService {
   static async getPermissions(userId: string, organizationId: string) {
-    const permissions = await prisma.membership.findUnique({
+    const tenantDb = getTenantClient(organizationId);
+    const permissions = await tenantDb.membership.findUnique({
       where: {
         organizationId_userId: {
           organizationId,
@@ -22,7 +23,8 @@ export default class AuthService {
     userId: string;
     organizationId: string;
   }) {
-    return await prisma.membership.findUnique({
+    const tenantDb = getTenantClient(organizationId);
+    return await tenantDb.membership.findUnique({
       where: {
         organizationId_userId: {
           organizationId,

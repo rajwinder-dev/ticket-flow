@@ -7,13 +7,14 @@ import z from 'zod';
 import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
-import { prisma } from '@org/database';
 import { NotificationService } from '../notification/notification.service.js';
+import { getTenantClient } from '@org/database';
 
 export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {
     const queueId = req.query.queueId as string;
 
+    const tenantdb = getTenantClient(req.organization.id);
     const queuefilter = queueId
       ? { user: { queueAgents: { some: { queueId } } } }
       : {};
@@ -22,7 +23,7 @@ export class MemberController {
     })
       .filter()
       .pagination();
-    const membership = await prisma.membership.findMany({
+    const membership = await tenantdb.membership.findMany({
       where: {
         organizationId: req.organization.id,
         isSystem: false,
@@ -92,7 +93,7 @@ export class MemberController {
         })),
       };
     });
-    const total = await prisma.membership.count({
+    const total = await tenantdb.membership.count({
       where: {
         organizationId: req.organization.id,
         ...filterOptions.where,
@@ -105,7 +106,9 @@ export class MemberController {
   });
   static updateRole = catchAsync(async (req, res, _next) => {
     const { userId, roleId } = req.params as ChangeMemberRoleInput;
-    const data = await prisma.membership.update({
+
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.membership.update({
       where: {
         organizationId_userId: {
           organizationId: req.organization.id,
@@ -141,7 +144,9 @@ export class MemberController {
   });
   static assignQueue = catchAsync(async (req, res, _next) => {
     const { userId, queueId } = req.params as ChangeMemberQueueInput;
-    const data = await prisma.queueAgent.upsert({
+
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.queueAgent.upsert({
       where: {
         queueId_agentId_organizationId: {
           queueId,
@@ -173,7 +178,8 @@ export class MemberController {
   });
   static unassignQueue = catchAsync(async (req, res, _next) => {
     const { userId, queueId } = req.params as ChangeMemberQueueInput;
-    const data = await prisma.queueAgent.delete({
+    const tenantdb = getTenantClient(req.organization.id);
+    const data = await tenantdb.queueAgent.delete({
       where: {
         queueId_agentId_organizationId: {
           queueId,

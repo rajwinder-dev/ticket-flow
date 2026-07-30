@@ -4,7 +4,7 @@ import { appError } from '../../core/utils/appError.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import { auth } from '@org/auth';
 import { fromNodeHeaders } from 'better-auth/node';
-import { prisma } from '@org/database';
+import { getTenantClient } from '@org/database';
 import { Socket } from 'socket.io';
 
 export class authMiddleware {
@@ -35,7 +35,7 @@ export class authMiddleware {
       return next(
         new appError('x-organization-id required', 400, 'VALIDATION_ERROR'),
       );
-
+    const tenantDb = getTenantClient(organizationId);
     const organizationIdParse = z.uuid().safeParse(organizationId);
     if (!organizationIdParse.success)
       return next(
@@ -47,7 +47,7 @@ export class authMiddleware {
       );
 
     const userId = req.user.id as string;
-    const member = await prisma.membership.findUnique({
+    const member = await tenantDb.membership.findUnique({
       where: {
         organizationId_userId: {
           userId,
@@ -74,9 +74,8 @@ export class authMiddleware {
         },
       },
     });
-    const ownerData = await prisma.membership.findFirst({
+    const ownerData = await tenantDb.membership.findFirst({
       where: {
-        id: organizationId,
         isSystem: true,
         role: {
           name: 'OWNER',

@@ -1,7 +1,7 @@
-import { CreateQueueInput, UpdateQueueInput } from "@org/zod";
-import { appError } from "../../core/utils/appError.js";
-import { ActivityService } from "../activity/activity.service.js";
-import { getTenantClient, prisma } from "@org/database";
+import { CreateQueueInput, UpdateQueueInput } from '@org/zod';
+import { appError } from '../../core/utils/appError.js';
+import { ActivityService } from '../activity/activity.service.js';
+import { getTenantClient } from '@org/database';
 
 export class QueueService {
   static create = async ({
@@ -15,14 +15,15 @@ export class QueueService {
     input: CreateQueueInput;
     userId: string;
   }) => {
-    const queueOrder = await prisma.queue.count({
+    const tenentdb = getTenantClient(organizationId);
+    const queueOrder = await tenentdb.queue.count({
       where: {
         organizationId,
         queueGroupId,
       },
     });
 
-    const queue = await prisma.queue.create({
+    const queue = await tenentdb.queue.create({
       data: {
         organizationId,
         queueGroupId,
@@ -33,11 +34,11 @@ export class QueueService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "new queue is created ",
-      event: "queue.create",
+      actorType: 'USER',
+      message: 'new queue is created ',
+      event: 'queue.create',
       entityId: queue.id,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return queue;
   };
@@ -48,7 +49,8 @@ export class QueueService {
     queueId: string;
     organizationId: string;
   }) => {
-    const data = await prisma.queue.findUnique({
+    const tenentdb = getTenantClient(organizationId);
+    const data = await tenentdb.queue.findUnique({
       where: {
         id: queueId,
         organizationId,
@@ -72,37 +74,38 @@ export class QueueService {
     organizationId: string;
   }) => {
     const tenantdb = getTenantClient(organizationId);
-    const [totalTickets, openTickets, highPriorityTickets, activeAgents] = await Promise.all([
-      tenantdb.ticket.count({
-        where: {
-          queueId,
-          organizationId,
-        },
-      }),
-      tenantdb.ticket.count({
-        where: {
-          queueId,
-          status: "OPEN",
-          organizationId,
-        },
-      }),
-      tenantdb.ticket.count({
-        where: {
-          queueId,
-          priority: {
-            in: ["HIGH", "URGENT"],
+    const [totalTickets, openTickets, highPriorityTickets, activeAgents] =
+      await Promise.all([
+        tenantdb.ticket.count({
+          where: {
+            queueId,
+            organizationId,
           },
-          organizationId,
-        },
-      }),
-      prisma.queueAgent.count({
-        where: {
-          queueId,
-          active: true,
-          organizationId,
-        },
-      }),
-    ]);
+        }),
+        tenantdb.ticket.count({
+          where: {
+            queueId,
+            status: 'OPEN',
+            organizationId,
+          },
+        }),
+        tenantdb.ticket.count({
+          where: {
+            queueId,
+            priority: {
+              in: ['HIGH', 'URGENT'],
+            },
+            organizationId,
+          },
+        }),
+        tenantdb.queueAgent.count({
+          where: {
+            queueId,
+            active: true,
+            organizationId,
+          },
+        }),
+      ]);
 
     return {
       totalTickets,
@@ -127,7 +130,8 @@ export class QueueService {
       agentId,
       organizationId,
     }));
-    const existingQueueAgents = await prisma.queueAgent.findMany({
+    const tenantdb = getTenantClient(organizationId);
+    const existingQueueAgents = await tenantdb.queueAgent.findMany({
       where: {
         organizationId,
         agentId: {
@@ -141,7 +145,7 @@ export class QueueService {
       alreadyAssignedAgent.includes(qa.agentId),
     );
     if (filteredQueueAgents.length > 0) {
-      const agentNames = await prisma.user.findMany({
+      const agentNames = await tenantdb.user.findMany({
         where: {
           id: {
             in: filteredQueueAgents.map((qa) => qa.agentId),
@@ -151,25 +155,25 @@ export class QueueService {
       throw new appError(
         `Some Agents are already assigned to other queues`,
         400,
-        "CONFLICT_ERROR",
+        'CONFLICT_ERROR',
         { agents: agentNames.map((a) => ({ id: a.id, name: a.email })) },
       );
     }
     //  return already existing agents and newly added agents
-    const updatedAgents = await prisma.queueAgent.createManyAndReturn({
+    const updatedAgents = await tenantdb.queueAgent.createManyAndReturn({
       data: queueAgents,
       skipDuplicates: true,
     });
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "agents added in queue ",
-      event: "queue.agents.added",
+      actorType: 'USER',
+      message: 'agents added in queue ',
+      event: 'queue.agents.added',
       entityId: queueId,
       oldData: existingQueueAgents,
       newData: updatedAgents,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return updatedAgents;
   };
@@ -184,7 +188,8 @@ export class QueueService {
     agentIds: string[];
     userId: string;
   }) => {
-    const currentState = await prisma.queueAgent.findMany({
+    const tenantdb = getTenantClient(organizationId);
+    const currentState = await tenantdb.queueAgent.findMany({
       where: {
         queueId,
         organizationId,
@@ -194,7 +199,7 @@ export class QueueService {
         active: true,
       },
     });
-    const deletedAgents = await prisma.queueAgent.updateManyAndReturn({
+    const deletedAgents = await tenantdb.queueAgent.updateManyAndReturn({
       where: {
         queueId,
         organizationId,
@@ -210,13 +215,13 @@ export class QueueService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "agents removed from queue ",
-      event: "queue.agent.remove",
+      actorType: 'USER',
+      message: 'agents removed from queue ',
+      event: 'queue.agent.remove',
       entityId: queueId,
       oldData: currentState,
       newData: deletedAgents,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return deletedAgents;
   };
@@ -227,7 +232,8 @@ export class QueueService {
     queueId: string;
     organizationId: string;
   }) => {
-    const queueAgents = await prisma.queueAgent.findMany({
+    const tenantdb = getTenantClient(organizationId);
+    const queueAgents = await tenantdb.queueAgent.findMany({
       where: {
         queueId,
         organizationId,
@@ -249,7 +255,8 @@ export class QueueService {
     input: UpdateQueueInput;
     userId: string;
   }) => {
-    const updatedQueue = await prisma.queue.update({
+    const tenantdb = getTenantClient(organizationId);
+    const updatedQueue = await tenantdb.queue.update({
       where: {
         id: queueId,
         organizationId,
@@ -260,13 +267,13 @@ export class QueueService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "queue details updated ",
-      event: "queue.update",
+      actorType: 'USER',
+      message: 'queue details updated ',
+      event: 'queue.update',
       entityId: queueId,
       oldData: input,
       newData: updatedQueue,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return updatedQueue;
   };
@@ -279,27 +286,31 @@ export class QueueService {
     organizationId: string;
     userId: string;
   }) => {
-    const tenantdb = getTenantClient(organizationId)
+    const tenantdb = getTenantClient(organizationId);
     const exitingQueue = await tenantdb.queue.findUnique({
       where: { id: queueId },
       select: { active: true },
     });
-    if (!exitingQueue) throw new appError("Queue not found", 404, "NOT_FOUND");
+    if (!exitingQueue) throw new appError('Queue not found', 404, 'NOT_FOUND');
     if (!exitingQueue?.active)
-      throw new appError("Queue is already deleted", 409, "CONFLICT_ERROR");
+      throw new appError('Queue is already deleted', 409, 'CONFLICT_ERROR');
     const activeTickets = await tenantdb.ticket.count({
       where: {
         queueId,
         organizationId,
         status: {
-          not: "CLOSED",
+          not: 'CLOSED',
         },
       },
     });
     if (activeTickets > 0) {
-      throw new appError("Cannot delete queue with active tickets", 400, "CONFLICT_ERROR");
+      throw new appError(
+        'Cannot delete queue with active tickets',
+        400,
+        'CONFLICT_ERROR',
+      );
     }
-    const deletedQueue = await prisma.queue.update({
+    const deletedQueue = await tenantdb.queue.update({
       where: {
         id: queueId,
         organizationId,
@@ -313,25 +324,28 @@ export class QueueService {
       },
     });
     // rearrange queue order
-    const unorderedQueues = await prisma.queue.findMany({
+    const unorderedQueues = await tenantdb.queue.findMany({
       where: { queueGroupId: deletedQueue.queueGroupId, active: true },
     });
     for (const [index, value] of unorderedQueues.entries()) {
       const newOrder = index + 1;
       if (newOrder !== value.order)
-        await prisma.queue.update({ where: { id: value.id }, data: { order: newOrder } });
+        await tenantdb.queue.update({
+          where: { id: value.id },
+          data: { order: newOrder },
+        });
     }
 
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "queue deleted successfully ",
-      event: "queue.delete",
+      actorType: 'USER',
+      message: 'queue deleted successfully ',
+      event: 'queue.delete',
       entityId: queueId,
       oldData: exitingQueue,
       newData: deletedQueue,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
   };
   static getLowerOrderQueue = async ({
@@ -341,14 +355,15 @@ export class QueueService {
     queueGroupId: string;
     organizationId: string;
   }) => {
-    const queue = await prisma.queue.findFirst({
+    const tenantdb = getTenantClient(organizationId);
+    const queue = await tenantdb.queue.findFirst({
       where: {
         queueGroupId,
         organizationId,
         active: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
       select: {
         id: true,
