@@ -99,7 +99,7 @@
       ]
     },
     "generate": {
-      "cache": true,
+      "cache": false,
       "inputs": ["{projectRoot}/prisma/schema.prisma"],
       "outputs": ["{projectRoot}/src/generated"]
     },
