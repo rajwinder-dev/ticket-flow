@@ -7,7 +7,7 @@ interface props {
 }
 const PageHeader = ({ title, description, children }: props) => {
   return (
-    <div className="flex items-center justify-between gap-4 border-b px-6 py-4 sticky top-0 bg-background">
+    <div className="flex items-center justify-between gap-4 border-b px-6 py-4 sticky top-0 bg-background z-10">
       <div>
         <h1 className="text-xl font-bold tracking-tight">{title}</h1>
         <p className="text-muted-foreground text-sm">{description}</p>
