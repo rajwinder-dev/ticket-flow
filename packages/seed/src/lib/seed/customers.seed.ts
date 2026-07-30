@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import {log} from  "@org/utils"
-import { prisma } from "@org/database";
+import { getTenantClient, prisma } from "@org/database";
 
 export async function seedCustomers(maxCustomersPerOrganization: number = 25) {
   const organizations = await prisma.organization.findMany({
@@ -17,6 +17,7 @@ export async function seedCustomers(maxCustomersPerOrganization: number = 25) {
   const createdCustomerIds: string[] = [];
 
   for (const organization of organizations) {
+    const tenantDb = getTenantClient(organization.id);
     const customerCount = Math.max(1, Math.floor(Math.random() * maxCustomersPerOrganization));
 
     for (let i = 0; i < customerCount; i++) {
@@ -25,13 +26,13 @@ export async function seedCustomers(maxCustomersPerOrganization: number = 25) {
       const email = faker.internet.email({ firstName, lastName }).toLowerCase();
 
       try {
-        const customerIdentity = await prisma.customerIdentity.upsert({
+        const customerIdentity = await tenantDb.customerIdentity.upsert({
           where: { email },
           update: {},
           create: { email },
         });
 
-        const customer = await prisma.customer.upsert({
+        const customer = await tenantDb.customer.upsert({
           where: {
             organizationId_identityId: {
               organizationId: organization.id,

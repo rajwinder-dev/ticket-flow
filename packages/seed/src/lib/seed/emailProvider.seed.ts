@@ -1,13 +1,22 @@
-import { prisma } from '@org/database';
+import { getTenantClient, prisma } from '@org/database';
 import { CryptoUtils, log } from '@org/utils';
 
 export async function seedEmailProviders() {
   log.info('seeding email providers');
 
-  const { RESEND_API_KEY, RESEND_WEBHOOK_SECRET, RESEND_DOMAIN, ENCRYPTION_KEY } =
-    process.env;
+  const {
+    RESEND_API_KEY,
+    RESEND_WEBHOOK_SECRET,
+    RESEND_DOMAIN,
+    ENCRYPTION_KEY,
+  } = process.env;
 
-  if (!ENCRYPTION_KEY || !RESEND_API_KEY || !RESEND_WEBHOOK_SECRET || !RESEND_DOMAIN) {
+  if (
+    !ENCRYPTION_KEY ||
+    !RESEND_API_KEY ||
+    !RESEND_WEBHOOK_SECRET ||
+    !RESEND_DOMAIN
+  ) {
     log.warn(
       'seedEmailProviders: skipping — missing one or more required env vars ' +
         '(ENCRYPTION_KEY, RESEND_API_KEY, RESEND_WEBHOOK_SECRET, RESEND_DOMAIN)',
@@ -25,30 +34,26 @@ export async function seedEmailProviders() {
     domain: RESEND_DOMAIN,
   };
 
-  const encryptedCredentials = crypto.encrypt(JSON.stringify(seedApi.credentials));
+  const encryptedCredentials = crypto.encrypt(
+    JSON.stringify(seedApi.credentials),
+  );
 
   // Dedupe: one email provider per organization, not per membership
-  const members = await prisma.membership.findMany({
-    include: {
-      organization: {
-        select: { name: true },
-      },
-    },
-    distinct: ['organizationId'],
-  });
+  const organizations = await prisma.organization.findMany();
 
-  for (const member of members) {
-    const orgName = member.organization?.name;
+  for (const org of organizations) {
+    const tenatDb = getTenantClient(org.id);
+    const orgName = org?.name;
     if (!orgName) {
-      log.warn(`skipping org ${member.organizationId} — missing organization name`);
+      log.warn(`skipping org ${org.id} — missing organization name`);
       continue;
     }
 
     const fromEmail = `${orgName.split(' ').join('_')}@${seedApi.domain}`;
 
-    await prisma.emailProvider.create({
+    await tenatDb.emailProvider.create({
       data: {
-        organizationId: member.organizationId,
+        organizationId: org.id,
         providerType: 'RESEND',
         fromEmail,
         domain: seedApi.domain,

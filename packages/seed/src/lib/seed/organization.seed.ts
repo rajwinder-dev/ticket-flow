@@ -1,6 +1,6 @@
 import { permissions } from "@org/constants";
 import { log } from "@org/utils";
-import { Organization, User, prisma } from "@org/database";
+import { Organization, User, getTenantClient, prisma } from "@org/database";
 import { faker } from "@faker-js/faker";
 
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
@@ -47,8 +47,9 @@ async function seedRolesAndMembership(org: Organization, userId: string) {
   ];
 
   for (const roleDef of roleDefinitions) {
+    const tenantDb = getTenantClient(org.id);
     try {
-      const role = await prisma.role.create({
+      const role = await tenantDb.role.create({
         data: {
           name: roleDef.name,
           code: generateCode("ROL"),
@@ -61,7 +62,7 @@ async function seedRolesAndMembership(org: Organization, userId: string) {
 
       // Assign the creator to the OWNER role specifically
       if (role.name === "OWNER") {
-        await prisma.membership.create({
+        await tenantDb.membership.create({
           data: {
             organizationId: org.id,
             userId: userId,
