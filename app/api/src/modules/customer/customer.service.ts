@@ -9,7 +9,8 @@ export class CustomerService {
     displayName?: string,
   ) => {
     const customerName = displayName || email.split('@')[0];
-    const customerData = await prisma.customer.upsert({
+    const tenantDb = getTenantClient(organizationId);
+    const customerData = await tenantDb.customer.upsert({
       where: {
         organizationId_identityId: {
           organizationId,

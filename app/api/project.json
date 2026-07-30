@@ -13,7 +13,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "app/api",
-        "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --clear-screen=false src/main.ts"
+        "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --clear-screen=false  --inspect  --inspect src/main.ts"
       }
     }
   }

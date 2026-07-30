@@ -4,13 +4,13 @@ import {
   queueSchemaResponse,
   RemoveAgentsFromQueueInput,
   UpdateQueueInput,
-} from "@org/zod";
-import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import response from "../../core/utils/response.js";
-import { QueueService } from "./queue.service.js";
-import { prisma } from "@org/database";
+} from '@org/zod';
+import z from 'zod';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { QueueService } from './queue.service.js';
+import { getTenantClient } from '@org/database';
 
 export class QueueController {
   static createQueue = catchAsync(async (req, res, _next) => {
@@ -26,7 +26,10 @@ export class QueueController {
   });
   static getQueueDetails = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
-    const data = await QueueService.getDetails({ queueId, organizationId: req.organization.id });
+    const data = await QueueService.getDetails({
+      queueId,
+      organizationId: req.organization.id,
+    });
     response(res, data);
   });
   static getQueueSummary = catchAsync(async (req, res, _next) => {
@@ -65,7 +68,8 @@ export class QueueController {
       .filter()
       .limitFields()
       .pagination();
-    const queues = await prisma.queue.findMany({
+    const tenantDb = getTenantClient(req.organization.id);
+    const queues = await tenantDb.queue.findMany({
       where: {
         organizationId: req.organization.id,
         queueGroupId: groupId,
@@ -91,12 +95,12 @@ export class QueueController {
       },
 
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
       skip: offset,
       take: limit,
     });
-    const total = await prisma.queue.count({
+    const total = await tenantDb.queue.count({
       where: {
         organizationId: req.organization.id,
         queueGroupId: groupId,
@@ -110,7 +114,10 @@ export class QueueController {
       description: queue.description,
       order: queue.order,
       agentsCount: queue._count.queueAgents,
-      ticketsCount: queue.queueAgents.reduce((sum, agent) => sum + agent.ticketCount, 0),
+      ticketsCount: queue.queueAgents.reduce(
+        (sum, agent) => sum + agent.ticketCount,
+        0,
+      ),
       createdAt: queue.createdAt,
     }));
 

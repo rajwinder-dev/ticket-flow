@@ -112,7 +112,8 @@ export class OrganizationController {
         400,
         'INVALID_TOKEN',
       );
-    const inviteData = await prisma.token.findFirst({
+    const tenantdb = getTenantClient(verifyToken.organizationId);
+    const inviteData = await tenantdb.token.findFirst({
       where: {
         token,
       },
