@@ -8,7 +8,7 @@ import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { normalize } from '../../core/utils/utils.js';
-import { getTenantClient, prisma } from '@org/database';
+import { getTenantClient } from '@org/database';
 import { CustomerService } from './customer.service.js';
 
 export class CustomerController {
