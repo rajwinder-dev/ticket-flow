@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -10,13 +9,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { authClient } from '@/lib/auth-client';
 import { disconnectSocket } from '@/lib/socketIo';
-import { Gear, LogoutIcon } from '@hugeicons/core-free-icons';
+import { LogoutIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { useNotification } from '@org/core';
 export function UserProfile() {
-  const { orgId } = useParams();
   const { data: session } = authClient.useSession();
   useNotification({ userId: session?.user.id });
   const navigate = useNavigate();
@@ -34,7 +32,7 @@ export function UserProfile() {
       <DropdownMenuTrigger className="hover:bg-secondary flex gap-2 rounded-md p-2">
         <Avatar className="h-8 w-8 rounded-lg">
           <AvatarImage
-            src={`${session?.user.image}`}
+            src={`${session?.user.avatar}`}
             alt={`${session?.user.name} Profile picture`}
           />
           <AvatarFallback className="rounded-lg uppercase">
@@ -59,7 +57,7 @@ export function UserProfile() {
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
               <AvatarImage
-                src={`${session?.user.image}`}
+                src={`${session?.user.avatar}`}
                 alt={`${session?.user.name} Profile picture`}
               />
               <AvatarFallback className="rounded-lg">
@@ -73,12 +71,12 @@ export function UserProfile() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => navigate(`/org/${orgId}/setting`)}>
-            <HugeiconsIcon icon={Gear} strokeWidth={2} />
-            Settings
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        {/* <DropdownMenuGroup> */}
+        {/*   <DropdownMenuItem onClick={() => navigate(`/org/${orgId}/setting`)}> */}
+        {/*     <HugeiconsIcon icon={Gear} strokeWidth={2} /> */}
+        {/*     Settings */}
+        {/*   </DropdownMenuItem> */}
+        {/* </DropdownMenuGroup> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handlerLogout}>
           <HugeiconsIcon icon={LogoutIcon} strokeWidth={2} />

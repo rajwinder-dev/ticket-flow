@@ -93,6 +93,7 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     errorElement: <ErrorBoundary />,
+    
     children: [
       {
         path: '/org',

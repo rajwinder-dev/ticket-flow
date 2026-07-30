@@ -16,7 +16,7 @@ const TicketDetailsHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-between md:flex-row flex-col gap-3 border-b p-4 w-full">
+    <div className="flex items-center justify-between md:flex-row flex-col gap-3 border-b p-4 w-full sticky top-0 bg-background">
       <div className="flex-1 space-y-2">
         {isLoadingTicketDetails ? (
           <div className="space-y-2">
@@ -44,7 +44,7 @@ const TicketDetailsHeader = () => {
           </>
         )}
       </div>
-      <div className='flex gap-2'>
+      <div className="flex gap-2">
         <Button
           variant="default"
           onClick={() =>

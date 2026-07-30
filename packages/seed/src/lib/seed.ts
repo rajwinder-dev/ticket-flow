@@ -11,6 +11,7 @@ import { seedTicketTransitions } from './seed/ticketTransitions.seed.js';
 import { log } from '@org/utils';
 import { seedInvites } from './seed/invite.seed.js';
 import { seedEmailProviders } from './seed/emailProvider.seed.js';
+import { seedActivityLog } from './seed/activityLog.seed.js';
 const seedConfig = {
   usersCount: 100,
   ownersCount: 20,
@@ -41,6 +42,7 @@ export class seedData {
     await seedTicketTransitions();
     await seedInvites();
     await seedEmailProviders();
+    await seedActivityLog();
     log.success('Fake data seeded successfully');
   }
   static async createOnlyAdmin() {

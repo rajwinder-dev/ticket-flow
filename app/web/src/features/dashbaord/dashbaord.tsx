@@ -41,7 +41,6 @@ const DashboardPage = () => {
 
   return (
     <div>
-      {/* Added a bit of structural spacing */}
       <PageHeader
         title="Dashboard"
         description="MVP overview of support workload, progress, and recent updates."
@@ -52,64 +51,68 @@ const DashboardPage = () => {
       </PageHeader>
       <OnboardingBanner />
       <DashboardMatrices />
-      <div className="grid lg:grid-cols-3">
+      <div className="grid grid-cols-1 items-stretch  lg:grid-cols-3">
         {/* Recent Ticket Activity Card */}
-        <Card className="lg:col-span-2">
+        <Card className="flex flex-col lg:col-span-2 order-1 lg:order-0">
           <CardHeader>
             <CardTitle>Recent Ticket Activity</CardTitle>
             <CardDescription>Latest updated tickets</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {isLoadingRecentTicket ? (
-              // Loading state: Loop through 3 placeholder ticket layouts
-              Array.from({ length: 1 }).map((_, i) => (
-                <div key={i} className="space-y-2 rounded-md border p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <Skeleton className="h-4 w-24" /> {/* Ticket ID */}
-                    <Skeleton className="h-5 w-14 rounded-full" />{' '}
-                    {/* Priority Badge */}
+          <CardContent className="flex min-h-0 flex-1 flex-col">
+            <div className="max-h-[16rem] flex-1 space-y-3 overflow-auto pr-1">
+              {isLoadingRecentTicket ? (
+                // Loading state: Loop through 3 placeholder ticket layouts
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="space-y-2 rounded-md border p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <Skeleton className="h-4 w-24" /> {/* Ticket ID */}
+                      <Skeleton className="h-5 w-14 rounded-full" />{' '}
+                      {/* Priority Badge */}
+                    </div>
+                    <Skeleton className="h-5 w-3/4" /> {/* Ticket Subject */}
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-16" /> {/* Status */}
+                      <Skeleton className="h-4 w-2" /> {/* Divider */}
+                      <Skeleton className="h-4 w-24" /> {/* Assigned User */}
+                    </div>
                   </div>
-                  <Skeleton className="h-5 w-3/4" /> {/* Ticket Subject */}
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-4 w-16" /> {/* Status */}
-                    <Skeleton className="h-4 w-2" /> {/* Divider */}
-                    <Skeleton className="h-4 w-24" /> {/* Assigned User */}
+                ))
+              ) : recentTickets?.data.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  No tickets available yet.
+                </p>
+              ) : (
+                recentTickets?.data.map((ticket) => (
+                  <div
+                    key={ticket.id}
+                    className="space-y-2 rounded-md border p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-mono text-xs">{ticket.id}</p>
+                      <Badge variant="outline">{ticket.priority}</Badge>
+                    </div>
+                    <p className="text-sm font-medium break-words">
+                      {ticket.subject}
+                    </p>
+                    <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                      <span>{ticket.status}</span>
+                      <span>-</span>
+                      <span>{ticket.assignedToUser?.name || 'Unassigned'}</span>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : recentTickets?.data.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
-                No tickets available yet.
-              </p>
-            ) : (
-              recentTickets?.data.map((ticket) => (
-                <div
-                  key={ticket.id}
-                  className="space-y-2 rounded-md border p-3"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-mono text-xs">{ticket.id}</p>
-                    <Badge variant="outline">{ticket.priority}</Badge>
-                  </div>
-                  <p className="text-sm font-medium">{ticket.subject}</p>
-                  <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                    <span>{ticket.status}</span>
-                    <span>-</span>
-                    <span>{ticket.assignedToUser?.name || 'Unassigned'}</span>
-                  </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
 
         {/* Resolution Progress Card */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Resolution Progress</CardTitle>
             <CardDescription>Resolved + closed ratio</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="flex-1 space-y-4">
             {isLoadingSummary ? (
               // Loading state for Progress Sidepanel
               <div className="space-y-4">

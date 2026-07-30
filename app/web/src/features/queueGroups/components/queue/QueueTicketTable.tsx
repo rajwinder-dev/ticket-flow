@@ -1,11 +1,11 @@
-import { Search } from "lucide-react";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Search } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Shadcn/UI Components
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton"; // Import shadcn skeleton
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
 import {
   Table,
   TableBody,
@@ -13,22 +13,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 // Custom Hooks & Utils
-import QueryBoundary from "@/components/QueryError";
-import { useTicket } from "@org/core";
-import { getAgeMetrics } from "@/lib/utils";
-import { useQueue } from "@org/core";
+import QueryBoundary from '@/components/QueryError';
+import { useTicket } from '@org/core';
+import { getAgeMetrics } from '@/lib/utils';
+import { useQueue } from '@org/core';
 
 type QueueTicketTableProps = {
   isLoading?: boolean; // Accept the loading control passed down from the parent shell
 };
 
-export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTableProps) {
-  const { queueId , orgId} = useParams();
-  const [ticketSearch, setTicketSearch] = useState("");
-
+export function QueueTicketTable({
+  isLoading: isParentLoading,
+}: QueueTicketTableProps) {
+  const { queueId, orgId } = useParams();
+  const [ticketSearch, setTicketSearch] = useState('');
+  const navigate = useNavigate();
   // Data Fetching
   const { ticketData, ticketDataError, isLoadingTicketData } = useTicket({
     filterOptions: {
@@ -36,7 +38,7 @@ export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTabl
         queueId: queueId!,
       },
     },
-    orgId
+    orgId,
   });
 
   const { queueSummary } = useQueue({ queueId });
@@ -53,8 +55,8 @@ export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTabl
             <Skeleton className="mt-1 h-3.5 w-32" /> // Sub-title summary metadata placeholder
           ) : (
             <p className="text-muted-foreground text-xs">
-              {queueSummary?.data.totalTickets ?? 0} total · {queueSummary?.data.openTickets ?? 0}{" "}
-              open
+              {queueSummary?.data.totalTickets ?? 0} total ·{' '}
+              {queueSummary?.data.openTickets ?? 0} open
             </p>
           )}
         </div>
@@ -98,45 +100,61 @@ export function QueueTicketTable({ isLoading: isParentLoading }: QueueTicketTabl
                 Array.from({ length: 5 }).map((_, index) => (
                   <TableRow key={index} className="hover:bg-transparent">
                     <TableCell className="w-20 pl-5">
-                      <Skeleton className="h-3.5 w-10 font-mono" /> {/* Ticket Code Token */}
+                      <Skeleton className="h-3.5 w-10 font-mono" />{' '}
+                      {/* Ticket Code Token */}
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1.5">
-                        <Skeleton className="h-4 w-48" /> {/* Main Subject text line */}
-                        <Skeleton className="h-3 w-72" />{" "}
+                        <Skeleton className="h-4 w-48" />{' '}
+                        {/* Main Subject text line */}
+                        <Skeleton className="h-3 w-72" />{' '}
                         {/* Secondary description string text snippet */}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-5 w-14 rounded-md" />{" "}
+                      <Skeleton className="h-5 w-14 rounded-md" />{' '}
                       {/* Priority outline badge component */}
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-5 w-16 rounded-md" />{" "}
+                      <Skeleton className="h-5 w-16 rounded-md" />{' '}
                       {/* Status filled badge component */}
                     </TableCell>
                     <TableCell className="pr-5">
-                      <Skeleton className="h-3.5 w-12" />{" "}
+                      <Skeleton className="h-3.5 w-12" />{' '}
                       {/* Chronological dynamic age string layout */}
                     </TableCell>
                   </TableRow>
                 ))
               ) : ticketData?.data?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
+                  <TableCell
+                    colSpan={5}
+                    className="text-muted-foreground h-24 text-center"
+                  >
                     No tickets found.
                   </TableCell>
                 </TableRow>
               ) : (
                 ticketData?.data.map((ticket) => (
-                  <TableRow key={ticket.id} className="hover:bg-muted/50 cursor-pointer">
+                  <TableRow
+                    key={ticket.id}
+                    className="hover:bg-muted/50 cursor-pointer"
+                    onClick={() =>
+                      navigate(`/org/${orgId}/ticket/${ticket.id}`)
+                    }
+                  >
                     <TableCell className="text-muted-foreground pl-5 font-mono text-[11px]">
                       {ticket.code}
                     </TableCell>
                     <TableCell>
-                      <p className="text-sm leading-tight font-medium">{ticket.subject}</p>
+                      <p className="text-sm leading-tight font-medium">
+                        {ticket.subject}
+                      </p>
                       <p className="text-muted-foreground font-mono text-[11px]">
-                        {ticket.description}
+                        {ticket.description?.slice(0, 40) +
+                          (ticket.description && ticket.description?.length > 80
+                            ? '...'
+                            : '')}
                       </p>
                     </TableCell>
                     <TableCell>

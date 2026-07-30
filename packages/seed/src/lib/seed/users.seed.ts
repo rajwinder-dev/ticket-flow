@@ -16,6 +16,7 @@ export async function seedUsers(count: number = 50) {
       email: 'rajwindersxxx@gmail.com',
       name: 'Rajwinder',
       password: '8968585382',
+      avatar: faker.image.avatar(),
     },
   });
 
@@ -37,6 +38,7 @@ export async function seedUsers(count: number = 50) {
         email: user.email,
         password: user.email,
         name: user.name,
+        avatar: faker.image.avatar(),
       },
     });
   }

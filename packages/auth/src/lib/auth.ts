@@ -1,4 +1,4 @@
-import { betterAuth, BetterAuthOptions  } from 'better-auth';
+import { betterAuth, BetterAuthOptions } from 'better-auth';
 
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 // import { EmailService } from "../modules/email/email.service.js";
@@ -13,12 +13,19 @@ const options = {
       generateId: () => crypto.randomUUID(),
     },
   },
+  user: {
+    additionalFields: {
+      avatar: {
+        type: 'string',
+      },
+    },
+  },
   baseURL: process.env.betterAuthUrl,
   emailAndPassword: {
-    enabled: true, 
+    enabled: true,
     sendResetPassword: async ({ user, token }) => {
       const frontendURL = `${process.env.betterAuthUrl}/reset-password/${token}`;
-      console.log("frontendURL", frontendURL)
+      console.log('frontendURL', frontendURL);
       // await EmailService.queueEmail({
       //   to: user.email,
       //   subject: "Reset your password",

@@ -249,6 +249,7 @@ export function useTicket({
           return {
             ...old,
             data: [
+              ...(old?.data ?? []),
               {
                 ...data.data,
                 createdAt: new Date(),
@@ -257,7 +258,6 @@ export function useTicket({
                   email: user?.email!,
                 },
               },
-              ...(old?.data ?? []),
             ],
           };
         },

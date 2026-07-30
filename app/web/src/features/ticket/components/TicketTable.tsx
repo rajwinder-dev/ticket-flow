@@ -82,7 +82,7 @@ const TicketTable = () => {
     <div>
       {/* Headers & Filters */}
       <div className="h-full">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between p-4  ">
           <div>
             <h2 className="text-xl font-bold capitalize">
               {assignedTo ? (assignedTo === 'none' ? 'unassigned' : 'My') : ''}{' '}
@@ -128,133 +128,134 @@ const TicketTable = () => {
         </div>
 
         {/* Table */}
-        <Table className="hidden lg:table w-full">
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>Code</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Assigned To</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoadingTicketData ? (
-              // Renders 5 placeholder rows that trace your actual columns perfectly
-              Array.from({ length: 3 }).map((_, rowIndex) => (
-                <TableRow key={rowIndex} className="hover:bg-transparent">
-                  <TableCell>
-                    <Skeleton className="h-4 w-12" />
-                  </TableCell>
-                  <TableCell className="max-w-80">
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-11/12" />
-                      <Skeleton className="h-3 w-3/4" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-3 w-16" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Skeleton className="ml-auto h-8 w-8 rounded-md" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : ticketData?.data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="text-muted-foreground py-8 text-center"
-                >
-                  No tickets found for current filters.
-                </TableCell>
+        <div className="*:data-[slot=table-container]:h-[calc(100vh-350px)] *:data-[slot=table-container]:overflow-y-auto border-t">
+          <Table className="hidden lg:table w-full">
+            <TableHeader className="bg-background sticky z-10 top-0 border-b">
+              <TableRow className="hover:bg-transparent">
+                <TableHead>Code</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Assigned To</TableHead>
+                <TableHead>Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ) : (
-              ticketData?.data.map((ticket) => (
-                <TableRow key={ticket.id}>
-                  <TableCell className="font-mono  text-xs font-medium">
-                    {ticket.code}
-                  </TableCell>
-                  <TableCell className="min-w-30 truncate font-medium hover:underline">
-                    <Link to={ticket.id}>
-                      <p className="text-wrap">{ticket.subject}</p>
-
-                      <p className="text-muted-foreground text-wrap  text-xs font-normal">
-                        {ticket.description?.slice(0, 70) + '...'}
-                      </p>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {ticket.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <TicketStatusCell ticket={ticket} size="sm" />
-                  </TableCell>
-                  <TableCell>
-                    <TicketPriorityCell ticket={ticket} size="sm" />
-                  </TableCell>
-                  <TableCell>
-                    <p>{ticket.assignedToUser?.name || 'Unassigned'}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {ticket.queue?.name || 'No Queue'}
-                    </p>
-                  </TableCell>
-                  <TableCell className="flex flex-col">
-                    <span>{formatToDate(ticket.updatedAt)}</span>
-                    <span>{formatToTime(ticket.updatedAt)}</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                          ...
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ticket actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          onClick={() => handleOpenTicketForm(ticket)}
-                        >
-                          Edit ticket
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleOpenEscalateForm(ticket)}
-                        >
-                          Escalate
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
-                          Delete ticket
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+            </TableHeader>
+            <TableBody>
+              {isLoadingTicketData ? (
+                // Renders 5 placeholder rows that trace your actual columns perfectly
+                Array.from({ length: 3 }).map((_, rowIndex) => (
+                  <TableRow key={rowIndex} className="hover:bg-transparent">
+                    <TableCell>
+                      <Skeleton className="h-4 w-12" />
+                    </TableCell>
+                    <TableCell className="max-w-80">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-11/12" />
+                        <Skeleton className="h-3 w-3/4" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto h-8 w-8 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : ticketData?.data.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={8}
+                    className="text-muted-foreground py-8 text-center"
+                  >
+                    No tickets found for current filters.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                ticketData?.data.map((ticket) => (
+                  <TableRow key={ticket.id}>
+                    <TableCell className="font-mono  text-xs font-medium">
+                      {ticket.code}
+                    </TableCell>
+                    <TableCell className="min-w-30 truncate font-medium hover:underline">
+                      <Link to={ticket.id}>
+                        <p className="text-wrap">{ticket.subject}</p>
 
+                        <p className="text-muted-foreground text-wrap  text-xs font-normal">
+                          {ticket.description?.slice(0, 70) + '...'}
+                        </p>
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {ticket.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <TicketStatusCell ticket={ticket} size="sm" />
+                    </TableCell>
+                    <TableCell>
+                      <TicketPriorityCell ticket={ticket} size="sm" />
+                    </TableCell>
+                    <TableCell>
+                      <p>{ticket.assignedToUser?.name || 'Unassigned'}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {ticket.queue?.name || 'No Queue'}
+                      </p>
+                    </TableCell>
+                    <TableCell className="flex flex-col">
+                      <span>{formatToDate(ticket.updatedAt)}</span>
+                      <span>{formatToTime(ticket.updatedAt)}</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            ...
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Ticket actions</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            onClick={() => handleOpenTicketForm(ticket)}
+                          >
+                            Edit ticket
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleOpenEscalateForm(ticket)}
+                          >
+                            Escalate
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive">
+                            Delete ticket
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
         {/* Mobile Table */}
         <div className="flex flex-col p-4 lg:hidden gap-4">
           {ticketData?.data.map((ticket) => (
