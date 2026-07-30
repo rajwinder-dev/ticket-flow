@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { dirtyValues } from '@/lib/utils';
 import { useUser } from '@org/core';
 import type { UpdateMyDetailsInput } from '@org/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -22,15 +23,17 @@ const ProfileForm = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, dirtyFields },
-  } = useForm<UpdateMyDetailsInput>({
-    defaultValues: {
-      phoneNo: userDetails?.data.phoneNo || undefined,
-      location: userDetails?.data.location || undefined,
-      avatar: userDetails?.data.avatar || undefined,
-    },
-  });
-
+  } = useForm<UpdateMyDetailsInput>();
+  useEffect(() => {
+    if (userDetails)
+      reset({
+        phoneNo: userDetails?.data.phoneNo || '',
+        location: userDetails?.data.location || '',
+        avatar: userDetails?.data.avatar || '',
+      });
+  }, [userDetails, reset]);
   const onSubmit = async (data: UpdateMyDetailsInput) => {
     const output = dirtyValues(dirtyFields, data);
     updateMyDetails(output, {

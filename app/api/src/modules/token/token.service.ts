@@ -1,21 +1,25 @@
-import crypto from "crypto";
-import { TokenDataInput } from "./token.types.js";
-import { prisma, TokeStatus } from "@org/database";
+import { TokenDataInput } from './token.types.js';
+import { prisma, TokeStatus } from '@org/database';
+import { createTokenHash } from '@org/utils';
 export class TokenService {
-  static createToken = async ({ input, expiresAt }: { input: TokenDataInput; expiresAt: Date }) => {
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const token = crypto.createHash("sha256").update(resetToken).digest("hex");
-    // revoke pending token
+  static createToken = async ({
+    input,
+    expiresAt,
+  }: {
+    input: TokenDataInput;
+    expiresAt: Date;
+  }) => {
+    const token = createTokenHash(); // revoke pending token
     await prisma.token.updateMany({
       where: {
         type: input.type,
-        status: "PENDING",
+        status: 'PENDING',
         email: input.email,
       },
       data: {
-        status: "REVOKED"
-      }
-    })
+        status: 'REVOKED',
+      },
+    });
     return await prisma.token.create({
       data: { ...input, token, expiresAt },
     });
@@ -26,7 +30,7 @@ export class TokenService {
     const tokenData = await prisma.token.findFirst({
       where: {
         token,
-        status: "PENDING",
+        status: 'PENDING',
         expiresAt: {
           gt: currentDate,
         },
@@ -34,12 +38,12 @@ export class TokenService {
       include: {
         role: {
           select: {
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
     return tokenData;

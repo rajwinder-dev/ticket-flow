@@ -35,6 +35,7 @@ const OrganizationForm = () => {
       name: currentOrganization?.data.name,
       slug: currentOrganization?.data.slug || undefined,
       description: currentOrganization?.data.description || undefined,
+      logo: currentOrganization?.data.logo || undefined,
     },
   });
 

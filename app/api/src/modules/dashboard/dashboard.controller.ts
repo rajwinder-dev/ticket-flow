@@ -1,10 +1,10 @@
-import { recentTicketSchema, statusCountsSchema } from "@org/zod";
-import { startOfWeek } from "date-fns";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import response from "../../core/utils/response.js";
-import { dashboardService } from "./dashboard.service.js";
-import z from "zod";
-import { getTenantClient } from "@org/database";
+import { recentTicketSchema, statusCountsSchema } from '@org/zod';
+import { startOfWeek } from 'date-fns';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { dashboardService } from './dashboard.service.js';
+import z from 'zod';
+import { getTenantClient } from '@org/database';
 
 export class dashboardController {
   static getSummary = catchAsync(async (req, res, _next) => {
@@ -20,7 +20,7 @@ export class dashboardController {
         },
       },
       orderBy: {
-        updatedAt: "desc",
+        updatedAt: 'desc',
       },
       select: {
         id: true,
@@ -34,6 +34,7 @@ export class dashboardController {
           },
         },
       },
+      take: 5,
     });
     response(res, data, 200, { schema: z.array(recentTicketSchema) });
   });

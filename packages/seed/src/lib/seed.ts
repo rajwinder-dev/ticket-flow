@@ -9,12 +9,15 @@ import { seedTickets } from './seed/ticket.seed.js';
 import { seedTicketComments } from './seed/ticketComments.seed.js';
 import { seedTicketTransitions } from './seed/ticketTransitions.seed.js';
 import { log } from '@org/utils';
+import { seedInvites } from './seed/invite.seed.js';
+import { seedEmailProviders } from './seed/emailProvider.seed.js';
 const seedConfig = {
   usersCount: 100,
   ownersCount: 20,
   maxOrg: 3,
   maxGroupsPerOrg: 3,
   maxQueuePerGroup: 4,
+  maxCustomersPerOrg: 25,
 };
 export class seedData {
   static async updateFakeData() {
@@ -32,10 +35,12 @@ export class seedData {
       seedConfig.maxQueuePerGroup,
     );
     await seedAgents();
-    await seedCustomers();
+    await seedCustomers(seedConfig.maxCustomersPerOrg);
     await seedTickets();
     await seedTicketComments();
     await seedTicketTransitions();
+    await seedInvites();
+    await seedEmailProviders();
     log.success('Fake data seeded successfully');
   }
   static async createOnlyAdmin() {

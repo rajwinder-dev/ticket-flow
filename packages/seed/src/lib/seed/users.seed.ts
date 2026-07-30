@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { log } from '@org/utils';
 
-import { prisma,  } from '@org/database';
+import { prisma } from '@org/database';
 import { auth } from '@org/auth';
 
 /**
@@ -42,6 +42,17 @@ export async function seedUsers(count: number = 50) {
   }
 
   const createdUsers = await prisma.user.findMany();
+
+  for (const user of createdUsers) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        phoneNo: faker.phone.number(),
+        location: faker.location.streetAddress(),
+        avatar: faker.image.avatar(),
+      },
+    });
+  }
   log.success(`Created ${createdUsers.length} users`);
   return createdUsers;
 }

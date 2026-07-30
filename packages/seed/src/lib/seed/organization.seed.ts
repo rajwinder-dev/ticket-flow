@@ -1,6 +1,7 @@
 import { permissions } from "@org/constants";
 import { log } from "@org/utils";
 import { Organization, User, prisma } from "@org/database";
+import { faker } from "@faker-js/faker";
 
 export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
   log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
@@ -9,14 +10,18 @@ export async function seedOrganizations(owners: User[], maxOrganizationCount: nu
     const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
 
     for (let i = 0; i < orgCount; i++) {
+      const name = `${owner.email.split("@")[0]}'s Corp ${i + 1}`;
       try {
         const organizationData = await prisma.organization.create({
           data: {
-            name: `${owner.email.split("@")[0]}'s Corp ${i + 1}`,
+            name,
             code: generateCode("ORG"),
             createdBy: owner.id,
             teamSize: Math.floor(Math.random() * 100) + 1,
             description: `Organization number ${i + 1} for ${owner.email}`,
+            slug: name.replace(/\s+/g, "-").toLowerCase(),
+            logo: faker.image.avatar(),
+            type: "TEAM",
           },
         });
         orgData.push(organizationData);

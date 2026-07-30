@@ -5,14 +5,14 @@ import { userApi } from './api.js';
 export const useUser = () => {
   const queryClient = useQueryClient();
   const { data: userDetails, isLoading: isLoading } = useQuery({
-    queryKey: ['user'],
+    queryKey: ['user', 'me'],
     queryFn: userApi.myDetails,
   });
 
   const { mutate: updateMyDetails, isPending: isUpdating } = useMutation({
     mutationFn: (input: UpdateMyDetailsInput) => userApi.updateMyDetails(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
     },
   });
 
