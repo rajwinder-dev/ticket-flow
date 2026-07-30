@@ -211,6 +211,7 @@ export class TicketController {
   });
   static getTicketComments = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
+    console.log(id)
     const { comments, pagination } = await TicketService.getTicketComments({
       organizationId: req.organization.id,
       ticketId: id,

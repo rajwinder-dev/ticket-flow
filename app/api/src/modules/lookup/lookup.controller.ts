@@ -8,6 +8,7 @@ class LookupControllerClass {
   getGroups = catchAsync(async (req, res, _next) => {
     const tenantdb = getTenantClient(req.organization.id);
     const data = await tenantdb.queueGroup.findMany({
+      where: { active: true },
       select: { id: true, name: true },
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
@@ -16,7 +17,7 @@ class LookupControllerClass {
     const tenantdb = getTenantClient(req.organization.id);
     const groupId = req.params.groupId as string;
     const data = await tenantdb.queue.findMany({
-      where: { queueGroupId: groupId },
+      where: { queueGroupId: groupId, active: true },
       select: { id: true, name: true },
     });
     response(res, data, 200, { schema: z.array(lookupSchema) });
@@ -25,7 +26,7 @@ class LookupControllerClass {
     const tenantdb = getTenantClient(req.organization.id);
     const queueId = req.params.queueId as string;
     const data = await tenantdb.queueAgent.findMany({
-      where: { queueId },
+      where: { queueId, active: true },
       select: { id: true, user: { select: { id: true, name: true } } },
     });
     const output = data.map((item) => ({
@@ -37,6 +38,9 @@ class LookupControllerClass {
   getRoles = catchAsync(async (req, res, _next) => {
     const tenantdb = getTenantClient(req.organization.id);
     const data = await tenantdb.role.findMany({
+      where: {
+        active: true,
+      },
       select: {
         id: true,
         name: true,

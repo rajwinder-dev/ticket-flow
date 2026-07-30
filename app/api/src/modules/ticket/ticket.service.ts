@@ -735,15 +735,15 @@ export class TicketService {
         },
       },
     });
-    if (!currentTicket?.queue) {
-      throw new appError('Invalid Ticket Id', 404, 'NOT_FOUND');
+    if (!input.groupId && !currentTicket?.queue) {
+      throw new appError('You need to select a group', 400, 'INVALID_PAYLOAD');
     }
     //  find next queue in same group
     const nextQueues = await tenantDb.queue.findMany({
       where: {
-        queueGroupId: input.groupId || currentTicket.queue.queueGroupId,
+        queueGroupId: input.groupId || currentTicket?.queue?.queueGroupId,
         order: {
-          gt: input.groupId ? 0 : currentTicket.queue.order,
+          gt: input.groupId ? 0 : currentTicket?.queue?.order,
         },
       },
       include: {
@@ -751,7 +751,7 @@ export class TicketService {
           select: {
             queueAgents: true,
           },
-        }, // or relation you use
+        },
       },
       orderBy: {
         order: 'asc',
