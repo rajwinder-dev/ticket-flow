@@ -3,20 +3,20 @@ import { Worker, QueueEvents } from 'bullmq';
 import { Redis } from 'ioredis';
 import { EmailQueueInput } from '@org/zod';
 import { log } from '@org/utils';
-import { prisma } from '@org/database';
 import { EmailQueueService } from './email/email-queue.service.js';
 import { selectTemplate } from './template.map.js';
 import { providerData } from './email/email-queue.types.js';
+import { getTenantClient } from '@org/database';
 
 const connection = new Redis({
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
   username: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD,
-  
+
   maxRetriesPerRequest: null,
   tls: process.env.REDIS_TLS ? {} : undefined,
-  retryStrategy: (times) => Math.min(times* 200, 2000),
+  retryStrategy: (times) => Math.min(times * 200, 2000),
   reconnectOnError: () => true,
   keepAlive: 10000,
   enableReadyCheck: true,
@@ -48,7 +48,9 @@ const worker = new Worker(
         jsx,
       });
     } else {
-      const providers = (await prisma.emailProvider.findMany({
+      if (!organizationId) throw new Error('organizationId undefined');
+      const tenantDb = getTenantClient(organizationId);
+      const providers = (await tenantDb.emailProvider.findMany({
         where: { organizationId },
         select: {
           providerType: true,

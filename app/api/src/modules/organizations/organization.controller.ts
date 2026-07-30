@@ -15,6 +15,8 @@ import { TokenService } from '../token/token.service.js';
 import { OrganizationService } from './organization.service.js';
 import { getTenantClient, prisma, Prisma } from '@org/database';
 import { EmailService } from '../email/email.service.js';
+import { GetMyOrganizationsRow } from './organization.types.js';
+
 export class OrganizationController {
   private static handler =
     new HandleFactory<Prisma.OrganizationUncheckedCreateInput>(
@@ -29,43 +31,23 @@ export class OrganizationController {
     response(res, organization, 201, { schema: createOrganizationResponse });
   });
   static getMyOrganizations = catchAsync(async (req, res) => {
-    const { filterOptions, limit, offset } = new APIFeatures(
-      req.query,
-    ).pagination();
-    const total = await prisma.membership.count({
-      where: {
-        userId: req.user.id,
-        ...filterOptions.where,
-      },
-    });
-    const membership = await prisma.membership.findMany({
-      where: {
-        userId: req.user.id,
-        ...filterOptions.where,
-      },
-      select: {
-        organization: {
-          select: {
-            name: true,
-            id: true,
-            createdBy: true,
-            logo: true,
-          },
-        },
-        role: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      take: limit,
-      skip: offset,
-    });
-    const output = membership.map((m) => ({
-      ...m.organization,
-      isOwner: m.organization?.createdBy === req.user.id,
-      role: m.role?.name,
+    const { limit, offset } = new APIFeatures(req.query).pagination();
+
+    const rows = await prisma.$queryRaw<GetMyOrganizationsRow[]>`
+    SELECT * FROM get_my_organizations(${req.user.id}::uuid, ${limit}, ${offset});
+  `;
+
+    const total = rows.length > 0 ? Number(rows[0].total_count) : 0;
+
+    const output = rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      logo: r.logo,
+      createdBy: r.createdBy,
+      role: r.roleName,
+      isOwner: r.isOwner,
     }));
+
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });
   static getCurrentOrganization = catchAsync(async (req, res, _next) => {
@@ -97,6 +79,7 @@ export class OrganizationController {
       roleId,
     });
     await EmailService.queueEmail({
+      organizationId: req.organization.id,
       to: email,
       subject: 'Invite Email to our organizations',
       template: 'invite',

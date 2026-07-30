@@ -1,17 +1,23 @@
-import { CreateCustomerInput, customerSchemaResponse, UpdateCustomerInput } from "@org/zod";
-import z from "zod";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { catchAsync } from "../../core/utils/catchAsync.js";
-import response from "../../core/utils/response.js";
-import { normalize } from "../../core/utils/utils.js";
-import { getTenantClient, prisma } from "@org/database";
-import { CustomerService } from "./customer.service.js";
+import {
+  CreateCustomerInput,
+  customerSchemaResponse,
+  UpdateCustomerInput,
+} from '@org/zod';
+import z from 'zod';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import response from '../../core/utils/response.js';
+import { normalize } from '../../core/utils/utils.js';
+import { getTenantClient, prisma } from '@org/database';
+import { CustomerService } from './customer.service.js';
 
 export class CustomerController {
   static getAllCustomers = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
     const search = normalize(req.query.search);
-    const { filterOptions, limit, offset } = new APIFeatures(req.query, { ignore: ["search"] })
+    const { filterOptions, limit, offset } = new APIFeatures(req.query, {
+      ignore: ['search'],
+    })
       .filter()
       .sort()
       .pagination();
@@ -24,14 +30,14 @@ export class CustomerController {
           {
             name: {
               contains: search,
-              mode: "insensitive",
+              mode: 'insensitive',
             },
           },
           {
             identity: {
               email: {
                 contains: search,
-                mode: "insensitive",
+                mode: 'insensitive',
               },
             },
           },
@@ -54,7 +60,7 @@ export class CustomerController {
         },
         tickets: {
           where: {
-            status: "OPEN",
+            status: 'OPEN',
           },
           select: {
             id: true,
@@ -89,14 +95,18 @@ export class CustomerController {
   static createCustomer = catchAsync(async (req, res, _next) => {
     const organizationId = req.organization.id;
     const data = req.body as CreateCustomerInput;
-    const customer = await CustomerService.createCustomer({data, organizationId}) 
+    const customer = await CustomerService.createCustomer({
+      data,
+      organizationId,
+    });
     response(res, customer, 201);
   });
   static updateCustomer = catchAsync(async (req, res, _next) => {
+    const tenantdb = getTenantClient(req.organization.id);
     const id = req.params.id as string;
     const input = req.body as UpdateCustomerInput;
     const organizationId = req.organization.id;
-    const data = await prisma.customer.update({
+    const data = await tenantdb.customer.update({
       where: {
         id,
         organizationId,

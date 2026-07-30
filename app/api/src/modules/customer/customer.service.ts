@@ -71,7 +71,7 @@ export class CustomerService {
         },
       });
     }
-    return await prisma.customerIdentity.create({
+    return await tenantDb.customerIdentity.create({
       data: {
         email,
         customer: {

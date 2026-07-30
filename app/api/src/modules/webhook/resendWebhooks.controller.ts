@@ -7,11 +7,11 @@ import { ResendConfig, ResendService } from '@org/email-providers';
 import { TicketService } from '../ticket/ticket.service.js';
 import { crypto } from '../../core/utils/crypto.js';
 import { EncryptionType } from '@org/utils';
-import { getTenantClient } from '@org/database';
+import { getTenantClient, prisma } from '@org/database';
+import { EmailWebhookRow } from './webhook.type.js';
 
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
-    const tenantdb = getTenantClient(req.organization.id);
     const rawBody = req.body.toString('utf8');
 
     const headers = {
@@ -33,13 +33,12 @@ export class resendWebhookController {
       throw new appError('Invalid payload structure', 400, 'INVALID_PAYLOAD');
     }
 
-    // Lookup webhook secret
-    const provider = await tenantdb.emailProvider.findFirst({
-      where: {
-        fromEmail: { in: email.to },
-        providerType: { not: 'SMTP' },
-      },
-    });
+    const rows = await prisma.$queryRaw<
+      EmailWebhookRow[]
+    >`SELECT * FROM get_email_webhook(${email.to}, 1)`;
+    const provider = rows[0] ?? null;
+    const tenantdb = getTenantClient(provider?.organizationId);
+
     if (!provider?.webhookSecret) {
       throw new appError('webhookSecret not found', 404, 'NOT_FOUND');
     }

@@ -14,7 +14,8 @@ export class EmailService {
     isSystemEmail,
   }: Omit<EmailQueueInput, 'jobType'>) => {
     if (!isSystemEmail) {
-      const tenantdb = getTenantClient(organizationId!);
+      if (!organizationId) throw new appError('organizationId undefined', 404);
+      const tenantdb = getTenantClient(organizationId);
       const emailProvider = await tenantdb.emailProvider.count();
       if (!emailProvider)
         throw new appError('You need to setup emailProvider', 404, 'NOT_FOUND');

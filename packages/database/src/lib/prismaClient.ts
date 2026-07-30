@@ -27,6 +27,7 @@ type TenantClient = ReturnType<typeof createTenantClient>;
 const clientCache = new Map<string, TenantClient>();
 
 function createTenantClient(organizationId: string) {
+  if (!organizationId) throw new Error('organizationId teneant undefined');
   return prisma.$extends({
     query: {
       $allModels: {
