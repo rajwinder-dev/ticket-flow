@@ -7,6 +7,7 @@ export const env = {
   betterAuthUrl: process.env.BETTER_AUTH_URL,
   betterAuthSecret: process.env.BETTER_AUTH_SECRET,
   refreshSecret: process.env.REFRESH_SECRET,
+  geminiApiKey: process.env.GEMINI_API_KEY,
   nodeEnv: process.env.NODE_ENV,
   port: process.env.BACKEND_PORT || 3000,
 };

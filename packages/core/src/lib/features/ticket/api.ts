@@ -1,4 +1,4 @@
-import type { FilterOptions } from "@org/web-utils";
+import type { FilterOptions } from '@org/web-utils';
 import {
   type AssignTicketInput,
   type CommentSchemaResponse,
@@ -13,20 +13,20 @@ import {
   type UpdateTicketInput,
   type UpdateTicketPriorityInput,
   type UpdateTicketStatusInput,
-} from "@org/zod";
-import { api } from "../../api.js";
+} from '@org/zod';
+import { api } from '../../api.js';
 
 export const ticketApi = {
   create: async (data: CreateTicketInput) => {
     const res = await api.post({
-      path: "/ticket",
+      path: '/ticket',
       data,
     });
     return res;
   },
   getAll: async (filterOptions?: FilterOptions) => {
     const res = await api.getMany<TicketSchemaResponse>({
-      path: "/ticket",
+      path: '/ticket',
       filterOptions,
     });
     return res;
@@ -40,7 +40,7 @@ export const ticketApi = {
   },
   getAssigned: async () => {
     const res = await api.getMany({
-      path: "/ticket/me",
+      path: '/ticket/me',
     });
     return res;
   },
@@ -86,7 +86,6 @@ export const ticketApi = {
     return res;
   },
   getComments: async (ticketId: string) => {
-
     const res = await api.getMany<CommentSchemaResponse>({
       path: `/ticket/${ticketId}/comment`,
     });
@@ -107,7 +106,7 @@ export const ticketApi = {
   },
   getTransitionHistory: async (ticketId: string) => {
     const res = await api.getMany<TicketTransitionSchema>({
-      path: `/ticket/${ticketId}/transition-history`,
+      path: `/ticket/${ticketId}/transitions`,
     });
     return res;
   },

@@ -128,8 +128,8 @@ const TicketTable = () => {
         </div>
 
         {/* Table */}
-        <div className="*:data-[slot=table-container]:h-[calc(100vh-350px)] *:data-[slot=table-container]:overflow-y-auto border-t">
-          <Table className="hidden lg:table w-full">
+        <div className="*:data-[slot=table-container]:h-[calc(100vh-350px)] *:data-[slot=table-container]:overflow-y-auto border-t hidden lg:block">
+          <Table className=" w-full">
             <TableHeader className="bg-background sticky z-10 top-0 border-b">
               <TableRow className="hover:bg-transparent">
                 <TableHead>Code</TableHead>
@@ -257,17 +257,18 @@ const TicketTable = () => {
           </Table>
         </div>
         {/* Mobile Table */}
-        <div className="flex flex-col p-4 lg:hidden gap-4">
-          {ticketData?.data.map((ticket) => (
-            <TicketCard
-              key={ticket.id}
-              ticket={ticket}
-              handleOpenTicketForm={handleOpenTicketForm}
-              handleOpenEscalateForm={handleOpenEscalateForm}
-            />
-          ))}
-        </div>
       </div>
+      <div className="flex flex-col p-4 lg:hidden gap-4">
+        {ticketData?.data.map((ticket) => (
+          <TicketCard
+            key={ticket.id}
+            ticket={ticket}
+            handleOpenTicketForm={handleOpenTicketForm}
+            handleOpenEscalateForm={handleOpenEscalateForm}
+          />
+        ))}
+      </div>
+
       {ticketData && (
         <Pagination
           offset={ticketData?.offset}

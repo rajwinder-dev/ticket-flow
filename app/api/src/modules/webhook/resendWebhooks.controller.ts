@@ -4,7 +4,7 @@ import { appError } from '../../core/utils/appError.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { ResendConfig, ResendService } from '@org/email-providers';
-import { TicketService } from '../ticket/ticket.service.js';
+import { TicketService } from '../ticket/ticket/ticket.service.js';
 import { crypto } from '../../core/utils/crypto.js';
 import { EncryptionType } from '@org/utils';
 import { getTenantClient, prisma } from '@org/database';

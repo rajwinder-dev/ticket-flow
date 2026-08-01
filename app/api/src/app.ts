@@ -34,11 +34,11 @@ import organizationRouter from './modules/organizations/organization.routes.js';
 import QueueRoutes from './modules/queue/queue.routes.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import roleRouter from './modules/role/role.route.js';
-import TicketRouter from './modules/ticket/ticket.routes.js';
 import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
 import { log } from '@org/utils';
+import TicketModuleRouter from './modules/ticket/ticket.module.js';
 
 export const app: Express = express();
 
@@ -50,17 +50,18 @@ app.use(helmet());
 app.use(hpp());
 
 configLogger(app);
-if(!devMode) app.use((req, res, next) => {
-  log.data('IP', {
-    ip: req.ip,
-    ips: req.ips,
-    cfIp: req.headers['cf-connecting-ip'],
-    xForwardedFor: req.headers['x-forwarded-for'],
-    realIp: req.headers['x-real-ip'],
-  });
+if (!devMode)
+  app.use((req, res, next) => {
+    log.data('IP', {
+      ip: req.ip,
+      ips: req.ips,
+      cfIp: req.headers['cf-connecting-ip'],
+      xForwardedFor: req.headers['x-forwarded-for'],
+      realIp: req.headers['x-real-ip'],
+    });
 
-  next();
-});
+    next();
+  });
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 500,
@@ -107,7 +108,7 @@ app.use('/api/v1/email', emailRouter);
 app.use('/api/v1/queue', QueueRoutes);
 app.use('/api/v1/queue-group', QueueGroupRoutes);
 app.use('/api/v1/customer', customerRoutes);
-app.use('/api/v1/ticket', TicketRouter);
+app.use('/api/v1/ticket', TicketModuleRouter);
 app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1/member', memberRouter);
 app.use('/api/v1/activity', ActivityRouter);
