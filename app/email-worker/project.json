@@ -13,8 +13,7 @@
       "options": {
         "cwd": "app/email-worker",
         "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --clear-screen=false src/main.ts"
-      },
-      "dependsOn": ["^build"]
+      }
     }
   }
 }

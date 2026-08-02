@@ -27,10 +27,12 @@ export type AggregateTicket = {
 }
 
 export type TicketAvgAggregateOutputType = {
+  confidence: number | null
   version: number | null
 }
 
 export type TicketSumAggregateOutputType = {
+  confidence: number | null
   version: number | null
 }
 
@@ -41,6 +43,10 @@ export type TicketMinAggregateOutputType = {
   category: string | null
   description: string | null
   status: $Enums.TicketStatus | null
+  sentiment: $Enums.Sentiment | null
+  language: string | null
+  summary: string | null
+  confidence: number | null
   priority: $Enums.Priority | null
   active: boolean | null
   createdAt: Date | null
@@ -60,6 +66,10 @@ export type TicketMaxAggregateOutputType = {
   category: string | null
   description: string | null
   status: $Enums.TicketStatus | null
+  sentiment: $Enums.Sentiment | null
+  language: string | null
+  summary: string | null
+  confidence: number | null
   priority: $Enums.Priority | null
   active: boolean | null
   createdAt: Date | null
@@ -79,6 +89,11 @@ export type TicketCountAggregateOutputType = {
   category: number
   description: number
   status: number
+  sentiment: number
+  language: number
+  summary: number
+  confidence: number
+  keywords: number
   priority: number
   active: number
   createdAt: number
@@ -94,10 +109,12 @@ export type TicketCountAggregateOutputType = {
 
 
 export type TicketAvgAggregateInputType = {
+  confidence?: true
   version?: true
 }
 
 export type TicketSumAggregateInputType = {
+  confidence?: true
   version?: true
 }
 
@@ -108,6 +125,10 @@ export type TicketMinAggregateInputType = {
   category?: true
   description?: true
   status?: true
+  sentiment?: true
+  language?: true
+  summary?: true
+  confidence?: true
   priority?: true
   active?: true
   createdAt?: true
@@ -127,6 +148,10 @@ export type TicketMaxAggregateInputType = {
   category?: true
   description?: true
   status?: true
+  sentiment?: true
+  language?: true
+  summary?: true
+  confidence?: true
   priority?: true
   active?: true
   createdAt?: true
@@ -146,6 +171,11 @@ export type TicketCountAggregateInputType = {
   category?: true
   description?: true
   status?: true
+  sentiment?: true
+  language?: true
+  summary?: true
+  confidence?: true
+  keywords?: true
   priority?: true
   active?: true
   createdAt?: true
@@ -252,6 +282,11 @@ export type TicketGroupByOutputType = {
   category: string | null
   description: string
   status: $Enums.TicketStatus
+  sentiment: $Enums.Sentiment
+  language: string | null
+  summary: string | null
+  confidence: number | null
+  keywords: runtime.JsonValue | null
   priority: $Enums.Priority | null
   active: boolean
   createdAt: Date
@@ -294,6 +329,11 @@ export type TicketWhereInput = {
   category?: Prisma.StringNullableFilter<"Ticket"> | string | null
   description?: Prisma.StringFilter<"Ticket"> | string
   status?: Prisma.EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFilter<"Ticket"> | $Enums.Sentiment
+  language?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  summary?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  confidence?: Prisma.FloatNullableFilter<"Ticket"> | number | null
+  keywords?: Prisma.JsonNullableFilter<"Ticket">
   priority?: Prisma.EnumPriorityNullableFilter<"Ticket"> | $Enums.Priority | null
   active?: Prisma.BoolFilter<"Ticket"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
@@ -323,6 +363,11 @@ export type TicketOrderByWithRelationInput = {
   category?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  sentiment?: Prisma.SortOrder
+  language?: Prisma.SortOrderInput | Prisma.SortOrder
+  summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  keywords?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -355,6 +400,11 @@ export type TicketWhereUniqueInput = Prisma.AtLeast<{
   category?: Prisma.StringNullableFilter<"Ticket"> | string | null
   description?: Prisma.StringFilter<"Ticket"> | string
   status?: Prisma.EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFilter<"Ticket"> | $Enums.Sentiment
+  language?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  summary?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  confidence?: Prisma.FloatNullableFilter<"Ticket"> | number | null
+  keywords?: Prisma.JsonNullableFilter<"Ticket">
   priority?: Prisma.EnumPriorityNullableFilter<"Ticket"> | $Enums.Priority | null
   active?: Prisma.BoolFilter<"Ticket"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
@@ -384,6 +434,11 @@ export type TicketOrderByWithAggregationInput = {
   category?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  sentiment?: Prisma.SortOrder
+  language?: Prisma.SortOrderInput | Prisma.SortOrder
+  summary?: Prisma.SortOrderInput | Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  keywords?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -411,6 +466,11 @@ export type TicketScalarWhereWithAggregatesInput = {
   category?: Prisma.StringNullableWithAggregatesFilter<"Ticket"> | string | null
   description?: Prisma.StringWithAggregatesFilter<"Ticket"> | string
   status?: Prisma.EnumTicketStatusWithAggregatesFilter<"Ticket"> | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentWithAggregatesFilter<"Ticket"> | $Enums.Sentiment
+  language?: Prisma.StringNullableWithAggregatesFilter<"Ticket"> | string | null
+  summary?: Prisma.StringNullableWithAggregatesFilter<"Ticket"> | string | null
+  confidence?: Prisma.FloatNullableWithAggregatesFilter<"Ticket"> | number | null
+  keywords?: Prisma.JsonNullableWithAggregatesFilter<"Ticket">
   priority?: Prisma.EnumPriorityNullableWithAggregatesFilter<"Ticket"> | $Enums.Priority | null
   active?: Prisma.BoolWithAggregatesFilter<"Ticket"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Ticket"> | Date | string
@@ -430,6 +490,11 @@ export type TicketCreateInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -454,6 +519,11 @@ export type TicketUncheckedCreateInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -478,6 +548,11 @@ export type TicketUpdateInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -502,6 +577,11 @@ export type TicketUncheckedUpdateInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -526,6 +606,11 @@ export type TicketCreateManyInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -545,6 +630,11 @@ export type TicketUpdateManyMutationInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -559,6 +649,11 @@ export type TicketUncheckedUpdateManyInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -593,6 +688,11 @@ export type TicketCountOrderByAggregateInput = {
   category?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  sentiment?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
+  keywords?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -606,6 +706,7 @@ export type TicketCountOrderByAggregateInput = {
 }
 
 export type TicketAvgOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
 
@@ -616,6 +717,10 @@ export type TicketMaxOrderByAggregateInput = {
   category?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  sentiment?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -635,6 +740,10 @@ export type TicketMinOrderByAggregateInput = {
   category?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  sentiment?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -648,6 +757,7 @@ export type TicketMinOrderByAggregateInput = {
 }
 
 export type TicketSumOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
   version?: Prisma.SortOrder
 }
 
@@ -884,6 +994,18 @@ export type EnumTicketStatusFieldUpdateOperationsInput = {
   set?: $Enums.TicketStatus
 }
 
+export type EnumSentimentFieldUpdateOperationsInput = {
+  set?: $Enums.Sentiment
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type NullableEnumPriorityFieldUpdateOperationsInput = {
   set?: $Enums.Priority | null
 }
@@ -955,6 +1077,11 @@ export type TicketCreateWithoutAssignedToUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -978,6 +1105,11 @@ export type TicketUncheckedCreateWithoutAssignedToUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1011,6 +1143,11 @@ export type TicketCreateWithoutAssignedByUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1034,6 +1171,11 @@ export type TicketUncheckedCreateWithoutAssignedByUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1086,6 +1228,11 @@ export type TicketScalarWhereInput = {
   category?: Prisma.StringNullableFilter<"Ticket"> | string | null
   description?: Prisma.StringFilter<"Ticket"> | string
   status?: Prisma.EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFilter<"Ticket"> | $Enums.Sentiment
+  language?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  summary?: Prisma.StringNullableFilter<"Ticket"> | string | null
+  confidence?: Prisma.FloatNullableFilter<"Ticket"> | number | null
+  keywords?: Prisma.JsonNullableFilter<"Ticket">
   priority?: Prisma.EnumPriorityNullableFilter<"Ticket"> | $Enums.Priority | null
   active?: Prisma.BoolFilter<"Ticket"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
@@ -1121,6 +1268,11 @@ export type TicketCreateWithoutOrganizationInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1144,6 +1296,11 @@ export type TicketUncheckedCreateWithoutOrganizationInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1193,6 +1350,11 @@ export type TicketCreateWithoutEmailMessagesInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1216,6 +1378,11 @@ export type TicketUncheckedCreateWithoutEmailMessagesInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1255,6 +1422,11 @@ export type TicketUpdateWithoutEmailMessagesInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1278,6 +1450,11 @@ export type TicketUncheckedUpdateWithoutEmailMessagesInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1301,6 +1478,11 @@ export type TicketCreateWithoutCustomerInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1324,6 +1506,11 @@ export type TicketUncheckedCreateWithoutCustomerInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1373,6 +1560,11 @@ export type TicketCreateWithoutQueueInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1396,6 +1588,11 @@ export type TicketUncheckedCreateWithoutQueueInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1445,6 +1642,11 @@ export type TicketCreateWithoutAttachmentsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1468,6 +1670,11 @@ export type TicketUncheckedCreateWithoutAttachmentsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1507,6 +1714,11 @@ export type TicketUpdateWithoutAttachmentsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1530,6 +1742,11 @@ export type TicketUncheckedUpdateWithoutAttachmentsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1553,6 +1770,11 @@ export type TicketCreateWithoutCommentsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1576,6 +1798,11 @@ export type TicketUncheckedCreateWithoutCommentsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1615,6 +1842,11 @@ export type TicketUpdateWithoutCommentsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1638,6 +1870,11 @@ export type TicketUncheckedUpdateWithoutCommentsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1661,6 +1898,11 @@ export type TicketCreateWithoutTransitionsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1684,6 +1926,11 @@ export type TicketUncheckedCreateWithoutTransitionsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1723,6 +1970,11 @@ export type TicketUpdateWithoutTransitionsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1746,6 +1998,11 @@ export type TicketUncheckedUpdateWithoutTransitionsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1769,6 +2026,11 @@ export type TicketCreateWithoutNotificationsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1792,6 +2054,11 @@ export type TicketUncheckedCreateWithoutNotificationsInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1831,6 +2098,11 @@ export type TicketUpdateWithoutNotificationsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1854,6 +2126,11 @@ export type TicketUncheckedUpdateWithoutNotificationsInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1877,6 +2154,11 @@ export type TicketCreateManyAssignedToUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1895,6 +2177,11 @@ export type TicketCreateManyAssignedByUserInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -1913,6 +2200,11 @@ export type TicketUpdateWithoutAssignedToUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1936,6 +2228,11 @@ export type TicketUncheckedUpdateWithoutAssignedToUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1959,6 +2256,11 @@ export type TicketUncheckedUpdateManyWithoutAssignedToUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1977,6 +2279,11 @@ export type TicketUpdateWithoutAssignedByUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2000,6 +2307,11 @@ export type TicketUncheckedUpdateWithoutAssignedByUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2023,6 +2335,11 @@ export type TicketUncheckedUpdateManyWithoutAssignedByUserInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2041,6 +2358,11 @@ export type TicketCreateManyOrganizationInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -2059,6 +2381,11 @@ export type TicketUpdateWithoutOrganizationInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2082,6 +2409,11 @@ export type TicketUncheckedUpdateWithoutOrganizationInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2105,6 +2437,11 @@ export type TicketUncheckedUpdateManyWithoutOrganizationInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2123,6 +2460,11 @@ export type TicketCreateManyCustomerInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -2141,6 +2483,11 @@ export type TicketUpdateWithoutCustomerInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2164,6 +2511,11 @@ export type TicketUncheckedUpdateWithoutCustomerInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2187,6 +2539,11 @@ export type TicketUncheckedUpdateManyWithoutCustomerInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2205,6 +2562,11 @@ export type TicketCreateManyQueueInput = {
   category?: string | null
   description: string
   status?: $Enums.TicketStatus
+  sentiment?: $Enums.Sentiment
+  language?: string | null
+  summary?: string | null
+  confidence?: number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: $Enums.Priority | null
   active?: boolean
   createdAt?: Date | string
@@ -2223,6 +2585,11 @@ export type TicketUpdateWithoutQueueInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2246,6 +2613,11 @@ export type TicketUncheckedUpdateWithoutQueueInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2269,6 +2641,11 @@ export type TicketUncheckedUpdateManyWithoutQueueInput = {
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+  sentiment?: Prisma.EnumSentimentFieldUpdateOperationsInput | $Enums.Sentiment
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confidence?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keywords?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   priority?: Prisma.NullableEnumPriorityFieldUpdateOperationsInput | $Enums.Priority | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2354,6 +2731,11 @@ export type TicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   category?: boolean
   description?: boolean
   status?: boolean
+  sentiment?: boolean
+  language?: boolean
+  summary?: boolean
+  confidence?: boolean
+  keywords?: boolean
   priority?: boolean
   active?: boolean
   createdAt?: boolean
@@ -2384,6 +2766,11 @@ export type TicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   category?: boolean
   description?: boolean
   status?: boolean
+  sentiment?: boolean
+  language?: boolean
+  summary?: boolean
+  confidence?: boolean
+  keywords?: boolean
   priority?: boolean
   active?: boolean
   createdAt?: boolean
@@ -2408,6 +2795,11 @@ export type TicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   category?: boolean
   description?: boolean
   status?: boolean
+  sentiment?: boolean
+  language?: boolean
+  summary?: boolean
+  confidence?: boolean
+  keywords?: boolean
   priority?: boolean
   active?: boolean
   createdAt?: boolean
@@ -2432,6 +2824,11 @@ export type TicketSelectScalar = {
   category?: boolean
   description?: boolean
   status?: boolean
+  sentiment?: boolean
+  language?: boolean
+  summary?: boolean
+  confidence?: boolean
+  keywords?: boolean
   priority?: boolean
   active?: boolean
   createdAt?: boolean
@@ -2444,7 +2841,7 @@ export type TicketSelectScalar = {
   assignedBy?: boolean
 }
 
-export type TicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "subject" | "category" | "description" | "status" | "priority" | "active" | "createdAt" | "updatedAt" | "version" | "organizationId" | "queueId" | "customerId" | "assignedTo" | "assignedBy", ExtArgs["result"]["ticket"]>
+export type TicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "subject" | "category" | "description" | "status" | "sentiment" | "language" | "summary" | "confidence" | "keywords" | "priority" | "active" | "createdAt" | "updatedAt" | "version" | "organizationId" | "queueId" | "customerId" | "assignedTo" | "assignedBy", ExtArgs["result"]["ticket"]>
 export type TicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.Ticket$organizationArgs<ExtArgs>
   queue?: boolean | Prisma.Ticket$queueArgs<ExtArgs>
@@ -2494,6 +2891,11 @@ export type $TicketPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     category: string | null
     description: string
     status: $Enums.TicketStatus
+    sentiment: $Enums.Sentiment
+    language: string | null
+    summary: string | null
+    confidence: number | null
+    keywords: runtime.JsonValue | null
     priority: $Enums.Priority | null
     active: boolean
     createdAt: Date
@@ -2943,6 +3345,11 @@ export interface TicketFieldRefs {
   readonly category: Prisma.FieldRef<"Ticket", 'String'>
   readonly description: Prisma.FieldRef<"Ticket", 'String'>
   readonly status: Prisma.FieldRef<"Ticket", 'TicketStatus'>
+  readonly sentiment: Prisma.FieldRef<"Ticket", 'Sentiment'>
+  readonly language: Prisma.FieldRef<"Ticket", 'String'>
+  readonly summary: Prisma.FieldRef<"Ticket", 'String'>
+  readonly confidence: Prisma.FieldRef<"Ticket", 'Float'>
+  readonly keywords: Prisma.FieldRef<"Ticket", 'Json'>
   readonly priority: Prisma.FieldRef<"Ticket", 'Priority'>
   readonly active: Prisma.FieldRef<"Ticket", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Ticket", 'DateTime'>

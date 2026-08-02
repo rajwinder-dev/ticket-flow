@@ -110,4 +110,10 @@ export const ticketApi = {
     });
     return res;
   },
+  generateSummary: async (ticketId: string) => {
+    const res = await api.post({
+      path: `/ticket/ai/${ticketId}/summary`,
+    });
+    return res;
+  },
 };

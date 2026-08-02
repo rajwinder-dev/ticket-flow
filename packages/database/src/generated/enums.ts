@@ -79,12 +79,23 @@ export const TicketStatus = {
 export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
 
 
+export const Sentiment = {
+  POSITIVE: 'POSITIVE',
+  NEUTRAL: 'NEUTRAL',
+  NEGATIVE: 'NEGATIVE'
+} as const
+
+export type Sentiment = (typeof Sentiment)[keyof typeof Sentiment]
+
+
 export const TicketAction = {
   ASSIGNED: 'ASSIGNED',
   ESCALATED: 'ESCALATED',
   STATUS_CHANGED: 'STATUS_CHANGED',
   PRIORITY_CHANGED: 'PRIORITY_CHANGED',
-  NOTE_ADDED: 'NOTE_ADDED'
+  NOTE_ADDED: 'NOTE_ADDED',
+  QUEUE_CHANGED: 'QUEUE_CHANGED',
+  GROUP_CHANGED: 'GROUP_CHANGED'
 } as const
 
 export type TicketAction = (typeof TicketAction)[keyof typeof TicketAction]

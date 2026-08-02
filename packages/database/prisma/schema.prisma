@@ -350,8 +350,9 @@ model Ticket {
   status         TicketStatus       @default(OPEN)
   sentiment      Sentiment          @default(NEUTRAL)
   language       String?
-  Summary        String?
+  summary        String?
   confidence     Float?
+  keywords       Json?
   priority       Priority?
   active         Boolean            @default(true)
   createdAt      DateTime           @default(now())
@@ -417,6 +418,8 @@ enum TicketAction {
   STATUS_CHANGED
   PRIORITY_CHANGED
   NOTE_ADDED
+  QUEUE_CHANGED
+  GROUP_CHANGED
 }
 
 model TicketTransition {

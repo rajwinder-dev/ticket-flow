@@ -35,5 +35,7 @@ export const ticketActions = [
   "STATUS_CHANGED",
   "PRIORITY_CHANGED",
   "NOTE_ADDED",
+  "QUEUE_CHANGED",
+  "GROUP_CHANGED"
 ] as const;
 export const escalationReasonValues = escalationReasons.map((item) => item.value);

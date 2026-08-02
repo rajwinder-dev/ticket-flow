@@ -278,6 +278,21 @@ export function useTicket({
       },
     },
   );
+  const {
+    mutate: generateTicketSummary,
+    isPending: isGeneratingTicketSummary,
+  } = useMutation({
+    mutationFn: ({
+      ticketId,
+    }: {
+      ticketId: string;
+    }) => ticketApi.generateSummary(ticketId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['ticket', 'details', { orgId, ticketId }],
+      });
+    },
+  });
   return {
     ticketData,
     isLoadingTicketData,
@@ -311,5 +326,7 @@ export function useTicket({
     ticketDataError,
     ticketSummaryError,
     assignedTicketDataError,
+    generateTicketSummary,
+    isGeneratingTicketSummary,
   };
 }

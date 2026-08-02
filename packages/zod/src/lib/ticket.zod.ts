@@ -1,7 +1,7 @@
 import {
   escalationReasonValues,
-  ticketActions,
   ticketCategory,
+  ticketActions,
   ticketPriority,
   ticketStatus,
 } from '@org/constants';
@@ -12,7 +12,6 @@ import {
   validString,
 } from './helper/zodHelper.js';
 import { validUuidParams } from './global.zod.js';
-// zod schemas
 export const createTicketInput = {
   bodySchema: z
     .object({
@@ -135,6 +134,11 @@ export const ticketDetailsSchema = z.object({
   description: z.string(),
   priority: z.enum(ticketPriority),
   category: z.string(),
+  summary: z.string(),
+  keywords: z.array(z.string()),
+  sentiment: z.string(),
+  confidence: z.number(),
+  language: z.string(),
   version: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -169,7 +173,7 @@ export const commentSchemaResponse = z.object({
 // Assuming these are your imported Prisma Enums
 export const ticketTranslationSchema = z.object({
   createdAt: z.date(),
-  action: z.enum(ticketActions),
+  action: z.enum(Object.values(ticketActions)),
   fromPriority: z.enum(ticketPriority).nullable(),
   toPriority: z.enum(ticketPriority).nullable(),
   fromStatus: z.enum(ticketStatus).nullable(),
@@ -178,12 +182,12 @@ export const ticketTranslationSchema = z.object({
   note: z.string().nullable(),
   fromQueue: z
     .object({
-      name: z.string(),
+      name: z.string().nullable(),
     })
     .nullable(),
   toQueue: z
     .object({
-      name: z.string(),
+      name: z.string().nullable(),
     })
     .nullable(),
   fromAgent: z
@@ -198,20 +202,21 @@ export const ticketTranslationSchema = z.object({
     .nullable(),
   fromGroup: z
     .object({
-      name: z.string(),
+      name: z.string().nullable(),
     })
     .nullable(),
   toGroup: z
     .object({
-      name: z.string(),
+      name: z.string().nullable(),
     })
     .nullable(),
+  changedBy: z.object({
+    name: z.string().nullable(),
+  }),
 });
 
 // Infer the TypeScript type from the schema
 // --- Inferred Types ---
-export type TicketPriority = (typeof ticketPriority)[number];
-export type TicketStatus = (typeof ticketStatus)[number];
 export type TicketCategory = (typeof ticketCategory)[number];
 export type ticketAction = (typeof ticketActions)[number];
 export type TicketSchemaResponse = z.infer<typeof ticketSchemaResponse>;

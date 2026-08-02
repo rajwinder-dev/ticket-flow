@@ -1,4 +1,4 @@
-import { getTenantClient, Priority, TicketStatus } from '@org/database';
+import { getTenantClient, priority, Priority, TicketStatus } from '@org/database';
 import { ParsedQs } from 'qs';
 import { APIFeatures } from '../../../core/utils/apiFeatures';
 import { allowedTransitions } from '@org/constants';
@@ -6,7 +6,6 @@ import { appError } from '../../../core/utils/appError';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationService } from '../../notification/notification.service';
 import { SocketService } from '../../socket/socket.service';
-import { TicketPriority } from '@org/zod';
 import { TicketService } from '../ticket/ticket.service';
 import { TicketCommentsService } from '../comments/comments.service';
 
@@ -238,7 +237,7 @@ export class TicketTransitionService {
     input,
   }: {
     input: {
-      priority: TicketPriority;
+      priority: priority;
       reason: string;
       comment: string;
       groupId?: string;
@@ -523,6 +522,11 @@ export class TicketTransitionService {
           },
         },
         toGroup: {
+          select: {
+            name: true,
+          },
+        },
+        changedBy: {
           select: {
             name: true,
           },

@@ -8,8 +8,10 @@ export type MimeType =
   | 'audio/wav'
   | 'video/mp4';
 export interface GeminiRequest {
+  data: Record<string, string | number | Record<string, any>>;
   query: string;
+  options?: any;
   buffer?: Buffer;
   mimeType?: MimeType;
-  jsonTemplate?: Record<string, 'string' | 'number'>;
+  responseSchema?:  Record<string, any >;
 }

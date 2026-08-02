@@ -31,7 +31,6 @@
     "@faker-js/faker": "^8.4.1",
     "@org/constants": "workspace:*",
     "@org/utils": "workspace:*",
-    "@org/zod": "workspace:*",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "dotenv": "^17.3.1",

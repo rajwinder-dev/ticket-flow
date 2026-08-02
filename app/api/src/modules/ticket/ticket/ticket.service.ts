@@ -1,6 +1,12 @@
-import { CreateTicketInput, UpdateTicketInput } from '@org/zod';
+import { CreateTicketInput } from '@org/zod';
 import { appError } from '../../../core/utils/appError.js';
-import { getTenantClient, priority, TicketAction } from '@org/database';
+import {
+  getTenantClient,
+  priority,
+  Prisma,
+  Sentiment,
+  TicketAction,
+} from '@org/database';
 import { readableId } from '../../../core/utils/utils.js';
 import { ActivityService } from '../../activity/activity.service.js';
 import { CustomerService } from '../../customer/customer.service.js';
@@ -8,6 +14,7 @@ import { QueueService } from '../../queue/queue.service.js';
 import { QueueGroupService } from '../../queueGroup/queueGroup.service.js';
 import { NotificationService } from '../../notification/notification.service.js';
 import { SocketService } from '../../socket/socket.service.js';
+import { TicketAiService } from '../ai/ticketAi.service.js';
 
 export class TicketService {
   static createAndAssign = async ({
@@ -21,7 +28,7 @@ export class TicketService {
     ownerId: string;
     userId?: string;
   }) => {
-    const { email, assignment, ...data } = input;
+    let { email, assignment, ...data } = input;
     let groupId = assignment?.groupId;
     let queueId = assignment?.queueId;
     let agentId = assignment?.agentId;
@@ -30,8 +37,26 @@ export class TicketService {
       email,
       organizationId,
     );
+
     if (!groupId) {
-      groupId = await QueueGroupService.getDefaultGroup(organizationId);
+      // ai get response
+      const aiResponse = await TicketAiService.analyzeTicket({
+        organizationId,
+        data: {
+          subject: data.subject,
+          description: data.description,
+        },
+      });
+      // if ai get response
+      if (aiResponse) {
+        const { groupId: aiGroupId, ...rest } = aiResponse;
+        data = { ...data, ...rest };
+        if (aiResponse.confidence < 0.8) {
+          groupId = await QueueGroupService.getDefaultGroup(organizationId);
+        } else {
+          groupId = aiGroupId;
+        }
+      }
     }
     if (!queueId && groupId) {
       queueId = await this.resolveQueueAssignment({
@@ -112,6 +137,10 @@ export class TicketService {
       description: string;
       priority: priority;
       category: string;
+      sentiment?: Sentiment;
+      keywords?: string[];
+      confidence?: number;
+      summary?: string;
     };
     organizationId: string;
     customerId: string;
@@ -161,7 +190,7 @@ export class TicketService {
     organizationId,
     userId,
   }: {
-    input: UpdateTicketInput;
+    input: Prisma.TicketUpdateInput;
     ticketId: string;
     organizationId: string;
     userId: string;
@@ -226,6 +255,10 @@ export class TicketService {
         priority: true,
         category: true,
         createdAt: true,
+        sentiment: true,
+        keywords: true,
+        summary: true,
+        confidence: true,
         updatedAt: true,
         version: true,
         assignedToUser: {

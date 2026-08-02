@@ -8,6 +8,7 @@ services:
       - prisma-network
 
   api:
+    restart: always
     build:
       context: .
       target: api
@@ -20,17 +21,19 @@ services:
       - REDIS_HOST=redis
 
     healthcheck:
-      test: [
-        "CMD-SHELL",
-        'node -e "require(\"http\").get(\"http://localhost:3000/health\", (r) => process.exit(r.statusCode === 200 ? 0 : 1))"'
-      ]
+      test:
+        [
+          "CMD-SHELL",
+          'node -e "require(\"http\").get(\"http://localhost:3000/health\", (r) => process.exit(r.statusCode === 200 ? 0 : 1))"',
+        ]
       retries: 5
     depends_on:
-      - redis  
+      - redis
     networks:
       - prisma-network
 
-  email-worker: 
+  email-worker:
+    restart: always
     build:
       context: .
       target: email-worker
@@ -46,6 +49,7 @@ services:
       - prisma-network # ADDED: Essential so it can see the redis container
 
   web:
+    restart: always
     build:
       context: .
       target: web

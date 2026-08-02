@@ -2293,6 +2293,11 @@ export const TicketScalarFieldEnum = {
   category: 'category',
   description: 'description',
   status: 'status',
+  sentiment: 'sentiment',
+  language: 'language',
+  summary: 'summary',
+  confidence: 'confidence',
+  keywords: 'keywords',
   priority: 'priority',
   active: 'active',
   createdAt: 'createdAt',
@@ -2652,6 +2657,34 @@ export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'Sentiment'
+ */
+export type EnumSentimentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sentiment'>
+    
+
+
+/**
+ * Reference to a field of type 'Sentiment[]'
+ */
+export type ListEnumSentimentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sentiment[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
  * Reference to a field of type 'Priority'
  */
 export type EnumPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Priority'>
@@ -2746,20 +2779,6 @@ export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputTy
  * Reference to a field of type 'NotificationChannel[]'
  */
 export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel[]'>
-    
-
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**

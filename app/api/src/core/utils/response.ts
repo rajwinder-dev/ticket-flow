@@ -1,6 +1,6 @@
-import { Response } from "express";
-import z from "zod";
-import { log } from "@org/utils";
+import { Response } from 'express';
+import z from 'zod';
+import { log } from '@org/utils';
 
 /**
  * TYPES & INTERFACES
@@ -15,7 +15,7 @@ interface ResponseOptions<T extends z.ZodTypeAny> {
  * Sends a standardized JSON response.
  * Handles both simple messages and complex, validated data objects.
  */
-export function sendResponse<T extends z.ZodTypeAny>(
+export function response<T extends z.ZodTypeAny>(
   res: Response,
   data: unknown,
   statusCode: number = 200,
@@ -23,11 +23,11 @@ export function sendResponse<T extends z.ZodTypeAny>(
 ) {
   let finalPayload: unknown = data;
 
-  if (options.schema && typeof data !== "string") {
+  if (options.schema && typeof data !== 'string') {
     const result = options.schema.safeParse(data);
 
     if (!result.success) {
-      log.warn("RESPONSE VALIDATION WARNING");
+      log.warn('RESPONSE VALIDATION WARNING');
       // log.data("Error", result.error)
     } else {
       finalPayload = result.data;
@@ -41,4 +41,4 @@ export function sendResponse<T extends z.ZodTypeAny>(
   });
 }
 
-export default sendResponse;
+export default response;
