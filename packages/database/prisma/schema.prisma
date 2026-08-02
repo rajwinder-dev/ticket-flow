@@ -335,6 +335,12 @@ enum TicketStatus {
   ESCALATED
 }
 
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
 model Ticket {
   id             String             @id @default(uuid()) @db.Uuid
   code           String             @unique
@@ -342,6 +348,10 @@ model Ticket {
   category       String?
   description    String             @db.Text
   status         TicketStatus       @default(OPEN)
+  sentiment      Sentiment          @default(NEUTRAL)
+  language       String?
+  Summary        String?
+  confidence     Float?
   priority       Priority?
   active         Boolean            @default(true)
   createdAt      DateTime           @default(now())

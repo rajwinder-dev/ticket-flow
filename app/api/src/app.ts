@@ -38,7 +38,7 @@ import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
 import { log } from '@org/utils';
-import TicketModuleRouter from './modules/ticket/ticket.module.js';
+import ticketModuleRouter from './modules/ticket/ticket.module.js';
 
 export const app: Express = express();
 
@@ -108,7 +108,7 @@ app.use('/api/v1/email', emailRouter);
 app.use('/api/v1/queue', QueueRoutes);
 app.use('/api/v1/queue-group', QueueGroupRoutes);
 app.use('/api/v1/customer', customerRoutes);
-app.use('/api/v1/ticket', TicketModuleRouter);
+app.use('/api/v1/ticket', ticketModuleRouter);
 app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1/member', memberRouter);
 app.use('/api/v1/activity', ActivityRouter);
