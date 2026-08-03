@@ -15,6 +15,7 @@ import { QueueGroupService } from '../../queueGroup/queueGroup.service.js';
 import { NotificationService } from '../../notification/notification.service.js';
 import { SocketService } from '../../socket/socket.service.js';
 import { TicketAiService } from '../ai/ticketAi.service.js';
+import { log } from '@org/utils';
 
 export class TicketService {
   static createAndAssign = async ({
@@ -366,11 +367,7 @@ export class TicketService {
         currentTicket?.assignedTo &&
         currentTicket.assignedTo !== nextAgentId
       ) {
-        console.log(
-          organizationId,
-          currentTicket.assignedTo,
-          currentTicket.queueId,
-        );
+        log.data("data", {currentTicket});
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {

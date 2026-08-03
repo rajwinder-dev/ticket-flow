@@ -15,12 +15,21 @@ export const prisma = new PrismaClient({
       emit: 'event',
       level: 'query',
     },
-    'error',
+    {
+      emit: 'event',
+      level: 'error',
+    },
   ],
 });
+
+// prisma.$on('query', (e) => {
+//   console.log(e.query);
+//   console.log(e.params);
+// });
+
 prisma.$on('error', (e) => {
-  log.error(e.target);
   log.error(e.message);
+  log.error(e.target);
 });
 
 type TenantClient = ReturnType<typeof createTenantClient>;

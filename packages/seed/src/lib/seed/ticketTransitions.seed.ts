@@ -1,6 +1,7 @@
 import { prisma } from '@org/database';
 import { faker } from '@faker-js/faker';
 import { TicketAction, TicketStatus, Priority } from '@org/database';
+import { log } from '@org/utils';
 
 const TRANSITIONS_PER_TICKET_MIN = 1;
 const TRANSITIONS_PER_TICKET_MAX = 3;
@@ -124,6 +125,7 @@ function buildActionFields(
 }
 
 export async function seedTicketTransitions() {
+  log.info('seeding ticket transitions');
   const organizations = await prisma.organization.findMany();
 
   for (const org of organizations) {
@@ -139,7 +141,7 @@ export async function seedTicketTransitions() {
     ]);
 
     if (!tickets.length) {
-      console.warn(`Skipping org ${org.id}: no tickets`);
+      log.warn(`Skipping org ${org.id}: no tickets`);
       continue;
     }
 
@@ -170,7 +172,7 @@ export async function seedTicketTransitions() {
       skipDuplicates: true,
     });
 
-    console.log(
+    log.success(
       `Seeded ${transitions.length} ticket transitions for org ${org.id}`,
     );
   }

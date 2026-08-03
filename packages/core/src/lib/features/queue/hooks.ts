@@ -4,8 +4,9 @@ import { queueApi } from './api.js';
 interface props {
   groupId?: string;
   queueId?: string;
+  agents?: boolean;
 }
-export function useQueue({ groupId, queueId }: props = {}) {
+export function useQueue({ groupId, queueId, agents }: props = {}) {
   const queryClient = useQueryClient();
   const {
     data: queues,
@@ -15,6 +16,15 @@ export function useQueue({ groupId, queueId }: props = {}) {
     queryFn: () => queueApi.getByGroupId(groupId!),
     queryKey: ['queue', { groupId }],
     enabled: !!groupId,
+  });
+  const {
+    data: queuesAgents,
+    isLoading: isLoadingQueuesAgents,
+    error: queueAgentError,
+  } = useQuery({
+    queryFn: () => queueApi.getAgents(queueId!),
+    queryKey: ['queue', 'agents', { queueId }],
+    enabled: !!queueId && agents,
   });
   const {
     data: queuesDetails,
@@ -45,7 +55,7 @@ export function useQueue({ groupId, queueId }: props = {}) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['queue', { groupId }] });
     },
-      });
+  });
 
   const { mutate: updatedQueue, isPending: isUpdatingQueue } = useMutation({
     mutationFn: ({
@@ -83,5 +93,8 @@ export function useQueue({ groupId, queueId }: props = {}) {
     queueError,
     queueDetailsError,
     queueSummaryError,
+    queuesAgents,
+    isLoadingQueuesAgents,
+    queueAgentError,
   };
 }

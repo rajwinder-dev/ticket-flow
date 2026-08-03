@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import QueryBoundary from '@/components/QueryError';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton'; // Import shadcn skeleton
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -15,7 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useMember, useQueue } from '@org/core';
+import { useQueue } from '@org/core';
+import type { QueueMembersSchemaResponse } from '@org/zod';
 
 type QueueAgentTableProps = {
   isLoading?: boolean; // Accept parent page cascade state parameter
@@ -24,17 +25,17 @@ type QueueAgentTableProps = {
 export function QueueAgentTable({
   isLoading: isParentLoading,
 }: QueueAgentTableProps) {
-  const { queueId, orgId } = useParams();
+  const { queueId } = useParams();
   const [agentSearch, setAgentSearch] = useState('');
 
-  const { members, membersError, isLoadingMembers } = useMember({
-    filterOptions: { filter: { queueId: queueId || '' } },
-    orgId,
+  const { queuesAgents, isLoadingQueuesAgents, queueAgentError } = useQueue({
+    queueId,
+    agents: true,
   });
   const { queueSummary } = useQueue({ queueId });
 
   // Unify loading metrics across both local query data and parent state triggers
-  const isLoading = isParentLoading || isLoadingMembers;
+  const isLoading = isParentLoading || isLoadingQueuesAgents;
 
   // Helper to get initials (e.g., "Alayna_Dare" -> "AD")
   const getInitials = (name: string) => {
@@ -72,7 +73,7 @@ export function QueueAgentTable({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <QueryBoundary error={membersError}>
+        <QueryBoundary error={queueAgentError}>
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -118,7 +119,7 @@ export function QueueAgentTable({
                     </TableCell>
                   </TableRow>
                 ))
-              ) : members?.data.length === 0 ? (
+              ) : queuesAgents?.data.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={3}
@@ -128,7 +129,7 @@ export function QueueAgentTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                members?.data.map((member) => (
+                queuesAgents?.data.map((member: QueueMembersSchemaResponse) => (
                   <TableRow
                     key={member.id}
                     className="hover:bg-muted/50 cursor-pointer"
@@ -152,14 +153,20 @@ export function QueueAgentTable({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-sm">
-                        <div className="h-2 w-2 rounded-full bg-green-500" />
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            member.active
+                              ? 'bg-green-500'
+                              : 'bg-muted-foreground/40'
+                          }`}
+                        />
                         <span className="text-xs capitalize">
                           {member.role?.toLowerCase()}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">
-                      {member.totalTickets}
+                      {member.ticketCount}
                     </TableCell>
                   </TableRow>
                 ))

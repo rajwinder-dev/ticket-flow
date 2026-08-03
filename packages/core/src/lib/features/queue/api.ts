@@ -1,11 +1,12 @@
 import {
+  QueueMembersSchemaResponse,
   type CreateQueueInput,
   type QueueDetailsSchema,
   type QueueSchemaResponse,
   type QueueSummarySchema,
   type UpdateQueueInput,
-} from "@org/zod";
-import { api } from "../../api.js";
+} from '@org/zod';
+import { api } from '../../api.js';
 
 export const queueApi = {
   getByGroupId: async (groupId: string) => {
@@ -65,7 +66,7 @@ export const queueApi = {
     return res;
   },
   getAgents: async (queueId: string) => {
-    const res = await api.getMany({
+    const res = await api.getMany<QueueMembersSchemaResponse>({
       path: `/queue/${queueId}/agents`,
     });
     return res;

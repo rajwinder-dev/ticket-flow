@@ -1,6 +1,7 @@
 import {
   AddAgentsToQueueInput,
   CreateQueueInput,
+  queueMembersSchemaResponse,
   queueSchemaResponse,
   RemoveAgentsFromQueueInput,
   UpdateQueueInput,
@@ -89,7 +90,15 @@ export class QueueController {
         },
         queueAgents: {
           select: {
-            ticketCount: true,
+            queue: {
+              select: {
+                _count: {
+                  select: {
+                    ticket: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -114,10 +123,7 @@ export class QueueController {
       description: queue.description,
       order: queue.order,
       agentsCount: queue._count.queueAgents,
-      ticketsCount: queue.queueAgents.reduce(
-        (sum, agent) => sum + agent.ticketCount,
-        0,
-      ),
+      ticketsCount: queue.queueAgents[0]?.queue?._count.ticket,
       createdAt: queue.createdAt,
     }));
 
@@ -126,13 +132,14 @@ export class QueueController {
       schema: z.array(queueSchemaResponse),
     });
   });
+
   static getQueueAgents = catchAsync(async (req, res, _next) => {
     const queueId = req.params.id as string;
     const agents = await QueueService.getQueueAgents({
       queueId,
       organizationId: req.organization.id,
     });
-    response(res, agents, 200);
+    response(res, agents, 200, {schema: z.array(queueMembersSchemaResponse)});
   });
   static updateQueue = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

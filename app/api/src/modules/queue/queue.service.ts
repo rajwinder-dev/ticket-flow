@@ -233,16 +233,56 @@ export class QueueService {
     organizationId: string;
   }) => {
     const tenantdb = getTenantClient(organizationId);
+
     const queueAgents = await tenantdb.queueAgent.findMany({
       where: {
         queueId,
         organizationId,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            name: true,
+            active: true,
+            email: true,
+            id: true,
+
+            _count: {
+              select: {
+                ticketsAssigned: {
+                  where: {
+                    queueId,
+                    status: {
+                      not: 'CLOSED',
+                    },
+                  },
+                },
+              },
+            },
+
+            membership: {
+              select: {
+                role: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
-    return queueAgents.map((qa) => qa.user);
+
+    return queueAgents.map((item) => ({
+      id: item.user?.id,
+      name: item.user?.name,
+      email: item.user?.email,
+      active: item.user?.active,
+      role: item.user?.membership[0]?.role?.name,
+      ticketCount: item.user?._count.ticketsAssigned || 0,
+    }));
   };
   static update = async ({
     queueId,

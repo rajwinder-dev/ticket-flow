@@ -3,6 +3,7 @@ import {log} from  "@org/utils"
 import { getTenantClient, prisma } from "@org/database";
 
 export async function seedCustomers(maxCustomersPerOrganization: number = 25) {
+  log.info("Seeding customers...");
   const organizations = await prisma.organization.findMany({
     select: { id: true, name: true },
   });

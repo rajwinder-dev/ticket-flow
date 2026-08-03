@@ -1,5 +1,9 @@
-import { z } from "zod";
-import { validBigDescription, validDescription, validString } from "./helper/zodHelper.js";
+import { z } from 'zod';
+import {
+  validBigDescription,
+  validDescription,
+  validString,
+} from './helper/zodHelper.js';
 
 // --- Queue Groups ---
 
@@ -40,8 +44,8 @@ export const addAgentsToQueueInput = {
   bodySchema: z
     .object({
       agentIds: z
-        .array(z.string().uuid("Each Agent ID must be a valid UUID"))
-        .min(1, "At least one agent ID is required"),
+        .array(z.string().uuid('Each Agent ID must be a valid UUID'))
+        .min(1, 'At least one agent ID is required'),
     })
     .strict(),
 };
@@ -50,8 +54,8 @@ export const removeAgentsFromQueueInput = {
   bodySchema: z
     .object({
       agentIds: z
-        .array(z.string().uuid("Each Agent ID must be a valid UUID"))
-        .min(1, "At least one agent ID is required"),
+        .array(z.string().uuid('Each Agent ID must be a valid UUID'))
+        .min(1, 'At least one agent ID is required'),
     })
     .strict(),
 };
@@ -96,13 +100,32 @@ export const queueSummarySchema = z.object({
   highPriorityTickets: z.number(),
   activeAgents: z.number(),
 });
+
+export const queueMembersSchemaResponse = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  active: z.boolean(),
+  roleId: z.string(),
+  role: z.string(),
+  ticketCount: z.number(),
+});
 // --- Inferred Types ---
 export type QueueDetailsSchema = z.infer<typeof queueDetailsSchema>;
 export type QueueGroupSchemaResponse = z.infer<typeof queueGroupSchemaResponse>;
 export type QueueSchemaResponse = z.infer<typeof queueSchemaResponse>;
-export type CreateQueueGroupInput = z.infer<typeof createQueueGroupInput.bodySchema>;
+export type CreateQueueGroupInput = z.infer<
+  typeof createQueueGroupInput.bodySchema
+>;
 export type CreateQueueInput = z.infer<typeof createQueueInput.bodySchema>;
 export type UpdateQueueInput = z.infer<typeof updateQueueInput.bodySchema>;
-export type AddAgentsToQueueInput = z.infer<typeof addAgentsToQueueInput.bodySchema>;
-export type RemoveAgentsFromQueueInput = z.infer<typeof removeAgentsFromQueueInput.bodySchema>;
+export type AddAgentsToQueueInput = z.infer<
+  typeof addAgentsToQueueInput.bodySchema
+>;
+export type RemoveAgentsFromQueueInput = z.infer<
+  typeof removeAgentsFromQueueInput.bodySchema
+>;
 export type QueueSummarySchema = z.infer<typeof queueSummarySchema>;
+export type QueueMembersSchemaResponse = z.infer<
+  typeof queueMembersSchemaResponse
+>;

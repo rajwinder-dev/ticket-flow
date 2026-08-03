@@ -1,5 +1,6 @@
 import { getTenantClient, prisma } from "@org/database";
 import { faker } from "@faker-js/faker";
+import { log } from "@org/utils";
 
 const COMMENTS_PER_TICKET_MIN = 1;
 const COMMENTS_PER_TICKET_MAX = 8;
@@ -15,6 +16,7 @@ function randomInt(min: number, max: number): number {
 
 
 export async function seedTicketComments() {
+  log.info('seeding ticket comments');
   const organizations = await prisma.organization.findMany();
 
   for (const org of organizations) {
@@ -26,7 +28,7 @@ export async function seedTicketComments() {
     ]);
 
     if (!tickets.length || !users.length) {
-      console.warn(`Skipping org ${org.id}: missing tickets or users`);
+      log.warn(`Skipping org ${org.id}: missing tickets or users`);
       continue;
     }
 
@@ -57,6 +59,6 @@ export async function seedTicketComments() {
       skipDuplicates: true,
     });
 
-    console.log(`Seeded ${comments.length} ticket comments for org ${org.id}`);
+    log.success(`Seeded ${comments.length} ticket comments for org ${org.id}`);
   }
 }
