@@ -4,8 +4,8 @@ import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { getTenantClient } from '@org/database';
 import { ActivityLogService } from './activity.types.js';
 
-export class ActivityService {
-  static lagActivity = async ({
+export class ActivityServiceClass {
+  lagActivity = async ({
     organizationId,
     actorId,
     actorType,
@@ -45,7 +45,7 @@ export class ActivityService {
     }
   };
 
-  static getActivityLogs = async (
+   getActivityLogs = async (
     organizationId: string,
     queryStaring: ParsedQs,
   ) => {
@@ -75,7 +75,7 @@ export class ActivityService {
     };
     return { data, pagination };
   };
-  static getActivitySummary = async (organizationId: string) => {
+  getActivitySummary = async (organizationId: string) => {
     const tenentDb = getTenantClient(organizationId);
     const data = await tenentDb.activityLog.groupBy({
       where: {
@@ -98,7 +98,7 @@ export class ActivityService {
 
     return { ...summary, total };
   };
-  static getDiff = (oldData: any, newData: any) => {
+   getDiff = (oldData: any, newData: any) => {
     const diff: Record<string, { from: any; to: any }> = {};
 
     Object.keys(newData).forEach((key) => {
@@ -113,3 +113,5 @@ export class ActivityService {
     return Object.keys(diff).length > 0 ? diff : null;
   };
 }
+
+export const ActivityService = new ActivityServiceClass();

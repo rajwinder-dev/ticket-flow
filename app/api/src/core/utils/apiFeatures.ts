@@ -1,7 +1,7 @@
-import { ParsedQs } from "qs";
-import { normalize } from "./utils.js";
+import { ParsedQs } from 'qs';
+import { normalize } from './utils.js';
 
-type SortOrder = "asc" | "desc";
+type SortOrder = 'asc' | 'desc';
 
 interface PrismaFilterOptions {
   where?: Record<string, unknown>;
@@ -22,7 +22,7 @@ export class APIFeatures {
     this.ignore = ignore;
     this.filterOptions = {};
     this.queryString = queryString;
-    this.limit = 30;
+    this.limit = 10;
     this.offset = 0;
     this.ignore?.ignore.map((item) => {
       delete this.queryString[item];
@@ -31,13 +31,13 @@ export class APIFeatures {
   filter() {
     const queryObj = { ...this.queryString };
     const excludeFields = [
-      "fields",
-      "sortby",
-      "sortOrder",
-      "limit",
-      "offset",
-      "search",
-      "searchBy",
+      'fields',
+      'sortby',
+      'sortOrder',
+      'limit',
+      'offset',
+      'search',
+      'searchBy',
     ];
     excludeFields.forEach((el) => delete queryObj[el]);
     // handle filter logic
@@ -48,8 +48,8 @@ export class APIFeatures {
       const field = match[1];
       const operator = match[3];
       let value: unknown = rawValue;
-      if (rawValue === "true") value = true;
-      else if (rawValue === "false") value = false;
+      if (rawValue === 'true') value = true;
+      else if (rawValue === 'false') value = false;
       else if (!isNaN(Number(rawValue))) value = Number(rawValue);
 
       if (operator) {
@@ -62,7 +62,7 @@ export class APIFeatures {
     if (queryObj?.searchBy && queryObj?.search) {
       selectedFilters[queryObj.searchBy as string] = {
         contains: queryObj.search,
-        mode: "insensitive",
+        mode: 'insensitive',
       };
       delete selectedFilters.search;
       delete selectedFilters.searchBy;
@@ -75,7 +75,7 @@ export class APIFeatures {
     const selectedField: { [key: string]: boolean } = {};
     if (fields) {
       String(fields)
-        .split(",")
+        .split(',')
         .forEach((item: string) => {
           return (selectedField[item] = true);
         });
@@ -85,8 +85,8 @@ export class APIFeatures {
   }
   sort() {
     const { sortby, sortOrder } = this.queryString;
-    const order = sortOrder === "asc" ? "asc" : "desc";
-    if (sortby && typeof sortby === "string") {
+    const order = sortOrder === 'asc' ? 'asc' : 'desc';
+    if (sortby && typeof sortby === 'string') {
       this.filterOptions = {
         ...this.filterOptions,
         orderBy: { [sortby]: order },
@@ -127,7 +127,7 @@ export class APIFeatures {
           ...this.filterOptions.where,
           [searchBy as string]: {
             contains: String(search),
-            mode: "insensitive",
+            mode: 'insensitive',
           },
         },
       };
