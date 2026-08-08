@@ -2,8 +2,81 @@ import { CreateQueueInput, UpdateQueueInput } from '@org/zod';
 import { appError } from '../../core/utils/appError.js';
 import { ActivityService } from '../activity/activity.service.js';
 import { getTenantClient } from '@org/database';
-
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { ParsedQs } from 'qs';
 export class QueueService {
+  static getQueues = async ({
+    queryString,
+    organizationId,
+    groupId,
+  }: {
+    organizationId: string;
+    groupId: string;
+    queryString: ParsedQs;
+  }) => {
+    const { filterOptions, limit, offset } = new APIFeatures(queryString)
+      .filter()
+      .limitFields()
+      .pagination();
+    const tenantDb = getTenantClient(organizationId);
+    const queues = await tenantDb.queue.findMany({
+      where: {
+        organizationId,
+        queueGroupId: groupId,
+        ...filterOptions.where,
+        active: true,
+      },
+      select: {
+        name: true,
+        description: true,
+        order: true,
+        createdAt: true,
+        id: true,
+        _count: {
+          select: {
+            queueAgents: true,
+          },
+        },
+        queueAgents: {
+          select: {
+            queue: {
+              select: {
+                _count: {
+                  select: {
+                    ticket: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+
+      orderBy: {
+        order: 'asc',
+      },
+      skip: offset,
+      take: limit,
+    });
+    const total = await tenantDb.queue.count({
+      where: {
+        organizationId,
+        queueGroupId: groupId,
+        ...filterOptions.where,
+        active: true,
+      },
+    });
+    const data = queues.map((queue) => ({
+      id: queue.id,
+      name: queue.name,
+      description: queue.description,
+      order: queue.order,
+      agentsCount: queue._count.queueAgents,
+      ticketsCount: queue.queueAgents[0]?.queue?._count.ticket,
+      createdAt: queue.createdAt,
+    }));
+    return { data, pagination: { total, limit, offset } };
+  };
   static create = async ({
     organizationId,
     queueGroupId,
@@ -136,6 +209,9 @@ export class QueueService {
         organizationId,
         agentId: {
           in: agentIds,
+        },
+        queueId: {
+          not: queueId,
         },
         active: true,
       },

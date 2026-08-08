@@ -9,8 +9,8 @@
 // way to inject them — for THAT one you have no choice but to use fake
 // timers. Practice both approaches and notice which one you reach for first.
 
-const TRIAL_LENGTH_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
-const WARNING_BEFORE_EXPIRY_MS = 2 * 24 * 60 * 60 * 1000; // 2 days before
+export const TRIAL_LENGTH_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
+export const WARNING_BEFORE_EXPIRY_MS = 2 * 24 * 60 * 60 * 1000; // 2 days before
 
 export function isTrialExpired(trialStartedAt: Date, now: Date = new Date()): boolean {
   const elapsed = now.getTime() - trialStartedAt.getTime();

@@ -1,0 +1,17 @@
+### resend webhook event
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/webhooks/resend
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "from": "user@gmail.com",
+  "to": "support@zilaukaraz.resend.app",
+  "subject": "this is subject",
+  "messageId": "klsjfwieoujlgijlsdf@",
+  "textBody": "<h1>hello</h1>"
+}

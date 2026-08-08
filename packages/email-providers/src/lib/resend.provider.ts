@@ -1,5 +1,5 @@
-import { Resend } from "resend";
-import { Webhook } from "svix";
+import { Resend } from 'resend';
+import { Webhook } from 'svix';
 export type ResendConfig = {
   apiKey: string;
 };
@@ -34,10 +34,10 @@ export class ResendService {
   }
   async verify(email: string) {
     const { data, error } = await this.resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: 'onboarding@resend.dev',
       to: email,
-      subject: "Health Check",
-      html: "OK",
+      subject: 'Health Check',
+      html: 'OK',
     });
     if (error) {
       throw new Error(error.message);
@@ -47,14 +47,17 @@ export class ResendService {
   static async verifyWebhook(
     payload: string,
     secret: string,
-    headers: { "svix-id": string; "svix-timestamp": string; "svix-signature": string },
+    headers: {
+      'svix-id': string;
+      'svix-timestamp': string;
+      'svix-signature': string;
+    },
   ) {
     const wh = new Webhook(secret);
     return wh.verify(payload, headers);
   }
   async getEmailDetails(messageId: string) {
     const emailData = await this.resend.emails.receiving.get(messageId);
-    console.log(emailData);
     const data = {
       html: emailData.data?.html,
       attachments: emailData.data?.attachments,

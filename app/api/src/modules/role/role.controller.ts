@@ -3,7 +3,6 @@ import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { RoleService } from './role.service.js';
 import { getTenantClient } from '@org/database';
-import { APIFeatures } from '../../core/utils/apiFeatures.js';
 
 export class roleController {
   static createRole = catchAsync(async (req, res, _next) => {
@@ -24,23 +23,11 @@ export class roleController {
     response(res, data, 200);
   });
   static getAllRoles = catchAsync(async (req, res, _next) => {
-    const tenantdb = getTenantClient(req.organization.id);
-    const { pagination } = new APIFeatures(req.query).pagination();
-    const data = await tenantdb.role.findMany({
-      where: {
-        organizationId: req.organization.id,
-        active: true,
-        isSystem: false,
-      },
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        description: true,
-        permissions: true,
-      },
+    const { data, pagination } = await RoleService.getAllRoles({
+      organizationId: req.organization.id,
+      queryString: req.query,
     });
-    response(res, data, 200, { otherFields: { ...pagination } });
+    response(res, data, 200, { otherFields: pagination });
   });
   static updateRole = catchAsync(async (req, res, _next) => {
     const input = req.body as UpdateRoleInput;

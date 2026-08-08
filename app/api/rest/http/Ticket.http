@@ -1,0 +1,153 @@
+### create ticket
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/ticket
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "customer1@gmail.com",
+  "description": "this is the description 2",
+  "subject": "Login not working"
+}
+
+### add comment
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/ticket/:id/comment
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "comment": "this is the comment from owner"
+}
+
+### assign ticket
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/ticket/:id/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "targetType": "AGENT",
+  "assignId": ""
+}
+
+### escalate ticket
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/ticket/:id/escalate
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get escalate options
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/:id/escalate-options
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get all tickets
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get comments
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/:id/comment
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get ticket details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get ticket summary
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/summary
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get transition history
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/:id/transitions
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### my assigned tickets
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/ticket/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update priority
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/ticket/:id/priority
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "priority": "HIGH"
+}
+
+### update status
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/ticket/:id/status
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+
+### create ticket summary
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/ticket/ai/:id/summary
+Authorization: Bearer {{accessToken}}
+Accept: application/json

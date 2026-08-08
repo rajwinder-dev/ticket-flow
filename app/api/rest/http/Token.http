@@ -1,0 +1,8 @@
+### get token details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/token/:token/details
+Authorization: Bearer {{accessToken}}
+Accept: application/json

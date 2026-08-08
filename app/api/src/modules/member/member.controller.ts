@@ -4,100 +4,17 @@ import {
   memberSchemaResponse,
 } from '@org/zod';
 import z from 'zod';
-import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
-import { NotificationService } from '../notification/notification.service.js';
-import { getTenantClient } from '@org/database';
+import { MemberService } from './member.service.js';
 
 export class MemberController {
   static getMembers = catchAsync(async (req, res, _next) => {
     const queueId = req.query.queueId as string;
-
-    const tenantdb = getTenantClient(req.organization.id);
-    const queuefilter = queueId
-      ? { user: { queueAgents: { some: { queueId } } } }
-      : {};
-    const { filterOptions, limit, offset } = new APIFeatures(req.query, {
-      ignore: ['queueId'],
-    })
-      .filter()
-      .pagination();
-    const membership = await tenantdb.membership.findMany({
-      where: {
-        organizationId: req.organization.id,
-        isSystem: false,
-        ...filterOptions.where,
-        ...queuefilter,
-      },
-      select: {
-        organizationId: true,
-        id: true,
-        createdAt: true,
-        role: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        user: {
-          select: {
-            email: true,
-            name: true,
-            avatar: true,
-            id: true,
-            queueAgents: {
-              where: { organizationId: req.organization.id },
-              select: {
-                ticketCount: true,
-                queueId: true,
-                queue: {
-                  where: { organizationId: req.organization.id },
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      skip: offset,
-      take: limit,
-    });
-
-    const data = membership.map((item) => {
-      const user = item.user;
-
-      const totalTickets = user?.queueAgents.reduce(
-        (sum, qa) => sum + qa.ticketCount,
-        0,
-      );
-
-      return {
-        id: item.id,
-        userId: item.user?.id,
-        email: user?.email,
-        name: user?.name,
-        avatar: user?.avatar,
-        role: item.role?.name,
-        roleId: item.role?.id,
-        createdAt: item.createdAt,
-        organizationId: item.organizationId,
-        totalTickets,
-        queues: user?.queueAgents.map((qa) => ({
-          queueId: qa.queue?.id,
-          name: qa.queue?.name,
-          ticketCount: qa.ticketCount,
-        })),
-      };
-    });
-    const total = await tenantdb.membership.count({
-      where: {
-        organizationId: req.organization.id,
-        ...filterOptions.where,
-      },
+    const { data, total, limit, offset } = await MemberService.getMembers({
+      organizationId: req.organization.id,
+      queueId,
+      queryString: req.query,
     });
     response(res, data, 200, {
       otherFields: { limit, offset, total },
@@ -106,101 +23,29 @@ export class MemberController {
   });
   static updateRole = catchAsync(async (req, res, _next) => {
     const { userId, roleId } = req.params as ChangeMemberRoleInput;
-
-    const tenantdb = getTenantClient(req.organization.id);
-    const data = await tenantdb.membership.update({
-      where: {
-        organizationId_userId: {
-          organizationId: req.organization.id,
-          userId,
-        },
-      },
-      data: {
-        roleId,
-      },
-      include: {
-        role: {
-          select: {
-            name: true,
-          },
-        },
-      },
+    const data = await MemberService.updateRole({
+      userId,
+      roleId,
+      organizationId: req.organization.id,
     });
-
-    NotificationService.sendNotification({
-      recipientId: userId,
-      userId: req.user.id,
-      data: {
-        organizationId: data.organizationId,
-        channel: 'IN_APP',
-        title: 'Your role changed',
-        message: `Your role has been changed to ${data.role?.name}`,
-        type: 'RBAC',
-        actorId: req.user.id,
-      },
-    });
-
     response(res, data);
   });
   static assignQueue = catchAsync(async (req, res, _next) => {
     const { userId, queueId } = req.params as ChangeMemberQueueInput;
-
-    const tenantdb = getTenantClient(req.organization.id);
-    const data = await tenantdb.queueAgent.upsert({
-      where: {
-        queueId_agentId_organizationId: {
-          queueId,
-          agentId: userId,
-          organizationId: req.organization.id,
-        },
-      },
-      update: {},
-      create: {
-        queueId,
-        agentId: userId,
-        organizationId: req.organization.id,
-      },
+    const data = await MemberService.assignQueue({
+      userId,
+      queueId,
+      organizationId: req.organization.id,
     });
-    NotificationService.sendNotification({
-      recipientId: userId,
-      userId: req.user.id,
-      data: {
-        organizationId: data.organizationId,
-        channel: 'IN_APP',
-        title: 'Queue assigned',
-        message: `You have been assigned to a queue`,
-        type: 'QUEUE',
-        actorId: req.user.id,
-      },
-    });
-
     response(res, data);
   });
   static unassignQueue = catchAsync(async (req, res, _next) => {
     const { userId, queueId } = req.params as ChangeMemberQueueInput;
-    const tenantdb = getTenantClient(req.organization.id);
-    const data = await tenantdb.queueAgent.delete({
-      where: {
-        queueId_agentId_organizationId: {
-          queueId,
-          agentId: userId,
-          organizationId: req.organization.id,
-        },
-      },
+    const data = await MemberService.unassignedQueue({
+      userId,
+      queueId,
+      organizationId: req.organization.id,
     });
-    NotificationService.sendNotification({
-      recipientId: userId,
-      userId: req.user.id,
-      data: {
-        organizationId: data.organizationId,
-        channel: 'IN_APP',
-        title: 'Queue unassigned',
-        message: `You have been removed to a queue`,
-        type: 'QUEUE',
-        actorId: req.user.id,
-      },
-    });
-
     response(res, data);
   });
 }

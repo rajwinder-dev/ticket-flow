@@ -3,8 +3,48 @@ import { appError } from '../../core/utils/appError.js';
 import { readableId } from '../../core/utils/utils.js';
 import { ActivityService } from '../activity/activity.service.js';
 import { getTenantClient } from '@org/database';
+import { ParsedQs } from 'qs';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
 
 export class RoleService {
+  static getAllRoles = async ({
+    organizationId,
+    queryString,
+  }: {
+    organizationId: string;
+    queryString: ParsedQs;
+  }) => {
+    const tenantdb = getTenantClient(organizationId);
+    const { filterOptions, limit, offset } = new APIFeatures(
+      queryString,
+    ).pagination();
+    const data = await tenantdb.role.findMany({
+      where: {
+        organizationId,
+        active: true,
+        isSystem: false,
+        ...filterOptions.where,
+      },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        description: true,
+        permissions: true,
+      },
+      skip: offset,
+      take: limit,
+    });
+    const total = await tenantdb.role.count({
+      where: {
+        organizationId,
+        active: true,
+        isSystem: false,
+        ...filterOptions.where,
+      },
+    });
+    return { data, pagination: { limit, offset, total } };
+  };
   static create = async (
     userId: string,
     organizationId: string,
@@ -88,9 +128,9 @@ export class RoleService {
     if (!existingRole) throw new appError('Role not found ', 404, 'NOT_FOUND');
     if (!existingRole.active)
       throw new appError('Role Already deleted', 409, 'CONFLICT_ERROR');
-    const userCount = await tenentDb.user.count({
+    const userCount = await tenentDb.membership.count({
       where: {
-        id: roleId,
+        roleId,
       },
     });
     if (userCount > 0)
@@ -99,7 +139,7 @@ export class RoleService {
         409,
         'CONFLICT_ERROR',
       );
-    const updatedRole = tenentDb.role.update({
+    const updatedRole = await tenentDb.role.update({
       data: {
         active: false,
       },

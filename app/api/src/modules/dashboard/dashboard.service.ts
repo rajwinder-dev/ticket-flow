@@ -1,4 +1,5 @@
-import { getTenantClient, TicketStatus } from "@org/database";
+import { getTenantClient, TicketStatus } from '@org/database';
+import { startOfWeek } from 'date-fns';
 
 export class dashboardService {
   static ticketSummary = async (organizationId: string) => {
@@ -7,7 +8,7 @@ export class dashboardService {
       where: {
         organizationId,
       },
-      by: "status",
+      by: 'status',
       _count: true,
     });
     const TOTAL = await tenantdb.ticket.count({
@@ -24,12 +25,12 @@ export class dashboardService {
     );
     //  if not exist, set to 0
     const statuses: TicketStatus[] = [
-      "OPEN",
-      "IN_PROGRESS",
-      "RESOLVED",
-      "CLOSED",
-      "ON_HOLD",
-      "REOPENED",
+      'OPEN',
+      'IN_PROGRESS',
+      'RESOLVED',
+      'CLOSED',
+      'ON_HOLD',
+      'REOPENED',
     ];
     for (const status of statuses) {
       if (!formattedData[status]) {
@@ -37,5 +38,33 @@ export class dashboardService {
       }
     }
     return { ...formattedData, TOTAL };
+  };
+  static getRecentTickets = async (organizationId: string) => {
+    const tenantdb = getTenantClient(organizationId);
+    const data = await tenantdb.ticket.findMany({
+      where: {
+        organizationId,
+        updatedAt: {
+          gt: startOfWeek(new Date()),
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      select: {
+        id: true,
+        code: true,
+        subject: true,
+        priority: true,
+        status: true,
+        assignedToUser: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      take: 5,
+    });
+    return data;
   };
 }

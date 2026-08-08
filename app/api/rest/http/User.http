@@ -1,0 +1,44 @@
+### OnboardUser
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/user/onboard
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "user": {
+    "location": "test"
+  },
+  "organization": {
+    "name": "tiven books",
+    "description": "this is tiven showroom",
+    "teamSize": 12
+  }
+}
+
+### my details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/user/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update my details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/user/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "location": "testing love",
+  "phoneNo": 1456789
+}

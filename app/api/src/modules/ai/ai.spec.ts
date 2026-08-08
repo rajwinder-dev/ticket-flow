@@ -7,7 +7,6 @@ const { mockGenerateContent } = vi.hoisted(() => {
 });
 
 vi.mock('@google/genai', () => {
-
   class MockGoogleGenAI {
     models = { generateContent: mockGenerateContent };
   }
@@ -32,9 +31,6 @@ import { log } from '@org/utils';
 
 describe('AiServiceClass', () => {
   beforeEach(() => {
-    // Don't clear mockGenerateContent's implementation across tests via
-    // clearAllMocks resetting the module-level singleton's `ai` instance —
-    // only reset call history.
     mockGenerateContent.mockReset();
     (log.warn as any).mockClear();
     (log.data as any).mockClear();
@@ -47,12 +43,7 @@ describe('AiServiceClass', () => {
   // --- constructor -------------------------------------------------------
 
   it('wires the AiService instance up to the mocked GoogleGenAI client', () => {
-    // The singleton is created at module load time with env.geminiApiKey,
-    // using the mocked GoogleGenAI class. Confirm it exposes the mocked
-    // generateContent method we control in these tests.
-    expect((AiService as any).ai.models.generateContent).toBe(
-      mockGenerateContent,
-    );
+    expect(AiService.ai.models.generateContent).toBe(mockGenerateContent);
   });
 
   // --- generateGeminiResponse --------------------------------------------
@@ -76,7 +67,6 @@ describe('AiServiceClass', () => {
       expect(callArgs.model).toBe('gemini-3.1-flash-lite');
       expect(callArgs.config).toEqual({
         responseMimeType: 'application/json',
-        responseSchema: undefined,
         temperature: 0.5,
       });
       expect(callArgs.contents).toEqual([
@@ -85,7 +75,6 @@ describe('AiServiceClass', () => {
           parts: [{ text: expect.stringContaining('Summarize this') }],
         },
       ]);
-      // Prompt should embed the serialized data/options.
       const promptText = callArgs.contents[0].parts[0].text;
       expect(promptText).toContain(JSON.stringify({ foo: 'bar' }, null, 2));
       expect(promptText).toContain(JSON.stringify({ verbose: true }, null, 2));

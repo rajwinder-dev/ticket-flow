@@ -1,0 +1,35 @@
+### get lookup groups
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/lookup/groups
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get queues for a group
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/lookup/queues/:groupId
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get agents for a queue
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/lookup/agents/:queueId
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get roles
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/lookup/roles
+Authorization: Bearer {{accessToken}}
+Accept: application/json

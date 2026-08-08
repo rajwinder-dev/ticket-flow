@@ -1,0 +1,17 @@
+### get summary
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/dashboard/summary
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get recent tickets
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/dashboard/recent-tickets
+Authorization: Bearer {{accessToken}}
+Accept: application/json

@@ -10,25 +10,23 @@ export class CustomerService {
   ) => {
     const customerName = displayName || email.split('@')[0];
     const tenantDb = getTenantClient(organizationId);
+
+    const identity = await prisma.customerIdentity.upsert({
+      where: { email },
+      update: {},
+      create: { email },
+    });
     const customerData = await tenantDb.customer.upsert({
       where: {
         organizationId_identityId: {
           organizationId,
-          identityId: (
-            await prisma.customerIdentity.upsert({
-              where: { email },
-              update: {},
-              create: { email },
-            })
-          ).id,
+          identityId: identity.id,
         },
       },
       update: {}, // Update name or metadata if needed
       create: {
         organizationId,
-        identityId: (await prisma.customerIdentity.findUnique({
-          where: { email },
-        }))!.id,
+        identityId: identity.id,
         name: customerName,
       },
     });

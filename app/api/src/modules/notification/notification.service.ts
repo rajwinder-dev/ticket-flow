@@ -29,7 +29,7 @@ export class NotificationServiceClass {
       expiresAt?: Date;
     };
   }) {
-    if (userId === recipientId)
+    if (userId !== null && userId === recipientId)
       return logger.info('cannot send notification to yourself');
 
     const notification = await prisma.notification.create({

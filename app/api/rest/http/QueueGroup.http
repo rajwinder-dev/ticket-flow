@@ -1,0 +1,56 @@
+### create group
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/queue-group
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "general 2",
+  "description": "this is general queue"
+}
+
+### set default group
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/queue-group/:id/default
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### delete group
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/queue-group/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get groups
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/queue-group
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update group
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/queue-group/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "test",
+  "description": "this is test group"
+}

@@ -1,0 +1,115 @@
+### add agents
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/queue/:id/agents
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "agentIds": [
+    "b818ac66-ffe7-4ebe-a21c-e3d48435fc2c",
+    "83b588dc-a334-487c-b32b-2c82134feb10"
+  ]
+}
+
+### create queue
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/queue/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "queue": {
+    "name": "customer care",
+    "description": "this is the queue",
+    "orderRank": 100
+  },
+  "sla": {
+    "firstResponseTimeMinutes": 15,
+    "resolutionTimeMinutes": 90
+  }
+}
+
+### remove agents
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/queue/:id/agents
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "agentIds": [
+    "b818ac66-ffe7-4ebe-a21c-e3d48435fc2c"
+  ]
+}
+
+### delete queue
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/queue/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get agents
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/queue/:id/agents
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get queue details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/queue/:id/details
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get queue summary
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/queue/:id/summary
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get queues
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/queue/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update queue
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/queue/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "description": "this is the queue updated",
+  "firstResponseTimeMinutes": 15,
+  "resolutionTimeMinutes": 90
+}

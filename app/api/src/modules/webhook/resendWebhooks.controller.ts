@@ -1,97 +1,49 @@
 import { ResentEmailWebhookSchema } from '@org/zod';
-import sanitizeHtml from 'sanitize-html';
 import { appError } from '../../core/utils/appError.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
-import { ResendConfig, ResendService } from '@org/email-providers';
 import { TicketService } from '../ticket/ticket/ticket.service.js';
-import { crypto } from '../../core/utils/crypto.js';
-import { EncryptionType } from '@org/utils';
-import { getTenantClient, prisma } from '@org/database';
-import { EmailWebhookRow } from './webhook.type.js';
-
+import { ResendWebhookService } from './resendWebhooks.service.js';
+import { WebhookService } from './webhook.service.js';
+const SUPPORTED_EVENTS = ['email.received'];
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
-    const rawBody = req.body.toString('utf8');
-
-    const headers = {
-      'svix-id': req.headers['svix-id'] as string,
-      'svix-timestamp': req.headers['svix-timestamp'] as string,
-      'svix-signature': req.headers['svix-signature'] as string,
+    const { rawBody, headers } = {
+      rawBody: req.body.toString('utf8'),
+      headers: {
+        'svix-id': req.headers['svix-id'] as string,
+        'svix-timestamp': req.headers['svix-timestamp'] as string,
+        'svix-signature': req.headers['svix-signature'] as string,
+      },
     };
+    const payload =
+      WebhookService.parseRawData<ResentEmailWebhookSchema>(rawBody);
 
-    let tempPayload: ResentEmailWebhookSchema;
-    try {
-      tempPayload = JSON.parse(rawBody);
-    } catch {
-      throw new appError('Invalid JSON payload', 400, 'INVALID_JSON');
+    if (!SUPPORTED_EVENTS.includes(payload.type)) {
+      throw new appError(
+        'Ignoring unsupported event',
+        200,
+        'UNSUPPORTED_EVENT',
+      );
     }
-
-    const email = tempPayload?.data;
-
-    if (!email?.to) {
+    if (!payload.data?.to) {
       throw new appError('Invalid payload structure', 400, 'INVALID_PAYLOAD');
     }
 
-    const rows = await prisma.$queryRaw<
-      EmailWebhookRow[]
-    >`SELECT * FROM get_email_webhook(${email.to}, 1)`;
-    const provider = rows[0] ?? null;
-    const tenantdb = getTenantClient(provider?.organizationId);
-
-    if (!provider?.webhookSecret) {
-      throw new appError('webhookSecret not found', 404, 'NOT_FOUND');
-    }
-
-    try {
-      await ResendService.verifyWebhook(
-        rawBody,
-        provider.webhookSecret,
-        headers,
-      );
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'An unexpected error occurred';
-
-      throw new appError(message, 400, 'INVALID_WEBHOOK');
-    }
-    const payload = JSON.parse(rawBody);
-    const data = payload.data;
-
-    // -------------------------------
-    // Normalize email
-    // -------------------------------
-    const normalized = {
-      from: data.from,
-      to: data.to,
-      subject: data.subject,
-      createdAt: data.created_at,
-      messageId: data.message_id,
-    };
-    // -------------------------------
-    // Fetch email data
-    // -------------------------------
-    const credentialString = crypto.decrypt(
-      provider.credentials as EncryptionType,
-    );
-    const credentials = JSON.parse(credentialString) as ResendConfig;
-
-    const resend = new ResendService(credentials);
-    const emailData = await resend.getEmailDetails(data.email_id);
-    const safeHtml = emailData.html ? sanitizeHtml(emailData.html) : null;
-    const ownerData = await tenantdb.membership.findFirst({
-      where: {
-        organizationId: provider.organizationId,
-        role: {
-          name: 'OWNER',
-        },
-      },
-      select: {
-        userId: true,
-      },
+    // verifyWebhook
+    const { provider } = await ResendWebhookService.verifyWebhook({
+      rawBody,
+      headers,
+      email: payload.data.to,
     });
-
-    if (tempPayload?.type === 'email.received') {
+    // fetch email data
+    const { ownerData, safeHtml, normalized, emailData } =
+      await ResendWebhookService.fetchEmail({
+        payload: payload.data,
+        provider,
+      });
+    // handle event
+    if (payload?.type === 'email.received') {
       await TicketService.createAndAssign({
         organizationId: provider.organizationId,
         ownerId: ownerData?.userId || '',

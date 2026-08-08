@@ -1,0 +1,53 @@
+### send test notification
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/notification/test/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get notifications
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/notification
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### mark notification as read
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/notification/mark-as-read/:notificationId
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### mark all notifications as read
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/notification/mark-all-as-read
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### delete a notification
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/notification/delete/:notificationId
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### delete all notifications
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/notification/delete-all
+Authorization: Bearer {{accessToken}}
+Accept: application/json

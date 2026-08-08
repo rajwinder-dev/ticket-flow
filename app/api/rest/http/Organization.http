@@ -1,0 +1,113 @@
+### accept invite
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/org/:token/invite/
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "xyz@gmail.com",
+  "roleId": "xyz"
+}
+
+### create organization
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/org
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "tivenbook2",
+  "type": "PERSONAL",
+  "slug": "test"
+}
+
+### update organization
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/org
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "tivenbook2 updated"
+}
+
+### delete organization
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/org
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### current organization details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/org/current
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get organizations
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/org/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### invite details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/org/:token/invite/
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### invite user
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/org/invite
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "xyz@gmail.com",
+  "roleId": "xyz"
+}
+
+### get organization members
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/org/member
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get onboarding status
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/org/onboardStatus
+Authorization: Bearer {{accessToken}}
+Accept: application/json

@@ -1,9 +1,9 @@
-import { CreateQueueGroupInput } from "@org/zod";
-import { ParsedQs } from "qs";
-import { APIFeatures } from "../../core/utils/apiFeatures.js";
-import { appError } from "../../core/utils/appError.js";
-import { ActivityService } from "../activity/activity.service.js";
-import { getTenantClient } from "@org/database";
+import { CreateQueueGroupInput } from '@org/zod';
+import { ParsedQs } from 'qs';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { appError } from '../../core/utils/appError.js';
+import { ActivityService } from '../activity/activity.service.js';
+import { getTenantClient } from '@org/database';
 
 export class QueueGroupService {
   static createQueueGroup = async ({
@@ -34,16 +34,21 @@ export class QueueGroupService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "new queue group is created ",
-      event: "queueGroup.create",
+      actorType: 'USER',
+      message: 'new queue group is created ',
+      event: 'queueGroup.create',
       entityId: queueGroup.id,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
     });
     return queueGroup;
   };
-  static getAllQueueGroups = async (organizationId: string, queryString: ParsedQs) => {
-    const { filterOptions, limit, offset } = new APIFeatures(queryString).pagination();
+  static getAllQueueGroups = async (
+    organizationId: string,
+    queryString: ParsedQs,
+  ) => {
+    const { filterOptions, limit, offset } = new APIFeatures(
+      queryString,
+    ).pagination();
     const tenentDb = getTenantClient(organizationId);
     const queueGroups = await tenentDb.queueGroup.findMany({
       where: {
@@ -87,7 +92,10 @@ export class QueueGroupService {
       },
     });
     const result = queueGroups.map((group) => {
-      const totalAgents = group.queues.reduce((sum, q) => sum + q._count.queueAgents, 0);
+      const totalAgents = group.queues.reduce(
+        (sum, q) => sum + q._count.queueAgents,
+        0,
+      );
 
       return {
         id: group.id,
@@ -125,11 +133,11 @@ export class QueueGroupService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "queue group is updated ",
-      event: "queueGroup.update",
+      actorType: 'USER',
+      message: 'queue group is updated ',
+      event: 'queueGroup.update',
       entityId: queueGroup.id,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
       oldData: input,
       newData: queueGroup,
     });
@@ -153,7 +161,11 @@ export class QueueGroupService {
       },
     });
     if (queuesInGroup > 0) {
-      throw new appError("Cannot delete queue group with active queues", 400, "CONFLICT_ERROR");
+      throw new appError(
+        'Cannot delete queue group with active queues',
+        400,
+        'CONFLICT_ERROR',
+      );
     }
     await tenantDb.queueGroup.update({
       where: {
@@ -167,11 +179,11 @@ export class QueueGroupService {
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "queue deleted successfully  ",
-      event: "queueGroup.delete",
+      actorType: 'USER',
+      message: 'queue deleted successfully  ',
+      event: 'queueGroup.delete',
       entityId: groupId,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
       oldData: { active: true },
       newData: { active: false },
     });
@@ -186,44 +198,50 @@ export class QueueGroupService {
     userId: string;
   }) => {
     const tenantdb = getTenantClient(organizationId);
-    const currentState = await tenantdb.queueGroup.findFirst({
-      where: {
-        organizationId,
-        id: groupId,
-      },
-      select: {
-        default: true,
-      },
-    });
-    await tenantdb.queueGroup.updateMany({
-      where: {
-        organizationId,
-      },
-      data: {
-        default: false,
-      },
-    });
+    const { queueGroup, currentState } = await tenantdb.$transaction(
+      async (tx) => {
+        const currentState = await tx.queueGroup.findFirst({
+          where: {
+            organizationId,
+            id: groupId,
+          },
+          select: {
+            default: true,
+          },
+        });
+        await tx.queueGroup.updateMany({
+          where: {
+            organizationId,
+          },
+          data: {
+            default: false,
+          },
+        });
 
-    const queueGroup = await tenantdb.queueGroup.update({
-      where: {
-        id: groupId,
-        organizationId,
+        const queueGroup = await tx.queueGroup.update({
+          where: {
+            id: groupId,
+            organizationId,
+          },
+          data: {
+            default: true,
+          },
+          select: {
+            default: true,
+          },
+        });
+
+        return { queueGroup, currentState };
       },
-      data: {
-        default: true,
-      },
-      select: {
-        default: true,
-      },
-    });
+    );
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
-      actorType: "USER",
-      message: "change default group ",
-      event: "queueGroup.default",
+      actorType: 'USER',
+      message: 'change default group ',
+      event: 'queueGroup.default',
       entityId: groupId,
-      entityType: "ORGANIZATION",
+      entityType: 'ORGANIZATION',
       oldData: currentState,
       newData: queueGroup,
     });

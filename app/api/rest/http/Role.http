@@ -1,0 +1,68 @@
+### create role
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/role
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "guest",
+  "description": "this is guest role",
+  "permissions": {
+    "user": [
+      "view",
+      "assign_ticket"
+    ],
+    "category": [
+      "create",
+      "edit",
+      "delete",
+      "view"
+    ]
+  }
+}
+
+### get all roles
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/role
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get role details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/role/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update role
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/role/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "guest-updated",
+  "description": "updated guest role"
+}
+
+### delete role
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/role/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json

@@ -1,15 +1,37 @@
 import { permissions } from '@org/constants';
 import { CreateOrganizationInput } from '@org/zod';
-import { addDays } from 'date-fns';
-import { env } from '../../config/env.js';
-import { appError } from '../../core/utils/appError.js';
 import { readableId } from '../../core/utils/utils.js';
 import { ActivityService } from '../activity/activity.service.js';
-import { TokenService } from '../token/token.service.js';
 import { getTenantClient, prisma } from '@org/database';
-import { NotificationService } from '../notification/notification.service.js';
-
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { GetMyOrganizationsRow } from './organization.types.js';
+import { ParsedQs } from 'qs';
 export class OrganizationService {
+  static getMyOrganizations = async ({
+    userId,
+    queryString,
+  }: {
+    userId: string;
+    queryString: ParsedQs;
+  }) => {
+    const { limit, offset } = new APIFeatures(queryString).pagination();
+
+    const rows = await prisma.$queryRaw<GetMyOrganizationsRow[]>`
+    SELECT * FROM get_my_organizations(${userId}::uuid, ${limit}, ${offset});
+  `;
+
+    const total = rows.length > 0 ? Number(rows[0].total_count) : 0;
+
+    const output = rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      logo: r.logo,
+      createdBy: r.createdBy,
+      role: r.roleName,
+      isOwner: r.isOwner,
+    }));
+    return { output, total };
+  };
   static create = async (userId: string, input: CreateOrganizationInput) => {
     const organization = await prisma.organization.create({
       data: {
@@ -68,126 +90,95 @@ export class OrganizationService {
     }
     return data;
   };
-  static inviteMember = async (
-    userId: string,
-    input: { organizationId: string; roleId: string; email: string },
-  ) => {
-    const { organizationId, email, roleId } = input;
-    const tenentDb = getTenantClient(organizationId);
-    const user = await tenentDb.membership.findUnique({
+  static getMembers = async ({
+    organizationId,
+    queryString,
+  }: {
+    organizationId: string;
+    queryString: any;
+  }) => {
+    const { filterOptions, limit, offset } = new APIFeatures(queryString)
+      .filter()
+      .pagination();
+    const tenantdb = getTenantClient(organizationId);
+    const membership = await tenantdb.membership.findMany({
       where: {
-        organizationId_userId: {
-          userId,
-          organizationId,
-        },
+        isSystem: false,
+        ...filterOptions.where,
       },
       select: {
-        organization: {
+        organizationId: true,
+        id: true,
+        createdAt: true,
+        role: {
           select: {
+            id: true,
             name: true,
           },
         },
         user: {
           select: {
+            email: true,
             name: true,
+            avatar: true,
+
+            queueAgents: {
+              where: { organizationId },
+              select: {
+                ticketCount: true,
+                queue: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
+      skip: offset,
+      take: limit,
     });
-    if (!user) throw new appError('Owner Details not found', 404, 'NOT_FOUND');
-    const { token, id } = await TokenService.createToken({
-      input: {
-        email,
-        type: 'INVITE_USER',
-        organizationId,
-        roleId,
-        createdBy: userId,
-      },
-      expiresAt: addDays(new Date(), 7),
-    });
-    const url = `${env.betterAuthUrl}/invite-user/${token}`;
-    await ActivityService.lagActivity({
-      organizationId,
-      actorId: userId,
-      actorType: 'USER',
-      message: 'created invite link to join organization',
-      event: 'organization.invite',
-      entityId: id,
-      entityType: 'ORGANIZATION',
-    });
-    return { url };
-  };
-  static acceptInvite = async (
-    userId: string,
-    email: string,
-    token: string,
-  ) => {
-    const verifyToken = await TokenService.verifyToken(token);
-    if (!verifyToken?.organizationId || !verifyToken?.roleId)
-      throw new appError(
-        'Invite Link is Invalid or Expire',
-        400,
-        'INVALID_TOKEN',
+    const data = membership.map((item) => {
+      const user = item.user;
+
+      const totalTickets = user?.queueAgents.reduce(
+        (sum, qa) => sum + qa.ticketCount,
+        0,
       );
-    if (verifyToken?.email !== email)
-      throw new appError(
-        'Invite not applicable for your Email',
-        403,
-        'FORBIDDEN',
-      );
-    const tenentDb = getTenantClient(verifyToken.organizationId);
-    const data = await tenentDb.membership.create({
-      data: {
-        userId,
-        organizationId: verifyToken.organizationId,
-        roleId: verifyToken.roleId,
-      },
-      include: {
-        organization: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
-      },
+
+      return {
+        id: item.id,
+        email: user?.email,
+        username: user?.name,
+        avatar: user?.avatar,
+        role: item.role?.name,
+        roleId: item.role?.id,
+        createdAt: item.createdAt,
+        organizationId: item.organizationId,
+        totalTickets,
+        queues: user?.queueAgents.map((qa) => ({
+          queueId: qa.queue?.id,
+          name: qa.queue?.name,
+          ticketCount: qa.ticketCount,
+        })),
+      };
     });
-    await TokenService.updateTokenStatus(token, 'USED');
-    await ActivityService.lagActivity({
-      organizationId: data.organizationId,
-      actorId: userId,
-      actorType: 'USER',
-      message: 'user joined organization',
-      event: 'organization.join',
-      entityId: data.id,
-      entityType: 'ORGANIZATION',
-      metadata: {
-        memberShipId: data.id,
-        roleId: data.roleId,
-      },
-    });
-    const orgOwner = await tenentDb.membership.findFirst({
+    const total = await prisma.membership.count({
       where: {
-        organizationId: data.organizationId,
-        role: {
-          isSystem: true,
-          name: 'OWNER',
-        },
+        organizationId,
+        ...filterOptions.where,
       },
     });
-    if (orgOwner?.userId)
-      NotificationService.sendNotification({
-        recipientId: orgOwner?.userId,
-        userId: null,
-        data: {
-          organizationId: data.organizationId,
-          channel: 'IN_APP',
-          title: 'User acept the Invite',
-          message: `User ${email} accepted the invite`,
-          type: 'MEMBER',
-          actorId: userId,
-        },
-      });
-    return { organizationId: data.organizationId };
+    return {
+      data,
+      propagation: {
+        total,
+        limit,
+        offset,
+      },
+    };
   };
   static onboardingStatus = async (organizationId: string) => {
     const tenantDb = getTenantClient(organizationId);

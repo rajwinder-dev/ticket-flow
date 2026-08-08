@@ -16,7 +16,11 @@ export class EmailService {
     if (!isSystemEmail) {
       if (!organizationId) throw new appError('organizationId undefined', 404);
       const tenantdb = getTenantClient(organizationId);
-      const emailProvider = await tenantdb.emailProvider.count();
+      const emailProvider = await tenantdb.emailProvider.count({
+        where: {
+          organizationId,
+        },
+      });
       if (!emailProvider)
         throw new appError('You need to setup emailProvider', 404, 'NOT_FOUND');
     }
@@ -69,7 +73,7 @@ export class EmailService {
         organizationId,
       },
     });
-    if (existingProviderCount === 2)
+    if (existingProviderCount >= 2)
       throw new appError(
         'Max 2 provider per organization is allowed',
         400,
@@ -95,7 +99,6 @@ export class EmailService {
   ) => {
     const tenantdb = getTenantClient(organizationId);
     const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
-    console.log(id, organizationId);
     return await tenantdb.emailProvider.update({
       where: {
         id,

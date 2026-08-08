@@ -1,0 +1,38 @@
+### Create Customer
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/customer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "customer1@gmail.com",
+  "name": "customer1"
+}
+
+### Update Customer
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/customer/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "customer1@gmail.com",
+  "name": "customer1 update"
+}
+
+### get all customers
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/customer
+Authorization: Bearer {{accessToken}}
+Accept: application/json

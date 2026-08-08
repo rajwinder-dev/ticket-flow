@@ -77,10 +77,10 @@ The hard one. Before writing any code, answer these two questions on paper:
 
 Then:
 
-- [ ] Mock `./search-sdk.js`'s `SearchSdk` export as a real `class`, using `vi.hoisted()` for any shared mock functions.
-- [ ] Test `search()`'s empty-string short-circuit — assert the SDK's `query` was never called.
-- [ ] Test `search()` sorts hits by `score` descending.
-- [ ] Test `rebuildIndex()` for both `'ok'` and `'error'` statuses.
+- [x] Mock `./search-sdk.js`'s `SearchSdk` export as a real `class`, using `vi.hoisted()` for any shared mock functions.
+- [x] Test `search()`'s empty-string short-circuit — assert the SDK's `query` was never called.
+- [x] Test `search()` sorts hits by `score` descending.
+- [x] Test `rebuildIndex()` for both `'ok'` and `'error'` statuses.
 - [ ] Delete your `vi.hoisted()` wrapper on purpose and confirm you get the exact "Cannot access before initialization" error from before. Put it back.
 - [ ] Mock `SearchSdk` as `vi.fn().mockImplementation(...)` instead of a `class` on purpose and see if it breaks — reason about why it does or doesn't.
 

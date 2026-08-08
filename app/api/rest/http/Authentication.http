@@ -1,0 +1,96 @@
+### Depricated Replaced with Batter Auth
+
+### Login
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "tod_fritsch13@yahoo.com",
+    "password": "123456"
+}
+
+### Logout
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/auth/logout
+Accept: application/json
+
+### Signup
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/auth/signup
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "rajwinder",
+  "email": "Emil_Zboncak99@gmail.com",
+  "password": "8968585382",
+  "confirmPassword": "8968585382"
+}
+
+### change password
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/auth/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "currentPassword": "8968585382",
+  "password": "123456789",
+  "confirmPassword": "123456789"
+}
+
+### details
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/auth/details
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### forget password
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/auth/forget-password/:email
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### refresh token 
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/auth/refresh-token
+Accept: application/json
+
+### reset password
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/auth/reset-password/:token
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "password": "123456",
+  "confirmPassword": "123456"
+}

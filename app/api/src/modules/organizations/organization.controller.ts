@@ -11,11 +11,9 @@ import { appError } from '../../core/utils/appError.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import HandleFactory from '../../core/utils/handlerFactory.js';
 import response from '../../core/utils/response.js';
-import { TokenService } from '../token/token.service.js';
 import { OrganizationService } from './organization.service.js';
-import { getTenantClient, prisma, Prisma } from '@org/database';
-import { EmailService } from '../email/email.service.js';
-import { GetMyOrganizationsRow } from './organization.types.js';
+import { prisma, Prisma } from '@org/database';
+import { InviteService } from './invite/invite.service.js';
 
 export class OrganizationController {
   private static handler =
@@ -32,22 +30,10 @@ export class OrganizationController {
   });
   static getMyOrganizations = catchAsync(async (req, res) => {
     const { limit, offset } = new APIFeatures(req.query).pagination();
-
-    const rows = await prisma.$queryRaw<GetMyOrganizationsRow[]>`
-    SELECT * FROM get_my_organizations(${req.user.id}::uuid, ${limit}, ${offset});
-  `;
-
-    const total = rows.length > 0 ? Number(rows[0].total_count) : 0;
-
-    const output = rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      logo: r.logo,
-      createdBy: r.createdBy,
-      role: r.roleName,
-      isOwner: r.isOwner,
-    }));
-
+    const { output, total } = await OrganizationService.getMyOrganizations({
+      userId: req.user.id as string,
+      queryString: req.query,
+    });
     response(res, output, 200, { otherFields: { limit, offset, total } });
   });
   static getCurrentOrganization = catchAsync(async (req, res, _next) => {
@@ -71,30 +57,24 @@ export class OrganizationController {
   });
   static sendInvite = catchAsync(async (req, res, _next) => {
     const { email, roleId } = req.body as InviteUserOrganizationInput;
-    if (email === req.user.email)
-      throw new appError('self invite is not applicable', 403, 'FORBIDDEN');
-    const { url } = await OrganizationService.inviteMember(req.user.id, {
-      organizationId: req.organization.id,
-      email,
-      roleId,
-    });
-    await EmailService.queueEmail({
-      organizationId: req.organization.id,
-      to: email,
-      subject: 'Invite Email to our organizations',
-      template: 'invite',
-      data: {
-        invitedByUsername: req.user.username,
-        organization: req.organization.name,
-        inviteLink: url,
+    await InviteService.inviteMember({
+      actor: {
+        userId: req.user.id,
+        email: req.user.email,
+        username: req.user.username,
+        organizationName: req.organization.name,
       },
-      isSystemEmail: false,
+      input: {
+        organizationId: req.organization.id,
+        email,
+        roleId,
+      },
     });
     response(res, { message: 'Invite Sent successfully' });
   });
   static acceptInvite = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
-    const verifyToken = await OrganizationService.acceptInvite(
+    const verifyToken = await InviteService.acceptInvite(
       req.user.id,
       req.user.email,
       token,
@@ -105,124 +85,16 @@ export class OrganizationController {
   });
   static InviteDetails = catchAsync(async (req, res, _next) => {
     const token = req.params.token as string;
-    const verifyToken = await TokenService.verifyToken(token);
-    if (!verifyToken?.organizationId || !verifyToken?.roleId)
-      throw new appError(
-        'Invite Link is Invalid or Expire',
-        400,
-        'INVALID_TOKEN',
-      );
-    const tenantdb = getTenantClient(verifyToken.organizationId);
-    const inviteData = await tenantdb.token.findFirst({
-      where: {
-        token,
-      },
-      include: {
-        organization: {
-          select: {
-            name: true,
-          },
-        },
-        TokenCreatedBy: {
-          select: {
-            email: true,
-          },
-        },
-        role: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    const data = {
-      organization: inviteData?.organization?.name,
-      role: inviteData?.role?.name,
-      invitedTo: inviteData?.email,
-      invitedBy: inviteData?.TokenCreatedBy?.email,
-      expiresAt: inviteData?.expiresAt,
-    };
+    const data = await InviteService.getInviteDetails(token);
     response(res, data, 200);
   });
   static getMembers = catchAsync(async (req, res, _next) => {
-    const { filterOptions, limit, offset } = new APIFeatures(req.query)
-      .filter()
-      .pagination();
-    const tenantdb = getTenantClient(req.organization.id);
-    const membership = await tenantdb.membership.findMany({
-      where: {
-        organizationId: req.organization.id,
-        isSystem: false,
-        ...filterOptions.where,
-      },
-      select: {
-        organizationId: true,
-        id: true,
-        createdAt: true,
-        role: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        user: {
-          select: {
-            email: true,
-            name: true,
-            avatar: true,
-
-            queueAgents: {
-              where: { organizationId: req.organization.id },
-              select: {
-                ticketCount: true,
-                queue: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      skip: offset,
-      take: limit,
-    });
-    const data = membership.map((item) => {
-      const user = item.user;
-
-      const totalTickets = user?.queueAgents.reduce(
-        (sum, qa) => sum + qa.ticketCount,
-        0,
-      );
-
-      return {
-        id: item.id,
-        email: user?.email,
-        username: user?.name,
-        avatar: user?.avatar,
-        role: item.role?.name,
-        roleId: item.role?.id,
-        createdAt: item.createdAt,
-        organizationId: item.organizationId,
-        totalTickets,
-        queues: user?.queueAgents.map((qa) => ({
-          queueId: qa.queue?.id,
-          name: qa.queue?.name,
-          ticketCount: qa.ticketCount,
-        })),
-      };
-    });
-    const total = await prisma.membership.count({
-      where: {
-        organizationId: req.organization.id,
-        ...filterOptions.where,
-      },
+    const { data, propagation } = await OrganizationService.getMembers({
+      organizationId: req.organization.id,
+      queryString: req.query,
     });
     response(res, data, 200, {
-      otherFields: { limit, offset, total },
+      otherFields: propagation,
       schema: memberSchemaResponse,
     });
   });

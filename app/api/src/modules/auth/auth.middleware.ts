@@ -12,6 +12,7 @@ export class authMiddleware {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
+
     if (!session) {
       return next(new appError('Unauthorized', 401, 'INVALID_SESSION'));
     }
@@ -79,6 +80,7 @@ export class authMiddleware {
         isSystem: true,
         role: {
           name: 'OWNER',
+          isSystem: true,
         },
       },
     });

@@ -1,0 +1,17 @@
+### get activity logs
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/activity
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get activity summary
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/activity/summary
+Authorization: Bearer {{accessToken}}
+Accept: application/json

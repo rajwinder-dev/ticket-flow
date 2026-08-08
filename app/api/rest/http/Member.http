@@ -1,0 +1,47 @@
+### get all members
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/member
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### assign queue to member
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/member/:queueId/agents/:userId
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "queueId": "{{queueId}}",
+  "userId": "{{userId}}"
+}
+
+### update member role
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/member/:roleId/roles/:userId
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "roleId": "{{roleId}}",
+  "userId": "{{userId}}"
+}
+
+### unassign queue from member
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/member/:queueId/agents/:userId/unassign
+Authorization: Bearer {{accessToken}}
+Accept: application/json

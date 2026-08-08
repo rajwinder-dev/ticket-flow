@@ -1,0 +1,85 @@
+### create credentials
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/email
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "providerType": "RESEND",
+  "fromEmail": "no-reply@resend.tiven.xyz",
+  "webhookSecret": "my-secret",
+  "credentials": {
+    "apiKey": "my-api-key"
+  }
+}
+
+### create SMTP credentials
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+POST {{url}}/api/v1/email/smtp
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "fromEmail": "test@gmail.com",
+  "credentials": {
+    "host": "sandbox.smtp.mailtrap.io",
+    "port": 587,
+    "user": "196df487e5f27a",
+    "pass": "604ec16ec6a46d"
+  }
+}
+
+### delete credentials
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+DELETE {{url}}/api/v1/email/:id
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### get providers
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/email
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### test mail
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+GET {{url}}/api/v1/email/test
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### update credentials
+
+@baseUrl = {{url}}
+@accessToken = {{accessToken}}
+
+PATCH {{url}}/api/v1/email/:id
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "providerType": "SMTP",
+  "credentials": {
+    "host": "sandbox.smtp.mailtrap.io",
+    "port": 2525,
+    "user": "user",
+    "pass": "pass"
+  }
+}

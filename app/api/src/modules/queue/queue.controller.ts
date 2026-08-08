@@ -7,11 +7,9 @@ import {
   UpdateQueueInput,
 } from '@org/zod';
 import z from 'zod';
-import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { QueueService } from './queue.service.js';
-import { getTenantClient } from '@org/database';
 
 export class QueueController {
   static createQueue = catchAsync(async (req, res, _next) => {
@@ -65,70 +63,14 @@ export class QueueController {
   });
   static getQueues = catchAsync(async (req, res, _next) => {
     const groupId = req.params.id as string;
-    const { filterOptions, limit, offset } = new APIFeatures(req.query)
-      .filter()
-      .limitFields()
-      .pagination();
-    const tenantDb = getTenantClient(req.organization.id);
-    const queues = await tenantDb.queue.findMany({
-      where: {
-        organizationId: req.organization.id,
-        queueGroupId: groupId,
-        ...filterOptions.where,
-        active: true,
-      },
-      select: {
-        name: true,
-        description: true,
-        order: true,
-        createdAt: true,
-        id: true,
-        _count: {
-          select: {
-            queueAgents: true,
-          },
-        },
-        queueAgents: {
-          select: {
-            queue: {
-              select: {
-                _count: {
-                  select: {
-                    ticket: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-
-      orderBy: {
-        order: 'asc',
-      },
-      skip: offset,
-      take: limit,
+    const { data, pagination } = await QueueService.getQueues({
+      groupId,
+      organizationId: req.organization.id,
+      queryString: req.query,
     });
-    const total = await tenantDb.queue.count({
-      where: {
-        organizationId: req.organization.id,
-        queueGroupId: groupId,
-        ...filterOptions.where,
-        active: true,
-      },
-    });
-    const result = queues.map((queue) => ({
-      id: queue.id,
-      name: queue.name,
-      description: queue.description,
-      order: queue.order,
-      agentsCount: queue._count.queueAgents,
-      ticketsCount: queue.queueAgents[0]?.queue?._count.ticket,
-      createdAt: queue.createdAt,
-    }));
 
-    response(res, result, 200, {
-      otherFields: { total, limit, offset },
+    response(res, data, 200, {
+      otherFields: pagination,
       schema: z.array(queueSchemaResponse),
     });
   });
@@ -139,7 +81,7 @@ export class QueueController {
       queueId,
       organizationId: req.organization.id,
     });
-    response(res, agents, 200, {schema: z.array(queueMembersSchemaResponse)});
+    response(res, agents, 200, { schema: z.array(queueMembersSchemaResponse) });
   });
   static updateQueue = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
