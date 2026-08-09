@@ -74,5 +74,6 @@ jobs:
 
       - name: setup dev role
         run: pnpm nx run database:setup-role # temp turn of tests
-      # - name: Run integration tests
-      # run: pnpm test
+
+      - name: Run all tests
+        run: pnpm  run test

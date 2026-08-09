@@ -8,6 +8,13 @@
         "command": "tsc -b"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "app/api",
+        "command": "vitest run"
+      }
+    },
     "serve": {
       "continuous": true,
       "executor": "nx:run-commands",
