@@ -15,6 +15,13 @@
         "command": "vitest run"
       }
     },
+    "test-watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "app/api",
+        "command": "vitest"
+      }
+    },
     "serve": {
       "continuous": true,
       "executor": "nx:run-commands",

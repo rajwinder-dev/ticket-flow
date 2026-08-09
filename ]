@@ -1,0 +1,85 @@
+import app from '../../src/app';
+import { expect } from 'vitest';
+import request from 'supertest';
+import { TestContext } from './helper/auth';
+const toggleLogs = process.env.LOGS === 'true';
+const endpoint = '/api/v1';
+interface props {
+  path: string;
+  data?: object;
+  expectedStatus?: number;
+  id?: number;
+}
+
+export class testFactory {
+  logs?: boolean;
+  headers!: Record<string, string>;
+  constructor() {
+    this.logs = toggleLogs;
+  }
+  async setup() {
+    const auth = new TestContext();
+    await auth.authenticate();
+    this.headers = {
+      ...auth.headers,
+      ...auth.orgHeader,
+    };
+  }
+  async get({ path, expectedStatus = 200, id }: props) {
+    let fullPath = `${endpoint}${path}`;
+    if (id) {
+      fullPath += `/${id}`;
+    }
+    const res = await request
+      .agent(app)
+      .get(fullPath)
+      .set('Authorization', `Bearer ${this.token}`);
+    try {
+      if (this.logs) this.logOutput('GET', fullPath, null, res.body, true);
+      expect(res.statusCode).toBe(expectedStatus);
+    } catch (err) {
+      this.logOutput('GET', fullPath, null, res.body);
+      throw err;
+    }
+
+    return res.body;
+  }
+  async delete({ path, expectedStatus = 204, id }: props) {
+    let fullPath = `${endpoint}${path}`;
+    if (id) {
+      fullPath += `/${id}`;
+    }
+    const res = await request
+      .agent(app)
+      .delete(fullPath)
+      .set('Authorization', `Bearer ${this.token}`);
+    try {
+      if (this.logs) this.logOutput('DELETE', fullPath, null, res.body, true);
+      expect(res.statusCode).toBe(expectedStatus);
+    } catch (err) {
+      this.logOutput('DELETE', fullPath, null, res.body);
+      throw err;
+    }
+    return res.body;
+  }
+  logOutput(
+    requestType: string,
+    fullPath: string,
+    input?: object | null | string,
+    output?: object | null,
+    success?: boolean,
+  ) {
+    const infoString = success
+      ? `${requestType} ✅ ${fullPath} ✅\n`
+      : `${requestType} ❌ ${fullPath} ❌\n`;
+    const inputString = input
+      ? `Input:\n${JSON.stringify(input, null, 2)}\n`
+      : '';
+    const outputString = output
+      ? `Output:\n${JSON.stringify(output, null, 2)}\n`
+      : '';
+    console.log(
+      infoString + inputString + outputString + `TimeStamp: ${new Date()}`,
+    );
+  }
+}

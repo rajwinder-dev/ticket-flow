@@ -4,7 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/client.js';
 import { log } from '@org/utils';
 const connectionString = process.env.DATABASE_URL;
-if (!connectionString) log.error('connectionString is undefined');
+if (!connectionString) log.error('DATABASE_URL is undefined');
 
 const adapter = new PrismaPg({ connectionString });
 
