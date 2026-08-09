@@ -176,7 +176,6 @@ describe('ActivityService', () => {
 
   describe('getActivityLogs', () => {
     it('returns paginated data along with pagination metadata', async () => {
-      const mockWhere = { organizationId: 'org_1' };
       mockTenantDb.activityLog.count.mockResolvedValue(42);
       mockTenantDb.activityLog.findMany.mockResolvedValue([
         { id: 'log_1' },
@@ -195,7 +194,6 @@ describe('ActivityService', () => {
         skip: 0,
         take: 10,
       });
-      console.log(result);
       expect(result).toEqual({
         data: [{ id: 'log_1' }, { id: 'log_2' }],
         pagination: { total: 42, offset: 0, limit: 10 },

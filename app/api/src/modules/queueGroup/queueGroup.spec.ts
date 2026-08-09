@@ -1,5 +1,4 @@
 import { QueueGroupService } from './queueGroup.service';
-import { APIFeatures } from '../../core/utils/apiFeatures.js';
 
 const {
   mockGetTenantClient,

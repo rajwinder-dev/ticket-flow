@@ -1,4 +1,3 @@
-import { log } from '@org/utils';
 import { catchAsync } from '../../../core/utils/catchAsync';
 import { TicketCommentsService } from './comments.service';
 
@@ -9,7 +8,6 @@ export class TicketCommentsController {
   static addComment = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;
     const { comment, id: uuid } = req.body as CreateTicketCommentInput;
-    log.data('comment', { comment, id: uuid });
     const data = await TicketCommentsService.createTicketComment({
       organizationId: req.organization.id,
       ticketId: id,

@@ -1,4 +1,9 @@
-import { getTenantClient, priority, Priority, TicketStatus } from '@org/database';
+import {
+  getTenantClient,
+  priority,
+  Priority,
+  TicketStatus,
+} from '@org/database';
 import { ParsedQs } from 'qs';
 import { APIFeatures } from '../../../core/utils/apiFeatures';
 import { allowedTransitions } from '@org/constants';
@@ -34,9 +39,8 @@ export class TicketTransitionService {
       },
     });
     if (!currentData) throw new appError('Ticket not found', 404);
-
-    // validate allowed status
-    if (!allowedTransitions[currentData.status].includes(nextStatus)) {
+    const allowedStatus = allowedTransitions[currentData.status];
+    if (!allowedStatus?.includes(nextStatus)) {
       throw new appError('Invalid transition', 403);
     }
 
@@ -139,6 +143,9 @@ export class TicketTransitionService {
           type: 'SYSTEM',
           metadata: { test: 'test' },
           expiresAt: new Date(),
+          organizationId,
+          ticketId,
+          actorId: userId,
         },
       });
     SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
@@ -158,50 +165,52 @@ export class TicketTransitionService {
     userId: string;
   }) => {
     const tanentDb = getTenantClient(organizationId);
-    const currentTicket = await tanentDb.ticket.findUnique({
-      where: { id: ticketId },
-      select: { priority: true, assignedTo: true },
-    });
-    const ticket = await tanentDb.$transaction(async (tx) => {
-      const updatedTicket = await tx.ticket.updateMany({
-        where: {
-          id: ticketId,
-          organizationId,
-          version,
-        },
-        data: {
-          priority,
-          version: {
-            increment: 1,
-          },
-        },
-      });
-      if (updatedTicket.count === 0) {
-        const existTicket = await tanentDb.ticket.findUnique({
+    const { currentTicket, updatedTicket } = await tanentDb.$transaction(
+      async (tx) => {
+        const currentTicket = await tx.ticket.findUnique({
           where: { id: ticketId },
-          select: { version: true },
+          select: { priority: true, assignedTo: true },
         });
-        if (existTicket)
-          throw new appError(
-            'Ticket already updated , refersh',
-            409,
-            'VERSION_MISSMATCH',
-            {
-              currenVersion: existTicket.version,
+        const updatedTicket = await tx.ticket.updateMany({
+          where: {
+            id: ticketId,
+            organizationId,
+            version,
+          },
+          data: {
+            priority,
+            version: {
+              increment: 1,
             },
-          );
-      }
-      await tx.ticketTransition.create({
-        data: {
-          ticketId,
-          action: 'PRIORITY_CHANGED',
-          toPriority: priority,
-          fromPriority: currentTicket?.priority,
-          organizationId,
-        },
-      });
-      return updatedTicket;
-    });
+          },
+        });
+        if (updatedTicket.count === 0) {
+          const existTicket = await tx.ticket.findUnique({
+            where: { id: ticketId },
+            select: { version: true },
+          });
+          if (existTicket)
+            throw new appError(
+              'Ticket already updated , refersh',
+              409,
+              'VERSION_MISSMATCH',
+              {
+                currenVersion: existTicket.version,
+              },
+            );
+        }
+        await tx.ticketTransition.create({
+          data: {
+            ticketId,
+            action: 'PRIORITY_CHANGED',
+            toPriority: priority,
+            fromPriority: currentTicket?.priority,
+            organizationId,
+          },
+        });
+        return { currentTicket, updatedTicket };
+      },
+    );
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
@@ -228,7 +237,7 @@ export class TicketTransitionService {
       });
 
     SocketService.invlidOrganizationQuery({ organizationId, keys: ['ticket'] });
-    return ticket;
+    return updatedTicket;
   };
   static escalateTicket = async ({
     ticketId,
@@ -257,6 +266,8 @@ export class TicketTransitionService {
         },
       },
     });
+    if (!currentTicket)
+      throw new appError('Ticket not found', 404, 'NOT_FOUND');
     if (!input.groupId && !currentTicket?.queue) {
       throw new appError('You need to select a group', 400, 'INVALID_PAYLOAD');
     }
@@ -265,7 +276,7 @@ export class TicketTransitionService {
       where: {
         queueGroupId: input.groupId || currentTicket?.queue?.queueGroupId,
         order: {
-          gt: input.groupId ? 0 : currentTicket?.queue?.order,
+          gte: input.groupId ? 0 : currentTicket?.queue?.order,
         },
       },
       include: {
@@ -300,6 +311,7 @@ export class TicketTransitionService {
       nextAgentId: agentId,
       organizationId,
       action: 'ESCALATED',
+      priority: input.priority,
       reason: input.reason,
     });
     await TicketCommentsService.createTicketComment({
@@ -352,21 +364,23 @@ export class TicketTransitionService {
     targetType: 'AGENT' | 'QUEUE';
     userId: string;
   }) => {
+    // thie AssginedId can be agentId or queueId
     const tenantDb = getTenantClient(organizationId);
     let queueId;
     let agentId;
     switch (targetType) {
-      // if queue given , resovle agent only
       case 'QUEUE':
+        // assignID = provided queueId
         {
+          queueId = assignId;
           agentId = await TicketService.resolveAgentAssignment({
-            queueId: assignId,
+            queueId,
             organizationId,
           });
         }
         break;
       case 'AGENT':
-        // if agent given , find agent and it queueID
+        // assignID = provided agentId
         {
           const queueData = await tenantDb.queueAgent.findFirst({
             where: {
@@ -374,10 +388,10 @@ export class TicketTransitionService {
               organizationId,
               active: true,
             },
-            select: { queueId: true },
+            select: { queueId: true, agentId: true },
           });
           queueId = queueData?.queueId;
-          agentId = assignId;
+          agentId = queueData?.agentId;
         }
         break;
       default:
@@ -386,7 +400,7 @@ export class TicketTransitionService {
     if (!queueId) throw new appError('Queue not found ', 404, 'NOT_FOUND');
     if (!agentId)
       throw new appError('Agent not found in queue', 404, 'NOT_FOUND');
-    if (agentId === assignId)
+    if (targetType === 'AGENT' && agentId === assignId)
       throw new appError('Already assigned to agent ', 409, 'CONFLICT_ERROR');
 
     const { updatedTicket, currentTicket } =
@@ -445,12 +459,13 @@ export class TicketTransitionService {
         where: {
           organizationId,
           queueGroupId: queueData.queue.queueGroupId,
-          order: queueData.queue.order + 1,
+          order: { gt: queueData.queue.order },
         },
         select: {
           id: true,
           name: true,
         },
+        orderBy: { order: 'asc' },
       });
     }
 
@@ -474,7 +489,6 @@ export class TicketTransitionService {
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const { offset, limit } = new APIFeatures(queryString).pagination();
-    console.log(organizationId, ticketId);
     const total = await tenantDb.ticketTransition.count({
       where: {
         organizationId,

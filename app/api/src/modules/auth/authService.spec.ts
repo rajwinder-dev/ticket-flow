@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import AuthService from './auth.service';
 import { getTenantClient } from '@org/database';
 const { mockGetTenantClient, mockFindUnique, mockAuth } = vi.hoisted(() => ({
@@ -58,5 +58,3 @@ describe('AuthService', () => {
     });
   });
 });
-
-

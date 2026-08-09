@@ -2,6 +2,7 @@ import { CreateTicketInput } from '@org/zod';
 import { appError } from '../../../core/utils/appError.js';
 import {
   getTenantClient,
+  Priority,
   priority,
   Prisma,
   Sentiment,
@@ -15,7 +16,6 @@ import { QueueGroupService } from '../../queueGroup/queueGroup.service.js';
 import { NotificationService } from '../../notification/notification.service.js';
 import { SocketService } from '../../socket/socket.service.js';
 import { TicketAiService } from '../ai/ticketAi.service.js';
-import { log } from '@org/utils';
 
 export class TicketService {
   static createAndAssign = async ({
@@ -51,10 +51,10 @@ export class TicketService {
       // if ai get response
       if (aiResponse) {
         const { groupId: aiGroupId, ...rest } = aiResponse;
-        data = { ...data, ...rest };
         if (aiResponse.confidence < 0.8) {
           groupId = await QueueGroupService.getDefaultGroup(organizationId);
         } else {
+          data = { ...data, ...rest };
           groupId = aiGroupId;
         }
       }
@@ -103,7 +103,7 @@ export class TicketService {
         entityId: ticket.id,
         entityType: 'TICKET',
       });
-      NotificationService.sendNotification({
+      await NotificationService.sendNotification({
         recipientId: agentId,
         userId: null,
         data: {
@@ -122,7 +122,7 @@ export class TicketService {
       });
       return finalAssignment;
     }
-    return null;
+    return { ticket, assignment: finalAssignment };
   };
   static createTicket = async ({
     data,
@@ -161,16 +161,7 @@ export class TicketService {
         queueId,
       },
     });
-    await ActivityService.lagActivity({
-      organizationId,
-      actorId: userId,
-      actorType: 'USER',
-      message: 'new ticket is created',
-      event: 'ticket.created',
-      entityId: ticket.id,
-      entityType: 'TICKET',
-    });
-    NotificationService.sendNotification({
+    await NotificationService.sendNotification({
       recipientId: ownerId,
       userId: null,
       data: {
@@ -182,6 +173,15 @@ export class TicketService {
         actorId: userId,
         ticketId: ticket.id,
       },
+    });
+    await ActivityService.lagActivity({
+      organizationId,
+      actorId: userId,
+      actorType: 'USER',
+      message: 'new ticket is created',
+      event: 'ticket.created',
+      entityId: ticket.id,
+      entityType: 'TICKET',
     });
     return ticket;
   };
@@ -218,7 +218,7 @@ export class TicketService {
       newData: updatedTicket,
     });
     if (updatedTicket.assignedTo)
-      NotificationService.sendNotification({
+      await NotificationService.sendNotification({
         recipientId: updatedTicket.assignedTo,
         userId,
         data: {
@@ -347,6 +347,7 @@ export class TicketService {
     organizationId,
     action,
     reason,
+    priority
   }: {
     ticketId: string;
     nextAgentId: string;
@@ -354,6 +355,7 @@ export class TicketService {
     organizationId: string;
     action: TicketAction;
     reason?: string;
+    priority?: Priority
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const ticketData = await tenantDb.$transaction(async (tx) => {
@@ -365,16 +367,16 @@ export class TicketService {
       // decrement previous agent (only if different)
       if (
         currentTicket?.assignedTo &&
-        currentTicket.assignedTo !== nextAgentId
+        currentTicket.assignedTo !== nextAgentId &&
+        currentTicket.queueId
       ) {
-        log.data("data", {currentTicket});
         await tx.queueAgent.update({
           where: {
             queueId_agentId_organizationId: {
               agentId: currentTicket.assignedTo,
               organizationId,
 
-              queueId: currentTicket.queueId!,
+              queueId: currentTicket.queueId,
             },
           },
           data: {
@@ -389,6 +391,7 @@ export class TicketService {
           assignedTo: nextAgentId,
           queueId: nextQueueId,
           status: 'OPEN',
+          priority
         },
       });
       await tx.ticketTransition.create({
