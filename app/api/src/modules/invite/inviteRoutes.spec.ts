@@ -1,18 +1,15 @@
 import { getTenantClient } from '@org/database';
-import app from '../../../app';
-import { TestFactory } from '../../../test/testFactory';
+import app from '../../app';
+import { TestFactory } from '../../test/testFactory';
 import {
   CreateOrganizationInput,
   InviteMemberDetailsResponse,
   InviteUserOrganizationInput,
 } from '@org/zod';
-import { TokenService } from '../../token/token.service';
+import { TokenService } from '../token/token.service';
 import { faker } from '@faker-js/faker';
-import {
-  getOrgantionMock,
-  getRoleMock,
-} from '../../../test/helper/mock.helper';
-import { EmailService } from '../../email/email.service';
+import { getOrgantionMock, getRoleMock } from '../../test/helper/mock.helper';
+import { EmailService } from '../email/email.service';
 vi.spyOn(EmailService, 'queueEmail').mockResolvedValue('string');
 const tokenSpy = vi.spyOn(TokenService, 'createToken');
 

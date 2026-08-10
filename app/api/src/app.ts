@@ -37,8 +37,8 @@ import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
 import ticketModuleRouter from './modules/ticket/ticket.module.js';
-import organizationRouter from './modules/organizations/organization/organization.routes.js';
-import inviteRouter from './modules/organizations/invite/invite.routes.js';
+import organizationRouter from './modules/organizations/organization.routes.js';
+import inviteRouter from './modules/invite/invite.routes.js';
 
 export const app: Express = express();
 

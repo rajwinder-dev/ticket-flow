@@ -1,9 +1,9 @@
-import { TestFactory } from '../../../test/testFactory';
-import app from '../../../app';
+import { TestFactory } from '../../test/testFactory';
+import app from '../../app';
 import { faker } from '@faker-js/faker';
 import { CreateOrganizationInput, UpdateOrganizationInput } from '@org/zod';
 import { getTenantClient } from '@org/database';
-import { slugify } from '../../../test/helper/mock.helper';
+import { slugify } from '../../test/helper/mock.helper';
 describe('Organization routes', () => {
   const agent = new TestFactory(app);
   beforeAll(async () => {

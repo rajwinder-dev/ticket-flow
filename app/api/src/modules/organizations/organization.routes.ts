@@ -1,7 +1,7 @@
 import { createOrganizationInput, updateOrganizationInput } from '@org/zod';
 import { Router } from 'express';
-import { validationMiddleware } from '../../../core/middleware/validationMiddleware.js';
-import { authMiddleware } from '../../auth/auth.middleware.js';
+import { validationMiddleware } from '../../core/middleware/validationMiddleware.js';
+import { authMiddleware } from '../auth/auth.middleware.js';
 import { OrganizationController } from './organization.controller.js';
 
 const organizationRouter: Router = Router();

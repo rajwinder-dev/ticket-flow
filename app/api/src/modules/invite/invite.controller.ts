@@ -1,6 +1,6 @@
 import { InviteUserOrganizationInput } from '@org/zod';
-import { catchAsync } from '../../../core/utils/catchAsync';
-import response from '../../../core/utils/response';
+import { catchAsync } from '../../core/utils/catchAsync';
+import response from '../../core/utils/response';
 import { InviteService } from './invite.service';
 
 class InviteControllerClass {

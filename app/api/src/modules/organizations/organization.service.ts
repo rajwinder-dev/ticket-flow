@@ -1,9 +1,9 @@
 import { permissions } from '@org/constants';
 import { CreateOrganizationInput } from '@org/zod';
-import { readableId } from '../../../core/utils/utils.js';
-import { ActivityService } from '../../activity/activity.service.js';
+import { readableId } from '../../core/utils/utils.js';
+import { ActivityService } from '../activity/activity.service.js';
 import { getTenantClient, prisma } from '@org/database';
-import { APIFeatures } from '../../../core/utils/apiFeatures.js';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
 import { GetMyOrganizationsRow } from './organization.types.js';
 import { ParsedQs } from 'qs';
 export class OrganizationService {

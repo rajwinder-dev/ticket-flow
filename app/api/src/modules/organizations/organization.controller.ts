@@ -1,19 +1,17 @@
 import {
   CreateOrganizationInput,
   createOrganizationResponse,
-  InviteUserOrganizationInput,
   memberSchemaResponse,
   organizationSchemaResponse,
   UpdateOrganizationInput,
 } from '@org/zod';
-import { APIFeatures } from '../../../core/utils/apiFeatures.js';
-import { appError } from '../../../core/utils/appError.js';
-import { catchAsync } from '../../../core/utils/catchAsync.js';
-import HandleFactory from '../../../core/utils/handlerFactory.js';
-import response from '../../../core/utils/response.js';
+import { APIFeatures } from '../../core/utils/apiFeatures.js';
+import { appError } from '../../core/utils/appError.js';
+import { catchAsync } from '../../core/utils/catchAsync.js';
+import HandleFactory from '../../core/utils/handlerFactory.js';
+import response from '../../core/utils/response.js';
 import { OrganizationService } from './organization.service.js';
 import { getTenantClient, prisma, Prisma } from '@org/database';
-import { InviteService } from '../invite/invite.service.js';
 
 export class OrganizationController {
   private static handler =
