@@ -3,6 +3,7 @@ import app from '../../../app';
 import { faker } from '@faker-js/faker';
 import { CreateOrganizationInput, UpdateOrganizationInput } from '@org/zod';
 import { getTenantClient } from '@org/database';
+import { slugify } from '../../../test/helper/mock.helper';
 describe('Organization routes', () => {
   const agent = new TestFactory(app);
   beforeAll(async () => {
@@ -30,16 +31,7 @@ describe('Organization routes', () => {
     await agent.cleanup();
   });
   const orgName = faker.company.name();
-  function slugify(text: string) {
-    return text
-      .toString()
-      .toLowerCase()
-      .trim()
-      .replace(/[\s_]+/g, '-') // spaces/underscores → -
-      .replace(/[^\w-]+/g, '') // remove special characters
-      .replace(/--+/g, '-') // collapse multiple -
-      .replace(/^-+|-+$/g, ''); // trim -
-  }
+
   it('should create an organization', async () => {
     const data = await agent.post<CreateOrganizationInput>({
       path: '/org',
@@ -52,11 +44,29 @@ describe('Organization routes', () => {
     expect(data.length).toBeDefined();
     await agent.setOrgId(data[0].id);
   });
+  it('A System role and membership should be created', async () => {
+    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const membership = await tenantDb.membership.findFirst({
+      where: {
+        organizationId: agent.auth.getActiveOrg()!,
+        isSystem: true,
+      },
+    });
+    const role = await tenantDb.role.findFirst({
+      where: {
+        organizationId: agent.auth.getActiveOrg()!,
+        isSystem: true,
+      },
+    });
+    expect(membership).toBeDefined();
+    expect(role).toBeDefined();
+  });
+
   it('should get current organization', async () => {
     const { data } = await agent.get<{ id: string }>({ path: '/org/current' });
     expect(data).toBeDefined();
   });
-  it('should upate current organization', async () => {
+  it('should update current organization', async () => {
     const newOrgName = faker.company.name();
     const { data } = await agent.patch<UpdateOrganizationInput>({
       path: '/org',

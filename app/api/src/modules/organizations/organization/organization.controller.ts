@@ -59,39 +59,6 @@ export class OrganizationController {
     });
     response(res, null, 204);
   });
-  static sendInvite = catchAsync(async (req, res, _next) => {
-    const { email, roleId } = req.body as InviteUserOrganizationInput;
-    await InviteService.inviteMember({
-      actor: {
-        userId: req.user.id,
-        email: req.user.email,
-        username: req.user.username,
-        organizationName: req.organization.name,
-      },
-      input: {
-        organizationId: req.organization.id,
-        email,
-        roleId,
-      },
-    });
-    response(res, { message: 'Invite Sent successfully' });
-  });
-  static acceptInvite = catchAsync(async (req, res, _next) => {
-    const token = req.params.token as string;
-    const verifyToken = await InviteService.acceptInvite(
-      req.user.id,
-      req.user.email,
-      token,
-    );
-    response(res, verifyToken, 200, {
-      otherFields: { message: 'Joined Organization successfully' },
-    });
-  });
-  static InviteDetails = catchAsync(async (req, res, _next) => {
-    const token = req.params.token as string;
-    const data = await InviteService.getInviteDetails(token);
-    response(res, data, 200);
-  });
   static getMembers = catchAsync(async (req, res, _next) => {
     const { data, propagation } = await OrganizationService.getMembers({
       organizationId: req.organization.id,

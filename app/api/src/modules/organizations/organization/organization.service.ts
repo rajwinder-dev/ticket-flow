@@ -69,16 +69,16 @@ export class OrganizationService {
             isSystem: true,
           },
         });
-        await ActivityService.lagActivity({
-          organizationId: organization.id,
-          actorId: userId,
-          actorType: 'USER',
-          message: 'User created new organization ',
-          event: 'organization.create',
-          entityId: organization.id,
-          entityType: 'ORGANIZATION',
-        });
         return { organization, membership };
+      });
+      await ActivityService.lagActivity({
+        organizationId: organization.id,
+        actorId: userId,
+        actorType: 'USER',
+        message: 'User created new organization ',
+        event: 'organization.create',
+        entityId: organization.id,
+        entityType: 'ORGANIZATION',
       });
     } catch (error) {
       await prisma.organization.delete({

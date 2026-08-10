@@ -36,9 +36,9 @@ import roleRouter from './modules/role/role.route.js';
 import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
-import { log } from '@org/utils';
 import ticketModuleRouter from './modules/ticket/ticket.module.js';
-import OrganizationModule from './modules/organizations/organization.module.js';
+import organizationRouter from './modules/organizations/organization/organization.routes.js';
+import inviteRouter from './modules/organizations/invite/invite.routes.js';
 
 export const app: Express = express();
 
@@ -97,7 +97,8 @@ app.get('/health', async (_req, res) => {
 });
 
 app.use('/api/v1/token', tokenRoute);
-app.use('/api/v1/org', OrganizationModule);
+app.use('/api/v1/org', organizationRouter);
+app.use('/api/v1/invite', inviteRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/role', roleRouter);
 app.use('/api/v1/email', emailRouter);

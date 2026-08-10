@@ -1,8 +1,7 @@
-// import app from '../../src/app';
 import type { Express } from 'express';
 import { expect } from 'vitest';
 import request from 'supertest';
-import { TestContext } from './helper/auth';
+import { CreateUserInput, TestContext } from './helper/auth';
 import TestAgent from 'supertest/lib/agent';
 const toggleLogs = process.env.LOGS === 'true';
 const endpoint = '/api/v1';
@@ -21,8 +20,8 @@ export class TestFactory {
     this.logs = toggleLogs;
     this.agent = request.agent(app);
   }
-  async authenticate() {
-    await this.auth.authenticate();
+  async authenticate(data?: Partial<CreateUserInput>) {
+    await this.auth.authenticate(data);
     this.headers = {
       ...this.auth.headers,
       ...this.auth.orgHeader,
@@ -31,8 +30,8 @@ export class TestFactory {
   async cleanup() {
     await this.auth.cleanup();
   }
-   getUserData() {
-    return  this.auth.getUserData();
+  getUserData() {
+    return this.auth.getUserData();
   }
   async setOrgId(orgId: string) {
     await this.auth.setOrg(orgId);
@@ -48,7 +47,12 @@ export class TestFactory {
     let fullPath = `${endpoint}${path}`;
 
     const res = await this.agent.get(fullPath).set(this.headers);
-    expect(res.statusCode).toBe(statusCode);
+    try {
+      expect(res.statusCode).toBe(statusCode);
+    } catch (error) {
+      console.dir(res.body);
+      throw error;
+    }
     return res.body;
   }
   async post<T>({ path, body, statusCode = 201 }: props<T>) {
@@ -57,8 +61,12 @@ export class TestFactory {
       .post(fullPath)
       .send(body ?? {})
       .set(this.headers);
-    expect(res.statusCode).toBe(statusCode);
-
+    try {
+      expect(res.statusCode).toBe(statusCode);
+    } catch (error) {
+      console.dir(res.body);
+      throw error;
+    }
     return res.body;
   }
   async patch<T>({ path, body, statusCode = 200 }: props<T>) {
@@ -67,7 +75,12 @@ export class TestFactory {
       .patch(fullPath)
       .send(body ?? {})
       .set(this.headers);
-    expect(res.statusCode).toBe(statusCode);
+    try {
+      expect(res.statusCode).toBe(statusCode);
+    } catch (error) {
+      console.dir(res.body);
+      throw error;
+    }
     return res.body;
   }
   async put<T>({ path, body, statusCode = 200 }: props<T>) {
@@ -76,14 +89,24 @@ export class TestFactory {
       .put(fullPath)
       .send(body ?? {})
       .set(this.headers);
-    expect(res.statusCode).toBe(statusCode);
+    try {
+      expect(res.statusCode).toBe(statusCode);
+    } catch (error) {
+      console.dir(res.body);
+      throw error;
+    }
 
     return res.body;
   }
   async delete<T>({ path, statusCode = 204 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
     const res = await this.agent.delete(fullPath).set(this.headers);
-    expect(res.statusCode).toBe(statusCode);
+    try {
+      expect(res.statusCode).toBe(statusCode);
+    } catch (error) {
+      console.dir(res.body);
+      throw error;
+    }
 
     return res.body;
   }

@@ -1,7 +1,7 @@
 import { auth } from '@org/auth';
 import type { TestHelpers } from 'better-auth/plugins';
 
-type CreateUserInput = Parameters<TestHelpers['createUser']>[0];
+export type CreateUserInput = Parameters<TestHelpers['createUser']>[0];
 
 export class TestContext {
   user!: Awaited<ReturnType<TestHelpers['createUser']>>;
@@ -12,7 +12,9 @@ export class TestContext {
     this.orgHeader = undefined;
     this.test = (await auth.$context).test;
     this.user = this.test.createUser({
-      email: `test-${crypto.randomUUID()}@example.com`,
+      email: data?.email
+        ? data.email
+        : `test-${crypto.randomUUID()}@example.com`,
       password: 'test',
       ...data,
     });
@@ -20,10 +22,8 @@ export class TestContext {
     return this.user;
   }
 
-  async authenticate() {
-    if (!this.user) {
-      await this.createUser();
-    }
+  async authenticate(data?: Partial<CreateUserInput>) {
+    await this.createUser(data);
     const headers = await this.test.getAuthHeaders({
       userId: this.user.id,
     });
