@@ -6,14 +6,14 @@ import {
   organizationSchemaResponse,
   UpdateOrganizationInput,
 } from '@org/zod';
-import { APIFeatures } from '../../core/utils/apiFeatures.js';
-import { appError } from '../../core/utils/appError.js';
-import { catchAsync } from '../../core/utils/catchAsync.js';
-import HandleFactory from '../../core/utils/handlerFactory.js';
-import response from '../../core/utils/response.js';
+import { APIFeatures } from '../../../core/utils/apiFeatures.js';
+import { appError } from '../../../core/utils/appError.js';
+import { catchAsync } from '../../../core/utils/catchAsync.js';
+import HandleFactory from '../../../core/utils/handlerFactory.js';
+import response from '../../../core/utils/response.js';
 import { OrganizationService } from './organization.service.js';
-import { prisma, Prisma } from '@org/database';
-import { InviteService } from './invite/invite.service.js';
+import { getTenantClient, prisma, Prisma } from '@org/database';
+import { InviteService } from '../invite/invite.service.js';
 
 export class OrganizationController {
   private static handler =
@@ -51,9 +51,13 @@ export class OrganizationController {
     response(res, data);
   });
   static deleteOrganization = catchAsync(async (req, res) => {
-    const id = req.params.id as string;
-    const data = await this.handler.softDelete(id);
-    response(res, data);
+    const id = req.organization.id;
+    const tenantDb = getTenantClient(id);
+    await tenantDb.organization.update({
+      where: { id },
+      data: { active: false },
+    });
+    response(res, null, 204);
   });
   static sendInvite = catchAsync(async (req, res, _next) => {
     const { email, roleId } = req.body as InviteUserOrganizationInput;

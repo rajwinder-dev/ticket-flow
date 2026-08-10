@@ -6,9 +6,9 @@ import { TestContext } from './helper/auth';
 import TestAgent from 'supertest/lib/agent';
 const toggleLogs = process.env.LOGS === 'true';
 const endpoint = '/api/v1';
-interface props {
+interface props<T> {
   path: string;
-  data?: object;
+  body?: Partial<T>;
   statusCode?: number;
 }
 
@@ -31,34 +31,56 @@ export class TestFactory {
   async cleanup() {
     await this.auth.cleanup();
   }
-  async get({ path, statusCode = 200 }: props) {
+   getUserData() {
+    return  this.auth.getUserData();
+  }
+  async setOrgId(orgId: string) {
+    await this.auth.setOrg(orgId);
+    this.headers = {
+      ...this.auth.headers,
+      ...this.auth.orgHeader,
+    };
+  }
+  async get<T>({
+    path,
+    statusCode = 200,
+  }: props<T>): Promise<{ success: boolean; data: T }> {
     let fullPath = `${endpoint}${path}`;
 
     const res = await this.agent.get(fullPath).set(this.headers);
     expect(res.statusCode).toBe(statusCode);
     return res.body;
   }
-  async post({ path, data, statusCode = 201 }: props) {
+  async post<T>({ path, body, statusCode = 201 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
-    const res = await this.agent.post(fullPath).send(data).set(this.headers);
+    const res = await this.agent
+      .post(fullPath)
+      .send(body ?? {})
+      .set(this.headers);
     expect(res.statusCode).toBe(statusCode);
 
     return res.body;
   }
-  async patch({ path, data, statusCode = 200 }: props) {
+  async patch<T>({ path, body, statusCode = 200 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
-    const res = await this.agent.patch(fullPath).send(data).set(this.headers);
+    const res = await this.agent
+      .patch(fullPath)
+      .send(body ?? {})
+      .set(this.headers);
     expect(res.statusCode).toBe(statusCode);
     return res.body;
   }
-  async put({ path, data, statusCode = 200 }: props) {
+  async put<T>({ path, body, statusCode = 200 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
-    const res = await this.agent.put(fullPath).send(data).set(this.headers);
+    const res = await this.agent
+      .put(fullPath)
+      .send(body ?? {})
+      .set(this.headers);
     expect(res.statusCode).toBe(statusCode);
 
     return res.body;
   }
-  async delete({ path, statusCode = 204 }: props) {
+  async delete<T>({ path, statusCode = 204 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
     const res = await this.agent.delete(fullPath).set(this.headers);
     expect(res.statusCode).toBe(statusCode);

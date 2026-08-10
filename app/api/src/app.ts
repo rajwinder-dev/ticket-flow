@@ -30,7 +30,6 @@ import emailRouter from './modules/email/email.routes.js';
 import lookupRouter from './modules/lookup/lookup.routes.js';
 import memberRouter from './modules/member/member.routes.js';
 import notificationRouter from './modules/notification/notification.routes.js';
-import organizationRouter from './modules/organizations/organization.routes.js';
 import QueueRoutes from './modules/queue/queue.routes.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import roleRouter from './modules/role/role.route.js';
@@ -39,6 +38,7 @@ import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
 import { log } from '@org/utils';
 import ticketModuleRouter from './modules/ticket/ticket.module.js';
+import OrganizationModule from './modules/organizations/organization.module.js';
 
 export const app: Express = express();
 
@@ -50,18 +50,14 @@ app.use(helmet());
 app.use(hpp());
 
 configLogger(app);
-if (!devMode)
-  app.use((req, res, next) => {
-    log.data('IP', {
-      ip: req.ip,
-      ips: req.ips,
-      cfIp: req.headers['cf-connecting-ip'],
-      xForwardedFor: req.headers['x-forwarded-for'],
-      realIp: req.headers['x-real-ip'],
-    });
-
-    next();
-  });
+// if (!devMode)
+//   app.use((req, res, next) => {
+//     log.data('IP', {
+//       ip: req.ip,
+//     });
+//
+//     next();
+//   });
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 500,
@@ -101,7 +97,7 @@ app.get('/health', async (_req, res) => {
 });
 
 app.use('/api/v1/token', tokenRoute);
-app.use('/api/v1/org', organizationRouter);
+app.use('/api/v1/org', OrganizationModule);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/role', roleRouter);
 app.use('/api/v1/email', emailRouter);

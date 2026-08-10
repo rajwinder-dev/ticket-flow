@@ -33,7 +33,12 @@ export class TestContext {
     this.headers = Object.fromEntries(headers.entries());
     return this.headers;
   }
-
+  getUserData() {
+    return this.user;
+  }
+  getActiveOrg() {
+    return this.orgHeader?.['x-organization-id'];
+  }
   async cleanup() {
     if (this.user) {
       await this.test.deleteUser(this.user.id);
