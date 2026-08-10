@@ -16,6 +16,7 @@
       }
     },
     "test-watch": {
+      "continuous": true,
       "executor": "nx:run-commands",
       "options": {
         "cwd": "app/api",

@@ -14,6 +14,6 @@ describe('protected route', () => {
 
   it('should return user data for authenticated request', async () => {
     const data = await agent.get({ path: '/org/me' });
-    console.log(data);
+    expect(data).toBeDefined();
   });
 });
