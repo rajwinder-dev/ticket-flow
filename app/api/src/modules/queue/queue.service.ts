@@ -405,8 +405,20 @@ export class QueueService {
     const tenantdb = getTenantClient(organizationId);
     const exitingQueue = await tenantdb.queue.findUnique({
       where: { id: queueId },
-      select: { active: true },
+      select: {
+        active: true,
+        _count: {
+          select: {
+            queueAgents: {
+              where: {
+                active: true,
+              },
+            },
+          },
+        },
+      },
     });
+
     if (!exitingQueue) throw new appError('Queue not found', 404, 'NOT_FOUND');
     if (!exitingQueue?.active)
       throw new appError('Queue is already deleted', 409, 'CONFLICT_ERROR');
@@ -422,7 +434,14 @@ export class QueueService {
     if (activeTickets > 0) {
       throw new appError(
         'Cannot delete queue with active tickets',
-        400,
+        409,
+        'CONFLICT_ERROR',
+      );
+    }
+    if (exitingQueue._count.queueAgents > 0) {
+      throw new appError(
+        'Cannot delete queue with active agents',
+        409,
         'CONFLICT_ERROR',
       );
     }

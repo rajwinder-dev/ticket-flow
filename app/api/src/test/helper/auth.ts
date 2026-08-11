@@ -21,7 +21,18 @@ export class TestContext {
     await this.test.saveUser(this.user);
     return this.user;
   }
-
+  async createOnlyUser(data?: Partial<CreateUserInput>) {
+    this.test = (await auth.$context).test;
+    const user = this.test.createUser({
+      email: data?.email
+        ? data.email
+        : `test-${crypto.randomUUID()}@example.com`,
+      password: 'test',
+      ...data,
+    });
+    await this.test.saveUser(user);
+    return this.user;
+  }
   async authenticate(data?: Partial<CreateUserInput>) {
     await this.createUser(data);
     const headers = await this.test.getAuthHeaders({

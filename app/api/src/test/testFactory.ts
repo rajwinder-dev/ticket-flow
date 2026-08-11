@@ -98,9 +98,12 @@ export class TestFactory {
 
     return res.body;
   }
-  async delete<T>({ path, statusCode = 204 }: props<T>) {
+  async delete<T>({ path, body, statusCode = 204 }: props<T>) {
     let fullPath = `${endpoint}${path}`;
-    const res = await this.agent.delete(fullPath).set(this.headers);
+    const res = await this.agent
+      .delete(fullPath)
+      .send(body ?? {})
+      .set(this.headers);
     try {
       expect(res.statusCode).toBe(statusCode);
     } catch (error) {
