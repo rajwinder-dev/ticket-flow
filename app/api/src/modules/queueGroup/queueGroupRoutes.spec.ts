@@ -40,7 +40,6 @@ describe('Queue Group', () => {
     expect(data.length).toBe(1);
   });
   it('should upate group', async () => {
-    console.log(agent.auth.getActiveOrg());
     const { data } = await agent.patch<UpdateQueueInput>({
       path: `/queue-group/${queueGroupId}`,
       statusCode: 200,

@@ -10,7 +10,7 @@ describe('Organization routes', () => {
     await agent.authenticate();
   });
   afterAll(async () => {
-    const orgId = agent.auth.getActiveOrg()!;
+    const orgId = agent.orgId;
     const tenantDb = getTenantClient(orgId);
     await tenantDb.membership.deleteMany({
       where: {
@@ -45,16 +45,16 @@ describe('Organization routes', () => {
     await agent.setOrgId(data[0].id);
   });
   it('A System role and membership should be created', async () => {
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const membership = await tenantDb.membership.findFirst({
       where: {
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
         isSystem: true,
       },
     });
     const role = await tenantDb.role.findFirst({
       where: {
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
         isSystem: true,
       },
     });

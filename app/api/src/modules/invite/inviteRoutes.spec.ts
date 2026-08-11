@@ -28,12 +28,12 @@ describe('inviteRoutes', () => {
     });
     await agent.setOrgId(data.data.id);
     const user = agent.getUserData();
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const role = await tenantDb.role.create({
       data: {
         createdBy: user.id,
         name: roleData.name,
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
         isSystem: false,
         code: roleData.code,
         permissions: [],
@@ -65,7 +65,7 @@ describe('inviteRoutes', () => {
       statusCode: 200,
     });
 
-    await agent.authenticate({ email: data.data.invitedTo });
+    await agent.authenticate({ data: { email: data.data.invitedTo } });
 
     expect(data).toBeDefined();
   });

@@ -13,7 +13,7 @@ describe('Roles  routes', () => {
     const orgData = getOrgantionMock();
     await agent.authenticate();
 
-    const user = await agent.auth.createAuthUser();
+    const user = await agent.createUser();
     memberId = user.id;
     const data = await agent.post<CreateOrganizationInput>({
       path: '/org',
@@ -43,12 +43,12 @@ describe('Roles  routes', () => {
     expect(data.length).toBe(1);
     roleId = data[0].id;
     // create membership manually
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const member = await tenantDb.membership.create({
       data: {
         userId: memberId,
         roleId,
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
       },
     });
     memberId = member.userId;
@@ -74,7 +74,7 @@ describe('Roles  routes', () => {
       path: `/role/${roleId}`,
       statusCode: 409,
     });
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     await tenantDb.membership.deleteMany({
       where: {
         roleId: roleId,

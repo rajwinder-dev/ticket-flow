@@ -19,14 +19,14 @@ describe('protected route', () => {
     const orgData = getOrgantionMock();
     await agent.authenticate();
 
-    const user = await agent.auth.createAuthUser();
+    const user = await agent.createUser();
     memberId = user.id;
     const data = await agent.post<CreateOrganizationInput>({
       path: '/org',
       body: orgData,
     });
     await agent.setOrgId(data.data.id);
-    tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    tenantDb = getTenantClient(agent.orgId!);
   });
 
   it('should get all premssions list', async () => {
@@ -37,9 +37,9 @@ describe('protected route', () => {
 
     const role = await tenantDb.role.create({
       data: {
-        createdBy: agent.auth.getUserData().id,
+        createdBy: agent.getUserData().id,
         name: faker.internet.userName(),
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
         isSystem: false,
         code: readableId('ROL'),
         permissions: { activity: ['view'] } as Partial<Permissions>,
@@ -49,7 +49,7 @@ describe('protected route', () => {
       data: {
         userId: memberId,
         roleId: role.id,
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
       },
     });
 

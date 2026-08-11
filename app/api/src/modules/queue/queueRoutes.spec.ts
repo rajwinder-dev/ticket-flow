@@ -38,7 +38,7 @@ describe('Queues ', () => {
       ],
     });
     groupId = queuesGroups[0].id;
-    const user = await agent.auth.createAuthUser();
+    const user = await agent.createUser();
     const role = await tenantDb.role.create({
       data: {
         createdBy: user.id,

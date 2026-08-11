@@ -27,7 +27,7 @@ describe('Customer routes', () => {
   afterAll(async () => {
     await tenantDb.customer.deleteMany({
       where: {
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
       },
     });
   });
@@ -118,7 +118,7 @@ describe('Customer routes', () => {
     const memberAgent = new TestFactory(app);
     await memberAgent.authenticate();
     // switch to same org but without granted 'customer' permissions
-    await memberAgent.setOrgId(agent.auth.getActiveOrg()!);
+    await memberAgent.setOrgId(agent.orgId);
 
     await memberAgent.get({
       path: '/customer',

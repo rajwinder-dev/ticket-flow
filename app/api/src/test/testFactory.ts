@@ -15,7 +15,8 @@ export class TestFactory {
   logs?: boolean;
   headers!: Record<string, string>;
   agent: TestAgent;
-  auth = new TestContext();
+  private auth = new TestContext();
+  orgId!: string;
   constructor(app: Express) {
     this.logs = toggleLogs;
     this.agent = request.agent(app);
@@ -33,12 +34,16 @@ export class TestFactory {
   getUserData() {
     return this.auth.getUserData();
   }
+  createUser() {
+    return this.auth.createAuthUser();
+  }
   async setOrgId(orgId: string) {
     await this.auth.setOrg(orgId);
     this.headers = {
       ...this.auth.headers,
       ...this.auth.orgHeader,
     };
+    this.orgId = orgId;
   }
   async get<T>({
     path,

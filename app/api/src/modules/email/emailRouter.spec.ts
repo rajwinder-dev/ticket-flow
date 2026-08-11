@@ -20,7 +20,7 @@ describe('Email routes', () => {
     const orgData = getOrgantionMock();
     await agent.authenticate();
 
-    const user = await agent.auth.createAuthUser();
+    const user = await agent.createUser();
     memberId = user.id;
     const data = await agent.post<CreateOrganizationInput>({
       path: '/org',
@@ -32,7 +32,7 @@ describe('Email routes', () => {
   afterAll(async () => {
     await tenantDb.emailProvider.deleteMany({
       where: {
-        organizationId: agent.auth.getActiveOrg()!,
+        organizationId: agent.orgId,
       },
     });
   });

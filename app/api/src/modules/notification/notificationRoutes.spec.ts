@@ -21,15 +21,15 @@ describe('Notification routes', () => {
 
   it('should get all notifications', async () => {
     // seed a notification manually since there's no create route
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const notification = await tenantDb.notification.create({
       data: {
         title: faker.lorem.words(3),
         message: faker.lorem.sentence(),
         type: 'SYSTEM',
         channel: 'IN_APP',
-        recipientId: agent.auth.getUserData().id,
-        organizationId: agent.auth.getActiveOrg()!,
+        recipientId: agent.getUserData().id,
+        organizationId: agent.orgId,
       },
     });
     notificationId = notification.id;
@@ -45,7 +45,7 @@ describe('Notification routes', () => {
     const found = data.find((n) => n.id === notificationId);
     expect(found).toBeDefined();
     expect(found?.isRead).toBe(false);
-    expect(found?.organization?.id).toBe(agent.auth.getActiveOrg());
+    expect(found?.organization?.id).toBe(agent.orgId);
   });
 
   it('should mark a notification as read', async () => {
@@ -55,7 +55,7 @@ describe('Notification routes', () => {
 
     expect(data.updated).toBe(true);
 
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const updated = await tenantDb.notification.findUnique({
       where: { id: notificationId },
     });
@@ -72,15 +72,15 @@ describe('Notification routes', () => {
 
   it('should mark all notifications as read', async () => {
     // seed a second unread notification
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     await tenantDb.notification.create({
       data: {
         title: faker.lorem.words(3),
         message: faker.lorem.sentence(),
         type: 'SYSTEM',
         channel: 'IN_APP',
-        recipientId: agent.auth.getUserData().id,
-        organizationId: agent.auth.getActiveOrg()!,
+        recipientId: agent.getUserData().id,
+        organizationId: agent.orgId,
       },
     });
 
@@ -90,7 +90,7 @@ describe('Notification routes', () => {
 
     const remainingUnread = await tenantDb.notification.count({
       where: {
-        recipientId: agent.auth.getUserData().id,
+        recipientId: agent.getUserData().id,
         isRead: false,
         deleted: false,
       },
@@ -103,7 +103,7 @@ describe('Notification routes', () => {
       path: `/notification/delete/${notificationId}`,
     });
 
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const deleted = await tenantDb.notification.findUnique({
       where: { id: notificationId },
     });
@@ -129,10 +129,10 @@ describe('Notification routes', () => {
       path: '/notification/delete-all',
     });
 
-    const tenantDb = getTenantClient(agent.auth.getActiveOrg()!);
+    const tenantDb = getTenantClient(agent.orgId);
     const remaining = await tenantDb.notification.count({
       where: {
-        recipientId: agent.auth.getUserData().id,
+        recipientId: agent.getUserData().id,
         deleted: false,
       },
     });
