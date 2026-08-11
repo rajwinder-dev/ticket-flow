@@ -35,7 +35,7 @@ export class TestContext {
   async authenticate({
     data,
     userId,
-  }: { data?: Partial<CreateUserInput>; userId?: string } = {}) {
+  }: { data?: Partial<CreateUserInput>; userId?: string }) {
     if (userId) {
       console.log('Switching authenticated user');
       return await this.setAuthHeaders(userId);

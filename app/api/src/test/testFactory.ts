@@ -20,8 +20,8 @@ export class TestFactory {
     this.logs = toggleLogs;
     this.agent = request.agent(app);
   }
-  async authenticate(data?: Partial<CreateUserInput>) {
-    await this.auth.authenticate({ data });
+  async authenticate({data, userId}:{data?: Partial<CreateUserInput>, userId?: string} = {}) {
+    await this.auth.authenticate({ data ,userId});
     this.headers = {
       ...this.auth.headers,
       ...this.auth.orgHeader,
@@ -45,7 +45,6 @@ export class TestFactory {
     statusCode = 200,
   }: props<T>): Promise<{ success: boolean; data: T }> {
     let fullPath = `${endpoint}${path}`;
-
     const res = await this.agent.get(fullPath).set(this.headers);
     try {
       expect(res.statusCode).toBe(statusCode);

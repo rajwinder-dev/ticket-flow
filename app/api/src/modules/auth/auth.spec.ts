@@ -1,4 +1,3 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { app } from '../../app.js';
 import { TestFactory } from '../../test/testFactory.js';
 import { getOrgantionMock } from '../../test/helper/mock.helper.js';
@@ -46,20 +45,37 @@ describe('protected route', () => {
         permissions: { activity: ['view'] } as Partial<Permissions>,
       },
     });
-    await tenantDb.membership.create({
+    const member = await tenantDb.membership.create({
       data: {
         userId: memberId,
         roleId: role.id,
         organizationId: agent.auth.getActiveOrg()!,
       },
     });
-  });
 
-  // it('member should see own premssions list', async () => {
-  //   await agent.authenticate({ userId: memberId });
-  //   const { data } = await agent.get<AuthPermissions>({
-  //     path: '/auth/permissions',
-  //   });
-  //   expect(data.permissions).toEqual(permissions);
-  // });
+    await agent.authenticate({ userId: member.userId });
+  });
+  it('should return joined orgainzations', async () => {
+    const { data } = await agent.get<{ organizations: string[] }[]>({
+      path: '/org/me',
+    });
+    expect(data.length).toBeGreaterThan(0);
+  });
+  it('member should see own premssions list', async () => {
+    const { data } = await agent.get<AuthPermissions>({
+      path: '/auth/permissions',
+    });
+    expect(data.permissions).toEqual({ activity: ['view'] });
+  });
+  it('menber should access premeted routes ', async () => {
+    await agent.get({
+      path: '/activity',
+    });
+  });
+  it('member should not access unpremeted routes ', async () => {
+    await agent.get({
+      path: '/org',
+      statusCode: 403,
+    });
+  });
 });
