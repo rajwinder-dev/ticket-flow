@@ -148,15 +148,15 @@ describe('NotificationService', () => {
       expect(result).toEqual({ updated: true });
     });
 
-    it('returns updated: false when no row matched', async () => {
+    it('returns updated: throw error when no rows were updated', async () => {
       mockUpdateMany.mockResolvedValue({ count: 0 });
 
-      const result = await NotificationService.markNotificationAsRead({
+      const result = NotificationService.markNotificationAsRead({
         notificationId: 'notif-1',
         userId: 'user-1',
       });
 
-      expect(result).toEqual({ updated: false });
+      expect(result).rejects.toThrow('Notification not found');
     });
   });
 
@@ -192,15 +192,15 @@ describe('NotificationService', () => {
       expect(result).toEqual({ deleted: true });
     });
 
-    it('returns deleted: false when no row matched', async () => {
+    it('returns deleted: throw error when no row matched', async () => {
       mockUpdateMany.mockResolvedValue({ count: 0 });
 
-      const result = await NotificationService.deleteNotification({
+      const result = NotificationService.deleteNotification({
         notificationId: 'notif-1',
         userId: 'user-1',
       });
 
-      expect(result).toEqual({ deleted: false });
+      expect(result).rejects.toThrow('Notification not found');
     });
   });
 

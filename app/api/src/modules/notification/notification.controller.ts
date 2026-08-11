@@ -55,18 +55,18 @@ class NotificationControllerClass {
 
   deleteNotification = catchAsync(async (req, res) => {
     const { notificationId } = req.params as { notificationId: string };
-    const data = await NotificationService.deleteNotification({
+    await NotificationService.deleteNotification({
       notificationId,
       userId: req.user.id,
     });
-    response(res, data);
+    response(res, null, 204);
   });
 
   deleteAllNotifications = catchAsync(async (req, res) => {
-    const data = await NotificationService.deleteAllNotifications({
+    await NotificationService.deleteAllNotifications({
       userId: req.user.id,
     });
-    response(res, data);
+    response(res, null, 204);
   });
 }
 export const NotificationController = new NotificationControllerClass();

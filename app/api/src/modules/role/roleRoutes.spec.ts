@@ -40,7 +40,6 @@ describe('Roles  routes', () => {
     const { data } = await agent.get<{ id: string }[]>({
       path: '/role',
     });
-    console.log(data);
     expect(data.length).toBe(1);
     roleId = data[0].id;
     // create membership manually

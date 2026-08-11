@@ -6,6 +6,7 @@ import {
 } from '@org/database';
 import { logger } from '../../core/utils/logger';
 import { SocketService } from '../socket/socket.service';
+import { appError } from '../../core/utils/appError';
 /**
  * invalidate belong to frontend cache of react query
  */
@@ -101,6 +102,8 @@ export class NotificationServiceClass {
         isRead: true,
       },
     });
+    if (data.count === 0)
+      throw new appError('Notification not found', 404, 'NOT_FOUND');
     return { updated: data.count > 0 };
   }
 
@@ -137,6 +140,8 @@ export class NotificationServiceClass {
         deletedAt: new Date(),
       },
     });
+    if (data.count === 0)
+      throw new appError('Notification not found', 404, 'NOT_FOUND');
     return { deleted: data.count > 0 };
   }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-// must be sync with schema 
+// must be sync with schema
 export const notificationType = z.enum([
   'TICKET',
   'RBAC',
@@ -11,7 +11,7 @@ export const notificationType = z.enum([
   'EMAIL',
   'USER',
   'SYSTEM',
-]) ;
+]);
 
 const notificationChannel = z.enum(['IN_APP', 'EMAIL']);
 
@@ -33,6 +33,9 @@ export const notificationSchema = z.object({
   expiresAt: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  organization: z.object({
+    id: z.uuid().nullable(),
+  }),
   actor: z
     .object({
       id: z.uuid(),
