@@ -8,8 +8,7 @@ export class TestContext {
   headers!: Record<string, string>;
   test!: TestHelpers;
   orgHeader: Record<'x-organization-id', string> | undefined;
-  private async createUser(data?: Partial<CreateUserInput>) {
-    this.orgHeader = undefined;
+  async createAuthUser(data?: Partial<CreateUserInput>) {
     const email = data?.email
       ? data.email
       : `test-${crypto.randomUUID()}@example.com`;
@@ -20,20 +19,29 @@ export class TestContext {
       password: email,
       ...data,
     });
-    await this.test.saveUser(this.user);
-    return this.user;
+    const user = await this.test.saveUser(this.user);
+    return user;
   }
-
-  async authenticate(data?: Partial<CreateUserInput>) {
-    await this.createUser(data);
+  private async setAuthHeaders(userId: string) {
     const headers = await this.test.getAuthHeaders({
-      userId: this.user.id,
+      userId,
     });
     if (!headers) {
       throw new Error('Failed to get authenticated headers');
     }
     this.headers = Object.fromEntries(headers.entries());
     return this.headers;
+  }
+  async authenticate({
+    data,
+    userId,
+  }: { data?: Partial<CreateUserInput>; userId?: string } = {}) {
+    if (userId) {
+      console.log('Switching authenticated user');
+      return await this.setAuthHeaders(userId);
+    }
+    await this.createAuthUser(data);
+    return await this.setAuthHeaders(userId || this.user.id);
   }
   getUserData() {
     return this.user;
@@ -50,16 +58,5 @@ export class TestContext {
     this.orgHeader = {
       'x-organization-id': orgId,
     };
-  }
-  async createOnlyUser(data?: Partial<CreateUserInput>) {
-    const user = this.test.createUser({
-      email: data?.email
-        ? data.email
-        : `test-${crypto.randomUUID()}@example.com`,
-      password: 'test',
-      ...data,
-    });
-    await this.test.saveUser(user);
-    return user;
   }
 }

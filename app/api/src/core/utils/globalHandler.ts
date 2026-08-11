@@ -5,7 +5,7 @@ import { devMode } from '../../config/appConfig.js';
 import { appError } from './appError.js';
 import { logger } from './logger.js';
 export const globalHandler: ErrorRequestHandler = (error, req, res, _next) => {
-  if (devMode) log.data(error.message, error);
+  if (devMode || process.env.DEBUG) log.data(error.message, error);
 
   if (error.name === 'PrismaClientValidationError') {
     error = new appError(

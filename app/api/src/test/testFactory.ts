@@ -21,7 +21,7 @@ export class TestFactory {
     this.agent = request.agent(app);
   }
   async authenticate(data?: Partial<CreateUserInput>) {
-    await this.auth.authenticate(data);
+    await this.auth.authenticate({ data });
     this.headers = {
       ...this.auth.headers,
       ...this.auth.orgHeader,

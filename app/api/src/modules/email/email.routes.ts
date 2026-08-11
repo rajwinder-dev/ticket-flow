@@ -1,4 +1,4 @@
-import { createEmailProviderInput, createSmtpInput } from "@org/zod";
+import { createEmailProviderInput, createSmtpInput, updateEmailProviderInput } from "@org/zod";
 import express, { Router } from "express";
 import { validationMiddleware } from "../../core/middleware/validationMiddleware.js";
 import { authMiddleware } from "../auth/auth.middleware.js";
@@ -28,7 +28,7 @@ emailRouter.post(
 emailRouter.patch(
   "/:id",
   authMiddleware.restrictToOwner,
-  validationMiddleware(createEmailProviderInput),
+  validationMiddleware(updateEmailProviderInput),
   EmailController.updateCredentials,
 );
 emailRouter.delete("/:id", authMiddleware.restrictToOwner, EmailController.deleteCredentials);

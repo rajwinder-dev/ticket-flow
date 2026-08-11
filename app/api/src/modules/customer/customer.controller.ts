@@ -77,7 +77,7 @@ export class CustomerController {
         ...filterOptions.where,
       },
     });
-    // warn: not scalable yet
+    // WARN: not scalable yet
     const result = customers.map((c) => ({
       id: c.id,
       name: c.name,

@@ -15,7 +15,7 @@ export function getRoleMock() {
   return {
     name: faker.person.jobTitle(),
     description: faker.lorem.sentence(),
-    code: readableId("ROL")
+    code: readableId('ROL'),
   } as const;
 }
 export function slugify(text: string) {
@@ -27,4 +27,12 @@ export function slugify(text: string) {
     .replace(/[^\w-]+/g, '') // remove special characters
     .replace(/--+/g, '-') // collapse multiple -
     .replace(/^-+|-+$/g, ''); // trim -
+}
+export function getRandomUser() {
+  return {
+    username: faker.internet.userName(),
+    email: `${crypto.randomUUID()}@${faker.internet.domainName()}.com`,
+    password: faker.internet.password(),
+    phone: `+${faker.number.int({ min: 1, max: 99 })}${faker.string.numeric(9)}`,
+  };
 }

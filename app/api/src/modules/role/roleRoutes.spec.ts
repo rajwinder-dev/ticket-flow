@@ -13,7 +13,7 @@ describe('Roles  routes', () => {
     const orgData = getOrgantionMock();
     await agent.authenticate();
 
-    const user = await agent.auth.createOnlyUser();
+    const user = await agent.auth.createAuthUser();
     memberId = user.id;
     const data = await agent.post<CreateOrganizationInput>({
       path: '/org',

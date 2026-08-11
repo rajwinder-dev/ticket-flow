@@ -33,12 +33,12 @@ import notificationRouter from './modules/notification/notification.routes.js';
 import QueueRoutes from './modules/queue/queue.routes.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import roleRouter from './modules/role/role.route.js';
-import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
 import ticketModuleRouter from './modules/ticket/ticket.module.js';
 import organizationRouter from './modules/organizations/organization.routes.js';
 import inviteRouter from './modules/invite/invite.routes.js';
+import authRouter from './modules/auth/auth.router.js';
 
 export const app: Express = express();
 
@@ -95,8 +95,7 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'error', message: 'DB unreachable' });
   }
 });
-
-app.use('/api/v1/token', tokenRoute);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/org', organizationRouter);
 app.use('/api/v1/invite', inviteRouter);
 app.use('/api/v1/user', userRouter);
