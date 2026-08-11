@@ -42,11 +42,11 @@ export class roleController {
   });
   static deleteRole = catchAsync(async (req, res, _next) => {
     const roleId = req.params.id as string;
-    const data = await RoleService.delete({
+    await RoleService.delete({
       roleId,
       organizationId: req.organization.id,
       userId: req.user.id,
     });
-    response(res, data, 201);
+    response(res, null, 204);
   });
 }

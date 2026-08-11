@@ -10,29 +10,20 @@ export class TestContext {
   orgHeader: Record<'x-organization-id', string> | undefined;
   private async createUser(data?: Partial<CreateUserInput>) {
     this.orgHeader = undefined;
+    const email = data?.email
+      ? data.email
+      : `test-${crypto.randomUUID()}@example.com`;
+
     this.test = (await auth.$context).test;
     this.user = this.test.createUser({
-      email: data?.email
-        ? data.email
-        : `test-${crypto.randomUUID()}@example.com`,
-      password: 'test',
+      email,
+      password: email,
       ...data,
     });
     await this.test.saveUser(this.user);
     return this.user;
   }
-  async createOnlyUser(data?: Partial<CreateUserInput>) {
-    this.test = (await auth.$context).test;
-    const user = this.test.createUser({
-      email: data?.email
-        ? data.email
-        : `test-${crypto.randomUUID()}@example.com`,
-      password: 'test',
-      ...data,
-    });
-    await this.test.saveUser(user);
-    return this.user;
-  }
+
   async authenticate(data?: Partial<CreateUserInput>) {
     await this.createUser(data);
     const headers = await this.test.getAuthHeaders({
@@ -59,5 +50,16 @@ export class TestContext {
     this.orgHeader = {
       'x-organization-id': orgId,
     };
+  }
+  async createOnlyUser(data?: Partial<CreateUserInput>) {
+    const user = this.test.createUser({
+      email: data?.email
+        ? data.email
+        : `test-${crypto.randomUUID()}@example.com`,
+      password: 'test',
+      ...data,
+    });
+    await this.test.saveUser(user);
+    return user;
   }
 }

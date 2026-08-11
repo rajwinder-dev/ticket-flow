@@ -9,7 +9,7 @@ export const createRoleInput = {
     .object({
       name: validString,
       description: optionalInput(validDescription).nullable(),
-      permissions: z.record(z.string(), z.array(z.string())),
+      permissions: z.record(z.string(), z.array(z.string())) ,
     })
     .strict(),
 };
