@@ -21,8 +21,11 @@ export class TestFactory {
     this.logs = toggleLogs;
     this.agent = request.agent(app);
   }
-  async authenticate({data, userId}:{data?: Partial<CreateUserInput>, userId?: string} = {}) {
-    await this.auth.authenticate({ data ,userId});
+  async authenticate({
+    data,
+    userId,
+  }: { data?: Partial<CreateUserInput>; userId?: string } = {}) {
+    await this.auth.authenticate({ data, userId });
     this.headers = {
       ...this.auth.headers,
       ...this.auth.orgHeader,
@@ -45,6 +48,13 @@ export class TestFactory {
     };
     this.orgId = orgId;
   }
+  async addHeaders(headers: Record<string, string>) {
+    this.headers = {
+      ...this.headers,
+      ...headers,
+    };
+  }
+
   async get<T>({
     path,
     statusCode = 200,

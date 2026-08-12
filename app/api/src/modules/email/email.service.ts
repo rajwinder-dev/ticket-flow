@@ -67,8 +67,7 @@ export class EmailService {
       webhookSecret?: string;
       priority: number;
     },
-  ) => {
-    const tenantdb = getTenantClient(organizationId);
+  ) => { const tenantdb = getTenantClient(organizationId);
     const existingProviderCount = await tenantdb.emailProvider.count({
       where: {
         organizationId,

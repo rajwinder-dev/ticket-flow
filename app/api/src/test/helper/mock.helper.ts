@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { readableId } from '../../core/utils/utils';
+import { ResentEmailWebhookSchema } from '@org/zod';
 
 export function getOrgantionMock() {
   const organization = faker.company.name();
@@ -35,4 +36,57 @@ export function getRandomUser() {
     password: faker.internet.password(),
     phone: `+${faker.number.int({ min: 1, max: 99 })}${faker.string.numeric(9)}`,
   };
+}
+
+export function getRandomResendMock({
+  email,
+  type = 'email.delivered',
+}: {
+  email: string;
+  type?: 'email.delivered';
+}) {
+  const payload: ResentEmailWebhookSchema = {
+    type,
+    created_at: faker.date.recent().toISOString(),
+    data: {
+      email_id: faker.string.uuid(),
+      created_at: faker.date.recent().toISOString(),
+      from: faker.internet.email(),
+      to: [email],
+      cc: faker.helpers.multiple(() => faker.internet.email(), {
+        count: { min: 0, max: 2 },
+      }),
+      bcc: faker.helpers.multiple(() => faker.internet.email(), {
+        count: { min: 0, max: 2 },
+      }),
+      message_id: `<${faker.string.uuid()}@${faker.internet.domainName()}>`,
+      subject: faker.lorem.sentence(),
+      attachments: faker.helpers.multiple(
+        () => ({
+          id: faker.string.uuid(),
+          filename: faker.system.fileName(),
+          content_type: faker.helpers.arrayElement([
+            'application/pdf',
+            'image/png',
+            'image/jpeg',
+            'text/plain',
+          ]),
+          content_disposition: faker.helpers.arrayElement([
+            'inline',
+            'attachment',
+          ]) as 'inline' | 'attachment',
+          ...(faker.datatype.boolean()
+            ? { content_id: faker.string.uuid() }
+            : {}),
+        }),
+        { count: { min: 0, max: 2 } },
+      ),
+    },
+  };
+  const headers = {
+    'svix-id': faker.datatype.string(),
+    'svix-timestamp': faker.datatype.string(),
+    'svix-signature': faker.datatype.string(),
+  };
+  return { payload, headers } as const;
 }

@@ -56,6 +56,7 @@ describe('TicketCommentsService', () => {
       const mockData = {
         id: 'comment_1',
         ticketId: 'ticket_1',
+        authorId: 'user_1',
         comment: 'Hello',
         ticket: { assignedTo: 'user_2' },
       };
@@ -113,7 +114,10 @@ describe('TicketCommentsService', () => {
         keys: ['ticket', 'comment'],
       });
 
-      expect(result).toEqual(mockData);
+      expect(result).toEqual({
+        authorId: 'user_1',
+        comment: 'Hello',
+      });
     });
 
     it('does not send a notification when ticket has no assignee', async () => {
