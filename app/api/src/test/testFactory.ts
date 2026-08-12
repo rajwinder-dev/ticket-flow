@@ -1,7 +1,7 @@
 import type { Express } from 'express';
 import { expect } from 'vitest';
 import request from 'supertest';
-import { CreateUserInput, TestContext } from './helper/auth';
+import { CreateUserInput, TestAuthContext } from './helper/auth';
 import TestAgent from 'supertest/lib/agent';
 const toggleLogs = process.env.LOGS === 'true';
 const endpoint = '/api/v1';
@@ -15,8 +15,8 @@ export class TestFactory {
   logs?: boolean;
   headers!: Record<string, string>;
   agent: TestAgent;
-  private auth = new TestContext();
   orgId!: string;
+  private auth = new TestAuthContext();
   constructor(app: Express) {
     this.logs = toggleLogs;
     this.agent = request.agent(app);
@@ -25,10 +25,10 @@ export class TestFactory {
     data,
     userId,
   }: { data?: Partial<CreateUserInput>; userId?: string } = {}) {
-    await this.auth.authenticate({ data, userId });
+    await this.auth.authenticateUser({ data, userId });
     this.headers = {
+      ...this.headers,
       ...this.auth.headers,
-      ...this.auth.orgHeader,
     };
   }
   async cleanup() {
@@ -38,15 +38,14 @@ export class TestFactory {
     return this.auth.getUserData();
   }
   createUser() {
-    return this.auth.createAuthUser();
+    return this.auth.onlyCreateUser();
   }
-  async setOrgId(orgId: string) {
-    await this.auth.setOrg(orgId);
+  setOrgId(orgId: string) {
+    this.orgId = orgId;
     this.headers = {
       ...this.auth.headers,
-      ...this.auth.orgHeader,
+      'x-organization-id': orgId,
     };
-    this.orgId = orgId;
   }
   async addHeaders(headers: Record<string, string>) {
     this.headers = {

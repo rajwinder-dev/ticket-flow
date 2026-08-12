@@ -10,10 +10,10 @@ import { permissions } from '@org/constants';
 import { getTenantClient } from '@org/database';
 import { faker } from '@faker-js/faker';
 import { readableId } from '../../core/utils/utils.js';
+const agent = new TestFactory(app);
 describe('protected route', () => {
   let memberId: string;
   let tenantDb: ReturnType<typeof getTenantClient>;
-  const agent = new TestFactory(app);
 
   beforeAll(async () => {
     const orgData = getOrgantionMock();
@@ -25,7 +25,7 @@ describe('protected route', () => {
       path: '/org',
       body: orgData,
     });
-    await agent.setOrgId(data.data.id);
+    agent.setOrgId(data.data.id);
     tenantDb = getTenantClient(agent.orgId!);
   });
 

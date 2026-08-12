@@ -69,7 +69,7 @@ export class TicketCommentsService {
     });
     const result = {
       comment: data.comment,
-      authorId: data.authorId,
+      authorId: userId,
     };
     return result;
   };

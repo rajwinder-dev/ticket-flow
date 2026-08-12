@@ -18,7 +18,7 @@ describe('Ticket comments', () => {
       path: '/org',
       body: orgData,
     });
-    await agent.setOrgId(data.data.id);
+    agent.setOrgId(data.data.id);
     const tenantDb = getTenantClient(data.data.id);
     const ticket = await tenantDb.ticket.create({
       data: {
@@ -62,6 +62,7 @@ describe('Ticket comments', () => {
       },
     });
     expect(data).toBeDefined();
+    expect(data.authorId).toEqual(agent.getUserData().id);
   });
   it('mamber should create comment', async () => {
     await agent.authenticate({ userId: memberId });
