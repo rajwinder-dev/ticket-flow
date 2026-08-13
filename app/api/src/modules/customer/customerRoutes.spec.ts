@@ -5,25 +5,22 @@ import {
 } from '@org/zod';
 import { TestFactory } from '../../test/testFactory';
 import app from '../../app';
-import { getOrgantionMock } from '../../test/helper/mock.helper';
 import { faker } from '@faker-js/faker';
 import { getTenantClient } from '@org/database';
+import { dbTestHelpers } from '../../test/helper/seed.helper';
 
 describe('Customer routes', () => {
   const agent = new TestFactory(app);
   let customerId: string;
   let tenantDb: ReturnType<typeof getTenantClient>;
   beforeAll(async () => {
-    const orgData = getOrgantionMock();
     await agent.authenticate();
-    const data = await agent.post({
-      path: '/org',
-      body: orgData,
-    });
-    await agent.setOrgId(data.data.id);
-    tenantDb = getTenantClient(data.data.id);
+    const dbHelpers = new dbTestHelpers(agent.getUserData().id);
+    const organization = await dbHelpers.createOrganization();
+    const data = organization[0];
+    agent.setOrgId(data.organization.id);
+    tenantDb = getTenantClient(data.organization.id);
   });
-
   afterAll(async () => {
     await tenantDb.customer.deleteMany({
       where: {
@@ -118,7 +115,7 @@ describe('Customer routes', () => {
     const memberAgent = new TestFactory(app);
     await memberAgent.authenticate();
     // switch to same org but without granted 'customer' permissions
-    await memberAgent.setOrgId(agent.orgId);
+    memberAgent.setOrgId(agent.orgId);
 
     await memberAgent.get({
       path: '/customer',

@@ -1,33 +1,28 @@
 import {
   CreateEmailProviderInput,
-  CreateOrganizationInput,
   CreateSmtpInput,
   EmailProviderSchema,
   UpdateEmailProviderInput,
 } from '@org/zod';
 import { TestFactory } from '../../test/testFactory';
 import app from '../../app';
-import { getOrgantionMock, getRandomUser } from '../../test/helper/mock.helper';
+import { getRandomUser } from '../../test/helper/mock.helper';
 import { faker } from '@faker-js/faker';
 import { getTenantClient } from '@org/database';
+import { dbTestHelpers } from '../../test/helper/seed.helper';
 
 describe('Email routes', () => {
   const agent = new TestFactory(app);
   let tenantDb: ReturnType<typeof getTenantClient>;
-  let memberId: string;
   let providerId: string;
   beforeAll(async () => {
-    const orgData = getOrgantionMock();
     await agent.authenticate();
-
-    const user = await agent.createUser();
-    memberId = user.id;
-    const data = await agent.post<CreateOrganizationInput>({
-      path: '/org',
-      body: orgData,
+    const dbHelpers = new dbTestHelpers(agent.getUserData().id);
+    const orgaintion = await dbHelpers.createOrganization({
+      count: 1,
     });
-    await agent.setOrgId(data.data.id);
-    tenantDb = getTenantClient(data.data.id);
+    agent.setOrgId(orgaintion[0].organization.id);
+    tenantDb = getTenantClient(orgaintion[0].organization.id);
   });
   afterAll(async () => {
     await tenantDb.emailProvider.deleteMany({
@@ -37,7 +32,7 @@ describe('Email routes', () => {
     });
   });
   it('should create a smpt provider', async () => {
-    const { data } = await agent.post<CreateSmtpInput>({
+    await agent.post<CreateSmtpInput>({
       path: '/email/smtp',
       body: {
         fromEmail: getRandomUser().email,

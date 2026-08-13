@@ -33,12 +33,13 @@ export const createTicketInput = {
 export const updateTicketInput = {
   bodySchema: z
     .object({
-      subject: z.string().min(2, 'Subject is required'),
+      subject: z.string().min(2, 'Subject is required').optional(),
       description: z.string().optional(),
-      priority: z.enum(ticketPriority),
-      category: z.string().min(1, 'Category is required'),
+      priority: z.enum(ticketPriority).optional(),
+      category: z.string().min(1, 'Category is required').optional(),
     })
     .strict(),
+  ...validUuidParams,
 };
 export const updateTicketStatusInput = {
   bodySchema: z

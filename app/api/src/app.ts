@@ -43,7 +43,7 @@ import authRouter from './modules/auth/auth.router.js';
 export const app: Express = express();
 
 // dev logs
-if (devMode) app.use(morgan('dev'));
+if (devMode || process.env.DEBUG) app.use(morgan('dev'));
 // security
 app.set('trust proxy', 1);
 app.use(helmet());
@@ -82,7 +82,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // custom middleware
-if (devMode) app.use(DevMiddleware.logRequests);
+if (devMode || process.env.DEBUG) app.use(DevMiddleware.logRequests);
 
 //  Routes:w
 //

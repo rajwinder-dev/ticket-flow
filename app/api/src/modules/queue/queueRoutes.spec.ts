@@ -2,74 +2,38 @@ import app from '../../app';
 import { TestFactory } from '../../test/testFactory';
 import {
   AddAgentsToQueueInput,
-  CreateOrganizationInput,
   CreateQueueInput,
   QueueSchemaResponse,
   QueueSummarySchema,
   RemoveAgentsFromQueueInput,
 } from '@org/zod';
-import { getOrgantionMock } from '../../test/helper/mock.helper';
-import { getTenantClient } from '@org/database';
-import { faker } from '@faker-js/faker';
-import { readableId } from '../../core/utils/utils';
+import { dbTestHelpers } from '../../test/helper/seed.helper';
 
 describe('Queues ', () => {
   let groupId: string;
   let queueId: string;
   let memberId: string;
   const agent = new TestFactory(app);
-  const orgData = getOrgantionMock();
   beforeAll(async () => {
     await agent.authenticate();
-    const data = await agent.post<CreateOrganizationInput>({
-      path: '/org',
-      body: orgData,
-    });
-    await agent.setOrgId(data.data.id);
-    const tenantDb = getTenantClient(data.data.id);
-    const queuesGroups = await tenantDb.queueGroup.createManyAndReturn({
-      data: [
-        {
-          organizationId: data.data.id,
-          name: 'group 1',
-          description: 'description 1',
-          default: true,
-        },
-      ],
-    });
+    const dbHelpers = new dbTestHelpers(agent.getUserData().id);
+    const organization = await dbHelpers.createOrganization();
+    agent.setOrgId(organization[0].organization.id);
+    const queuesGroups = await dbHelpers.createGroups();
     groupId = queuesGroups[0].id;
     const user = await agent.createUser();
-    const role = await tenantDb.role.create({
-      data: {
-        createdBy: user.id,
-        name: faker.internet.userName(),
-        organizationId: data.data.id,
-        isSystem: false,
-        code: readableId('ROL'),
-        permissions: [],
-      },
+    const role = await dbHelpers.createroles({
+      permissions: {},
     });
 
     try {
-      let member = await tenantDb.membership.findUnique({
-        where: {
-          organizationId_userId: {
-            organizationId: data.data.id,
-            userId: user.id,
-          },
-        },
+      const member = await dbHelpers.createMembership({
+        userIds: [user.id],
+        orgId: agent.orgId,
+        roleId: role.id,
       });
-      if (!member) {
-        member = await tenantDb.membership.create({
-          data: {
-            organizationId: data.data.id,
-            userId: user.id,
-            roleId: role.id,
-          },
-        });
-      }
 
-      memberId = member.userId;
+      memberId = member[0].userId;
     } catch (error) {
       // console.log(error);
     }

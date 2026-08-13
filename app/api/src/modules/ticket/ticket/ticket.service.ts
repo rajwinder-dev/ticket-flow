@@ -51,7 +51,7 @@ export class TicketService {
       // if ai get response
       if (aiResponse) {
         const { groupId: aiGroupId, ...rest } = aiResponse;
-        if (aiResponse.confidence < 0.8) {
+        if (aiResponse.confidence < 0.8 || !aiGroupId) {
           groupId = await QueueGroupService.getDefaultGroup(organizationId);
         } else {
           data = { ...data, ...rest };
@@ -122,7 +122,9 @@ export class TicketService {
       });
       return finalAssignment;
     }
-    return { ticket, assignment: finalAssignment };
+
+    const result = { ticket, assignment: finalAssignment };
+    return result;
   };
   static createTicket = async ({
     data,

@@ -2,14 +2,14 @@ import { getTenantClient } from '@org/database';
 import app from '../../app';
 import { TestFactory } from '../../test/testFactory';
 import {
-  CreateOrganizationInput,
   InviteMemberDetailsResponse,
   InviteUserOrganizationInput,
 } from '@org/zod';
 import { TokenService } from '../token/token.service';
 import { faker } from '@faker-js/faker';
-import { getOrgantionMock, getRoleMock } from '../../test/helper/mock.helper';
+import { getRoleMock } from '../../test/helper/mock.helper';
 import { EmailService } from '../email/email.service';
+import { dbTestHelpers } from '../../test/helper/seed.helper';
 vi.spyOn(EmailService, 'queueEmail').mockResolvedValue('string');
 const tokenSpy = vi.spyOn(TokenService, 'createToken');
 
@@ -18,15 +18,12 @@ describe('inviteRoutes', () => {
   let roleId: string;
   const agent = new TestFactory(app);
   let token: string;
-  const orgData = getOrgantionMock();
   const roleData = getRoleMock();
   beforeAll(async () => {
     await agent.authenticate();
-    const data = await agent.post<CreateOrganizationInput>({
-      path: '/org',
-      body: orgData,
-    });
-    await agent.setOrgId(data.data.id);
+    const dbHelpers = new dbTestHelpers(agent.getUserData().id);
+    const organization = await dbHelpers.createOrganization();
+    agent.setOrgId(organization[0].organization.id);
     const user = agent.getUserData();
     const tenantDb = getTenantClient(agent.orgId);
     const role = await tenantDb.role.create({

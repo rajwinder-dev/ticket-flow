@@ -21,7 +21,7 @@ export class TicketController {
     response(res, output, 201);
   });
   static updateTicket = catchAsync(async (req, res, _next) => {
-    const ticketId = req.params.ticketId as string;
+    const ticketId = req.params.id as string;
     const updatedTicket = await TicketService.updateTicket({
       input: req.body,
       organizationId: req.organization.id,

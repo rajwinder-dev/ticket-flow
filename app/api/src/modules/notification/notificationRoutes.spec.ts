@@ -1,22 +1,19 @@
 import { TestFactory } from '../../test/testFactory';
 import app from '../../app';
-import { getOrgantionMock } from '../../test/helper/mock.helper';
 import { getTenantClient } from '@org/database';
 import { faker } from '@faker-js/faker';
 import { NotificationSchema } from '@org/zod'; // adjust import path if different
+import { dbTestHelpers } from '../../test/helper/seed.helper';
 
 describe('Notification routes', () => {
   const agent = new TestFactory(app);
   let notificationId: string;
 
   beforeAll(async () => {
-    const orgData = getOrgantionMock();
     await agent.authenticate();
-    const data = await agent.post({
-      path: '/org',
-      body: orgData,
-    });
-    await agent.setOrgId(data.data.id);
+    const dbHelper = new dbTestHelpers(agent.getUserData().id);
+    const organization = await dbHelper.createOrganization();
+    agent.setOrgId(organization[0].organization.id);
   });
 
   it('should get all notifications', async () => {

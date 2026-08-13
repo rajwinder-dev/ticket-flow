@@ -13,7 +13,7 @@ TicketRouter.post(
   TicketController.createTicket,
 );
 TicketRouter.patch(
-  '/:ticketId',
+  '/:id',
   authMiddleware.verifyPermission('ticket', 'edit'),
   validationMiddleware(updateTicketInput),
   TicketController.updateTicket,

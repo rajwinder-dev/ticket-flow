@@ -42,7 +42,7 @@ describe('Organization routes', () => {
   it('should get all my organizations', async () => {
     const { data } = await agent.get<{ id: string }[]>({ path: '/org/me' });
     expect(data.length).toBeDefined();
-    await agent.setOrgId(data[0].id);
+     agent.setOrgId(data[0].id);
   });
   it('A System role and membership should be created', async () => {
     const tenantDb = getTenantClient(agent.orgId);

@@ -15,9 +15,6 @@ export const createQueueGroupInput = {
       isDefault: z.boolean().optional(),
     })
     .strict(),
-  paramsSchema: z.object({
-    id: z.uuid('Invalid Queue Group ID'),
-  }),
 };
 
 // --- Queues ---

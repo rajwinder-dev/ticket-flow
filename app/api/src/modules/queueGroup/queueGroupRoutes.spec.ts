@@ -1,36 +1,35 @@
 import app from '../../app';
 import { TestFactory } from '../../test/testFactory';
 import {
-  CreateOrganizationInput,
   CreateQueueGroupInput,
   QueueGroupSchemaResponse,
   UpdateQueueInput,
 } from '@org/zod';
-import { getOrgantionMock } from '../../test/helper/mock.helper';
+import { dbTestHelpers } from '../../test/helper/seed.helper';
+import { faker } from '@faker-js/faker';
 
 describe('Queue Group', () => {
   let queueGroupId: string;
   const agent = new TestFactory(app);
-  const orgData = getOrgantionMock();
   beforeAll(async () => {
     await agent.authenticate();
-    const data = await agent.post<CreateOrganizationInput>({
-      path: '/org',
-      body: orgData,
-    });
-    await agent.setOrgId(data.data.id);
+    const dbHelper = new dbTestHelpers(agent.getUserData().id);
+    const organization = await dbHelper.createOrganization();
+    agent.setOrgId(organization[0].organization.id);
   });
   afterAll(async () => {});
   it('create a queue group', async () => {
     const data = await agent.post<CreateQueueGroupInput>({
       path: '/queue-group',
       body: {
-        name: 'queue group',
+        name: faker.person.jobTitle(),
         description: 'description',
       },
     });
-    queueGroupId = data.data.id;
+
     expect(data).toBeDefined();
+    console.log(data);
+    queueGroupId = data.data.id;
   });
   it('should get all queues', async () => {
     const { data } = await agent.get<QueueGroupSchemaResponse[]>({
