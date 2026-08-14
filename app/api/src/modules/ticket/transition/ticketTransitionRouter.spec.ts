@@ -4,7 +4,6 @@ import { dbTestHelpers } from '../../../test/helper/seed.helper';
 import { TestFactory } from '../../../test/testFactory';
 import { faker } from '@faker-js/faker';
 import {
-  AssignTicketInput,
   CreateTicketInput,
   EscalateTicketInput,
   TicketEscalationOptions,
@@ -12,7 +11,6 @@ import {
   UpdateTicketStatusInput,
 } from '@org/zod';
 import { getTenantClient, TenantClient } from '@org/database';
-import { User } from '@org/auth';
 vi.mock('../../ai/ai.service.ts', () => ({
   AiService: {
     generateGeminiResponse: vi.fn().mockResolvedValue({
@@ -169,7 +167,7 @@ describe('TicketTransitionRouter', () => {
     expect(data).toHaveProperty('currentQueue');
   });
   it('should throw error for groupId if no further queue', async () => {
-    const data = await agent.post<EscalateTicketInput>({
+    await agent.post<EscalateTicketInput>({
       path: `/ticket/${ticketId}/escalate`,
       body: {
         reason: 'sla-breach',

@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationService } from '../../notification/notification.service';
 import { SocketService } from '../../socket/socket.service';
-import { TicketService } from '../ticket/ticket.service';
 import { TicketCommentsService } from '../comments/comments.service';
+import { TicketService } from '../ticket/ticket.service';
 import { TicketTransitionService } from './ticketTransition.service';
 
 // ---- Hoisted mocks ----
@@ -116,6 +116,7 @@ const mockedCreateTicketComment = vi.mocked(
 describe('TicketTransitionService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
     mockTransaction.mockImplementation(async (callback: any) =>
       callback({
         ticket: {
@@ -194,7 +195,7 @@ describe('TicketTransitionService', () => {
         keys: ['ticket'],
       });
 
-      expect(result).toEqual([{ id: 'ticket_1', status: 'CLOSED' }]);
+      expect(result).toEqual({ id: 'ticket_1', status: 'CLOSED' });
     });
 
     it('increments queueAgent ticketCount on REOPENED', async () => {
@@ -348,7 +349,12 @@ describe('TicketTransitionService', () => {
         priority: 'LOW',
         assignedTo: 'agent_1',
       });
-      mockTxUpdateMany.mockResolvedValue({ count: 1 });
+      mockTxUpdateManyAndReturn.mockResolvedValue([
+        {
+          id: 'ticket_1',
+          priority: 'HIGH',
+        },
+      ]);
 
       const result = await TicketTransitionService.updatePriority({
         ticketId: 'ticket_1',
@@ -358,7 +364,7 @@ describe('TicketTransitionService', () => {
         userId: 'user_1',
       });
 
-      expect(mockTxUpdateMany).toHaveBeenCalledWith({
+      expect(mockTxUpdateManyAndReturn).toHaveBeenCalledWith({
         where: { id: 'ticket_1', organizationId: 'org_1', version: 2 },
         data: { priority: 'HIGH', version: { increment: 1 } },
       });
@@ -378,7 +384,7 @@ describe('TicketTransitionService', () => {
         }),
       );
 
-      expect(result).toEqual({ count: 1 });
+      expect(result).toEqual({ id: 'ticket_1', priority: 'HIGH' });
     });
 
     it('notifies the assignee when present', async () => {
@@ -433,9 +439,16 @@ describe('TicketTransitionService', () => {
         id: 'ticket_1',
         queue: { queueGroupId: 'group_1', order: 1 },
       });
-      mockQueueFindMany.mockResolvedValue([
-        { id: 'queue_2', order: 2, _count: { queueAgents: 2 } },
-      ]);
+
+      vi.spyOn(TicketTransitionService, 'escalationOptions').mockResolvedValue({
+        currentQueue: {
+          id: 'queue_1',
+          name: 'Tier 1',
+          order: 1,
+        },
+        nextQueue: { id: 'queue_2', name: 'Tier 2', order: 2 },
+      } as any);
+
       mockedResolveAgentAssignment.mockResolvedValue('agent_2');
       mockedUpdateTicketMovement.mockResolvedValue({
         updatedTicket: { id: 'ticket_1', code: 'TKT-1', assignedTo: 'agent_2' },
@@ -449,9 +462,10 @@ describe('TicketTransitionService', () => {
         input: baseInput,
       });
 
-      expect(mockQueueFindMany).toHaveBeenCalledWith(
+      expect(TicketTransitionService.escalationOptions).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { queueGroupId: 'group_1', order: { gte: 1 } },
+          organizationId: 'org_1',
+          ticketId: 'ticket_1',
         }),
       );
       expect(mockedResolveAgentAssignment).toHaveBeenCalledWith({
@@ -482,6 +496,11 @@ describe('TicketTransitionService', () => {
     it('throws 400 when no groupId is given and the ticket has no current queue', async () => {
       mockTicketFindUnique.mockResolvedValue({ id: 'ticket_1', queue: null });
 
+      vi.spyOn(TicketTransitionService, 'escalationOptions').mockResolvedValue({
+        currentQueue: null,
+        nextQueue: null,
+      } as any);
+
       await expect(
         TicketTransitionService.escalateTicket({
           ticketId: 'ticket_1',
@@ -511,9 +530,13 @@ describe('TicketTransitionService', () => {
         id: 'ticket_1',
         queue: { queueGroupId: 'group_1', order: 1 },
       });
-      mockQueueFindMany.mockResolvedValue([
-        { id: 'q2', order: 2, _count: { queueAgents: 0 } },
-      ]);
+
+      vi.spyOn(TicketTransitionService, 'escalationOptions').mockResolvedValue({
+        currentQueue: { id: 'queue_1', name: 'Tier 1', order: 1 },
+        nextQueue: { id: 'q2', name: 'Tier 2', order: 2 },
+      } as any);
+
+      mockedResolveAgentAssignment.mockResolvedValue(undefined);
 
       await expect(
         TicketTransitionService.escalateTicket({
@@ -530,9 +553,12 @@ describe('TicketTransitionService', () => {
         id: 'ticket_1',
         queue: { queueGroupId: 'group_1', order: 1 },
       });
-      mockQueueFindMany.mockResolvedValue([
-        { id: 'q2', order: 2, _count: { queueAgents: 1 } },
-      ]);
+
+      vi.spyOn(TicketTransitionService, 'escalationOptions').mockResolvedValue({
+        currentQueue: { id: 'queue_1', name: 'Tier 1', order: 1 },
+        nextQueue: { id: 'q2', name: 'Tier 2', order: 2 },
+      } as any);
+
       mockedResolveAgentAssignment.mockResolvedValue(undefined);
 
       await expect(
@@ -597,7 +623,11 @@ describe('TicketTransitionService', () => {
       mockTicketFindUnique.mockResolvedValue({
         queue: { id: 'q1', name: 'Tier 1', queueGroupId: 'group_1', order: 1 },
       });
-      mockQueueFindFirst.mockResolvedValue({ id: 'q2', name: 'Tier 2' });
+      mockQueueFindFirst.mockResolvedValue({
+        id: 'q2',
+        name: 'Tier 2',
+        order: 2,
+      });
 
       const result = await TicketTransitionService.escalationOptions({
         organizationId: 'org_1',
@@ -610,12 +640,15 @@ describe('TicketTransitionService', () => {
             organizationId: 'org_1',
             queueGroupId: 'group_1',
             order: { gt: 1 },
+            active: true,
           },
         }),
       );
+
       expect(result).toEqual({
-        currentQueue: { id: 'q1', name: 'Tier 1' },
-        nextQueue: { id: 'q2', name: 'Tier 2' },
+        currentQueue: { id: 'q1', name: 'Tier 1', order: 1 },
+        nextQueue: { id: 'q2', name: 'Tier 2', order: 2 },
+        groupIdRequired: false,
       });
     });
 

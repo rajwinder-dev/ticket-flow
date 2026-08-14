@@ -1,12 +1,11 @@
 import {
-  CreateOrganizationInput,
   CreateTicketInput,
   UpdateTicketInput,
 } from '@org/zod';
 import { faker } from '@faker-js/faker';
 import { TestFactory } from '../../../test/testFactory';
 import app from '../../../app';
-import { getOrgantionMock } from '../../../test/helper/mock.helper';
+import { dbTestHelpers } from '../../../test/helper/seed.helper';
 
 vi.mock('../../ai/ai.service.ts', () => ({
   AiService: {
@@ -30,20 +29,18 @@ describe('Ticket Routes', () => {
   const agent = new TestFactory(app);
   let ticketId: string;
   beforeAll(async () => {
-    const orgData = getOrgantionMock();
     await agent.authenticate();
-    const data = await agent.post<CreateOrganizationInput>({
-      path: '/org',
-      body: orgData,
-    });
-    agent.setOrgId(data.data.id);
+    const dbHelper = new dbTestHelpers(agent.getUserData().id);
+    await dbHelper.createOrganization();
+
+    agent.setOrgId(dbHelper.orgId!);
   });
   it('should create a ticket', async () => {
     const { data } = await agent.post<CreateTicketInput>({
       path: '/ticket',
       body: mockTicket,
     });
-    ticketId = data.ticket.id;
+    ticketId = data.id;
     expect(data).toBeDefined();
   });
   it('should update ticket', async () => {
@@ -52,6 +49,7 @@ describe('Ticket Routes', () => {
       path: `/ticket/${ticketId}`,
       body: {
         description,
+        version: 1,
       },
     });
     expect(data).toBeDefined();

@@ -1,3 +1,4 @@
+import { allowedTransitions } from '@org/constants';
 import {
   getTenantClient,
   priority,
@@ -6,13 +7,12 @@ import {
 } from '@org/database';
 import { ParsedQs } from 'qs';
 import { APIFeatures } from '../../../core/utils/apiFeatures';
-import { allowedTransitions } from '@org/constants';
 import { appError } from '../../../core/utils/appError';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationService } from '../../notification/notification.service';
 import { SocketService } from '../../socket/socket.service';
-import { TicketService } from '../ticket/ticket.service';
 import { TicketCommentsService } from '../comments/comments.service';
+import { TicketService } from '../ticket/ticket.service';
 
 export class TicketTransitionService {
   static updateStatus = async ({
@@ -259,13 +259,34 @@ export class TicketTransitionService {
     const currentTicket = await tenantDb.ticket.findUnique({
       where: { id: ticketId },
     });
+
     let { currentQueue, nextQueue } = await this.escalationOptions({
       organizationId,
       ticketId,
       groupId: input.groupId,
     });
 
-    if (!currentQueue) throw new appError('Ticket not found', 404, 'NOT_FOUND');
+    if (!currentTicket)
+      throw new appError('Ticket not found', 404, 'NOT_FOUND');
+
+    // If ticket exists but has no queue, ask for a group if not provided
+    if (!currentQueue) {
+      if (!input.groupId) {
+        throw new appError(
+          'You need to select a group',
+          400,
+          'INVALID_PAYLOAD',
+        );
+      } else {
+        // Try to find a queue in the provided group
+        throw new appError(
+          'No queue found in the selected group',
+          409,
+          'CONFLICT_ERROR',
+        );
+      }
+    }
+
     if (!input.groupId && !nextQueue) {
       throw new appError('You need to select a group', 400, 'INVALID_PAYLOAD');
     }
