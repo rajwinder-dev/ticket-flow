@@ -22,9 +22,6 @@
       "path": "./packages/core"
     },
     {
-      "path": "./app/api-e2e"
-    },
-    {
       "path": "./app/api"
     },
     {

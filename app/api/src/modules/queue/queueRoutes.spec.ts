@@ -29,7 +29,6 @@ describe('Queues ', () => {
     try {
       const member = await dbHelpers.createMembership({
         userIds: [user.id],
-        orgId: agent.orgId,
         roleId: role.id,
       });
 
