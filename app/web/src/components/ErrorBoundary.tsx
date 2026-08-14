@@ -21,10 +21,8 @@ export function ErrorBoundary() {
 
   let title = 'Something went wrong';
   let description = 'An unexpected error occurred. Please try again.';
-  let status: number | undefined = undefined;
 
   if (isRouteErrorResponse(error)) {
-    status = error.status;
     title = error.status === 404 ? 'Page not found' : `Error ${error.status}`;
     description =
       error.status === 404

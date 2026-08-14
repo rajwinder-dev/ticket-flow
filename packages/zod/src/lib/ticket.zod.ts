@@ -243,3 +243,5 @@ export type TicketSummary = z.infer<typeof ticketSummary>;
 export type TicketDetailsSchema = z.infer<typeof ticketDetailsSchema>;
 export type CommentSchemaResponse = z.infer<typeof commentSchemaResponse>;
 export type TicketTransitionSchema = z.infer<typeof ticketTranslationSchema>;
+export type TicketPriority = (typeof ticketPriority)[number];
+export type TicketStatus = (typeof ticketStatus)[number];
