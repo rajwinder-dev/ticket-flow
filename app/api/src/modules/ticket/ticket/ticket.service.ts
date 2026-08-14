@@ -26,7 +26,7 @@ export class TicketService {
   }: {
     input: CreateTicketInput;
     organizationId: string;
-    ownerId: string;
+    ownerId?: string;
     userId?: string;
   }) => {
     let { email, assignment, ...data } = input;
@@ -51,7 +51,7 @@ export class TicketService {
       // if ai get response
       if (aiResponse) {
         const { groupId: aiGroupId, ...rest } = aiResponse;
-        if (aiResponse.confidence < 0.8) {
+        if (aiResponse.confidence < 0.8 || !aiGroupId) {
           groupId = await QueueGroupService.getDefaultGroup(organizationId);
         } else {
           data = { ...data, ...rest };
@@ -120,9 +120,10 @@ export class TicketService {
         organizationId,
         keys: ['ticket'],
       });
-      return finalAssignment;
     }
-    return { ticket, assignment: finalAssignment };
+
+    const result = { ...ticket, assignment: finalAssignment };
+    return result;
   };
   static createTicket = async ({
     data,
@@ -148,7 +149,7 @@ export class TicketService {
     assignedTo?: string;
     queueId?: string;
     userId?: string;
-    ownerId: string;
+    ownerId?: string;
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const ticket = await tenantDb.ticket.create({
@@ -161,19 +162,20 @@ export class TicketService {
         queueId,
       },
     });
-    await NotificationService.sendNotification({
-      recipientId: ownerId,
-      userId: null,
-      data: {
-        organizationId,
-        channel: 'IN_APP',
-        title: 'New Ticket created and assigned',
-        message: `Ticket ${ticket.code} has been created.`,
-        type: 'TICKET',
-        actorId: userId,
-        ticketId: ticket.id,
-      },
-    });
+    if (ownerId)
+      await NotificationService.sendNotification({
+        recipientId: ownerId,
+        userId: null,
+        data: {
+          organizationId,
+          channel: 'IN_APP',
+          title: 'New Ticket created and assigned',
+          message: `Ticket ${ticket.code} has been created.`,
+          type: 'TICKET',
+          actorId: userId,
+          ticketId: ticket.id,
+        },
+      });
     await ActivityService.lagActivity({
       organizationId,
       actorId: userId,
@@ -183,6 +185,7 @@ export class TicketService {
       entityId: ticket.id,
       entityType: 'TICKET',
     });
+
     return ticket;
   };
   static updateTicket = async ({
@@ -190,15 +193,17 @@ export class TicketService {
     ticketId,
     organizationId,
     userId,
+    version,
   }: {
     input: Prisma.TicketUpdateInput;
     ticketId: string;
     organizationId: string;
     userId: string;
+    version?: number;
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const updatedTicket = await tenantDb.ticket.update({
-      where: { id: ticketId, organizationId },
+      where: { id: ticketId, organizationId, version },
       data: {
         ...input,
         version: {
@@ -338,6 +343,7 @@ export class TicketService {
         ticketCount: 'asc',
       },
     });
+
     return agent?.agentId;
   };
   static updateTicketMovement = async ({
@@ -347,7 +353,7 @@ export class TicketService {
     organizationId,
     action,
     reason,
-    priority
+    priority,
   }: {
     ticketId: string;
     nextAgentId: string;
@@ -355,7 +361,7 @@ export class TicketService {
     organizationId: string;
     action: TicketAction;
     reason?: string;
-    priority?: Priority
+    priority?: Priority;
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const ticketData = await tenantDb.$transaction(async (tx) => {
@@ -391,7 +397,7 @@ export class TicketService {
           assignedTo: nextAgentId,
           queueId: nextQueueId,
           status: 'OPEN',
-          priority
+          priority,
         },
       });
       await tx.ticketTransition.create({

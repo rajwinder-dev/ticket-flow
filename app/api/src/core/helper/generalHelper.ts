@@ -8,4 +8,10 @@ export function getClientIp(req: Request) {
   return req?.socket?.remoteAddress || null;
 }
 
-
+export function parseJson<T>(data: string): T {
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    throw new Error("Invalid JSON");
+  }
+}

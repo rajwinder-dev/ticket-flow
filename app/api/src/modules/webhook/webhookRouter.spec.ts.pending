@@ -1,0 +1,69 @@
+import { CreateOrganizationInput } from '@org/zod';
+import { TestFactory } from '../../test/testFactory';
+import app from '../../app';
+import {
+  getOrgantionMock,
+  getRandomResendMock,
+} from '../../test/helper/mock.helper';
+const { mockGetEmailDetails, mockVerifyWebhook } = vi.hoisted(() => ({
+  mockVerifyWebhook: vi.fn(),
+  mockGetEmailDetails: vi.fn(),
+}));
+vi.mock('@org/email-providers', () => ({
+  ResendService: {
+    verifyWebhook: mockVerifyWebhook,
+    getEmailDetails: mockGetEmailDetails,
+  },
+}));
+import { crypto } from '../../core/utils/crypto.js';
+import { faker } from '@faker-js/faker';
+import { getTenantClient } from '@org/database';
+describe('resend webhook routes', () => {
+  const orgEmail = `resend@${faker.internet.domainName()}`;
+
+  const agent = new TestFactory(app);
+
+  let memberId: string;
+  beforeAll(async () => {
+    const orgData = getOrgantionMock();
+    await agent.authenticate();
+
+    const user = await agent.createUser();
+    memberId = user.id;
+    const data = await agent.post<CreateOrganizationInput>({
+      path: '/org',
+      body: orgData,
+    });
+    await agent.setOrgId(data.data.id);
+    const emailCredentials = crypto.encrypt(
+      JSON.stringify({
+        credentials: {
+          apiKey: faker.datatype.string(),
+        },
+      }),
+    );
+    const tenantDb = getTenantClient(data.data.id);
+    await tenantDb.emailProvider.create({
+      data: {
+        providerType: 'RESEND',
+        fromEmail: orgEmail,
+        webhookSecret: faker.datatype.string(),
+        credentials: emailCredentials,
+        priority: 1,
+        domain: orgEmail.split('@')[1],
+      },
+    });
+  });
+  it('should create resend webhook', async () => {
+
+
+    const { payload, headers } = getRandomResendMock({ email: orgEmail });
+    agent.addHeaders(headers);
+
+    const { data } = await agent.post({
+      path: '/webhook/resend',
+      body: JSON.stringify(payload),
+    });
+    expect(data).toBeDefined();
+  });
+});

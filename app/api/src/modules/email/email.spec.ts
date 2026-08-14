@@ -183,9 +183,8 @@ describe('EmailService', () => {
           priority: 1,
         }),
       ).rejects.toMatchObject({
-        message: 'Max 2 provider per organization is allowed',
-        statusCode: 400,
-        code: 'CONFLICT_ERROR',
+        statusCode: 403,
+        code: 'FORBIDDEN',
       });
 
       expect(mockEmailProviderCreate).not.toHaveBeenCalled();

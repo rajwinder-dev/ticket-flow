@@ -16,7 +16,7 @@ export class TicketCommentsController {
       id: uuid,
       isInternal: true,
     });
-    response(res, data, 200);
+    response(res, data, 201);
   });
   static getTicketComments = catchAsync(async (req, res, _next) => {
     const id = req.params.id as string;

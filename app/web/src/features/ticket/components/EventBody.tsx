@@ -31,9 +31,9 @@ export function EventBody({ event }: { event: TicketTransitionSchema }) {
       <div className="mt-1 space-y-1.5">
         {(event.fromQueue || event.toQueue) && (
           <div className="flex flex-wrap items-center gap-1.5">
-            {event.fromQueue && <QueueTag name={event.fromQueue.name} />}
+            {event.fromQueue?.name && <QueueTag name={event.fromQueue.name} />}
             <ArrowRight size="14" />
-            {event.toQueue && <QueueTag name={event.toQueue.name} />}
+            {event.toQueue?.name && <QueueTag name={event.toQueue.name} />}
             {event.escalationReason && <ReasonBadge reason={event.escalationReason} />}
           </div>
         )}

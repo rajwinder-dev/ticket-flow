@@ -20,11 +20,7 @@ import { useLookupHook, ticketApi, useTicket } from '@org/core';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { escalationReasons, ticketPriority } from '@org/constants';
-import {
-  escalateTicketInput,
-  TicketPriority,
-  type EscalateTicketInput,
-} from '@org/zod';
+import { escalateTicketInput, type EscalateTicketInput } from '@org/zod';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronUp } from 'lucide-react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -36,7 +32,7 @@ type TicketData = {
   code: string;
   subject: string;
   description?: string;
-  priority: TicketPriority;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
   category: string;
 };
 interface TicketEscalateDialogProps {
@@ -52,11 +48,6 @@ export function TicketEscalateDialog({
 }: TicketEscalateDialogProps) {
   const { orgId } = useParams();
   const { groupsData } = useLookupHook({ orgId });
-  const { data: escalateOptions } = useQuery({
-    queryFn: () => ticketApi.escalateOptions(ticket!.id),
-    queryKey: ['escalation-options', { ticketId: ticket?.id }],
-    enabled: !!ticket?.id,
-  });
   const { escalateTicket, isEscalatingTicket } = useTicket({ orgId });
   const {
     control,
@@ -72,6 +63,15 @@ export function TicketEscalateDialog({
   });
 
   const watchedPriority = useWatch({ control, name: 'priority' });
+  const watchedGroupId = useWatch({ control, name: 'groupId' });
+  const { data: escalateOptions } = useQuery({
+    queryFn: () => ticketApi.escalateOptions(ticket!.id, watchedGroupId),
+    queryKey: [
+      'escalation-options',
+      { ticketId: ticket?.id, groupId: watchedGroupId },
+    ],
+    enabled: !!ticket?.id,
+  });
 
   const handleFormSubmit = async (data: EscalateTicketInput) => {
     if (!ticket) return;
@@ -125,7 +125,7 @@ export function TicketEscalateDialog({
               to={escalateOptions.data.nextQueue?.name}
             />
           )}
-          {!escalateOptions?.data.nextQueue && (
+          {escalateOptions?.data.groupIdRequired && (
             <div className="space-y-1.5">
               <Label htmlFor="group" className="text-sm font-medium">
                 Select Group <span className="text-destructive">*</span>

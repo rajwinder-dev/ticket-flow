@@ -364,14 +364,17 @@ describe('QueueService', () => {
         }),
       ).rejects.toMatchObject({
         message: 'Cannot delete queue with active tickets',
-        statusCode: 400,
+        statusCode: 409,
       });
 
       expect(mockQueueUpdate).not.toHaveBeenCalled();
     });
 
     it('soft-deletes the queue, reorders remaining queues, and logs activity', async () => {
-      mockQueueFindUnique.mockResolvedValue({ active: true });
+      mockQueueFindUnique.mockResolvedValue({
+        active: true,
+        _count: { queueAgents: 0 },
+      });
       mockTicketCount.mockResolvedValue(0);
       mockQueueUpdate.mockResolvedValueOnce({
         active: false,
@@ -402,7 +405,26 @@ describe('QueueService', () => {
       );
     });
   });
+  it('soft-deletes throw error when it has agents', async () => {
+    mockQueueFindUnique.mockResolvedValue({
+      active: true,
+      _count: { queueAgents: 1 },
+    });
+    mockTicketCount.mockResolvedValue(0);
 
+    await expect(
+      QueueService.delete({
+        queueId: 'q-1',
+        organizationId,
+        userId: 'user-1',
+      }),
+    ).rejects.toMatchObject({
+      message: 'Cannot delete queue with active agents',
+      statusCode: 409,
+    });
+
+    expect(mockQueueUpdate).not.toHaveBeenCalled();
+  });
   describe('getLowerOrderQueue', () => {
     it('returns the id of the lowest-order active queue', async () => {
       mockQueueFindFirst.mockResolvedValue({ id: 'q-1' });

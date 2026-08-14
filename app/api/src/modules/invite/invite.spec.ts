@@ -30,7 +30,7 @@ vi.mock('@org/database', () => ({
   getTenantClient: mockGetTenantClient,
 }));
 
-vi.mock('../../token/token.service', () => ({
+vi.mock('../token/token.service', () => ({
   TokenService: {
     createToken: mockCreateToken,
     verifyToken: mockVerifyToken,
@@ -38,25 +38,25 @@ vi.mock('../../token/token.service', () => ({
   },
 }));
 
-vi.mock('../../activity/activity.service', () => ({
+vi.mock('../activity/activity.service', () => ({
   ActivityService: {
     lagActivity: mockLagActivity,
   },
 }));
 
-vi.mock('../../email/email.service', () => ({
+vi.mock('../email/email.service', () => ({
   EmailService: {
     queueEmail: mockQueueEmail,
   },
 }));
 
-vi.mock('../../notification/notification.service', () => ({
+vi.mock('../notification/notification.service', () => ({
   NotificationService: {
     sendNotification: mockSendNotification,
   },
 }));
 
-vi.mock('../../../config/env', () => ({
+vi.mock('../../config/env', () => ({
   env: { betterAuthUrl: 'https://app.example.com' },
 }));
 

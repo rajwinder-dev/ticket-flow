@@ -30,38 +30,34 @@ import emailRouter from './modules/email/email.routes.js';
 import lookupRouter from './modules/lookup/lookup.routes.js';
 import memberRouter from './modules/member/member.routes.js';
 import notificationRouter from './modules/notification/notification.routes.js';
-import organizationRouter from './modules/organizations/organization.routes.js';
 import QueueRoutes from './modules/queue/queue.routes.js';
 import QueueGroupRoutes from './modules/queueGroup/queueGroup.routes.js';
 import roleRouter from './modules/role/role.route.js';
-import tokenRoute from './modules/token/token.routes.js';
 import userRouter from './modules/user/user.routes.js';
 import webhookRouter from './modules/webhook/webhook.routes.js';
-import { log } from '@org/utils';
 import ticketModuleRouter from './modules/ticket/ticket.module.js';
+import organizationRouter from './modules/organizations/organization.routes.js';
+import inviteRouter from './modules/invite/invite.routes.js';
+import authRouter from './modules/auth/auth.router.js';
 
 export const app: Express = express();
 
 // dev logs
-if (devMode) app.use(morgan('dev'));
+if (devMode || process.env.DEBUG) app.use(morgan('dev'));
 // security
 app.set('trust proxy', 1);
 app.use(helmet());
 app.use(hpp());
 
 configLogger(app);
-if (!devMode)
-  app.use((req, res, next) => {
-    log.data('IP', {
-      ip: req.ip,
-      ips: req.ips,
-      cfIp: req.headers['cf-connecting-ip'],
-      xForwardedFor: req.headers['x-forwarded-for'],
-      realIp: req.headers['x-real-ip'],
-    });
-
-    next();
-  });
+// if (!devMode)
+//   app.use((req, res, next) => {
+//     log.data('IP', {
+//       ip: req.ip,
+//     });
+//
+//     next();
+//   });
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 500,
@@ -86,7 +82,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
 // custom middleware
-if (devMode) app.use(DevMiddleware.logRequests);
+if (devMode || process.env.DEBUG) app.use(DevMiddleware.logRequests);
 
 //  Routes:w
 //
@@ -99,9 +95,9 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'error', message: 'DB unreachable' });
   }
 });
-
-app.use('/api/v1/token', tokenRoute);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/org', organizationRouter);
+app.use('/api/v1/invite', inviteRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/role', roleRouter);
 app.use('/api/v1/email', emailRouter);

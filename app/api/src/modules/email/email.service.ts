@@ -4,6 +4,7 @@ import { appError } from '../../core/utils/appError.js';
 import { getTenantClient, ProviderType } from '@org/database';
 import { emailQueuePush } from '../../core/utils/emailQueue.js';
 import { crypto } from '../../core/utils/crypto.js';
+import { EncryptionType } from '@org/utils';
 export class EmailService {
   static queueEmail = async ({
     organizationId,
@@ -66,8 +67,7 @@ export class EmailService {
       webhookSecret?: string;
       priority: number;
     },
-  ) => {
-    const tenantdb = getTenantClient(organizationId);
+  ) => { const tenantdb = getTenantClient(organizationId);
     const existingProviderCount = await tenantdb.emailProvider.count({
       where: {
         organizationId,
@@ -76,8 +76,8 @@ export class EmailService {
     if (existingProviderCount >= 2)
       throw new appError(
         'Max 2 provider per organization is allowed',
-        400,
-        'CONFLICT_ERROR',
+        403,
+        'FORBIDDEN',
       );
     const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
     return await tenantdb.emailProvider.create({
@@ -98,18 +98,26 @@ export class EmailService {
     { credentials, providerType, fromEmail }: UpdateEmailProviderInput,
   ) => {
     const tenantdb = getTenantClient(organizationId);
-    const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
+    let input: {
+      domain: string;
+      fromEmail: string;
+      providerType: ProviderType;
+      credentials?: EncryptionType;
+    } = {
+      domain: fromEmail.split('@')[1],
+      fromEmail,
+      providerType,
+    };
+    if (credentials) {
+      const encryptCredentials = crypto.encrypt(JSON.stringify(credentials));
+      input.credentials = encryptCredentials;
+    }
     return await tenantdb.emailProvider.update({
       where: {
         id,
         organizationId,
       },
-      data: {
-        domain: fromEmail.split('@')[1],
-        fromEmail,
-        providerType,
-        credentials: encryptCredentials,
-      },
+      data: input,
     });
   };
   static deleteEmailProvider = async (id: string, organizationId: string) => {

@@ -59,7 +59,7 @@ export class QueueController {
       agentIds,
       userId: req.user.id,
     });
-    response(res, null, 204);
+    response(res, null, 200);
   });
   static getQueues = catchAsync(async (req, res, _next) => {
     const groupId = req.params.id as string;

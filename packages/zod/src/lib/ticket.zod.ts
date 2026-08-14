@@ -33,12 +33,14 @@ export const createTicketInput = {
 export const updateTicketInput = {
   bodySchema: z
     .object({
-      subject: z.string().min(2, 'Subject is required'),
+      subject: z.string().min(2, 'Subject is required').optional(),
       description: z.string().optional(),
-      priority: z.enum(ticketPriority),
-      category: z.string().min(1, 'Category is required'),
+      priority: z.enum(ticketPriority).optional(),
+      category: z.string().min(1, 'Category is required').optional(),
+      version: z.number(),
     })
     .strict(),
+  ...validUuidParams,
 };
 export const updateTicketStatusInput = {
   bodySchema: z
@@ -118,6 +120,7 @@ const QueueOptionSchema = z.object({ id: z.string(), name: z.string() });
 export const ticketEscalationOptions = z.object({
   currentQueue: QueueOptionSchema.nullable(),
   nextQueue: QueueOptionSchema.nullable(),
+  groupIdRequired: z.boolean(),
 });
 export const ticketSummary = z.object({
   total: z.number(),
@@ -240,3 +243,5 @@ export type TicketSummary = z.infer<typeof ticketSummary>;
 export type TicketDetailsSchema = z.infer<typeof ticketDetailsSchema>;
 export type CommentSchemaResponse = z.infer<typeof commentSchemaResponse>;
 export type TicketTransitionSchema = z.infer<typeof ticketTranslationSchema>;
+export type TicketPriority = (typeof ticketPriority)[number];
+export type TicketStatus = (typeof ticketStatus)[number];

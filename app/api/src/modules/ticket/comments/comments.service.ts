@@ -67,7 +67,11 @@ export class TicketCommentsService {
       organizationId,
       keys: ['ticket', 'comment'],
     });
-    return data;
+    const result = {
+      comment: data.comment,
+      authorId: userId,
+    };
+    return result;
   };
   static getTicketComments = async ({
     ticketId,

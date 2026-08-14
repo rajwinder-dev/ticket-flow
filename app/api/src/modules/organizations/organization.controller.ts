@@ -1,7 +1,6 @@
 import {
   CreateOrganizationInput,
   createOrganizationResponse,
-  InviteUserOrganizationInput,
   memberSchemaResponse,
   organizationSchemaResponse,
   UpdateOrganizationInput,
@@ -12,8 +11,7 @@ import { catchAsync } from '../../core/utils/catchAsync.js';
 import HandleFactory from '../../core/utils/handlerFactory.js';
 import response from '../../core/utils/response.js';
 import { OrganizationService } from './organization.service.js';
-import { prisma, Prisma } from '@org/database';
-import { InviteService } from './invite/invite.service.js';
+import { getTenantClient, prisma, Prisma } from '@org/database';
 
 export class OrganizationController {
   private static handler =
@@ -51,42 +49,13 @@ export class OrganizationController {
     response(res, data);
   });
   static deleteOrganization = catchAsync(async (req, res) => {
-    const id = req.params.id as string;
-    const data = await this.handler.softDelete(id);
-    response(res, data);
-  });
-  static sendInvite = catchAsync(async (req, res, _next) => {
-    const { email, roleId } = req.body as InviteUserOrganizationInput;
-    await InviteService.inviteMember({
-      actor: {
-        userId: req.user.id,
-        email: req.user.email,
-        username: req.user.username,
-        organizationName: req.organization.name,
-      },
-      input: {
-        organizationId: req.organization.id,
-        email,
-        roleId,
-      },
+    const id = req.organization.id;
+    const tenantDb = getTenantClient(id);
+    await tenantDb.organization.update({
+      where: { id },
+      data: { active: false },
     });
-    response(res, { message: 'Invite Sent successfully' });
-  });
-  static acceptInvite = catchAsync(async (req, res, _next) => {
-    const token = req.params.token as string;
-    const verifyToken = await InviteService.acceptInvite(
-      req.user.id,
-      req.user.email,
-      token,
-    );
-    response(res, verifyToken, 200, {
-      otherFields: { message: 'Joined Organization successfully' },
-    });
-  });
-  static InviteDetails = catchAsync(async (req, res, _next) => {
-    const token = req.params.token as string;
-    const data = await InviteService.getInviteDetails(token);
-    response(res, data, 200);
+    response(res, null, 204);
   });
   static getMembers = catchAsync(async (req, res, _next) => {
     const { data, propagation } = await OrganizationService.getMembers({

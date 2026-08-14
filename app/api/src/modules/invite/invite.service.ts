@@ -1,11 +1,11 @@
 import { getTenantClient } from '@org/database';
-import { appError } from '../../../core/utils/appError';
-import { TokenService } from '../../token/token.service';
+import { appError } from '../../core/utils/appError';
+import { TokenService } from '../token/token.service';
 import { addDays } from 'date-fns';
-import { env } from '../../../config/env';
-import { ActivityService } from '../../activity/activity.service';
-import { EmailService } from '../../email/email.service';
-import { NotificationService } from '../../notification/notification.service';
+import { env } from '../../config/env';
+import { ActivityService } from '../activity/activity.service';
+import { EmailService } from '../email/email.service';
+import { NotificationService } from '../notification/notification.service';
 
 class InviteServiceClass {
   inviteMember = async ({

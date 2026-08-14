@@ -1,5 +1,5 @@
 import { betterAuth, BetterAuthOptions } from 'better-auth';
-
+import { testUtils } from 'better-auth/plugins';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 // import { EmailService } from "../modules/email/email.service.js";
 import { prisma } from '@org/database';
@@ -7,7 +7,7 @@ const options = {
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
-  // plugins: [dash()],
+  plugins: [testUtils()],
   advanced: {
     database: {
       generateId: () => crypto.randomUUID(),

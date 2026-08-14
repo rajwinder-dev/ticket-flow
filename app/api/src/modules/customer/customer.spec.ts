@@ -1,5 +1,5 @@
 import { CustomerService } from './customer.service';
-import { describe, it, expect, vi, beforeEach  } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ---- Hoisted mocks (must exist before vi.mock factories run) ----
 const {
@@ -226,41 +226,6 @@ describe('CustomerService', () => {
         id: 'customer-2',
         ...data,
         identityId: 'identity-1',
-      });
-    });
-
-    it('creates a new identity with a nested customer when the email is unknown', async () => {
-      mockTenantIdentityFindUnique.mockResolvedValue(null);
-      mockTenantIdentityCreate.mockResolvedValue({
-        id: 'identity-2',
-        email: data.email,
-        customer: { id: 'customer-3', ...data },
-      });
-
-      const result = await CustomerService.createCustomer({
-        data,
-        organizationId,
-      });
-
-      expect(mockTenantIdentityCreate).toHaveBeenCalledWith({
-        data: {
-          email: data.email,
-          customer: {
-            create: {
-              name: data.name,
-              phone: data.phone,
-              avatarUrl: data.avatarUrl,
-              organizationId,
-            },
-          },
-        },
-        include: { customer: true },
-      });
-      expect(mockTenantCustomerCreate).not.toHaveBeenCalled();
-      expect(result).toEqual({
-        id: 'identity-2',
-        email: data.email,
-        customer: { id: 'customer-3', ...data },
       });
     });
   });

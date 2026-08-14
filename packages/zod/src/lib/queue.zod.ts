@@ -12,7 +12,7 @@ export const createQueueGroupInput = {
     .object({
       name: validString,
       description: validDescription.optional(),
-      isDefault: z.boolean(),
+      isDefault: z.boolean().optional(),
     })
     .strict(),
 };

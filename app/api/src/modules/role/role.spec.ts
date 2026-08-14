@@ -160,26 +160,29 @@ describe('RoleService', () => {
       expect(mockRoleUpdate).not.toHaveBeenCalled();
     });
 
-    it('throws a conflict when the role is already deleted', async () => {
+    it('throws not found when the role is already deleted', async () => {
       mockRoleFindUnique.mockResolvedValue({ active: false });
 
       await expect(
         RoleService.delete({ roleId: 'role-1', organizationId, userId }),
       ).rejects.toMatchObject({
-        message: 'Role Already deleted',
-        statusCode: 409,
-        code: 'CONFLICT_ERROR',
+        message: 'Role not found',
+        statusCode: 404,
+        code: 'NOT_FOUND',
       });
     });
 
     it('throws a conflict when users are still assigned to the role', async () => {
-      mockRoleFindUnique.mockResolvedValue({ active: true });
+      mockRoleFindUnique.mockResolvedValue({
+        active: true,
+        _count: { membership: 1 },
+      });
       mockMemberShipCount.mockResolvedValue(3);
 
       await expect(
         RoleService.delete({ roleId: 'role-1', organizationId, userId }),
       ).rejects.toMatchObject({
-        message: 'users are already assigned to this role',
+        message: 'Role already assigned',
         statusCode: 409,
         code: 'CONFLICT_ERROR',
       });
@@ -188,7 +191,10 @@ describe('RoleService', () => {
     });
 
     it('deactivates the role and logs activity when nothing blocks deletion', async () => {
-      mockRoleFindUnique.mockResolvedValue({ active: true });
+      mockRoleFindUnique.mockResolvedValue({
+        active: true,
+        _count: { membership: 0 },
+      });
       mockMemberShipCount.mockResolvedValue(0);
       mockRoleUpdate.mockResolvedValue({ id: 'role-1', active: false });
 

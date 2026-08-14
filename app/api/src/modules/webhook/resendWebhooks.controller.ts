@@ -4,20 +4,21 @@ import { catchAsync } from '../../core/utils/catchAsync.js';
 import response from '../../core/utils/response.js';
 import { TicketService } from '../ticket/ticket/ticket.service.js';
 import { ResendWebhookService } from './resendWebhooks.service.js';
-import { WebhookService } from './webhook.service.js';
+import { crypto } from '../../core/utils/crypto.js';
+import { EncryptionType } from '@org/utils';
+import { ResendConfig } from '@org/email-providers';
+import { parseJson } from '../../core/helper/generalHelper.js';
 const SUPPORTED_EVENTS = ['email.received'];
+import senitizeHtml from 'sanitize-html';
 export class resendWebhookController {
   static events = catchAsync(async (req, res, _next) => {
-    const { rawBody, headers } = {
-      rawBody: req.body.toString('utf8'),
-      headers: {
-        'svix-id': req.headers['svix-id'] as string,
-        'svix-timestamp': req.headers['svix-timestamp'] as string,
-        'svix-signature': req.headers['svix-signature'] as string,
-      },
+    const rawBody = req.body.toString('utf8');
+    const headers = {
+      'svix-id': req.headers['svix-id'] as string,
+      'svix-timestamp': req.headers['svix-timestamp'] as string,
+      'svix-signature': req.headers['svix-signature'] as string,
     };
-    const payload =
-      WebhookService.parseRawData<ResentEmailWebhookSchema>(rawBody);
+    const payload = parseJson<ResentEmailWebhookSchema>(rawBody);
 
     if (!SUPPORTED_EVENTS.includes(payload.type)) {
       throw new appError(
@@ -36,21 +37,30 @@ export class resendWebhookController {
       headers,
       email: payload.data.to,
     });
-    // fetch email data
-    const { ownerData, safeHtml, normalized, emailData } =
-      await ResendWebhookService.fetchEmail({
-        payload: payload.data,
-        provider,
-      });
+    // decrypt credentials
+    const credentialString = crypto.decrypt(
+      provider.credentials as EncryptionType,
+    );
+    const credentials = parseJson<ResendConfig>(credentialString);
+
+    // fetch sender details
+    const { emailData } = await ResendWebhookService.fetchSenderDetails({
+      credentials,
+      email_id: payload.data.email_id,
+    });
+    // get owner
+    const ownerData = await ResendWebhookService.getOwnerDetails(
+      provider?.organizationId,
+    );
     // handle event
     if (payload?.type === 'email.received') {
       await TicketService.createAndAssign({
         organizationId: provider.organizationId,
-        ownerId: ownerData?.userId || '',
+        ownerId: ownerData?.userId,
         input: {
-          subject: normalized.subject || 'No subject',
-          email: normalized.from,
-          description: safeHtml || emailData.text || '',
+          subject: payload.data.subject || 'No subject',
+          email: payload.data.from,
+          description: senitizeHtml(emailData.html || emailData.text || ''),
           priority: 'MEDIUM',
           category: 'GENERAL',
         },

@@ -11,7 +11,7 @@ import { useTicket, formatDateTime } from '@org/core';
 import { useParams } from 'react-router';
 import { TicketStatusCell } from './TicketStatusCell';
 import { TicketPriorityCell } from './TicketPriorityCell';
-import { Badge, CheckCircle2, RefreshCw, Sparkles } from 'lucide-react';
+import { Badge, CheckCircle2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 

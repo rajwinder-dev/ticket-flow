@@ -118,27 +118,29 @@ export class RoleService {
     const tenentDb = getTenantClient(organizationId);
     const existingRole = await tenentDb.role.findUnique({
       where: {
+        organizationId,
         id: roleId,
         isSystem: false,
       },
       select: {
         active: true,
+        isSystem: true,
+        _count: {
+          select: {
+            membership: true,
+          },
+        },
       },
     });
-    if (!existingRole) throw new appError('Role not found ', 404, 'NOT_FOUND');
+    if (!existingRole) throw new appError('Role not found', 404, 'NOT_FOUND');
+    if (existingRole.isSystem)
+      throw new appError('Cannot delete system role', 400, 'FORBIDDEN');
     if (!existingRole.active)
-      throw new appError('Role Already deleted', 409, 'CONFLICT_ERROR');
-    const userCount = await tenentDb.membership.count({
-      where: {
-        roleId,
-      },
-    });
-    if (userCount > 0)
-      throw new appError(
-        'users are already assigned to this role',
-        409,
-        'CONFLICT_ERROR',
-      );
+      throw new appError('Role not found', 404, 'NOT_FOUND');
+
+    if (existingRole._count.membership > 0) {
+      throw new appError('Role already assigned', 409, 'CONFLICT_ERROR');
+    }
     const updatedRole = await tenentDb.role.update({
       data: {
         active: false,

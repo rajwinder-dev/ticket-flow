@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { type TicketStatus } from '@org/zod';
+import { TicketStatus } from '@org/zod';
 import { useTicket } from '@org/core';
 import { allowedTransitions } from '@org/constants';
 import { useParams } from 'react-router';

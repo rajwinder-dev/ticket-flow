@@ -70,7 +70,7 @@ export class CustomerService {
         },
       });
     }
-    return await tenantDb.customerIdentity.create({
+    const customer = await tenantDb.customerIdentity.create({
       data: {
         email,
         customer: {
@@ -86,6 +86,7 @@ export class CustomerService {
         customer: true,
       },
     });
+    return customer.customer[0];
   };
   static getCustomerByEmail = async ({
     email,

@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getTenantClient } from '@org/database';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appError } from '../../../core/utils/appError.js';
 import { readableId } from '../../../core/utils/utils.js';
 import { ActivityService } from '../../activity/activity.service.js';
 import { CustomerService } from '../../customer/customer.service.js';
+import { NotificationService } from '../../notification/notification.service.js';
 import { QueueService } from '../../queue/queue.service.js';
 import { QueueGroupService } from '../../queueGroup/queueGroup.service.js';
-import { NotificationService } from '../../notification/notification.service.js';
 import { SocketService } from '../../socket/socket.service.js';
 import { TicketAiService } from '../ai/ticketAi.service.js';
 import { TicketService } from './ticket.service';
@@ -580,11 +580,17 @@ describe('TicketService', () => {
       expect(mockedAnalyzeTicket).not.toHaveBeenCalled();
       expect(mockedGetLowerOrderQueue).not.toHaveBeenCalled();
       expect(mockQueueAgentFindFirst).not.toHaveBeenCalled();
-      expect(result).toEqual({
-        groupId: 'group_1',
-        queueId: 'queue_1',
-        agentId: 'agent_1',
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: 'ticket_1',
+          code: 'TKT-0001',
+          assignment: {
+            groupId: 'group_1',
+            queueId: 'queue_1',
+            agentId: 'agent_1',
+          },
+        }),
+      );
 
       // actorType is USER because assignment.agentId was explicitly provided.
       expect(mockedLagActivity).toHaveBeenCalledWith(
@@ -634,11 +640,17 @@ describe('TicketService', () => {
       expect(mockedGetLowerOrderQueue).toHaveBeenCalledWith(
         expect.objectContaining({ queueGroupId: 'ai_group_1' }),
       );
-      expect(result).toEqual({
-        groupId: 'ai_group_1',
-        queueId: 'queue_ai',
-        agentId: 'agent_ai',
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: 'ticket_1',
+          code: 'TKT-0001',
+          assignment: {
+            groupId: 'ai_group_1',
+            queueId: 'queue_ai',
+            agentId: 'agent_ai',
+          },
+        }),
+      );
 
       // actorType is SYSTEM because agent was auto-resolved, not user-supplied.
       expect(mockedLagActivity).toHaveBeenCalledWith(
@@ -675,7 +687,11 @@ describe('TicketService', () => {
 
       expect(mockedGetDefaultGroup).toHaveBeenCalledWith('org_1');
       expect(result).toEqual(
-        expect.objectContaining({ groupId: 'default_group' }),
+        expect.objectContaining({
+          id: 'ticket_1',
+          code: 'TKT-0001',
+          assignment: expect.objectContaining({ groupId: 'default_group' }),
+        }),
       );
     });
 

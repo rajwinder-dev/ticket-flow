@@ -9,7 +9,7 @@ export interface TicketanalyzeResponse {
   confidence: number;
   summary: string;
   priority: priority;
-  groupId: string;
+  groupId: string | null;
 }
 export interface TicketsummaryResponse {
   summary: string;
@@ -53,7 +53,7 @@ export const ticketAnalyzeTemplateSchema = {
       type: Type.STRING,
     },
     groupId: {
-      type: Type.STRING,
+      type: Type.STRING || Type.NULL,
     },
   },
   required: [
