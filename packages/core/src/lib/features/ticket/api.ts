@@ -98,9 +98,15 @@ export const ticketApi = {
     });
     return res;
   },
-  escalateOptions: async (ticketId: string) => {
+  escalateOptions: async (ticketId: string, groupId?: string) => {
+    const filterOptions: FilterOptions = {
+      filter: {
+        groupId,
+      },
+    };
     const res = await api.get<TicketEscalationOptions>({
       path: `/ticket/${ticketId}/escalate-options`,
+      filterOptions: groupId ? filterOptions : undefined,
     });
     return res;
   },

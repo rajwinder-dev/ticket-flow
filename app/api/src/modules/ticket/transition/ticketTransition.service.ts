@@ -119,7 +119,7 @@ export class TicketTransitionService {
           organizationId,
         },
       });
-      return updatedTicket;
+      return { ...updatedTicket[0] };
     });
     await ActivityService.lagActivity({
       organizationId,
@@ -165,13 +165,13 @@ export class TicketTransitionService {
     userId: string;
   }) => {
     const tanentDb = getTenantClient(organizationId);
-    const { currentTicket, updatedTicket } = await tanentDb.$transaction(
+    const { updatedTicket, currentTicket } = await tanentDb.$transaction(
       async (tx) => {
         const currentTicket = await tx.ticket.findUnique({
           where: { id: ticketId },
           select: { priority: true, assignedTo: true },
         });
-        const updatedTicket = await tx.ticket.updateMany({
+        const updatedTicket = await tx.ticket.updateManyAndReturn({
           where: {
             id: ticketId,
             organizationId,
@@ -184,7 +184,7 @@ export class TicketTransitionService {
             },
           },
         });
-        if (updatedTicket.count === 0) {
+        if (updatedTicket.length === 0) {
           const existTicket = await tx.ticket.findUnique({
             where: { id: ticketId },
             select: { version: true },
@@ -208,7 +208,7 @@ export class TicketTransitionService {
             organizationId,
           },
         });
-        return { currentTicket, updatedTicket };
+        return { updatedTicket: updatedTicket[0], currentTicket };
       },
     );
     await ActivityService.lagActivity({
@@ -258,39 +258,18 @@ export class TicketTransitionService {
     const tenantDb = getTenantClient(organizationId);
     const currentTicket = await tenantDb.ticket.findUnique({
       where: { id: ticketId },
-      include: {
-        queue: {
-          include: {
-            queueGroup: true,
-          },
-        },
-      },
     });
-    if (!currentTicket)
-      throw new appError('Ticket not found', 404, 'NOT_FOUND');
-    if (!input.groupId && !currentTicket?.queue) {
+    let { currentQueue, nextQueue } = await this.escalationOptions({
+      organizationId,
+      ticketId,
+      groupId: input.groupId,
+    });
+
+    if (!currentQueue) throw new appError('Ticket not found', 404, 'NOT_FOUND');
+    if (!input.groupId && !nextQueue) {
       throw new appError('You need to select a group', 400, 'INVALID_PAYLOAD');
     }
-    //  find next queue in same group
-    const nextQueues = await tenantDb.queue.findMany({
-      where: {
-        queueGroupId: input.groupId || currentTicket?.queue?.queueGroupId,
-        order: {
-          gte: input.groupId ? 0 : currentTicket?.queue?.order,
-        },
-      },
-      include: {
-        _count: {
-          select: {
-            queueAgents: true,
-          },
-        },
-      },
-      orderBy: {
-        order: 'asc',
-      },
-    });
-    const nextQueue = nextQueues.find((q) => q._count.queueAgents > 0);
+
     if (!nextQueue)
       throw new appError(
         'No further queue. Please select another group.',
@@ -366,8 +345,8 @@ export class TicketTransitionService {
   }) => {
     // thie AssginedId can be agentId or queueId
     const tenantDb = getTenantClient(organizationId);
-    let queueId;
-    let agentId;
+    let queueId: string | undefined;
+    let agentId: string | undefined;
     switch (targetType) {
       case 'QUEUE':
         // assignID = provided queueId
@@ -393,6 +372,13 @@ export class TicketTransitionService {
           queueId = queueData?.queueId;
           agentId = queueData?.agentId;
         }
+        if (queueId === assignId)
+          throw new appError(
+            'Already assigned to agent ',
+            409,
+            'CONFLICT_ERROR',
+          );
+
         break;
       default:
         throw new appError('Invalid targetType ', 400);
@@ -400,9 +386,6 @@ export class TicketTransitionService {
     if (!queueId) throw new appError('Queue not found ', 404, 'NOT_FOUND');
     if (!agentId)
       throw new appError('Agent not found in queue', 404, 'NOT_FOUND');
-    if (targetType === 'AGENT' && agentId === assignId)
-      throw new appError('Already assigned to agent ', 409, 'CONFLICT_ERROR');
-
     const { updatedTicket, currentTicket } =
       await TicketService.updateTicketMovement({
         ticketId,
@@ -427,16 +410,20 @@ export class TicketTransitionService {
   static escalationOptions = async ({
     organizationId,
     ticketId,
+    groupId,
   }: {
     organizationId: string;
     ticketId: string;
+    groupId?: string;
   }) => {
+    let groupIdRequired = false;
     let nextQueue: { id: string; name: string } | null = null;
     const tenantDb = getTenantClient(organizationId);
     const queueData = await tenantDb.ticket.findUnique({
       where: {
         id: ticketId,
         organizationId,
+        active: true,
       },
       select: {
         queue: {
@@ -455,24 +442,45 @@ export class TicketTransitionService {
     }
 
     if (queueData.queue.order !== null) {
-      nextQueue = await tenantDb.queue.findFirst({
+      const findNextQueue = await tenantDb.queue.findFirst({
         where: {
           organizationId,
           queueGroupId: queueData.queue.queueGroupId,
           order: { gt: queueData.queue.order },
+          active: true,
         },
         select: {
           id: true,
           name: true,
+          order: true,
+        },
+        orderBy: { order: 'asc' },
+      });
+      if (!findNextQueue) groupIdRequired = true;
+      nextQueue = findNextQueue;
+    }
+    if (groupId) {
+      nextQueue = await tenantDb.queue.findFirst({
+        where: {
+          organizationId,
+          queueGroupId: groupId,
+          order: { gt: 0 },
+          active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          order: true,
         },
         orderBy: { order: 'asc' },
       });
     }
-
     return {
+      groupIdRequired,
       currentQueue: {
         id: queueData.queue.id,
         name: queueData.queue.name,
+        order: queueData.queue.order,
       },
       nextQueue,
     };

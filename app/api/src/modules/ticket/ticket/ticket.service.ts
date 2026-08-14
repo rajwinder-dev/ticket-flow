@@ -120,10 +120,9 @@ export class TicketService {
         organizationId,
         keys: ['ticket'],
       });
-      return finalAssignment;
     }
 
-    const result = { ticket, assignment: finalAssignment };
+    const result = { ...ticket, assignment: finalAssignment };
     return result;
   };
   static createTicket = async ({
@@ -186,6 +185,7 @@ export class TicketService {
       entityId: ticket.id,
       entityType: 'TICKET',
     });
+
     return ticket;
   };
   static updateTicket = async ({
@@ -193,15 +193,17 @@ export class TicketService {
     ticketId,
     organizationId,
     userId,
+    version,
   }: {
     input: Prisma.TicketUpdateInput;
     ticketId: string;
     organizationId: string;
     userId: string;
+    version?: number;
   }) => {
     const tenantDb = getTenantClient(organizationId);
     const updatedTicket = await tenantDb.ticket.update({
-      where: { id: ticketId, organizationId },
+      where: { id: ticketId, organizationId, version },
       data: {
         ...input,
         version: {
@@ -341,6 +343,7 @@ export class TicketService {
         ticketCount: 'asc',
       },
     });
+
     return agent?.agentId;
   };
   static updateTicketMovement = async ({

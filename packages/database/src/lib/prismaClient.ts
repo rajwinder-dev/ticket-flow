@@ -32,7 +32,7 @@ prisma.$on('error', (e) => {
   log.error(e.target);
 });
 
-type TenantClient = ReturnType<typeof createTenantClient>;
+export type TenantClient = ReturnType<typeof createTenantClient>;
 const clientCache = new Map<string, TenantClient>();
 
 function createTenantClient(organizationId: string) {

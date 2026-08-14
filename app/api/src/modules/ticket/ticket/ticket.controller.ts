@@ -2,6 +2,7 @@ import {
   ticketDetailsSchema,
   ticketSchemaResponse,
   ticketSummary,
+  UpdateTicketInput,
 } from '@org/zod';
 import z from 'zod';
 import { APIFeatures } from '../../../core/utils/apiFeatures.js';
@@ -22,11 +23,13 @@ export class TicketController {
   });
   static updateTicket = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
+    const {version, ...input} = req.body as UpdateTicketInput
     const updatedTicket = await TicketService.updateTicket({
-      input: req.body,
+      input,
       organizationId: req.organization.id,
       userId: req.user.id,
       ticketId,
+      version
     });
     response(res, updatedTicket);
   });

@@ -2,7 +2,13 @@ import z from 'zod';
 import { catchAsync } from '../../../core/utils/catchAsync';
 
 import response from '../../../core/utils/response.js';
-import { AssignTicketInput, EscalateTicketInput, ticketTranslationSchema, UpdateTicketPriorityInput, UpdateTicketStatusInput } from '@org/zod';
+import {
+  AssignTicketInput,
+  EscalateTicketInput,
+  ticketTranslationSchema,
+  UpdateTicketPriorityInput,
+  UpdateTicketStatusInput,
+} from '@org/zod';
 import { TicketTransitionService } from './ticketTransition.service';
 export class TicketTransitionController {
   static getTransitionHistory = catchAsync(async (req, res, _next) => {
@@ -33,14 +39,14 @@ export class TicketTransitionController {
   static updatePriority = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
     const { priority, version } = req.body as UpdateTicketPriorityInput;
-    const data = await TicketTransitionService.updatePriority({
+    const updatedTicket = await TicketTransitionService.updatePriority({
       userId: req.user.id,
       ticketId,
       organizationId: req.organization.id,
       priority,
       version,
     });
-    response(res, data, 200);
+    response(res, updatedTicket, 200);
   });
   static assignTicket = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
@@ -67,9 +73,11 @@ export class TicketTransitionController {
   });
   static getEscalateOptions = catchAsync(async (req, res, _next) => {
     const ticketId = req.params.id as string;
+    const groupId = req.query.groupId as string;
     const data = await TicketTransitionService.escalationOptions({
       ticketId,
       organizationId: req.organization.id,
+      groupId,
     });
     response(res, data);
   });

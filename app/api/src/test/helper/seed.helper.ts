@@ -8,6 +8,7 @@ import { getTenantClient, ProviderType } from '@org/database';
 import { RoleService } from '../../modules/role/role.service';
 import { EmailService } from '../../modules/email/email.service';
 import { TicketService } from '../../modules/ticket/ticket/ticket.service';
+import { PermissionAction, PermissionModule } from '@org/zod';
 
 // TODO:  make it independent from api modules
 
@@ -23,7 +24,7 @@ export class dbTestHelpers {
   async createOrganization({ count = 1 }: { count?: number } = {}) {
     let result = [];
     for (let i = 0; i < count; i++) {
-      const name = faker.company.name();
+      const name = `${faker.company.name()}-${i}`;
       const data = await OrganizationService.create(this.ownerId, {
         name,
         type: 'PERSONAL',
@@ -91,10 +92,10 @@ export class dbTestHelpers {
     }
     return result;
   }
-  async createroles({
+  async createroles<T extends PermissionModule>({
     permissions,
   }: {
-    permissions: Record<string, string[]> | {};
+    permissions: Record<T, PermissionAction<T>[]> | {};
   }) {
     if (!this.orgId) throw new Error('orgId is not set');
     const data = await RoleService.create(this.ownerId, this.orgId, {
@@ -109,7 +110,6 @@ export class dbTestHelpers {
     roleId,
   }: {
     userIds: string[];
-    orgId: string;
     roleId: string;
   }) {
     if (!this.orgId) throw new Error('orgId is not set');

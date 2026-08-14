@@ -37,6 +37,7 @@ export const updateTicketInput = {
       description: z.string().optional(),
       priority: z.enum(ticketPriority).optional(),
       category: z.string().min(1, 'Category is required').optional(),
+      version: z.number(),
     })
     .strict(),
   ...validUuidParams,
@@ -119,6 +120,7 @@ const QueueOptionSchema = z.object({ id: z.string(), name: z.string() });
 export const ticketEscalationOptions = z.object({
   currentQueue: QueueOptionSchema.nullable(),
   nextQueue: QueueOptionSchema.nullable(),
+  groupIdRequired: z.boolean(),
 });
 export const ticketSummary = z.object({
   total: z.number(),
