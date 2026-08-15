@@ -5,7 +5,19 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
-import { cloudflare } from '@cloudflare/vite-plugin';
+const proxyUrl = 'http://localhost:3000';
+const apiProxy = {
+  '/api': {
+    target: proxyUrl,
+    changeOrigin: true,
+  },
+  '/socket.io': {
+    target: proxyUrl,
+    changeOrigin: true,
+    ws: true,
+  },
+};
+
 export default defineConfig({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/app/web',
@@ -13,26 +25,19 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      '/socket.io': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        ws: true,
-      },
-    },
+    proxy: apiProxy,
     allowedHosts: ['app.tiven.xyz'],
   },
 
   preview: {
-    port: 4200,
     host: 'localhost',
+    port: 4200,
+    strictPort: true,
+    proxy: apiProxy,
+    allowedHosts: ['app.tiven.xyz'],
   },
 
-  plugins: [react(), tailwindcss(), tsconfigPaths(), cloudflare()],
+  plugins: [react(), tailwindcss(), tsconfigPaths()],
 
   resolve: {
     alias: {
@@ -43,6 +48,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+
   build: {
     outDir: './dist',
     emptyOutDir: true,
