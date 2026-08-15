@@ -39,6 +39,7 @@ interface props {
     description?: string;
     priority: TicketPriority;
     category: string;
+    version: number;
   };
   open: boolean;
   setOpen: (value: boolean) => void;
@@ -55,13 +56,13 @@ const TicketEditDialog = ({ ticket, open, setOpen }: props) => {
   } = useForm<UpdateTicketInput>({
     resolver: zodResolver(updateTicketInput.bodySchema),
     defaultValues: {
+      version: ticket.version,
       subject: ticket.subject,
       description: ticket.description || '',
       priority: ticket.priority,
       category: ticket.category,
     },
   });
-
   const onSubmit = (data: UpdateTicketInput) => {
     updateTicket(
       { id: ticket.id, data },

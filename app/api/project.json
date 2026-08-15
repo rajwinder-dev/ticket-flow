@@ -10,6 +10,7 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "continuous": true,
       "options": {
         "cwd": "app/api",
         "command": "vitest run"
@@ -29,6 +30,13 @@
       "options": {
         "cwd": "app/api",
         "command": "NODE_OPTIONS=\"--conditions=@org/source\" tsx watch --inspect=9230 --clear-screen=false    src/main.ts"
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "app/api",
+        "command": "node ./dist/main.js"
       }
     }
   }
