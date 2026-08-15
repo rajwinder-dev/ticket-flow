@@ -3,7 +3,7 @@ import {
   ticketCategory,
   ticketActions,
   ticketPriority,
-  ticketStatus,
+  ticketStatus
 } from '@org/constants';
 import { z } from 'zod';
 import {

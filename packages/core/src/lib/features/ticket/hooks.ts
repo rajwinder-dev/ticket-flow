@@ -116,7 +116,6 @@ export function useTicket({
       return await updateCache<ApiResponse<TicketSchemaResponse>>({
         queryKey: ['ticket', 'details', { orgId, ticketId: data.id }],
         updater: (old: any) => {
-          console.log(old);
           return {
             ...old,
             data: {
@@ -150,7 +149,6 @@ export function useTicket({
         return await updateCache<ApiResponse<TicketSchemaResponse>>({
           queryKey: ['ticket', 'details', { orgId, ticketId: data.id }],
           updater: (old: any) => {
-            console.log(old);
             return {
               ...old,
               data: {
@@ -185,7 +183,6 @@ export function useTicket({
         });
       },
       onMutate: async (data) => {
-        console.log(filterOptions);
         if (filterOptions)
           await updateCache({
             queryKey: ['ticket', { orgId }, filterOptions],
@@ -282,11 +279,8 @@ export function useTicket({
     mutate: generateTicketSummary,
     isPending: isGeneratingTicketSummary,
   } = useMutation({
-    mutationFn: ({
-      ticketId,
-    }: {
-      ticketId: string;
-    }) => ticketApi.generateSummary(ticketId),
+    mutationFn: ({ ticketId }: { ticketId: string }) =>
+      ticketApi.generateSummary(ticketId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['ticket', 'details', { orgId, ticketId }],

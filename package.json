@@ -6,7 +6,8 @@
     "dev": "nx run-many -t serve  ",
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",
-    "test": "nx run-many -t test"
+    "test": "nx run-many -t test",
+    "preview": "nx run-many -t preview"
   },
   "private": true,
   "devDependencies": {
