@@ -20,11 +20,12 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@org/api": "workspace:*",
     "@org/auth": "workspace:*",
+    "@org/constants": "workspace:*",
     "@org/database": "workspace:*",
     "@org/utils": "workspace:*",
-    "@org/constants": "workspace:*",
-    "@org/api": "workspace:*",
+    "p-limit": "^7.3.1",
     "tslib": "^2.3.0"
   }
 }

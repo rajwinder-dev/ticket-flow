@@ -58,3 +58,4 @@ export const getTenantClient = (organizationId: string) => {
   }
   return clientCache.get(organizationId)!;
 };
+export { PrismaClient, PrismaPg };

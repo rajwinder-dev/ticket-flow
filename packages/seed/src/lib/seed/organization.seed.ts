@@ -1,37 +1,44 @@
-import { permissions } from "@org/constants";
-import { log } from "@org/utils";
-import { Organization, User, getTenantClient, prisma } from "@org/database";
-import { faker } from "@faker-js/faker";
+import { permissions } from '@org/constants';
+import { log } from '@org/utils';
+import { Organization, User, prisma } from '@org/database';
+import { faker } from '@faker-js/faker';
+import { progress } from '../seed.helper.js';
+import { prismSeed } from '../prismaSeedClient.js';
 
-export async function seedOrganizations(owners: User[], maxOrganizationCount: number) {
-  log.info(`seeding Max ${maxOrganizationCount} organization for ${owners.length}`);
-  const orgData  = [];
-  for (const owner of owners) {
-    const orgCount = Math.floor(Math.random() * maxOrganizationCount) + 1;
+export async function seedOrganizations({
+  owners,
+  count = 5,
+}: {
+  owners: User[];
+  count?: number;
+}) {
+  log.info(`seeding Max ${count} organization for ${owners.length} users`);
+  const orgData = [];
+  for (const [index, owner] of owners.entries()) {
+    const orgCount = Math.floor(Math.random() * count) + 1;
 
     for (let i = 0; i < orgCount; i++) {
-      const name = `${owner.email.split("@")[0]}'s Corp ${i + 1}`;
+      const name = `${owner.email.split('@')[0]}'s Corp ${i + 1}`;
       try {
         const organizationData = await prisma.organization.create({
           data: {
             name,
-            code: generateCode("ORG"),
+            code: generateCode('ORG'),
             createdBy: owner.id,
             teamSize: Math.floor(Math.random() * 100) + 1,
             description: `Organization number ${i + 1} for ${owner.email}`,
-            slug: name.replace(/\s+/g, "-").toLowerCase(),
+            slug: name.replace(/\s+/g, '-').toLowerCase(),
             logo: faker.image.avatar(),
-            type: "TEAM",
+            type: 'TEAM',
           },
         });
         orgData.push(organizationData);
         await seedRolesAndMembership(organizationData, owner.id);
-
-        log.success(`Successfully created Org: ${organizationData.name}`);
       } catch (err) {
-        console.error("Error creating org:", err);
+        console.error('Error creating org:', err);
       }
     }
+    progress(owners.length, index + 1);
   }
   return orgData;
 }
@@ -41,33 +48,35 @@ export async function seedOrganizations(owners: User[], maxOrganizationCount: nu
  */
 async function seedRolesAndMembership(org: Organization, userId: string) {
   const roleDefinitions = [
-    { name: "OWNER", permissions: permissions }, // Full access
-    { name: "ADMIN", permissions: filterPermissions(permissions, ["delete"]) }, // No delete
-    { name: "SUPPORT", permissions: filterPermissions(permissions, ["delete", "edit", "create"]) }, // View only mostly
+    { name: 'OWNER', permissions: permissions }, // Full access
+    { name: 'ADMIN', permissions: filterPermissions(permissions, ['delete']) }, // No delete
+    {
+      name: 'SUPPORT',
+      permissions: filterPermissions(permissions, ['delete', 'edit', 'create']),
+    }, // View only mostly
   ];
 
   for (const roleDef of roleDefinitions) {
-    const tenantDb = getTenantClient(org.id);
     try {
-      const role = await tenantDb.role.create({
+      const role = await prismSeed.role.create({
         data: {
           name: roleDef.name,
-          code: generateCode("ROL"),
+          code: generateCode('ROL'),
           organizationId: org.id,
           createdBy: userId,
           permissions: roleDef.permissions,
-          isSystem: roleDef.name === "OWNER",
+          isSystem: roleDef.name === 'OWNER',
         },
       });
 
       // Assign the creator to the OWNER role specifically
-      if (role.name === "OWNER") {
-        await tenantDb.membership.create({
+      if (role.name === 'OWNER') {
+        await prismSeed.membership.create({
           data: {
             organizationId: org.id,
             userId: userId,
             roleId: role.id,
-            isSystem: roleDef.name === "OWNER",
+            isSystem: roleDef.name === 'OWNER',
           },
         });
       }
@@ -87,11 +96,15 @@ function generateCode(prefix: string) {
 /**
  * Utility: Simple permission filter to make roles look different
  */
-function filterPermissions(allPerms: typeof permissions, restrictedActions: string[]) {
+function filterPermissions(
+  allPerms: typeof permissions,
+  restrictedActions: string[],
+) {
   const newPerms = JSON.parse(JSON.stringify(allPerms)); // Deep clone
   for (const category in newPerms) {
     newPerms[category] = newPerms[category].filter(
-      (action: string) => !restrictedActions.some((restricted) => action.includes(restricted)),
+      (action: string) =>
+        !restrictedActions.some((restricted) => action.includes(restricted)),
     );
   }
   return newPerms;

@@ -1,14 +1,16 @@
 import { ActorType, LogSeverity, EntryType } from '@org/database';
 import { log } from '@org/utils';
-import { getTenantClient, prisma } from '@org/database'; // adjust to wherever your tenant client factory actually lives
+import { prisma } from '@org/database'; // adjust to wherever your tenant client factory actually lives
+import { prismSeed } from '../prismaSeedClient.js';
+import { progress } from '../seed.helper.js';
 
-/**
- * Seeds the ActivityLog table for every organization, using each
- * organization's own tenant-scoped DB client. Covers every ActorType,
- * LogSeverity, and EntryType combination you're likely to hit in production.
- */
-export async function seedActivityLog() {
-  log.info('seeding activity log');
+export async function seedActivityLog(maxLogsPerOrg: number = 20) {
+  if (maxLogsPerOrg <= 0) {
+    log.info('maxLogsPerOrg is 0 or negative, nothing to seed');
+    return;
+  }
+
+  log.info(`seeding activity log (max ${maxLogsPerOrg} per org)`);
 
   const organizations = await prisma.organization.findMany();
 
@@ -17,25 +19,19 @@ export async function seedActivityLog() {
     return;
   }
 
-  for (const organization of organizations) {
+  for (const [current, organization] of organizations.entries()) {
     const orgId = organization.id;
-    await seedActivityLogForOrg(orgId);
+    await seedActivityLogForOrg(orgId, maxLogsPerOrg);
+    progress(organizations.length, current);
   }
-
-  log.info(`seeded activity log for ${organizations.length} organizations`);
 }
 
-async function seedActivityLogForOrg(orgId: string) {
-  const tenantDb = getTenantClient(orgId);
-
-  // Grab a couple of users within this tenant's DB to attach logs to.
-  // Falls back to creating minimal placeholder records if none exist,
-  // so this script is safe to run against a fresh tenant DB.
-  let users = await tenantDb.user.findMany({ take: 3 });
+async function seedActivityLogForOrg(orgId: string, maxLogsPerOrg: number) {
+  let users = await prismSeed.user.findMany({ take: 3 });
   if (users.length === 0) {
     users = await Promise.all(
       ['Alice Johnson', 'Bob Smith', 'Carol Diaz'].map((name, i) =>
-        tenantDb.user.create({
+        prismSeed.user.create({
           data: {
             name,
             email: `seed-user-${i}-${orgId}@example.com`,
@@ -47,8 +43,9 @@ async function seedActivityLogForOrg(orgId: string) {
 
   const [alice, bob, carol] = users;
 
-  // Build a batch of representative log entries for this tenant.
-  const entries: Parameters<typeof tenantDb.activityLog.create>[0]['data'][] = [
+  type LogEntry = Parameters<typeof prismSeed.activityLog.create>[0]['data'];
+
+  const templates: LogEntry[] = [
     {
       actorId: alice.id,
       actorType: ActorType.USER,
@@ -139,11 +136,18 @@ async function seedActivityLogForOrg(orgId: string) {
     },
   ];
 
-  // 3. Insert them.
-  await tenantDb.activityLog.createMany({
+  const entries: LogEntry[] = Array.from({ length: maxLogsPerOrg }, (_, i) => {
+    const template = templates[i % templates.length];
+    const pass = Math.floor(i / templates.length);
+
+    return pass === 0
+      ? template
+      : { ...template, entityId: crypto.randomUUID() };
+  });
+
+  await prismSeed.activityLog.createMany({
     data: entries,
     skipDuplicates: true,
   });
 
-  log.info(`seeded ${entries.length} activity log entries`);
 }

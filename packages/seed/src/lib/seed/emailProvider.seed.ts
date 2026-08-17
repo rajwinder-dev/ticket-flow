@@ -1,5 +1,7 @@
-import { getTenantClient, prisma } from '@org/database';
+import { prisma } from '@org/database';
 import { CryptoUtils, log } from '@org/utils';
+import { prismSeed } from '../prismaSeedClient.js';
+import { progress } from '../seed.helper.js';
 
 export async function seedEmailProviders() {
   log.info('seeding email providers');
@@ -41,8 +43,7 @@ export async function seedEmailProviders() {
   // Dedupe: one email provider per organization, not per membership
   const organizations = await prisma.organization.findMany();
 
-  for (const org of organizations) {
-    const tenatDb = getTenantClient(org.id);
+  for (const [current, org] of organizations.entries()) {
     const orgName = org?.name;
     if (!orgName) {
       log.warn(`skipping org ${org.id} — missing organization name`);
@@ -51,7 +52,7 @@ export async function seedEmailProviders() {
 
     const fromEmail = `${orgName.split(' ').join('_')}@${seedApi.domain}`;
 
-    await tenatDb.emailProvider.create({
+    await prismSeed.emailProvider.create({
       data: {
         organizationId: org.id,
         providerType: 'RESEND',
@@ -62,6 +63,7 @@ export async function seedEmailProviders() {
         priority: 1,
       },
     });
+    progress(organizations.length, current);
   }
 
   log.success('email providers seeded successfully');

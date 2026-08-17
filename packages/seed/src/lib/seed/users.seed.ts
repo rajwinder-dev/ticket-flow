@@ -1,60 +1,68 @@
 import { faker } from '@faker-js/faker';
 import { log } from '@org/utils';
-
 import { prisma } from '@org/database';
-import { auth } from '@org/auth';
+import { hashPassword } from '@org/auth';
 
-/**
- * Seed users
- */
-export async function seedUsers(count: number = 50) {
+const SEED_PASSWORD = '8968585382';
+export async function seedUsers({ count = 50 }: { count: number }) {
+  const current = await prisma.user.count();
+  count = count - current;
+
+  if(count <= 0) {
+    log.info('No users to seed');
+    return await prisma.user.findMany(); 
+  }
   log.info(`Seeding ${count} users...`);
-
-  const users: { email: string; name: string; password: string }[] = [];
-  await auth.api.signUpEmail({
-    body: {
+  const remaining = Math.max(count - 1, 0);
+  const emails = new Set<string>();
+  const fakeUsers: { email: string; name: string }[] = [
+    {
       email: 'rajwindersxxx@gmail.com',
       name: 'Rajwinder',
-      password: '8968585382',
-      avatar: faker.image.avatar(),
     },
-  });
+  ];
 
-  const emails = new Set<string>();
-
-  while (users.length < count) {
-    const email = faker.internet.email().toLocaleLowerCase();
+  while (fakeUsers.length < remaining) {
+    const email = faker.internet.email().toLowerCase();
     if (emails.has(email)) continue;
-    users.push({
-      email: faker.internet.email().toLocaleLowerCase(),
-      password: faker.internet.email().toLocaleLowerCase(),
+    emails.add(email);
+    fakeUsers.push({
+      email,
       name: faker.internet.userName(),
     });
   }
 
-  for (const user of users) {
-    await auth.api.signUpEmail({
-      body: {
-        email: user.email,
-        password: user.email,
-        name: user.name,
-        avatar: faker.image.avatar(),
-      },
-    });
-  }
+  const sharedHashedPassword = await hashPassword(SEED_PASSWORD);
 
-  const createdUsers = await prisma.user.findMany();
+  await prisma.user.createMany({
+    data: fakeUsers.map((u) => ({
+      email: u.email,
+      name: u.name,
+      phoneNo: faker.phone.number(),
+      location: faker.location.streetAddress(),
+      avatar: faker.image.avatar(),
+      emailVerified: true,
+    })),
+    skipDuplicates: true,
+  });
 
-  for (const user of createdUsers) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        phoneNo: faker.phone.number(),
-        location: faker.location.streetAddress(),
-        avatar: faker.image.avatar(),
-      },
-    });
-  }
-  log.success(`Created ${createdUsers.length} users`);
+  const createdUsers = await prisma.user.findMany({
+    where: { email: { in: fakeUsers.map((u) => u.email) } },
+  });
+
+  await prisma.account.createMany({
+    data: createdUsers.map((u) => ({
+      id: crypto.randomUUID(),
+      userId: u.id,
+      providerId: 'credential',
+      accountId: u.id,
+      password: sharedHashedPassword,
+    })),
+    skipDuplicates: true,
+  });
+
+  log.success(
+    `Created ${createdUsers.length} users (shared password: ${SEED_PASSWORD})`,
+  );
   return createdUsers;
 }

@@ -2,9 +2,10 @@ import { prisma } from '@org/database';
 import { faker } from '@faker-js/faker';
 import { TicketAction, TicketStatus, Priority } from '@org/database';
 import { log } from '@org/utils';
+import { prismSeed } from '../prismaSeedClient.js';
+import { progress } from '../seed.helper.js';
 
 const TRANSITIONS_PER_TICKET_MIN = 1;
-const TRANSITIONS_PER_TICKET_MAX = 3;
 
 const STATUSES: TicketStatus[] = [
   TicketStatus.OPEN,
@@ -46,25 +47,6 @@ function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createTenantClient(organizationId: string) {
-  return prisma.$extends({
-    query: {
-      $allModels: {
-        async $allOperations({ args, query }) {
-          const [, result] = await prisma.$transaction([
-            prisma.$executeRaw`SELECT set_config('app.current_organization', ${organizationId}, true);`,
-            query(args),
-          ]);
-          return result;
-        },
-      },
-    },
-  });
-}
-
-// Builds the action-specific fields for a transition record. Only the
-// fields relevant to the given action are populated; everything else
-// stays undefined (nullable in the schema).
 function buildActionFields(
   action: TicketAction,
   ctx: {
@@ -124,20 +106,20 @@ function buildActionFields(
   }
 }
 
-export async function seedTicketTransitions() {
+export async function seedTicketTransitions({
+  count = 8,
+}: { count?: number } = {}) {
   log.info('seeding ticket transitions');
   const organizations = await prisma.organization.findMany();
 
-  for (const org of organizations) {
-    const tenantDb = createTenantClient(org.id);
-
+  for (const [current, org] of organizations.entries()) {
     const [tickets, users, queues, groups] = await Promise.all([
-      tenantDb.ticket.findMany({ where: { organizationId: org.id } }),
-      tenantDb.user.findMany(),
-      tenantDb.queue.findMany({ where: { organizationId: org.id } }),
+      prismSeed.ticket.findMany({ where: { organizationId: org.id } }),
+      prismSeed.user.findMany(),
+      prismSeed.queue.findMany({ where: { organizationId: org.id } }),
       // Remove/adjust this if you don't have a QueueGroup model with
       // an organizationId field — it wasn't part of the shared schema.
-      tenantDb.queueGroup.findMany({ where: { organizationId: org.id } }),
+      prismSeed.queueGroup.findMany({ where: { organizationId: org.id } }),
     ]);
 
     if (!tickets.length) {
@@ -148,10 +130,7 @@ export async function seedTicketTransitions() {
     let transitions = [];
 
     for (const ticket of tickets) {
-      const transitionCount = randomInt(
-        TRANSITIONS_PER_TICKET_MIN,
-        TRANSITIONS_PER_TICKET_MAX,
-      );
+      const transitionCount = randomInt(TRANSITIONS_PER_TICKET_MIN, count);
 
       for (let i = 0; i < transitionCount; i++) {
         const action = randomItem(ACTIONS);
@@ -167,13 +146,10 @@ export async function seedTicketTransitions() {
       }
     }
 
-    await tenantDb.ticketTransition.createMany({
+    await prismSeed.ticketTransition.createMany({
       data: transitions,
       skipDuplicates: true,
     });
-
-    log.success(
-      `Seeded ${transitions.length} ticket transitions for org ${org.id}`,
-    );
+    progress(organizations.length, current);
   }
 }

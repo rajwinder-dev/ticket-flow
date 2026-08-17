@@ -2,6 +2,8 @@ import { betterAuth, BetterAuthOptions } from 'better-auth';
 import { testUtils } from 'better-auth/plugins';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 // import { EmailService } from "../modules/email/email.service.js";
+
+export { hashPassword } from 'better-auth/crypto'; // adjust to your auth lib's exported hasher
 import { prisma } from '@org/database';
 const options = {
   database: prismaAdapter(prisma, {

@@ -1,75 +1,47 @@
 import { log } from '@org/utils';
-import { getTenantClient, prisma } from '@org/database';
+import {  prisma } from '@org/database';
+import { progress } from '../seed.helper.js';
+import { prismSeed } from '../prismaSeedClient.js';
 
 export async function seedAgents() {
   log.info(`seeding agents to unique queues.`);
+  const organizations = await prisma.organization.findMany();
 
-  // 1. Fetch organizations.
-  const organizations = await prisma.organization.findMany({
-    // where: {
-    //   membership: {
-    //     some: {
-    //       role: {
-    //         name: {
-    //           not: 'OWNER',
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
-    // include: {
-    //   membership: {
-    //     select: {
-    //       id: true,
-    //       userId: true,
-    //     },
-    //   },
-    //   queueGroups: {
-    //     include: {
-    //       queues: { select: { id: true } },
-    //     },
-    //   },
-    // },
-  });
+  for (const [current, org] of organizations.entries()) {
 
-  // const queueAgentData: {
-  //   organizationId: string;
-  //   queueId: string;
-  //   agentId: string;
-  // }[] = [];
-
-  for (const org of organizations) {
-    const tenantDb = getTenantClient(org.id);
-    const membership = await tenantDb.membership.findMany({
-      where: { role: { name: { not: 'OWNER' } } },
+    const membership = await prismSeed.membership.findMany({
+      where: { role: { name: { not: 'OWNER' } }, organizationId: org.id },
     });
-    const queueGroups = await tenantDb.queueGroup.findMany({
+    const queueGroups = await prismSeed.queueGroup.findMany({
+      where: { organizationId: org.id },
       include: { queues: true },
     });
+
     const agentIds = membership.map((m) => m.userId);
     const allQueues = queueGroups.flatMap((group) => group.queues);
 
     if (agentIds.length === 0 || allQueues.length === 0) continue;
-    let index = 0;
-    for (const agentId of agentIds) {
-      const assignedQueue = allQueues[index % allQueues.length];
-      try {
-        await tenantDb.queueAgent.create({
-          data: {
-            organizationId: org.id,
-            queueId: assignedQueue.id,
-            agentId: agentId,
-          },
-        });
-      } catch (error) {
-        console.error(
-          "Batch insert failed. Check if 'agentId' should be the User ID or Membership ID.",
-        );
-        throw error;
-      }
-      log.success(`Successfully assigned ${index} agents to unique queues.`);
 
-      index++;
+    // Build every queueAgent row up front instead of one create() per agent.
+    const queueAgentData = agentIds.map((agentId, index) => ({
+      organizationId: org.id,
+      queueId: allQueues[index % allQueues.length].id,
+      agentId,
+    }));
+
+    try {
+       await prismSeed.queueAgent.createMany({
+        data: queueAgentData,
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      console.error(
+        `Batch insert failed for org ${org.id}. Check if 'agentId' should be the User ID or Membership ID.`,
+        error,
+      );
+      throw error;
     }
+
+    progress(organizations.length, current);
   }
 }

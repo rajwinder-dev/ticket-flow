@@ -12,33 +12,26 @@ import { log } from '@org/utils';
 import { seedInvites } from './seed/invite.seed.js';
 import { seedEmailProviders } from './seed/emailProvider.seed.js';
 import { seedActivityLog } from './seed/activityLog.seed.js';
-const seedConfig = {
-  usersCount: 100,
-  ownersCount: 20,
-  maxOrg: 3,
-  maxGroupsPerOrg: 3,
-  maxQueuePerGroup: 4,
-  maxCustomersPerOrg: 25,
-};
+import { generateSeedConfig } from './config.js';
+
+const config = generateSeedConfig('medium');
+
 export class seedData {
   static async updateFakeData() {
     await this.clearData();
-    const users = await seedUsers(seedConfig.usersCount);
-    await seedOrganizations(
-      users.splice(0, seedConfig.ownersCount),
-      seedConfig.maxOrg,
-    );
-    await seedMembers(
-      users.splice(seedConfig.ownersCount + 1, seedConfig.usersCount),
-    );
-    await seedQueueGroups(
-      seedConfig.maxGroupsPerOrg,
-      seedConfig.maxQueuePerGroup,
-    );
+    const users = await seedUsers({ count: config.USER_COUNT });
+    await seedOrganizations({
+      owners: users.splice(0, config.OWNER_COUNT),
+    });
+    await seedMembers({
+      users: users.splice(config.OWNER_COUNT + 1, config.USER_COUNT),
+      membershipCount: config.MEMBERS_COUNT,
+    });
+    await seedQueueGroups(config.GROUP_COUNT, config.QUEUES_COUNT);
     await seedAgents();
-    await seedCustomers(seedConfig.maxCustomersPerOrg);
-    await seedTickets();
-    await seedTicketComments();
+    await seedCustomers(config.CUSTOMER_COUNT);
+    await seedTickets({ ticketCount: config.TICKET_COUNT });
+    await seedTicketComments({ countPerTicket: config.COMMENT_COUNT });
     await seedTicketTransitions();
     await seedInvites();
     await seedEmailProviders();

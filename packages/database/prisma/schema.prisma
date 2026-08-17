@@ -410,6 +410,10 @@ model TicketComment {
   author         User          @relation(fields: [authorId], references: [id])
   organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId String        @db.Uuid
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([organizationId])
 }
 
 enum TicketAction {
