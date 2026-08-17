@@ -3,27 +3,21 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "types": [
-      "node",
-      "express",
-      "vitest/globals"
-    ],
+    "types": ["node", "express", "vitest/globals"],
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
     "emitDeclarationOnly": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "eslint.config.js",
     "eslint.config.cjs",
-    "eslint.config.mjs",
+    "eslint.config.mjs"
     // "**/*.test.ts",
     // "**/*.spec.ts"
   ],
   "references": [
     {
-      "path": "../../packages/auth/tsconfig.lib.json"
+      "path": "../../packages/queues/tsconfig.lib.json"
     },
     {
       "path": "../../packages/zod/tsconfig.lib.json"
@@ -39,6 +33,9 @@
     },
     {
       "path": "../../packages/constants/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/auth/tsconfig.lib.json"
     }
   ]
 }

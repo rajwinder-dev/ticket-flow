@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { EmailQueueInput, UpdateEmailProviderInput } from '@org/zod';
 import { appError } from '../../core/utils/appError.js';
 import { getTenantClient, ProviderType } from '@org/database';
-import { emailQueuePush } from '../../core/utils/emailQueue.js';
+import { emailQueuePush } from '@org/queues';
 import { crypto } from '../../core/utils/crypto.js';
 import { EncryptionType } from '@org/utils';
 export class EmailService {

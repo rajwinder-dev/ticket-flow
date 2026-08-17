@@ -1,5 +1,5 @@
 {
-  "name": "@org/auth",
+  "name": "@org/queues",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -16,11 +16,8 @@
     }
   },
   "dependencies": {
-    "@better-auth/infra": "^0.3.7",
-    "@org/database": "workspace:*",
-    "@org/queues": "workspace:*",
-    "better-auth": "^1.6.25",
-    "dotenv": "^17.4.2",
-    "tslib": "^2.3.0"
+    "bullmq": "^6.1.2",
+    "tslib": "^2.3.0",
+    "@org/zod": "workspace:*"
   }
 }

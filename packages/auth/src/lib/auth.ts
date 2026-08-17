@@ -1,7 +1,7 @@
 import { betterAuth, BetterAuthOptions } from 'better-auth';
 import { testUtils } from 'better-auth/plugins';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-// import { EmailService } from "../modules/email/email.service.js";
+import { emailQueuePush } from '@org/queues';
 
 export { hashPassword } from 'better-auth/crypto'; // adjust to your auth lib's exported hasher
 import { prisma } from '@org/database';
@@ -27,17 +27,17 @@ const options = {
     enabled: true,
     sendResetPassword: async ({ user, token }) => {
       const frontendURL = `${process.env.betterAuthUrl}/reset-password/${token}`;
-      console.log('frontendURL', frontendURL);
-      // await EmailService.queueEmail({
-      //   to: user.email,
-      //   subject: "Reset your password",
-      //   template: "forgetPassword",
-      //   isSystemEmail: true,
-      //   data: {
-      //     userName: user.name!,
-      //     resetLink: frontendURL,
-      //   },
-      // });
+      await emailQueuePush({
+        to: user.email,
+        subject: 'Reset your password',
+        template: 'forgetPassword',
+        jobType: 'email',
+        isSystemEmail: true,
+        data: {
+          userName: user.name!,
+          resetLink: frontendURL,
+        },
+      });
     },
     resetPasswordTokenExpiresIn: 3600,
   },
