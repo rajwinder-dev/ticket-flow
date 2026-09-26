@@ -34,7 +34,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       instance = await getSocket({
         userId: data.user.id,
         token: data.session.token,
-        apiUrl: process.env.VITE_API_URL,
+        apiUrl: import.meta.env.VITE_API_URL,
       });
 
       setSocket(instance);
