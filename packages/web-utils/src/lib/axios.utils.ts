@@ -40,6 +40,12 @@ export class AxiosApi {
   }
   setContext(context: RequestContext) {
     this.context = context;
+    return this;
+  }
+  setApiUrl(url: string) {
+    this.apiUrl = url;
+    this.api.defaults.baseURL = url;
+    return this;
   }
   async post<T = geneticApiResponse>({
     path,
