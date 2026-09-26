@@ -22,11 +22,11 @@ const options = {
       },
     },
   },
-  baseURL: process.env.betterAuthUrl,
+  baseURL: process.env.BETTER_AUTH_URL,
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, token }) => {
-      const frontendURL = `${process.env.betterAuthUrl}/reset-password/${token}`;
+      const frontendURL = `${process.env.BETTER_AUTH_URL}/reset-password/${token}`;
       await emailQueuePush({
         to: user.email,
         subject: 'Reset your password',

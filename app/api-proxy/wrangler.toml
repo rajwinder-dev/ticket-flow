@@ -6,3 +6,4 @@ routes = [
   { pattern = "ticketflow.devtiven.com/api/*", zone_name = "devtiven.com" },
   { pattern = "ticketflow.devtiven.com/webhooks/*", zone_name = "devtiven.com" },
 ]
+

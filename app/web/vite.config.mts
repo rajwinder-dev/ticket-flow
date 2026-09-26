@@ -5,7 +5,9 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
+import { cloudflare } from '@cloudflare/vite-plugin';
 const proxyUrl = 'http://localhost:3000';
+
 const apiProxy = {
   '/api': {
     target: proxyUrl,
@@ -37,7 +39,7 @@ export default defineConfig({
     allowedHosts: ['app.tiven.xyz'],
   },
 
-  plugins: [react(), tailwindcss(), tsconfigPaths()],
+  plugins: [react(), tailwindcss(), tsconfigPaths(), cloudflare()],
 
   resolve: {
     alias: {
