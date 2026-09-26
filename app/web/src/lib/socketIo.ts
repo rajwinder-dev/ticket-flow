@@ -2,9 +2,11 @@ import { Socket, io } from 'socket.io-client';
 export function getSocket({
   userId,
   token,
+  apiUrl,
 }: {
   userId: string;
   token: string;
+  apiUrl?: string;
 }): Promise<Socket> {
   if (typeof window === 'undefined')
     throw new Error('Socket must run on client');
@@ -12,18 +14,15 @@ export function getSocket({
     return Promise.resolve(window.__socket);
   if (window.__socketPromise) return window.__socketPromise;
   window.__socketPromise = (async () => {
-    const socket = io(
-      window.location.origin,
-      {
-        transports: ['websocket'],
-        withCredentials: true,
-        auth: {
-          userId,
-          token,
-        },
-        autoConnect: true,
+    const socket = io(apiUrl || window.location.origin, {
+      transports: ['websocket'],
+      withCredentials: true,
+      auth: {
+        userId,
+        token,
       },
-    );
+      autoConnect: true,
+    });
     window.__socket = socket;
     window.__socketPromise = undefined;
     return socket;
